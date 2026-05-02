@@ -1,17 +1,33 @@
 'use client';
-// v1.0.1 - Triggering new build
+// v1.0.2 - Fix UseChat type errors
 
 import { useChat } from '@ai-sdk/react';
+import { useState } from 'react';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, sendMessage } = useChat();
+  const [input, setInput] = useState('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    sendMessage({ text: input });
+    setInput('');
+  };
+
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       <h1 className="text-2xl font-bold mb-4 text-center">SupportPilot Demo</h1>
       {messages.map(m => (
-        <div key={m.id} className="whitespace-pre-wrap mb-4">
+        <div key={m.id || Math.random().toString()} className="whitespace-pre-wrap mb-4">
           <span className="font-bold">{m.role === 'user' ? 'User: ' : 'AI: '}</span>
-          {m.content}
+          {m.parts?.map((part, index) => (
+            part.type === 'text' ? <span key={index}>{part.text}</span> : null
+          ))}
         </div>
       ))}
 
