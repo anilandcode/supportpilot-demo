@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.67",
+    "@ai-sdk/react": "^3.0.176",
     "@base-ui/react": "^1.4.1",
     "ai": "^6.0.172",
     "class-variance-authority": "^0.7.1",
