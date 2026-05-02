@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-background:   #FAFAFA;
+  /* Claude-inspired warm palette */
+  --color-background:   #FAF9F7;
   --color-panel:        #FFFFFF;
-  --color-foreground:   #0A0A0A;
-  --color-foreground-2: #6B7280;
-  --color-border:       #E5E7EB;
-  --color-accent:       #5E6AD2;
-  --color-accent-soft:  #EEF0FB;
+  --color-foreground:   #1C1917;
+  --color-foreground-2: #78716C;
+  --color-border:       #E7E2DB;
+  --color-accent:       #C96442;
+  --color-accent-soft:  #FDF1EC;
   --color-accent-fg:    #FFFFFF;
+
+  /* Dark surface used in inverted sections */
+  --color-dark-bg:      #1C1917;
+  --color-dark-panel:   #292524;
+  --color-dark-border:  rgba(255,255,255,0.08);
 
   /* Spacing scale */
   --spacing-4:  4px;
@@ -26,26 +31,24 @@
   --radius-sm:   8px;
   --radius-md:   12px;
   --radius-lg:   16px;
+  --radius-xl:   24px;
   --radius-full: 9999px;
 
   /* Typography */
   --font-sans: Inter, system-ui, sans-serif;
 }
 
-/* Dark mode token overrides — toggle via .dark on <html> */
 .dark {
-  --color-background:   #0A0A0A;
-  --color-panel:        #141414;
-  --color-foreground:   #FFFFFF;
-  --color-foreground-2: rgba(255, 255, 255, 0.6);
+  --color-background:   #0C0A09;
+  --color-panel:        #1C1917;
+  --color-foreground:   #F5F0EB;
+  --color-foreground-2: rgba(245, 240, 235, 0.55);
   --color-border:       rgba(255, 255, 255, 0.08);
-  --color-accent:       #7B83E0;
-  --color-accent-soft:  rgba(94, 106, 210, 0.15);
+  --color-accent:       #E07855;
+  --color-accent-soft:  rgba(201, 100, 66, 0.15);
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--color-background);
@@ -53,17 +56,15 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Smooth token transitions across the whole page on theme swap */
 *, *::before, *::after {
   transition-property: background-color, border-color, color;
   transition-duration: 0.15s;
   transition-timing-function: ease;
 }
 
-/* Don't animate things that should be instant */
 button, a, [role="button"] {
-  transition-property: background-color, border-color, color, opacity, box-shadow;
+  transition-property: background-color, border-color, color, opacity, box-shadow, transform;
+  transition-duration: 0.15s;
 }

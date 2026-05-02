@@ -1,14 +1,15 @@
-import { Card } from "@/components/ui/card";
+"use client";
+
+import { useState } from "react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CopyButton } from "@/components/ui/copy-button";
 import { ChatWindow } from "@/components/chat/chat-window";
+import { Menu, X } from "lucide-react";
 
 const EMBED_SNIPPET = `<iframe
   src="https://supportpilot-demo.vercel.app/embed"
-  width="500px"
-  height="700px"
-  frameborder="0"
-  allowtransparency="true"
+  width="500px" height="700px"
+  frameborder="0" allowtransparency="true"
   style="position:fixed;bottom:0;right:0;border:none;z-index:9999"
 ></iframe>`;
 
@@ -16,60 +17,51 @@ const EMBED_SNIPPET = `<iframe
 
 function HeroChatPreview() {
   return (
-    <div className="w-full max-w-md rounded-2xl border border-border bg-panel shadow-2xl overflow-hidden text-left">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-panel">
-        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold shrink-0">
-          P
+    <div className="w-full rounded-2xl border border-border bg-panel shadow-2xl overflow-hidden">
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
+        <div className="relative">
+          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-fg text-sm font-bold">P</div>
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-panel" />
         </div>
-        <div className="flex-1">
-          <p className="text-xs font-semibold text-foreground">Pilot · Linear-clone Support</p>
-          <p className="text-[10px] text-foreground-2 flex items-center gap-1 mt-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-            Online — replies in seconds
-          </p>
+        <div>
+          <p className="text-sm font-semibold text-foreground">Pilot</p>
+          <p className="text-xs text-foreground-2">Linear-clone Support · Online</p>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="px-4 py-4 flex flex-col gap-3 bg-background">
-        <div className="flex gap-2 items-end">
-          <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold shrink-0">
-            P
-          </div>
-          <div className="bg-panel border border-border text-foreground text-xs rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] leading-relaxed">
-            Hi! I&apos;m Pilot 👋 Ask me anything about Linear-clone — pricing, features, integrations.
+      <div className="px-5 py-5 flex flex-col gap-4 bg-background">
+        <div className="flex gap-3 items-end max-w-[85%]">
+          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold shrink-0 mb-0.5">P</div>
+          <div className="bg-panel border border-border text-foreground text-sm rounded-2xl rounded-bl-sm px-4 py-3 leading-relaxed">
+            Hey! I&apos;m Pilot 👋 I can answer questions about pricing, features, integrations, or billing.
           </div>
         </div>
 
         <div className="flex justify-end">
-          <div className="bg-accent text-accent-fg text-xs rounded-2xl rounded-br-sm px-3 py-2 max-w-[75%] leading-relaxed">
+          <div className="bg-accent text-accent-fg text-sm rounded-2xl rounded-br-sm px-4 py-3 max-w-[80%] leading-relaxed">
             How much does Pro cost?
           </div>
         </div>
 
-        <div className="flex gap-2 items-end">
-          <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold shrink-0">
-            P
-          </div>
-          <div className="bg-panel border border-border text-foreground text-xs rounded-2xl rounded-bl-sm px-3 py-2 max-w-[80%] leading-relaxed">
-            <span>Pro is <strong>$12/user/mo</strong> — or $9.60 with annual billing.</span>
-            <span className="mt-1.5 flex">
-              <span className="bg-accent-soft text-accent text-[10px] font-medium rounded-full px-2 py-0.5 border border-[color-mix(in_srgb,var(--color-accent)_20%,transparent)]">
-                Source: Pricing Plans
+        <div className="flex gap-3 items-end max-w-[90%]">
+          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold shrink-0 mb-0.5">P</div>
+          <div className="bg-panel border border-border text-foreground text-sm rounded-2xl rounded-bl-sm px-4 py-3 leading-relaxed">
+            <p>Pro is <strong>$12/user/month</strong> — or $9.60 with annual billing (20% off).</p>
+            <div className="mt-2">
+              <span className="inline-flex items-center gap-1 text-xs bg-accent-soft text-accent font-medium rounded-full px-2.5 py-1 border border-[color-mix(in_srgb,var(--color-accent)_20%,transparent)]">
+                📄 Pricing Plans
               </span>
-            </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Input */}
-      <div className="px-4 py-3 border-t border-border bg-panel">
-        <div className="flex items-center gap-2 border border-border rounded-full px-3 py-2 bg-background">
-          <span className="text-xs text-foreground-2 flex-1">Ask a question…</span>
-          <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center shrink-0">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" />
+      <div className="px-5 py-4 border-t border-border bg-panel">
+        <div className="flex items-center gap-3 bg-background border border-border rounded-full px-4 py-2.5">
+          <span className="text-sm text-foreground-2 flex-1">Ask a question…</span>
+          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z"/>
             </svg>
           </div>
         </div>
@@ -78,151 +70,212 @@ function HeroChatPreview() {
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Nav ─────────────────────────────────────────────────────────────────────
 
-export default function Home() {
+function Nav() {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <header className="sticky top-0 z-30 border-b border-border bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)] backdrop-blur-md">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+        <a href="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center text-accent-fg text-sm font-bold shadow-sm">P</div>
+          <span className="text-base font-bold text-foreground tracking-tight">SupportPilot</span>
+        </a>
 
-      {/* ── Nav ── */}
-      <header className="sticky top-0 z-20 border-b border-border bg-[color-mix(in_srgb,var(--color-background)_85%,transparent)] backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-accent-fg text-xs font-bold">P</div>
-            <span className="text-sm font-semibold text-foreground">SupportPilot</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <a href="#chat" className="text-sm text-foreground-2 hover:text-foreground transition-colors hidden sm:block">Demo</a>
-            <a href="/admin" className="text-sm text-foreground-2 hover:text-foreground transition-colors hidden sm:block">Dashboard</a>
-            <ThemeToggle />
-            <a
-              href="https://calendly.com/anilpervaiz/15min"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center h-8 px-4 rounded-full bg-accent text-accent-fg text-xs font-semibold hover:bg-[color-mix(in_srgb,var(--color-accent)_85%,black)] transition-colors"
-            >
-              Book a call
+        <nav className="hidden md:flex items-center gap-8">
+          {[
+            { label: "Demo", href: "#chat" },
+            { label: "How it works", href: "#how" },
+            { label: "Pricing", href: "#pricing" },
+            { label: "Dashboard", href: "/admin" },
+          ].map((l) => (
+            <a key={l.label} href={l.href} className="text-sm text-foreground-2 hover:text-foreground transition-colors font-medium">
+              {l.label}
             </a>
-          </div>
-        </div>
-      </header>
+          ))}
+        </nav>
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden px-6 pt-20 pb-24 flex flex-col items-center text-center">
-        {/* Subtle radial gradient behind hero */}
-        <div
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%)",
-          }}
-          aria-hidden
-        />
-
-        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-accent-soft text-accent border border-[color-mix(in_srgb,var(--color-accent)_25%,transparent)] mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" />
-          AI-powered · Always on · Trained on your docs
-        </span>
-
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground max-w-3xl leading-[1.05] mb-6">
-          Stop answering<br className="hidden sm:block" /> the same questions.
-        </h1>
-
-        <p className="text-lg sm:text-xl text-foreground-2 max-w-lg leading-relaxed mb-10">
-          SupportPilot is a 24/7 AI support agent trained on your docs.
-          It answers instantly, cites its sources, and hands off to humans when it matters.
-        </p>
-
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-          <a
-            href="#chat"
-            className="inline-flex items-center justify-center h-12 px-7 rounded-full bg-accent text-accent-fg font-semibold text-sm transition-colors hover:bg-[color-mix(in_srgb,var(--color-accent)_85%,black)] shadow-lg shadow-[color-mix(in_srgb,var(--color-accent)_30%,transparent)]"
-          >
-            Try the demo →
-          </a>
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <a
             href="https://calendly.com/anilpervaiz/15min"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center h-12 px-7 rounded-full border border-border text-foreground font-semibold text-sm transition-colors hover:bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)]"
+            className="h-9 px-5 rounded-full bg-accent text-accent-fg text-sm font-semibold flex items-center hover:opacity-90 transition-opacity shadow-sm"
           >
             Book a call
           </a>
         </div>
 
-        {/* Hero preview */}
-        <div className="relative w-full flex justify-center">
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none" aria-hidden />
-          <HeroChatPreview />
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
+          <button onClick={() => setOpen(!open)} className="p-2 text-foreground-2" aria-label="Menu">
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <div className="md:hidden border-t border-border bg-panel px-5 py-4 flex flex-col gap-4">
+          {[
+            { label: "Demo", href: "#chat" },
+            { label: "How it works", href: "#how" },
+            { label: "Dashboard", href: "/admin" },
+          ].map((l) => (
+            <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm font-medium text-foreground-2 hover:text-foreground">
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="https://calendly.com/anilpervaiz/15min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-10 px-5 rounded-full bg-accent text-accent-fg text-sm font-semibold flex items-center justify-center"
+          >
+            Book a call
+          </a>
+        </div>
+      )}
+    </header>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function Home() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <Nav />
+
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden px-5 sm:px-8 pt-16 sm:pt-24 pb-16">
+        <div
+          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] opacity-25 -z-10"
+          style={{ background: "radial-gradient(ellipse at center top, var(--color-accent), transparent 70%)" }}
+          aria-hidden
+        />
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="flex flex-col items-start">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-accent-soft text-accent border border-[color-mix(in_srgb,var(--color-accent)_25%,transparent)] mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              AI-powered · 24/7 · Trained on your docs
+            </span>
+
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold tracking-tight text-foreground leading-[1.08] mb-6">
+              Stop answering<br />the same<br />
+              <span className="text-accent">questions.</span>
+            </h1>
+
+            <p className="text-lg text-foreground-2 leading-relaxed mb-8 max-w-md">
+              SupportPilot is a 24/7 AI support agent trained on your docs. It answers instantly, cites sources, and escalates to humans when it matters.
+            </p>
+
+            <div className="flex flex-wrap gap-3 mb-10">
+              <a
+                href="#chat"
+                className="h-12 px-7 rounded-full bg-accent text-accent-fg font-semibold text-sm flex items-center gap-2 hover:opacity-90 transition-opacity shadow-lg shadow-[color-mix(in_srgb,var(--color-accent)_25%,transparent)]"
+              >
+                Try the demo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a
+                href="https://calendly.com/anilpervaiz/15min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-12 px-7 rounded-full border border-border text-foreground font-semibold text-sm flex items-center hover:bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] transition-colors"
+              >
+                Book a call
+              </a>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-2">
+                {(["#C96442","#2563EB","#16A34A","#7C3AED"] as const).map((c, i) => (
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-panel flex items-center justify-center text-white text-xs font-bold" style={{ background: c }}>
+                    {["A","M","S","R"][i]}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-foreground-2">
+                <span className="font-semibold text-foreground">12 businesses</span> launched this month
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <HeroChatPreview />
+          </div>
         </div>
       </section>
 
       {/* ── Stats ── */}
-      <section className="border-y border-border">
-        <div className="max-w-4xl mx-auto px-6 grid grid-cols-3 divide-x divide-border">
+      <section className="bg-[#1C1917]">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 grid grid-cols-3 divide-x divide-[rgba(255,255,255,0.08)]">
           {[
-            { value: "70%", label: "Repetitive questions deflected" },
-            { value: "$2K/mo", label: "Avg. savings vs. a support VA" },
-            { value: "< 24h", label: "From zero to live chatbot" },
+            { value: "70%", label: "Questions deflected", sub: "vs. human agents" },
+            { value: "$2K+", label: "Saved per month", sub: "vs. a support VA" },
+            { value: "< 3s", label: "Response time", sub: "around the clock" },
           ].map((s) => (
-            <div key={s.label} className="flex flex-col items-center py-10 px-4 text-center">
-              <span className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">{s.value}</span>
-              <span className="mt-2 text-xs sm:text-sm text-foreground-2 max-w-[120px] leading-snug">{s.label}</span>
+            <div key={s.label} className="flex flex-col items-center py-10 sm:py-14 px-4 text-center">
+              <span className="text-3xl sm:text-5xl font-bold text-white tracking-tight mb-1">{s.value}</span>
+              <span className="text-xs sm:text-sm text-white/70 font-medium">{s.label}</span>
+              <span className="text-xs text-white/40 mt-0.5">{s.sub}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── How it works ── */}
-      <section className="px-6 py-24 flex flex-col items-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">How it works</p>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-16">
-          Live in three steps
-        </h2>
+      <section id="how" className="px-5 sm:px-8 py-24 flex flex-col items-center">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-3">How it works</span>
+        <h2 className="text-3xl sm:text-4xl font-bold text-foreground text-center mb-4">Live in three steps</h2>
+        <p className="text-foreground-2 text-center max-w-md mb-16 leading-relaxed text-sm">
+          No engineers required. Go from zero to a live support bot in under 24 hours.
+        </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl w-full relative">
-          {/* Connecting line on desktop */}
-          <div className="hidden sm:block absolute top-5 left-[calc(16.67%+20px)] right-[calc(16.67%+20px)] h-px bg-border" aria-hidden />
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
           {[
             {
-              step: "01",
+              n: "01",
               icon: (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
                 </svg>
               ),
               title: "Upload your docs",
-              desc: "Paste your FAQ, drop in Markdown files, or point to a Notion page. The bot learns from whatever you have.",
+              desc: "Paste your FAQ, drop in Markdown files, or connect a Notion page. The bot learns from whatever you have.",
             },
             {
-              step: "02",
+              n: "02",
               icon: (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                 </svg>
               ),
               title: "Customise voice & brand",
-              desc: "Set the bot's name, personality, and colors. Wire up an escalation path to Calendly, email, or Slack.",
+              desc: "Set the bot's name, personality, and colors. Wire an escalation path to Calendly, email, or Slack.",
             },
             {
-              step: "03",
+              n: "03",
               icon: (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
                 </svg>
               ),
               title: "Embed on your site",
               desc: "Copy one iframe snippet or share a hosted link. Works on Webflow, WordPress, Squarespace — any platform.",
             },
           ].map((item) => (
-            <div key={item.step} className="flex flex-col gap-4 relative">
-              <div className="w-10 h-10 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0 border border-[color-mix(in_srgb,var(--color-accent)_20%,transparent)] relative z-10 bg-background">
-                {item.icon}
+            <div key={item.n} className="relative bg-panel border border-border rounded-2xl p-7 flex flex-col gap-5 hover:shadow-md hover:-translate-y-0.5 transition-all">
+              <div className="flex items-start justify-between">
+                <div className="w-12 h-12 rounded-xl bg-accent-soft text-accent flex items-center justify-center border border-[color-mix(in_srgb,var(--color-accent)_15%,transparent)]">
+                  {item.icon}
+                </div>
+                <span className="text-5xl font-black text-[color-mix(in_srgb,var(--color-foreground)_7%,transparent)] select-none leading-none">{item.n}</span>
               </div>
               <div>
-                <p className="text-xs font-mono text-foreground-2 font-medium mb-1">{item.step}</p>
-                <h3 className="text-base font-semibold text-foreground mb-2">{item.title}</h3>
+                <h3 className="text-base font-bold text-foreground mb-2">{item.title}</h3>
                 <p className="text-sm text-foreground-2 leading-relaxed">{item.desc}</p>
               </div>
             </div>
@@ -230,191 +283,194 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Live chat demo ── */}
-      <section id="chat" className="px-4 sm:px-6 py-20 flex flex-col items-center border-t border-border bg-[color-mix(in_srgb,var(--color-accent)_3%,var(--color-background))]">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">Live demo</p>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 text-center">
-          Try Pilot right now
-        </h2>
-        <p className="text-foreground-2 text-sm mb-8 text-center max-w-md">
-          Real bot, real AI — trained on Linear-clone&apos;s docs. Ask it anything.
-        </p>
-
-        <div className="w-full max-w-2xl rounded-2xl overflow-hidden border border-border shadow-xl shadow-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] h-[600px]">
-          <ChatWindow />
+      {/* ── Live demo ── */}
+      <section id="chat" className="px-5 sm:px-8 py-20 bg-[color-mix(in_srgb,var(--color-accent)_4%,var(--color-background))] border-y border-border">
+        <div className="max-w-3xl mx-auto flex flex-col items-center">
+          <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-3">Live demo</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 text-center">Try Pilot right now</h2>
+          <p className="text-foreground-2 text-sm mb-8 text-center max-w-md leading-relaxed">
+            Real AI, real answers — trained on Linear-clone&apos;s docs. Ask anything about pricing, features, or integrations.
+          </p>
+          <div className="flex flex-wrap gap-2 mb-8 justify-center">
+            {["What's included in Pro?", "Do you integrate with GitHub?", "What's the refund policy?"].map((q) => (
+              <span key={q} className="text-xs px-3.5 py-2 rounded-full border border-border bg-panel text-foreground-2 cursor-default">
+                {q}
+              </span>
+            ))}
+          </div>
+          <div className="w-full rounded-2xl border border-border shadow-xl overflow-hidden h-[580px]">
+            <ChatWindow />
+          </div>
         </div>
       </section>
 
       {/* ── Widget preview ── */}
-      <section className="px-4 sm:px-6 py-20 flex flex-col items-center border-t border-border">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">Embeddable widget</p>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 text-center">Floats on any page</h2>
-        <p className="text-foreground-2 text-sm mb-10 text-center max-w-md">
-          A bubble sits in the corner of your site. One tap opens the full chat — same Pilot experience, zero friction for visitors.
+      <section className="px-5 sm:px-8 py-24 flex flex-col items-center">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-3">Embeddable widget</span>
+        <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-center">Floats on any page</h2>
+        <p className="text-foreground-2 text-sm mb-12 text-center max-w-md leading-relaxed">
+          A bubble sits in the corner of your site. One tap opens the full chat — zero friction for visitors.
         </p>
 
-        <div className="relative w-full max-w-2xl rounded-2xl border border-border overflow-hidden bg-panel">
-          {/* Fake browser chrome */}
-          <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-background">
-            <div className="w-3 h-3 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_12%,transparent)]" />
-            <div className="w-3 h-3 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_12%,transparent)]" />
-            <div className="w-3 h-3 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_12%,transparent)]" />
-            <div className="flex-1 mx-4 h-5 rounded bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] flex items-center px-3">
-              <span className="text-[10px] text-foreground-2">yoursite.com</span>
+        <div className="w-full max-w-2xl rounded-2xl border border-border overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-400" />
+            </div>
+            <div className="flex-1 mx-3 h-6 rounded-md bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] flex items-center px-3 gap-2">
+              <div className="w-3 h-3 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_10%,transparent)]" />
+              <span className="text-[11px] text-foreground-2 font-mono">yoursite.com/pricing</span>
             </div>
           </div>
 
-          {/* Page content mockup */}
-          <div className="h-52 px-8 py-6 flex flex-col gap-3 select-none pointer-events-none">
-            <div className="w-48 h-3 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_10%,transparent)]" />
-            <div className="w-64 h-2.5 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]" />
-            <div className="w-56 h-2.5 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]" />
-            <div className="mt-2 w-32 h-8 rounded-lg bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)]" />
-          </div>
+          <div className="relative h-56 px-8 py-7 bg-background">
+            <div className="flex flex-col gap-3 max-w-xs">
+              <div className="h-4 w-40 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_12%,transparent)]" />
+              <div className="h-3 w-64 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_7%,transparent)]" />
+              <div className="h-3 w-52 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_7%,transparent)]" />
+              <div className="h-3 w-56 rounded-full bg-[color-mix(in_srgb,var(--color-foreground)_7%,transparent)]" />
+              <div className="mt-2 h-8 w-28 rounded-lg bg-[color-mix(in_srgb,var(--color-foreground)_10%,transparent)]" />
+            </div>
 
-          {/* Widget bubble */}
-          <a
-            href="/embed"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open widget preview"
-            className="absolute bottom-5 right-5 w-14 h-14 rounded-full bg-accent text-accent-fg shadow-lg shadow-[color-mix(in_srgb,var(--color-accent)_40%,transparent)] flex items-center justify-center hover:scale-105 transition-transform"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-            </svg>
-          </a>
-          <div className="absolute bottom-7 right-24 text-xs text-foreground-2 bg-panel border border-border rounded-full px-3 py-1.5 shadow-sm">
-            Click to preview ↗
+            <div className="absolute bottom-9 right-24 bg-foreground text-background text-xs font-medium rounded-xl px-3 py-2 shadow-lg whitespace-nowrap">
+              Click to preview ↗
+            </div>
+
+            <a
+              href="/embed"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-5 right-5 w-14 h-14 rounded-full bg-accent text-accent-fg shadow-xl shadow-[color-mix(in_srgb,var(--color-accent)_35%,transparent)] flex items-center justify-center hover:scale-105 transition-transform"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+              </svg>
+            </a>
           </div>
         </div>
       </section>
 
       {/* ── Embed code ── */}
-      <section id="embed" className="px-4 sm:px-6 py-20 flex flex-col items-center border-t border-border bg-[color-mix(in_srgb,var(--color-accent)_3%,var(--color-background))]">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">One-line install</p>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 text-center">Add it to your site</h2>
-        <p className="text-foreground-2 text-sm mb-8 text-center max-w-md">
+      <section id="embed" className="px-5 sm:px-8 py-20 bg-[color-mix(in_srgb,var(--color-accent)_4%,var(--color-background))] border-y border-border flex flex-col items-center">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-3">One-line install</span>
+        <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 text-center">Add it to your site</h2>
+        <p className="text-foreground-2 text-sm mb-10 text-center max-w-md">
           Paste one snippet into your HTML. Loads async — never blocks your page.
         </p>
 
-        <div className="w-full max-w-2xl rounded-xl overflow-hidden border border-border shadow-sm">
-          <div className="flex items-center justify-between px-4 py-2.5 bg-[#1a1a1a]">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-              <span className="text-xs font-mono text-white/40 ml-2">index.html</span>
+        <div className="w-full max-w-2xl rounded-xl overflow-hidden border border-[rgba(255,255,255,0.06)] shadow-xl">
+          <div className="flex items-center justify-between px-4 py-3 bg-[#161412]">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                <div className="w-3 h-3 rounded-full bg-green-500/80" />
+              </div>
+              <span className="text-xs font-mono text-white/40">index.html</span>
             </div>
             <CopyButton text={EMBED_SNIPPET} />
           </div>
-          <pre className="bg-[#111] text-green-400 text-xs sm:text-sm leading-relaxed p-5 overflow-x-auto font-mono">
+          <pre className="bg-[#0D0B0A] text-[#E07855] text-xs sm:text-sm leading-relaxed p-6 overflow-x-auto font-mono">
             <code>{EMBED_SNIPPET}</code>
           </pre>
         </div>
-        <p className="mt-4 text-xs text-foreground-2 text-center">
-          Works on Webflow, WordPress, Squarespace, and plain HTML.
+        <p className="mt-5 text-xs text-foreground-2">Works on Webflow, WordPress, Squarespace, and plain HTML.</p>
+      </section>
+
+      {/* ── Pricing comparison ── */}
+      <section id="pricing" className="px-5 sm:px-8 py-24 flex flex-col items-center">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-3">Why AI support</span>
+        <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-center">The economics are obvious</h2>
+        <p className="text-foreground-2 text-center max-w-sm mb-12 leading-relaxed text-sm">
+          Replace a $4,000/mo headcount with $50 in API costs — and get better coverage.
         </p>
-      </section>
 
-      {/* ── Built with ── */}
-      <section className="px-6 py-14 flex flex-col items-center border-t border-border">
-        <p className="text-xs font-semibold uppercase tracking-widest text-foreground-2 mb-8">Built with</p>
-        <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl">
-          {[
-            { label: "Next.js 16", color: "bg-black text-white" },
-            { label: "Gemini 2.5 Flash", color: "bg-blue-600 text-white" },
-            { label: "Vercel AI SDK v6", color: "bg-foreground text-background" },
-            { label: "Tailwind CSS v4", color: "bg-cyan-500 text-white" },
-            { label: "Framer Motion", color: "bg-purple-600 text-white" },
-            { label: "TypeScript", color: "bg-blue-700 text-white" },
-          ].map((tech) => (
-            <span
-              key={tech.label}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold ${tech.color}`}
-            >
-              {tech.label}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Cost comparison ── */}
-      <section className="px-6 py-20 flex flex-col items-center border-t border-border bg-[color-mix(in_srgb,var(--color-accent)_3%,var(--color-background))]">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-3">Why AI support</p>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-10 text-center">The economics are obvious</h2>
-
-        <div className="w-full max-w-lg rounded-2xl border border-border overflow-hidden bg-panel shadow-sm">
-          <div className="grid grid-cols-3 px-5 py-3 border-b border-border bg-background">
-            <span className="text-xs font-semibold text-foreground-2">Option</span>
-            <span className="text-xs font-semibold text-foreground-2 text-center">Monthly cost</span>
-            <span className="text-xs font-semibold text-foreground-2 text-right">Coverage</span>
+        <div className="w-full max-w-lg rounded-2xl border border-border overflow-hidden shadow-sm">
+          <div className="grid grid-cols-3 px-6 py-3.5 bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] border-b border-border">
+            <span className="text-xs font-bold text-foreground-2 uppercase tracking-wide">Option</span>
+            <span className="text-xs font-bold text-foreground-2 uppercase tracking-wide text-center">Monthly cost</span>
+            <span className="text-xs font-bold text-foreground-2 uppercase tracking-wide text-right">Coverage</span>
           </div>
           {[
-            { label: "Virtual assistant", cost: "~$2,000", coverage: "4–6 hr delays", highlight: false },
-            { label: "Support agent", cost: "~$4,000", coverage: "One timezone", highlight: false },
-            { label: "SupportPilot AI", cost: "~$50", coverage: "24/7 global", highlight: true },
+            { label: "Virtual assistant", cost: "~$2,000", coverage: "4–6 hr delays", hi: false },
+            { label: "Support agent", cost: "~$4,000", coverage: "One timezone", hi: false },
+            { label: "SupportPilot AI", cost: "~$50", coverage: "24/7 global", hi: true },
           ].map((row) => (
             <div
               key={row.label}
               className={[
-                "grid grid-cols-3 px-5 py-4 border-b border-border last:border-0",
-                row.highlight ? "bg-accent-soft" : "",
+                "grid grid-cols-3 px-6 py-4 border-b border-border last:border-0 items-center",
+                row.hi ? "bg-accent-soft" : "bg-panel",
               ].join(" ")}
             >
-              <span className={`text-sm font-medium ${row.highlight ? "text-accent" : "text-foreground"}`}>
-                {row.label}
-              </span>
-              <span className={`text-sm font-bold text-center ${row.highlight ? "text-accent" : "text-foreground"}`}>
-                {row.cost}
-              </span>
-              <span className={`text-sm text-right ${row.highlight ? "text-accent font-medium" : "text-foreground-2"}`}>
-                {row.coverage}
-              </span>
+              <span className={`text-sm font-semibold ${row.hi ? "text-accent" : "text-foreground"}`}>{row.label}</span>
+              <span className={`text-sm font-bold text-center ${row.hi ? "text-accent" : "text-foreground"}`}>{row.cost}</span>
+              <div className="flex justify-end">
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${row.hi ? "bg-accent text-accent-fg" : "text-foreground-2"}`}>
+                  {row.coverage}
+                </span>
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Built with ── */}
+      <section className="px-5 sm:px-8 py-14 border-t border-border flex flex-col items-center bg-[color-mix(in_srgb,var(--color-foreground)_2%,transparent)]">
+        <p className="text-xs font-bold uppercase tracking-[0.15em] text-foreground-2 mb-8">Built with</p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {[
+            { label: "Next.js 16", bg: "bg-black text-white" },
+            { label: "Gemini 2.5 Flash", bg: "bg-blue-600 text-white" },
+            { label: "Vercel AI SDK v6", bg: "bg-[#1C1917] text-white" },
+            { label: "Tailwind CSS v4", bg: "bg-cyan-500 text-white" },
+            { label: "Framer Motion", bg: "bg-purple-600 text-white" },
+            { label: "TypeScript", bg: "bg-blue-700 text-white" },
+          ].map((t) => (
+            <span key={t.label} className={`text-xs font-semibold px-4 py-2 rounded-full ${t.bg}`}>{t.label}</span>
           ))}
         </div>
       </section>
 
       {/* ── Footer CTA ── */}
-      <section className="px-6 py-24 flex flex-col items-center text-center border-t border-border relative overflow-hidden">
+      <section className="relative px-5 sm:px-8 py-28 flex flex-col items-center text-center overflow-hidden border-t border-border">
         <div
           className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 60% at 50% 100%, color-mix(in srgb, var(--color-accent) 10%, transparent), transparent 70%)",
-          }}
+          style={{ background: "radial-gradient(ellipse 70% 70% at 50% 110%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent)" }}
           aria-hidden
         />
-        <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-accent mb-4">Work with Anil</span>
+        <h2 className="text-3xl sm:text-5xl font-bold text-foreground mb-5 max-w-xl leading-tight">
           Want one for your business?
         </h2>
         <p className="text-foreground-2 text-base max-w-md mb-10 leading-relaxed">
-          I build custom AI support agents in 24 hours — trained on your docs,
-          styled to your brand, deployed live.
+          I build custom AI support agents in 24 hours — trained on your docs, styled to your brand, deployed live.
         </p>
         <a
           href="https://calendly.com/anilpervaiz/15min"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center h-14 px-10 rounded-full bg-accent text-accent-fg font-bold text-base transition-colors hover:bg-[color-mix(in_srgb,var(--color-accent)_85%,black)] shadow-xl shadow-[color-mix(in_srgb,var(--color-accent)_30%,transparent)]"
+          className="h-14 px-10 rounded-full bg-accent text-accent-fg font-bold text-base flex items-center gap-2 hover:opacity-90 transition-opacity shadow-xl shadow-[color-mix(in_srgb,var(--color-accent)_30%,transparent)]"
         >
-          Book a free 15-min call →
+          Book a free 15-min call
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
         <p className="mt-4 text-sm text-foreground-2">No commitment. Just a conversation.</p>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="px-6 py-8 border-t border-border">
+      <footer className="px-5 sm:px-8 py-8 border-t border-border">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-foreground-2">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold">P</div>
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold">P</div>
             <span>
               Built by{" "}
-              <a href="https://anilpervaiz.com" target="_blank" rel="noopener noreferrer" className="text-accent font-medium hover:underline">
+              <a href="https://anilpervaiz.com" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
                 Anil Pervaiz
-              </a>{" "}
-              — full-stack AI architect
+              </a>
+              {" "}— full-stack AI architect
             </span>
           </div>
           <div className="flex items-center gap-6">
