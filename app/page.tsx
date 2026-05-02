@@ -14,30 +14,30 @@ const EMBED_SNIPPET = `<iframe
 
 function HeroChatPreview() {
   return (
-    <div className="w-full rounded-2xl border border-border bg-panel shadow-2xl overflow-hidden">
+    <div className="w-full rounded-2xl border border-border bg-panel shadow-2xl overflow-hidden ring-1 ring-foreground/[0.04]">
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
         <div className="relative shrink-0">
-          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-fg text-sm font-bold">
+          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold">
             P
           </div>
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-panel" />
+          <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-panel" />
         </div>
-        <div>
-          <p className="text-sm font-semibold text-foreground">Pilot</p>
-          <p className="text-xs text-foreground-2">Linear-clone Support · Online</p>
+        <div className="flex flex-col">
+          <p className="text-xs font-semibold text-foreground leading-tight">Pilot</p>
+          <p className="text-[10px] text-foreground-2">Online</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="px-5 py-5 flex flex-col gap-4 bg-background">
+      <div className="px-4 py-5 flex flex-col gap-4 bg-background/50">
         {/* Bot */}
-        <div className="flex gap-3 items-end">
-          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold shrink-0 mb-0.5">
+        <div className="flex gap-2.5 items-end">
+          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-accent-fg text-[10px] font-bold shrink-0 mb-0.5">
             P
           </div>
-          <div className="bg-panel border border-border text-foreground text-sm rounded-2xl rounded-bl-sm px-4 py-3 leading-relaxed max-w-[82%]">
-            Hey! I&apos;m Pilot 👋 Ask me anything about pricing, features, or integrations.
+          <div className="bg-panel border border-border text-foreground text-[13px] rounded-2xl rounded-bl-sm px-3.5 py-2.5 leading-relaxed max-w-[85%]">
+            Hey! I&apos;m Pilot 👋 Ask me anything about pricing or features.
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default function Home() {
               AI-powered · 24/7 · Trained on your docs
             </span>
 
-            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold tracking-tight text-foreground leading-[1.08] mb-6">
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold tracking-tight text-foreground leading-[1.15] mb-6">
               Stop answering<br />the same<br />
               <span className="text-accent">questions.</span>
             </h1>
@@ -135,11 +135,11 @@ export default function Home() {
             {/* Social proof */}
             <div className="flex items-center gap-4">
               <div className="flex -space-x-2">
-                {(["#C96442", "#2563EB", "#16A34A", "#7C3AED"] as const).map((c, i) => (
+                {(["#C96442", "#8B5CF6", "#10B981", "#3B82F6"] as const).map((c, i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-panel flex items-center justify-center text-white text-xs font-bold"
-                    style={{ background: c }}
+                    className="w-8 h-8 rounded-full border-2 border-panel flex items-center justify-center text-white text-[10px] font-bold"
+                    style={{ background: `color-mix(in srgb, ${c} 80%, var(--color-foreground))` }}
                     aria-hidden
                   >
                     {["A", "M", "S", "R"][i]}
@@ -169,8 +169,8 @@ export default function Home() {
           ].map((s) => (
             <div key={s.label} className="flex flex-col items-center py-10 sm:py-14 px-4 text-center">
               <span className="text-3xl sm:text-5xl font-bold text-white tracking-tight mb-1">{s.value}</span>
-              <span className="text-xs sm:text-sm text-white/70 font-medium">{s.label}</span>
-              <span className="text-xs text-white/40 mt-0.5">{s.sub}</span>
+              <span className="text-xs sm:text-sm text-white/80 font-medium">{s.label}</span>
+              <span className="text-xs text-white/60 mt-0.5">{s.sub}</span>
             </div>
           ))}
         </div>
@@ -237,7 +237,7 @@ export default function Home() {
           </p>
 
           {/* FIX 2 — removed duplicate suggestion chips; ChatWindow shows its own internally */}
-          <div className="w-full rounded-2xl border border-border shadow-xl overflow-hidden h-[580px]">
+          <div className="w-full rounded-2xl border border-border shadow-2xl overflow-hidden h-[540px] bg-panel ring-1 ring-foreground/[0.04]">
             <ChatWindow />
           </div>
         </div>
@@ -364,16 +364,16 @@ export default function Home() {
       {/* ── Built with ── */}
       <section className="px-5 sm:px-8 py-14 border-t border-border flex flex-col items-center bg-[color-mix(in_srgb,var(--color-foreground)_2%,transparent)]">
         <p className="text-xs font-bold uppercase tracking-[0.15em] text-foreground-2 mb-8">Built with</p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
           {[
-            { label: "Next.js 16",        bg: "bg-black text-white"       },
-            { label: "Gemini 2.5 Flash",  bg: "bg-blue-600 text-white"    },
-            { label: "Vercel AI SDK v6",  bg: "bg-[#1C1917] text-white"   },
-            { label: "Tailwind CSS v4",   bg: "bg-cyan-500 text-white"    },
-            { label: "Framer Motion",     bg: "bg-purple-600 text-white"  },
-            { label: "TypeScript",        bg: "bg-blue-700 text-white"    },
+            { label: "Next.js 16",        bg: "bg-foreground text-background" },
+            { label: "Gemini 2.5 Flash",  bg: "bg-accent-soft text-accent border border-accent/20" },
+            { label: "Vercel AI SDK v6",  bg: "bg-accent-soft text-accent border border-accent/20" },
+            { label: "Tailwind CSS v4",   bg: "bg-accent-soft text-accent border border-accent/20" },
+            { label: "Framer Motion",     bg: "bg-accent-soft text-accent border border-accent/20" },
+            { label: "TypeScript",        bg: "bg-accent-soft text-accent border border-accent/20" },
           ].map((t) => (
-            <span key={t.label} className={`text-xs font-semibold px-4 py-2 rounded-full ${t.bg}`}>
+            <span key={t.label} className={`text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-md ${t.bg}`}>
               {t.label}
             </span>
           ))}

@@ -54,7 +54,7 @@ export function Message({ role, content, citations: citationsProp }: MessageProp
       >
         <div
           className={cn(
-            "rounded-2xl px-4 py-3 text-xs sm:text-sm leading-relaxed break-words",
+            "rounded-2xl px-4 py-3 text-[13px] sm:text-sm leading-relaxed break-words shadow-sm",
             isUser
               ? "bg-accent text-accent-fg rounded-br-sm"
               : "bg-panel border border-border text-foreground rounded-bl-sm"
