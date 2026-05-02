@@ -1,4 +1,5 @@
 'use client';
+// v1.0.1 - Triggering new build
 
 import { useChat } from 'ai/react';
 
