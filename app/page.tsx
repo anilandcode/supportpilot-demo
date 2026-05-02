@@ -69,7 +69,7 @@ function HeroChatPreview() {
           <span className="text-xs text-foreground-2 flex-1">Ask a question…</span>
           <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center shrink-0">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z"/>
+              <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" />
             </svg>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function Home() {
               step: "01",
               icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
                 </svg>
               ),
               title: "Upload your docs",
@@ -199,7 +199,7 @@ export default function Home() {
               step: "02",
               icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
               ),
               title: "Customise voice & brand",
@@ -209,7 +209,7 @@ export default function Home() {
               step: "03",
               icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                  <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
                 </svg>
               ),
               title: "Embed on your site",
