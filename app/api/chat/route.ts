@@ -1,16 +1,37 @@
+import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { google } from "@ai-sdk/google";
-import { streamText } from "ai";
+import { buildSystemPrompt } from "@/lib/system-prompt";
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+export const runtime = "edge";
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  try {
+    const body = await req.json();
 
-  const result = streamText({
-    model: google("gemini-2.5-flash"),
-    messages,
-  });
+    const messages: UIMessage[] = body.messages;
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "messages must be a non-empty array" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-  return result.toUIMessageStreamResponse();
+    const modelMessages = await convertToModelMessages(messages);
+
+    const result = streamText({
+      model: google("gemini-2.5-flash"),
+      system: buildSystemPrompt(),
+      messages: modelMessages,
+      maxOutputTokens: 1024,
+      temperature: 0.5,
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (err) {
+    console.error("[/api/chat]", err);
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }
