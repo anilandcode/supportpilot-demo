@@ -34,8 +34,7 @@
   --radius-xl:   24px;
   --radius-full: 9999px;
 
-  /* Typography */
-  --font-sans: Inter, system-ui, sans-serif;
+  /* --font-sans is set by layout.tsx via Next.js font variable */
 }
 
 .dark {
