@@ -58,7 +58,7 @@ export function ChatWidget() {
             style={{ transformOrigin: "bottom right" }}
             // Mobile: full-screen. Desktop: 400×600 above button.
             className={[
-              "bg-panel rounded-2xl shadow-xl border border-border overflow-hidden",
+              "bg-card rounded-2xl shadow-xl border border-border overflow-hidden",
               // full-screen on mobile
               "fixed inset-0 sm:relative sm:inset-auto",
               "sm:w-[400px] sm:h-[600px]",

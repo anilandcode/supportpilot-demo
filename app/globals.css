@@ -1,58 +1,70 @@
 @import "tailwindcss";
 
 @theme {
-  /* Claude-inspired warm palette */
-  --color-background:   #FAF9F7;
-  --color-panel:        #FFFFFF;
-  --color-foreground:   #1C1917;
-  --color-foreground-2: #78716C;
-  --color-border:       #E7E2DB;
-  --color-accent:       #C96442;
-  --color-accent-soft:  #FDF1EC;
-  --color-accent-fg:    #FFFFFF;
+  /* Shiori-inspired dark-first system */
+  --color-background:    #0A0A0A;
+  --color-surface:       #111111;
+  --color-card:          #161616;
+  --color-card-elevated: #1C1C1C;
 
-  /* Dark surface used in inverted sections */
-  --color-dark-bg:      #1C1917;
-  --color-dark-panel:   #292524;
-  --color-dark-border:  rgba(255,255,255,0.08);
+  --color-border:        rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
 
-  /* Spacing scale */
-  --spacing-4:  4px;
-  --spacing-8:  8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-24: 24px;
-  --spacing-32: 32px;
-  --spacing-48: 48px;
-  --spacing-64: 64px;
-  --spacing-96: 96px;
+  --color-foreground:   #FAFAFA;
+  --color-foreground-2: rgba(255, 255, 255, 0.65);
+  --color-foreground-3: rgba(255, 255, 255, 0.4);
+
+  --color-accent:      #F97316;
+  --color-accent-hover:#EA580C;
+  --color-accent-soft: rgba(249, 115, 22, 0.12);
+  --color-accent-fg:   #FFFFFF;
 
   /* Radius */
-  --radius-sm:   8px;
-  --radius-md:   12px;
+  --radius-md:   10px;
   --radius-lg:   16px;
-  --radius-xl:   24px;
+  --radius-xl:   20px;
   --radius-full: 9999px;
 
-  /* --font-sans is set by layout.tsx via Next.js font variable */
+  /* --font-geist-sans / --font-geist-mono set by layout.tsx */
 }
 
-.dark {
-  --color-background:   #0C0A09;
-  --color-panel:        #1C1917;
-  --color-foreground:   #F5F0EB;
-  --color-foreground-2: rgba(245, 240, 235, 0.55);
-  --color-border:       rgba(255, 255, 255, 0.08);
-  --color-accent:       #E07855;
-  --color-accent-soft:  rgba(201, 100, 66, 0.15);
+/* Short-name aliases — allows var(--background), var(--accent) etc. in inline styles */
+:root {
+  --background:    var(--color-background);
+  --surface:       var(--color-surface);
+  --card:          var(--color-card);
+  --card-elevated: var(--color-card-elevated);
+  --border:        var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --foreground:    var(--color-foreground);
+  --foreground-2:  var(--color-foreground-2);
+  --foreground-3:  var(--color-foreground-3);
+  --accent:        var(--color-accent);
+  --accent-hover:  var(--color-accent-hover);
+  --accent-soft:   var(--color-accent-soft);
+  --accent-fg:     var(--color-accent-fg);
 }
 
 html { scroll-behavior: smooth; }
 
+/* Consistent keyboard focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

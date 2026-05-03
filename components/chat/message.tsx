@@ -48,16 +48,16 @@ export function Message({ role, content, citations: citationsProp }: MessageProp
 
       <div
         className={cn(
-          "flex flex-col gap-1.5 max-w-[80%]",
+          "flex flex-col gap-1.5 max-w-[75%]",
           isUser ? "items-end" : "items-start"
         )}
       >
         <div
           className={cn(
-            "rounded-2xl px-4 py-3 text-[13px] sm:text-sm leading-relaxed break-words shadow-sm",
+            "rounded-2xl px-4 py-3 text-[13px] sm:text-sm leading-relaxed break-words",
             isUser
-              ? "bg-accent text-accent-fg rounded-br-sm"
-              : "bg-panel border border-border text-foreground rounded-bl-sm"
+              ? "bg-accent text-white"
+              : "bg-card-elevated border border-border text-foreground"
           )}
         >
           {text}

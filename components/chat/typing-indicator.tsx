@@ -21,7 +21,7 @@ export function TypingIndicator() {
         P
       </div>
 
-      <div className="bg-panel border border-border rounded-2xl rounded-bl-sm px-4 py-3">
+      <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
         <div className="flex gap-1.5 items-center h-4">
           {[0, 150, 300].map((delay) => (
             <span

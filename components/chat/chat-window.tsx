@@ -69,7 +69,7 @@ export function ChatWindow({ onClose }: ChatWindowProps = {}) {
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-panel shrink-0">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card shrink-0">
         <div
           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold"
           aria-hidden
@@ -99,7 +99,7 @@ export function ChatWindow({ onClose }: ChatWindowProps = {}) {
       {error && (
         <div
           role="alert"
-          className="mx-4 mt-3 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400 shrink-0"
+          className="mx-4 mt-3 flex items-start gap-3 rounded-lg border border-red-900/40 bg-red-950/30 px-4 py-3 text-sm text-red-400 shrink-0"
         >
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden />
           <div className="flex-1">
@@ -145,8 +145,8 @@ export function ChatWindow({ onClose }: ChatWindowProps = {}) {
       )}
 
       {/* Input area */}
-      <div className="px-4 py-3 border-t border-border bg-panel shrink-0">
-        <div className="flex gap-2">
+      <div className="px-4 py-3 border-t border-border bg-card shrink-0">
+        <div className="flex gap-2 items-center">
           <div className="relative flex-1">
             <Input
               ref={inputRef}
@@ -157,6 +157,7 @@ export function ChatWindow({ onClose }: ChatWindowProps = {}) {
               disabled={isLoading}
               maxLength={MAX_CHARS}
               aria-label="Message input"
+              className="bg-surface h-11"
             />
             {showCounter && (
               <span
@@ -170,17 +171,15 @@ export function ChatWindow({ onClose }: ChatWindowProps = {}) {
               </span>
             )}
           </div>
-          <Button
+          <button
             type="button"
-            variant="primary"
-            size="sm"
             disabled={isLoading || !inputValue.trim()}
             onClick={submit}
             aria-label="Send message"
-            className="shrink-0 px-3"
+            className="shrink-0 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent-hover transition-colors disabled:opacity-40"
           >
             <SendHorizonal className="w-4 h-4" aria-hidden />
-          </Button>
+          </button>
         </div>
       </div>
     </div>

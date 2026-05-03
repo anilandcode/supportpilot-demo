@@ -28,7 +28,7 @@ export function CopyButton({ text, className }: CopyButtonProps) {
       className={[
         "flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors",
         copied
-          ? "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950/40"
+          ? "text-green-400 bg-green-950/40"
           : "text-foreground-2 hover:text-foreground hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)]",
         className,
       ]

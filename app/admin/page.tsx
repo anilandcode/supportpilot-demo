@@ -160,7 +160,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Top nav */}
-      <header className="sticky top-0 z-10 border-b border-border bg-panel">
+      <header className="sticky top-0 z-10 border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-accent-fg text-xs font-bold">

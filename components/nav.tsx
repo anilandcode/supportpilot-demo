@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const LINKS = [
   { label: "Demo", href: "#chat" },
@@ -40,7 +39,6 @@ export function Nav() {
 
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-3">
-          <ThemeToggle />
           <a
             href="https://calendly.com/anilpervaiz/15min"
             target="_blank"
@@ -51,22 +49,19 @@ export function Nav() {
           </a>
         </div>
 
-        {/* Mobile right */}
-        <div className="flex md:hidden items-center gap-2">
-          <ThemeToggle />
-          <button
-            onClick={() => setOpen(!open)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="p-2 rounded-lg text-foreground-2 hover:text-foreground hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] transition-colors"
-          >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="flex md:hidden p-2 rounded-lg text-foreground-2 hover:text-foreground hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] transition-colors"
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-panel px-5 py-5 flex flex-col gap-1">
+        <div className="md:hidden border-t border-border bg-card px-5 py-5 flex flex-col gap-1">
           {LINKS.map((l) => (
             <a
               key={l.label}
