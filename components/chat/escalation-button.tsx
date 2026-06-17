@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-
-const CALENDLY_URL = "https://calendly.com/anilpervaiz/15min";
+import { theme } from "@/lib/theme";
 
 type EscalationButtonProps = {
   /** Compact text-only variant for use inside the error banner */
@@ -8,16 +7,16 @@ type EscalationButtonProps = {
 };
 
 export function EscalationButton({ inline }: EscalationButtonProps) {
-  const open = () => window.open(CALENDLY_URL, "_blank", "noopener,noreferrer");
+  const open = () => window.open(theme.escalation.url, "_blank", "noopener,noreferrer");
 
   if (inline) {
     return (
       <button
         onClick={open}
         className="text-xs font-medium underline underline-offset-2 hover:no-underline text-red-700 dark:text-red-400"
-        aria-label="Book a call with a human support agent"
+        aria-label={theme.escalation.label}
       >
-        Book a call
+        {theme.escalation.label}
       </button>
     );
   }
@@ -28,10 +27,9 @@ export function EscalationButton({ inline }: EscalationButtonProps) {
         variant="outline"
         size="sm"
         onClick={open}
-        aria-label="Book a 15-minute call with a human support agent"
+        aria-label={theme.escalation.label}
       >
-        <span aria-hidden>💬</span>
-        Talk to a human
+        {theme.escalation.label}
       </Button>
     </div>
   );

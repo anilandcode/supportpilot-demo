@@ -3,14 +3,11 @@ import { Footer } from "@/components/layout/footer";
 import { CopyButton } from "@/components/ui/copy-button";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { WidgetBubble } from "@/components/ui/widget-demo";
+import { theme } from "@/lib/theme";
 import { FileText, Sparkles, Monitor, Calendar } from "lucide-react";
 
-const EMBED_SNIPPET = `<iframe
-  src="https://supportpilot-demo.vercel.app/embed"
-  width="500px" height="700px"
-  frameborder="0" allowtransparency="true"
-  style="position:fixed;bottom:0;right:0;border:none;z-index:9999"
-></iframe>`;
+const EMBED_SNIPPET = `<script async src="https://supportpilot-demo.vercel.app/widget.js" data-accent="${theme.colors.accent}"></script>`;
+const IFRAME_SNIPPET = `<iframe src="https://supportpilot-demo.vercel.app/embed" width="400" height="620" style="border:0;border-radius:18px"></iframe>`;
 
 // ─── Static hero chat preview ─────────────────────────────────────────────────
 
@@ -26,13 +23,13 @@ function HeroChatPreview() {
       {/* Bot message 1 */}
       <div className="flex gap-3 mb-4">
         <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5">
-          P
+          {theme.botName[0]}
         </div>
         <div
           className="rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground border border-border"
           style={{ background: "var(--card-elevated)" }}
         >
-          Hey! I&apos;m Pilot 👋 I can answer questions about pricing, features,
+          Hey! I&apos;m {theme.botName}. I can answer questions about pricing, features,
           integrations, or billing.
         </div>
       </div>
@@ -47,7 +44,7 @@ function HeroChatPreview() {
       {/* Bot message 2 */}
       <div className="flex gap-3 mb-5">
         <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5">
-          P
+          {theme.botName[0]}
         </div>
         <div className="flex flex-col gap-2">
           <div
@@ -135,7 +132,7 @@ export default function Home() {
             className="text-[18px] mt-6 max-w-2xl mx-auto leading-[1.6]"
             style={{ color: "var(--foreground-2)" }}
           >
-            SupportPilot is a 24/7 AI support agent trained on your docs. It
+            {theme.productName} is a 24/7 AI support agent trained on your docs. It
             answers instantly, cites sources, and escalates to humans when it
             matters.
           </p>
@@ -149,7 +146,7 @@ export default function Home() {
               Try the demo →
             </a>
             <a
-              href="https://calendly.com/anilpervaiz/15min"
+              href={theme.escalation.url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground text-[15px] font-medium px-5 py-3 rounded-full border border-border-strong hover:bg-card transition-colors"
@@ -164,7 +161,7 @@ export default function Home() {
             style={{ color: "var(--foreground-3)" }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden />
-            12 businesses launched this month.
+            White-label setup for {theme.company} is live now.
           </p>
         </div>
       </section>
@@ -220,7 +217,7 @@ export default function Home() {
                 n: "03",
                 Icon: Monitor,
                 title: "Embed on your site",
-                desc: "Copy one iframe snippet or share a hosted link. Works on Webflow, WordPress, Squarespace — any platform.",
+                desc: "Copy one script snippet or use the iframe fallback. Works on Webflow, WordPress, Shopify, Squarespace, and plain HTML.",
               },
             ].map(({ n, Icon, title, desc }) => (
               <div
@@ -244,9 +241,9 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
             <span className="text-[12px] uppercase tracking-[0.08em] text-accent mb-3 block">Live demo</span>
-            <h2 className="text-[36px] font-semibold tracking-tight text-foreground">Try Pilot right now</h2>
+            <h2 className="text-[36px] font-semibold tracking-tight text-foreground">Try {theme.botName} right now</h2>
             <p className="text-foreground-2 mt-3 text-[15px] leading-relaxed max-w-lg mx-auto">
-              Real AI, real answers — trained on Linear-clone&apos;s docs. Ask anything about pricing, features, or integrations.
+              Real answers from {theme.company}&apos;s docs. Ask anything about pricing, features, integrations, billing, or security.
             </p>
           </div>
 
@@ -339,103 +336,64 @@ export default function Home() {
               <CopyButton text={EMBED_SNIPPET} />
             </div>
 
-            {/* Syntax-colored code */}
             <pre className="p-6 font-mono text-[13px] leading-relaxed overflow-x-auto" style={{ color: "#E5E5E5" }}>
-              <code>
-                <span style={{ color: "var(--foreground-3)" }}>&lt;iframe{"\n"}</span>
-                {"  "}<span style={{ color: "#94A3B8" }}>src</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>https://supportpilot-demo.vercel.app/embed</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {"\n"}
-                {"  "}<span style={{ color: "#94A3B8" }}>width</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>500px</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {" "}
-                <span style={{ color: "#94A3B8" }}>height</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>700px</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {"\n"}
-                {"  "}<span style={{ color: "#94A3B8" }}>frameborder</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>0</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {" "}
-                <span style={{ color: "#94A3B8" }}>allowtransparency</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>true</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {"\n"}
-                {"  "}<span style={{ color: "#94A3B8" }}>style</span>
-                <span style={{ color: "var(--foreground-3)" }}>="</span>
-                <span style={{ color: "#FBBF24" }}>position:fixed;bottom:0;right:0;border:none;z-index:9999</span>
-                <span style={{ color: "var(--foreground-3)" }}>"</span>
-                {"\n"}
-                <span style={{ color: "var(--foreground-3)" }}>&gt;&lt;/iframe&gt;</span>
-              </code>
+              <code>{EMBED_SNIPPET}</code>
             </pre>
           </div>
 
-          <p className="text-[13px] text-foreground-3 text-center mt-5">
-            Works on Webflow, WordPress, Squarespace, and plain HTML.
+          <p className="text-[13px] text-foreground-3 text-center mt-5 break-words">
+            Iframe fallback: <code className="font-mono">{IFRAME_SNIPPET}</code>
           </p>
         </div>
       </section>
 
-      {/* ── Economics ── */}
+      {/* ── Pricing tiers ── */}
       <section id="economics" className="py-24 px-6 bg-surface">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-[12px] uppercase tracking-[0.08em] text-accent mb-3 block">Why AI support</span>
-            <h2 className="text-[36px] font-semibold tracking-tight text-foreground">The economics are obvious</h2>
+            <span className="text-[12px] uppercase tracking-[0.08em] text-accent mb-3 block">Lite vs Enterprise</span>
+            <h2 className="text-[36px] font-semibold tracking-tight text-foreground">Start simple, upgrade when support volume grows</h2>
             <p className="text-foreground-2 mt-3 text-[15px] leading-relaxed max-w-lg mx-auto">
-              Replace a $4,000/mo headcount with $50 in API costs — and get better coverage.
+              The same UI runs against a low-cost docs engine or a vector RAG backend with analytics and ingestion.
             </p>
           </div>
 
-          <table className="w-full bg-card border border-border rounded-[16px] overflow-hidden border-separate border-spacing-0 mt-12">
-            <thead>
-              <tr className="bg-surface">
-                <th className="px-6 py-3.5 text-left text-[12px] uppercase tracking-wider font-medium text-foreground-3 border-b border-border">
-                  Option
-                </th>
-                <th className="px-6 py-3.5 text-center text-[12px] uppercase tracking-wider font-medium text-foreground-3 border-b border-border">
-                  Monthly cost
-                </th>
-                <th className="px-6 py-3.5 text-right text-[12px] uppercase tracking-wider font-medium text-foreground-3 border-b border-border">
-                  Coverage
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              <tr>
-                <td className="px-6 py-4 text-[15px] text-foreground font-medium">Virtual assistant</td>
-                <td className="px-6 py-4 text-[15px] text-foreground text-center">~$2,000</td>
-                <td className="px-6 py-4 text-[15px] text-foreground-2 text-right">4–6 hr delays</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-[15px] text-foreground font-medium">Support agent</td>
-                <td className="px-6 py-4 text-[15px] text-foreground text-center">~$4,000</td>
-                <td className="px-6 py-4 text-[15px] text-foreground-2 text-right">One timezone</td>
-              </tr>
-              <tr className="bg-accent-soft">
-                <td className="px-6 py-4 text-[15px] font-semibold text-accent">
-                  <span className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden />
-                    SupportPilot AI
+          <div className="grid gap-4 md:grid-cols-2">
+            {[
+              {
+                name: "Lite",
+                price: "$150-400 setup",
+                description: "Gemini, Markdown docs, cited answers, script embed, and human escalation.",
+                points: ["No database required", "Best for FAQs and small help centers", "Runs from /knowledge files"],
+              },
+              {
+                name: "Enterprise",
+                price: "$1.5k+ build",
+                description: "Vector RAG, Supabase ingestion, analytics, guardrails, and multi-source docs.",
+                points: ["pgvector-ready retriever boundary", "Stats and feedback endpoints", "PDF/site/Notion ingestion path"],
+              },
+            ].map((tier) => (
+              <div key={tier.name} className="rounded-[16px] border border-border bg-card p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">{tier.name}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground-2">{tier.description}</p>
+                  </div>
+                  <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+                    {tier.price}
                   </span>
-                </td>
-                <td className="px-6 py-4 text-[15px] font-bold text-accent text-center">~$50</td>
-                <td className="px-6 py-4 text-right">
-                  <span className="inline-flex items-center bg-accent text-white text-[12px] font-semibold px-3 py-1 rounded-full">
-                    24/7 global
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+                <ul className="mt-6 space-y-3 text-sm text-foreground-2">
+                  {tier.points.map((point) => (
+                    <li key={point} className="flex gap-2">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -481,7 +439,7 @@ export default function Home() {
           </p>
           <div className="mt-10">
             <a
-              href="https://calendly.com/anilpervaiz/15min"
+              href={theme.escalation.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 bg-accent text-white text-[15px] font-medium px-7 py-4 rounded-full hover:bg-accent-hover transition-colors"

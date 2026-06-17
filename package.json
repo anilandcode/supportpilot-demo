@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test:conversation": "tsx scripts/test-conversation.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.67",

@@ -10,44 +10,17 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { getStatsSnapshot } from "@/lib/analytics";
+import { theme } from "@/lib/theme";
 
 export const metadata: Metadata = {
-  title: "Dashboard — SupportPilot AI",
+  title: `Dashboard - ${theme.productName}`,
   robots: "noindex",
 };
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
+export const dynamic = "force-dynamic";
 
-const STATS = [
-  {
-    label: "Total conversations",
-    value: "1,247",
-    delta: "+12% this week",
-    icon: MessageSquare,
-    positive: true,
-  },
-  {
-    label: "Deflection rate",
-    value: "73%",
-    delta: "+4 pts vs last month",
-    icon: TrendingUp,
-    positive: true,
-  },
-  {
-    label: "Avg. response time",
-    value: "2.3s",
-    delta: "−0.4s vs last week",
-    icon: Zap,
-    positive: true,
-  },
-  {
-    label: "Escalation rate",
-    value: "18%",
-    delta: "−2 pts vs last month",
-    icon: ArrowUpRight,
-    positive: true,
-  },
-] as const;
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
 type Status = "resolved" | "escalated" | "active";
 
@@ -79,7 +52,7 @@ const CONVERSATIONS: {
     id: "c3",
     user: "Priya Nair",
     initials: "PN",
-    preview: "How do I connect Linear-clone to GitHub?",
+    preview: `How do I connect ${theme.company} to GitHub?`,
     status: "resolved",
     time: "14 min ago",
   },
@@ -157,6 +130,34 @@ function Avatar({ initials, size = "md" }: { initials: string; size?: "sm" | "md
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
+  const stats = getStatsSnapshot();
+  const statCards = [
+    {
+      label: "Total conversations",
+      value: String(stats.totalConversations),
+      delta: "Live demo memory",
+      icon: MessageSquare,
+    },
+    {
+      label: "Deflection rate",
+      value: `${stats.deflectionRate}%`,
+      delta: `${stats.answered} answered`,
+      icon: TrendingUp,
+    },
+    {
+      label: "Avg. response time",
+      value: "<3s",
+      delta: "Streaming endpoint",
+      icon: Zap,
+    },
+    {
+      label: "Escalation rate",
+      value: `${stats.escalationRate}%`,
+      delta: `${stats.escalated} escalated`,
+      icon: ArrowUpRight,
+    },
+  ] as const;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Top nav */}
@@ -164,17 +165,17 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-accent-fg text-xs font-bold">
-              P
+              {theme.botName[0]}
             </div>
-            <span className="text-sm font-semibold text-foreground">SupportPilot</span>
+            <span className="text-sm font-semibold text-foreground">{theme.productName}</span>
             <ChevronRight className="w-3.5 h-3.5 text-foreground-2" aria-hidden />
             <span className="text-sm text-foreground-2">Dashboard</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-foreground-2 hidden sm:block">Linear-clone workspace</span>
+            <span className="text-xs text-foreground-2 hidden sm:block">{theme.company} workspace</span>
             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold">
-              AP
+              {theme.company.slice(0, 2).toUpperCase()}
             </div>
           </div>
         </div>
@@ -184,12 +185,12 @@ export default function AdminPage() {
         {/* Page heading */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Overview</h1>
-          <p className="mt-1 text-sm text-foreground-2">Last 30 days · Linear-clone workspace</p>
+          <p className="mt-1 text-sm text-foreground-2">Live demo · {theme.company} workspace</p>
         </div>
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {STATS.map((s) => {
+          {statCards.map((s) => {
             const Icon = s.icon;
             return (
               <Card key={s.label} className="px-5 py-4">
@@ -289,10 +290,10 @@ export default function AdminPage() {
               <h2 className="text-sm font-semibold text-foreground mb-4">Today at a glance</h2>
               <div className="flex flex-col gap-3">
                 {[
-                  { label: "New conversations", value: "34" },
-                  { label: "Resolved by AI", value: "27" },
-                  { label: "Escalated to human", value: "7" },
-                  { label: "Avg. CSAT", value: "4.8 / 5" },
+                  { label: "New conversations", value: String(stats.totalConversations) },
+                  { label: "Resolved by AI", value: String(stats.answered) },
+                  { label: "Escalated to human", value: String(stats.escalated) },
+                  { label: "CSAT", value: stats.csat === null ? "No votes" : `${stats.csat}%` },
                 ].map((row) => (
                   <div key={row.label} className="flex items-center justify-between">
                     <span className="text-xs text-foreground-2">{row.label}</span>

@@ -1,3 +1,5 @@
+import { theme } from "@/lib/theme";
+
 export function Footer() {
   return (
     <footer
@@ -8,7 +10,7 @@ export function Footer() {
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden />
           <span>
-            Built by{" "}
+            {theme.productName} configured for {theme.company}. Built by{" "}
             <a
               href="https://anilpervaiz.com"
               target="_blank"

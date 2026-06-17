@@ -1,187 +1,139 @@
 "use client";
 
-import { useState, useRef, useEffect, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, isTextUIPart } from "ai";
-import { SendHorizonal, AlertCircle, RotateCcw, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { MessageList } from "./message-list";
-import { SuggestedQuestions } from "./suggested-questions";
-import { EscalationButton } from "./escalation-button";
+import { DefaultChatTransport, isTextUIPart, type UIMessage } from "ai";
+import { AlertCircle, RotateCcw, ShieldCheck, X } from "lucide-react";
+import { BrandAvatar } from "@/components/chat/brand-avatar";
+import { Composer } from "@/components/chat/composer";
+import { EscalationButton } from "@/components/chat/escalation-button";
+import { MessageList } from "@/components/chat/message-list";
+import { WelcomeCard } from "@/components/chat/welcome-card";
+import { theme } from "@/lib/theme";
+import type { ChatMetadata } from "@/lib/types";
 
-const MAX_CHARS = 500;
-const WARN_CHARS = 400;
-const transport = new DefaultChatTransport({ api: "/api/chat" });
+const CLIENT_MESSAGE_LIMIT = 8;
+const transport = new DefaultChatTransport<UIMessage<ChatMetadata>>({ api: "/api/chat" });
 
 type ChatWindowProps = {
-  /** When provided, renders a close (X) button in the header — used by ChatWidget */
   onClose?: () => void;
 };
 
+function getTextContent(msg: UIMessage): string {
+  return msg.parts.filter(isTextUIPart).map((p) => p.text).join("");
+}
+
 export function ChatWindow({ onClose }: ChatWindowProps = {}) {
-  const { messages, status, sendMessage, clearError, error } = useChat({ transport });
+  const { messages, status, sendMessage, clearError, error } = useChat<UIMessage<ChatMetadata>>({
+    transport,
+  });
 
   const [inputValue, setInputValue] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [clientRateLimited, setClientRateLimited] = useState(false);
+  const shellRef = useRef<HTMLDivElement>(null);
 
   const isLoading = status === "streaming" || status === "submitted";
-  const visibleMessages = messages.filter((m) => m.role !== "system");
-  const userMessageCount = messages.filter((m) => m.role === "user").length;
-  const showEscalation = !!error || userMessageCount >= 3;
-  const charsLeft = MAX_CHARS - inputValue.length;
-  const showCounter = inputValue.length > WARN_CHARS;
+  const visibleMessages = messages.filter((message) => message.role !== "system");
+  const userMessageCount = messages.filter((message) => message.role === "user").length;
+  const showEscalation = Boolean(error) || userMessageCount >= 3 || visibleMessages.some((message) => message.metadata?.escalated);
+  const configuredTier = theme.tier as "lite" | "enterprise";
+  const lastMetadata = useMemo(() => {
+    return [...visibleMessages].reverse().find((message) => message.role === "assistant")?.metadata;
+  }, [visibleMessages]);
+  const isRateLimited = clientRateLimited || Boolean(lastMetadata?.rateLimited);
 
-  // Focus input when assistant finishes responding
   useEffect(() => {
-    if (status === "ready") {
-      inputRef.current?.focus();
-    }
+    if (status === "ready") shellRef.current?.focus();
   }, [status]);
 
-  function submit() {
-    const text = inputValue.trim();
+  function submit(textOverride?: string) {
+    const text = (textOverride ?? inputValue).trim();
     if (!text || isLoading) return;
-    setInputValue("");
-    sendMessage({ text });
-  }
 
-  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      submit();
+    if (userMessageCount >= CLIENT_MESSAGE_LIMIT) {
+      setClientRateLimited(true);
+      return;
     }
-  }
 
-  function onSelectSuggestion(q: string) {
-    sendMessage({ text: q });
-    inputRef.current?.focus();
+    setInputValue("");
+    setClientRateLimited(false);
+    sendMessage({ text });
   }
 
   function retry() {
-    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    const lastUserMsg = [...messages].reverse().find((message) => message.role === "user");
     if (!lastUserMsg) return;
-    const text = lastUserMsg.parts.filter(isTextUIPart).map((p) => p.text).join("");
     clearError();
-    sendMessage({ text });
+    sendMessage({ text: getTextContent(lastUserMsg) });
   }
 
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card shrink-0">
-        <div
-          className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold"
-          aria-hidden
-        >
-          P
-        </div>
-        <div className="flex flex-col flex-1">
-          <span className="text-sm font-semibold text-foreground leading-tight">Pilot</span>
+    <div ref={shellRef} tabIndex={-1} className="flex h-full w-full flex-col overflow-hidden bg-background">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3">
+        <BrandAvatar className="h-9 w-9" />
+        <div className="flex flex-1 flex-col">
+          <span className="text-sm font-semibold leading-tight text-foreground">{theme.botName}</span>
           <span className="flex items-center gap-1.5 text-xs text-foreground-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" aria-hidden />
-            Online
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" aria-hidden />
+            {configuredTier === "enterprise" ? "Enterprise RAG" : "Lite docs mode"}
           </span>
         </div>
 
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close chat"
-            className="w-8 h-8 flex items-center justify-center rounded-full text-foreground-2 hover:text-foreground hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-foreground-2 hover:bg-surface hover:text-foreground"
           >
-            <X className="w-4 h-4" aria-hidden />
+            <X className="h-4 w-4" aria-hidden />
           </button>
         )}
       </div>
 
-      {/* Error banner */}
-      {error && (
+      {(error || isRateLimited) && (
         <div
           role="alert"
-          className="mx-4 mt-3 flex items-start gap-3 rounded-lg border border-red-900/40 bg-red-950/30 px-4 py-3 text-sm text-red-400 shrink-0"
+          className="mx-4 mt-3 flex shrink-0 items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
         >
-          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden />
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
           <div className="flex-1">
-            <p className="font-medium">Something went wrong.</p>
-            <p className="mt-0.5 text-xs opacity-80">Want to talk to a human instead?</p>
+            <p className="font-medium">{isRateLimited ? "Demo limit reached." : "Something went wrong."}</p>
+            <p className="mt-0.5 text-xs opacity-80">
+              {isRateLimited ? "Pause for a moment before sending more questions." : "Retry the last question or escalate to a human."}
+            </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={retry}
-              className="flex items-center gap-1 text-xs font-medium underline-offset-2 hover:underline"
-              aria-label="Retry last message"
-            >
-              <RotateCcw className="w-3 h-3" aria-hidden />
-              Retry
-            </button>
+          <div className="flex shrink-0 items-center gap-2">
+            {error && (
+              <button
+                type="button"
+                onClick={retry}
+                className="flex items-center gap-1 text-xs font-medium underline-offset-2 hover:underline"
+                aria-label="Retry last message"
+              >
+                <RotateCcw className="h-3 w-3" aria-hidden />
+                Retry
+              </button>
+            )}
             <EscalationButton inline />
           </div>
         </div>
       )}
 
-      {/* Empty state */}
-      {visibleMessages.length === 0 && !isLoading && (
-        <div className="flex flex-1 items-center justify-center px-6 text-center">
-          <p className="text-sm sm:text-base text-foreground-2 leading-relaxed max-w-xs">
-            Hi, I&apos;m Pilot 👋
-            <br />
-            Ask me anything about Linear-clone.
-          </p>
-        </div>
-      )}
-
-      {/* Message list */}
-      {(visibleMessages.length > 0 || isLoading) && (
+      {visibleMessages.length === 0 && !isLoading ? (
+        <WelcomeCard onSelect={(question) => submit(question)} />
+      ) : (
         <MessageList messages={messages} isLoading={isLoading} />
       )}
 
-      {/* Escalation strip — after 3 messages or on error (not shown when inline error banner is visible) */}
-      {showEscalation && !error && <EscalationButton />}
+      {showEscalation && !error && !isRateLimited && <EscalationButton />}
 
-      {/* Suggested questions — only before first message */}
-      {userMessageCount === 0 && !isLoading && (
-        <SuggestedQuestions onSelect={onSelectSuggestion} />
-      )}
-
-      {/* Input area */}
-      <div className="px-4 py-3 border-t border-border bg-card shrink-0">
-        <div className="flex gap-2 items-center">
-          <div className="relative flex-1">
-            <Input
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value.slice(0, MAX_CHARS))}
-              onKeyDown={onKeyDown}
-              placeholder="Ask a question…"
-              disabled={isLoading}
-              maxLength={MAX_CHARS}
-              aria-label="Message input"
-              className="bg-surface h-11"
-            />
-            {showCounter && (
-              <span
-                className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs tabular-nums pointer-events-none ${
-                  charsLeft <= 20 ? "text-red-500" : "text-foreground-2"
-                }`}
-                aria-live="polite"
-                aria-atomic="true"
-              >
-                {charsLeft}
-              </span>
-            )}
-          </div>
-          <button
-            type="button"
-            disabled={isLoading || !inputValue.trim()}
-            onClick={submit}
-            aria-label="Send message"
-            className="shrink-0 w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent-hover transition-colors disabled:opacity-40"
-          >
-            <SendHorizonal className="w-4 h-4" aria-hidden />
-          </button>
-        </div>
-      </div>
+      <Composer
+        value={inputValue}
+        onChange={setInputValue}
+        onSubmit={() => submit()}
+        disabled={isLoading || isRateLimited}
+      />
     </div>
   );
 }

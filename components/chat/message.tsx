@@ -1,7 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+import { BrandAvatar } from "@/components/chat/brand-avatar";
+import { Citations } from "@/components/chat/citations";
+import { Feedback } from "@/components/chat/feedback";
+import { MarkdownMessage } from "@/components/chat/markdown-message";
 import { cn } from "@/lib/utils";
 import type { Citation } from "@/lib/types";
 
@@ -19,12 +22,13 @@ function parseCitations(content: string): { text: string; citations: Citation[] 
 }
 
 type MessageProps = {
+  id: string;
   role: "user" | "assistant";
   content: string;
   citations?: Citation[];
 };
 
-export function Message({ role, content, citations: citationsProp }: MessageProps) {
+export function Message({ id, role, content, citations: citationsProp }: MessageProps) {
   const { text, citations: parsed } = parseCitations(content);
   const citations = citationsProp ?? parsed;
   const isUser = role === "user";
@@ -36,15 +40,7 @@ export function Message({ role, content, citations: citationsProp }: MessageProp
       transition={{ duration: 0.2, ease: "easeOut" }}
       className={cn("flex gap-2.5 w-full", isUser ? "justify-end" : "justify-start")}
     >
-      {/* Avatar — assistant only */}
-      {!isUser && (
-        <div
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold mt-0.5"
-          aria-hidden
-        >
-          P
-        </div>
-      )}
+      {!isUser && <BrandAvatar className="mt-0.5 h-8 w-8" />}
 
       <div
         className={cn(
@@ -56,22 +52,15 @@ export function Message({ role, content, citations: citationsProp }: MessageProp
           className={cn(
             "rounded-2xl px-4 py-3 text-[13px] sm:text-sm leading-relaxed break-words",
             isUser
-              ? "bg-accent text-white"
+              ? "bg-[var(--color-bubble-user)] text-foreground"
               : "bg-card-elevated border border-border text-foreground"
           )}
         >
-          {text}
+          <MarkdownMessage content={text} />
         </div>
 
-        {citations.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 px-1">
-            {citations.map((c, i) => (
-              <Badge key={i} variant="default">
-                {c.source}
-              </Badge>
-            ))}
-          </div>
-        )}
+        <Citations citations={citations} />
+        {!isUser && <Feedback messageId={id} />}
       </div>
     </motion.div>
   );

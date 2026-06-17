@@ -1,9 +1,4 @@
-const QUESTIONS = [
-  "How much does Pro cost?",
-  "Do you integrate with GitHub?",
-  "What's your refund policy?",
-  "Is my data secure?",
-];
+import { theme } from "@/lib/theme";
 
 type SuggestedQuestionsProps = {
   onSelect: (q: string) => void;
@@ -12,7 +7,7 @@ type SuggestedQuestionsProps = {
 export function SuggestedQuestions({ onSelect }: SuggestedQuestionsProps) {
   return (
     <div className="flex flex-wrap gap-2 px-4 pb-3">
-      {QUESTIONS.map((q) => (
+      {theme.suggestions.map((q) => (
         <button
           key={q}
           onClick={() => onSelect(q)}

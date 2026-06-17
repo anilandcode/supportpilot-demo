@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { theme } from "@/lib/theme";
 
 const LINKS = [
   { label: "Demo", href: "#chat" },
@@ -19,9 +20,9 @@ export function Nav() {
         {/* Logo */}
         <a href="/" className="flex items-center gap-2.5 shrink-0">
           <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center text-accent-fg text-sm font-bold">
-            P
+            {theme.botName[0]}
           </div>
-          <span className="text-base font-bold text-foreground tracking-tight">SupportPilot</span>
+          <span className="text-base font-bold text-foreground tracking-tight">{theme.productName}</span>
         </a>
 
         {/* Desktop links */}
@@ -40,12 +41,12 @@ export function Nav() {
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="https://calendly.com/anilpervaiz/15min"
+            href={theme.escalation.url}
             target="_blank"
             rel="noopener noreferrer"
             className="h-9 px-5 rounded-full bg-accent text-accent-fg text-sm font-semibold flex items-center hover:opacity-90 transition-opacity"
           >
-            Book a call
+            {theme.escalation.label}
           </a>
         </div>
 
@@ -73,12 +74,12 @@ export function Nav() {
             </a>
           ))}
           <a
-            href="https://calendly.com/anilpervaiz/15min"
+            href={theme.escalation.url}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 h-11 rounded-full bg-accent text-accent-fg text-sm font-semibold flex items-center justify-center"
           >
-            Book a call
+            {theme.escalation.label}
           </a>
         </div>
       )}

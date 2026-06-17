@@ -1,9 +1,11 @@
 /**
  * Simulates 5 user questions against the local (or live) chat API.
  * Usage:
- *   pnpm test:conversation                      # local dev server
- *   BASE_URL=https://your-app.vercel.app pnpm test:conversation
+ *   npm run test:conversation
+ *   BASE_URL=https://your-app.vercel.app npm run test:conversation
  */
+
+import { theme } from "../lib/theme";
 
 export {};
 
@@ -42,22 +44,42 @@ async function ask(question: string, conversationId: string): Promise<string> {
     throw new Error(`HTTP ${res.status}: ${await res.text()}`);
   }
 
-  // Collect the streamed text — AI SDK streams newline-delimited JSON parts
+  // Collect streamed text from AI SDK UI streams. Local fallback responses and
+  // provider streams use the same text-delta chunk shape.
   const raw = await res.text();
   const lines = raw.split("\n").filter(Boolean);
 
   let fullText = "";
   for (const line of lines) {
-    // AI SDK v6 data stream format: lines prefixed with type code
-    // Text deltas are: 0:"chunk"
+    if (line.startsWith("data: ")) {
+      try {
+        const chunk = JSON.parse(line.slice(6));
+        if (chunk.type === "text-delta" && typeof chunk.delta === "string") {
+          fullText += chunk.delta;
+        }
+      } catch {
+        // Ignore non-JSON control lines.
+      }
+      continue;
+    }
+
     const textMatch = line.match(/^0:"(.*)"/);
     if (textMatch) {
-      // Unescape the JSON string value
       try {
         fullText += JSON.parse(`"${textMatch[1]}"`);
       } catch {
         fullText += textMatch[1];
       }
+      continue;
+    }
+
+    try {
+      const chunk = JSON.parse(line);
+      if (chunk.type === "text-delta" && typeof chunk.delta === "string") {
+        fullText += chunk.delta;
+      }
+    } catch {
+      // Ignore protocol control lines.
     }
   }
 
@@ -65,7 +87,7 @@ async function ask(question: string, conversationId: string): Promise<string> {
 }
 
 async function run() {
-  console.log(`\nSupportPilot AI — Conversation Test`);
+  console.log(`\n${theme.productName} - Conversation Test`);
   console.log(`Target: ${API_URL}`);
   console.log("─".repeat(60));
 

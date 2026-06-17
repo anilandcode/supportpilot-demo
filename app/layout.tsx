@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { getThemeCssVariables, theme } from "@/lib/theme";
 import "./globals.css";
 
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
-
 export const metadata: Metadata = {
-  title: "SupportPilot AI — 24/7 customer support, trained on your docs",
+  title: `${theme.productName} - AI customer support trained on your docs`,
   description:
-    "AI customer support agent that answers from your knowledge base, escalates to humans when needed.",
+    "White-label AI customer support that answers from your knowledge base, cites sources, and escalates to humans when needed.",
 };
 
 export default function RootLayout({
@@ -17,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
-      <body className="bg-background text-foreground antialiased">
+    <html lang="en" data-theme-mode={theme.mode} suppressHydrationWarning>
+      <body className="bg-background text-foreground antialiased" style={getThemeCssVariables()}>
         {children}
       </body>
     </html>

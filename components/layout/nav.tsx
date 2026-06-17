@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { theme } from "@/lib/theme";
 
 const LINKS = [
   { label: "Demo",         href: "#demo"    },
@@ -25,7 +26,7 @@ export function Nav() {
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
           <span className="w-2 h-2 rounded-full bg-accent" aria-hidden />
-          <span className="text-[15px] font-semibold text-foreground">SupportPilot</span>
+          <span className="text-[15px] font-semibold text-foreground">{theme.productName}</span>
         </a>
 
         {/* Center links (desktop) */}
@@ -44,12 +45,12 @@ export function Nav() {
         {/* Right: Book a call (desktop) */}
         <div className="hidden md:flex items-center shrink-0">
           <a
-            href="https://calendly.com/anilpervaiz/15min"
+            href={theme.escalation.url}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-accent text-white text-[14px] font-medium px-4 py-2 rounded-full hover:bg-accent-hover transition-colors"
           >
-            Book a call
+            {theme.escalation.label}
           </a>
         </div>
 
@@ -77,12 +78,12 @@ export function Nav() {
             </a>
           ))}
           <a
-            href="https://calendly.com/anilpervaiz/15min"
+            href={theme.escalation.url}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 py-3 text-center bg-accent text-white text-[14px] font-medium rounded-full hover:bg-accent-hover transition-colors"
           >
-            Book a call
+            {theme.escalation.label}
           </a>
         </div>
       )}

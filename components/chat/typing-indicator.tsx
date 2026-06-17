@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { BrandAvatar } from "@/components/chat/brand-avatar";
+import { theme } from "@/lib/theme";
 
 export function TypingIndicator() {
   return (
@@ -10,16 +12,10 @@ export function TypingIndicator() {
       exit={{ opacity: 0, y: 4 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
       className="flex gap-2.5 w-full justify-start"
-      aria-label="Pilot is typing"
+      aria-label={`${theme.botName} is typing`}
       role="status"
     >
-      {/* Avatar */}
-      <div
-        className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-fg text-xs font-bold mt-0.5"
-        aria-hidden
-      >
-        P
-      </div>
+      <BrandAvatar className="mt-0.5 h-8 w-8" />
 
       <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
         <div className="flex gap-1.5 items-center h-4">

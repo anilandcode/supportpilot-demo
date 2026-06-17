@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { ChatWidget } from "@/components/chat/chat-widget";
+import { ChatWindow } from "@/components/chat/chat-window";
+import { theme } from "@/lib/theme";
 
 export const metadata: Metadata = {
+  title: `${theme.productName} embed`,
   robots: "noindex, nofollow",
 };
 
@@ -20,7 +22,9 @@ export default function EmbedPage() {
           overflow: hidden;
         }
       `}</style>
-      <ChatWidget />
+      <main style={{ width: "100vw", height: "100vh" }}>
+        <ChatWindow />
+      </main>
     </>
   );
 }

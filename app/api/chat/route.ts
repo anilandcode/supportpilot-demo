@@ -1,37 +1,181 @@
-import { streamText, convertToModelMessages, type UIMessage } from "ai";
-import { google } from "@ai-sdk/google";
+import {
+  convertToModelMessages,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  isTextUIPart,
+  streamText,
+  type UIMessage,
+} from "ai";
+import { getLanguageModel, getModelReadiness } from "@/lib/generation";
+import { logConversation } from "@/lib/analytics";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
 import { buildSystemPrompt } from "@/lib/system-prompt";
+import { theme } from "@/lib/theme";
+import type { ChatMetadata, Citation } from "@/lib/types";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+
+type SupportUIMessage = UIMessage<ChatMetadata>;
+
+function getClientKey(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || req.headers.get("x-real-ip") || "local-demo";
+}
+
+function getTextContent(message: UIMessage): string {
+  return message.parts.filter(isTextUIPart).map((part) => part.text).join("");
+}
+
+function toCitations(chunks: Chunk[]): Citation[] {
+  return chunks.map((chunk) => ({
+    source: chunk.source,
+    url: chunk.url,
+    score: chunk.score,
+  }));
+}
+
+function containsSensitiveData(text: string): boolean {
+  return /\b(password|passcode|secret|api[_\s-]?key|token|card number|cvv|ssn)\b/i.test(text);
+}
+
+function assistantResponse(text: string, metadata: ChatMetadata, status = 200): Response {
+  const stream = createUIMessageStream<SupportUIMessage>({
+    execute: ({ writer }) => {
+      writer.write({
+        type: "start",
+        messageId: crypto.randomUUID(),
+        messageMetadata: metadata,
+      });
+      writer.write({ type: "text-start", id: "answer" });
+      writer.write({ type: "text-delta", id: "answer", delta: text });
+      writer.write({ type: "text-end", id: "answer" });
+      writer.write({
+        type: "finish",
+        finishReason: "stop",
+        messageMetadata: metadata,
+      });
+    },
+  });
+
+  return createUIMessageStreamResponse({ stream, status });
+}
+
+function localAnswer(question: string, chunks: Chunk[], citations: Citation[]): string {
+  if (!hasUsefulContext(chunks)) {
+    return `I do not know from the docs I have. ${theme.escalation.label} can help with that.`;
+  }
+
+  const best = chunks[0];
+  const sentences = best.text
+    .replace(/^#+\s+.+$/gm, "")
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(" ");
+
+  return `${sentences} [Source: ${best.source}]\n\nI can go deeper if you want the exact setup, billing, or security details.`;
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const messages = body.messages as UIMessage[] | undefined;
 
-    const messages: UIMessage[] = body.messages;
     if (!Array.isArray(messages) || messages.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "messages must be a non-empty array" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return Response.json({ error: "messages must be a non-empty array" }, { status: 400 });
     }
 
-    const modelMessages = await convertToModelMessages(messages);
+    const lastUserMessage = [...messages].reverse().find((message) => message.role === "user");
+    const question = lastUserMessage ? getTextContent(lastUserMessage).trim() : "";
+
+    if (!question) {
+      return assistantResponse("Send me a question and I will check the docs.", {
+        tier: theme.tier,
+      });
+    }
+
+    const rate = checkRateLimit(getClientKey(req));
+    if (!rate.allowed) {
+      const retrySeconds = Math.max(Math.ceil((rate.resetAt - Date.now()) / 1000), 1);
+      const text = `You have hit the demo rate limit. Try again in about ${retrySeconds} seconds, or ${theme.escalation.label.toLowerCase()} for help.`;
+      const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;
+      logConversation({
+        question,
+        answered: false,
+        escalated: true,
+        rateLimited: true,
+        citations: [],
+      });
+      return assistantResponse(text, metadata);
+    }
+
+    if (containsSensitiveData(question)) {
+      const text =
+        "Please do not share passwords, payment details, tokens, or other sensitive credentials here. If you already shared one, rotate it and contact a human for account help.";
+      const metadata = { tier: theme.tier, escalated: true } satisfies ChatMetadata;
+      logConversation({
+        question,
+        answered: false,
+        escalated: true,
+        rateLimited: false,
+        citations: [],
+      });
+      return assistantResponse(text, metadata);
+    }
+
+    const chunks = await getRetriever().retrieve(question, 5);
+    const citations = toCitations(chunks);
+    const usefulContext = hasUsefulContext(chunks);
+    const metadata = {
+      citations,
+      tier: theme.tier,
+      escalated: !usefulContext,
+    } satisfies ChatMetadata;
+
+    const readiness = getModelReadiness();
+    if (!readiness.ready) {
+      logConversation({
+        question,
+        answered: usefulContext,
+        escalated: !usefulContext,
+        rateLimited: false,
+        citations: usefulContext ? citations : [],
+      });
+      return assistantResponse(localAnswer(question, chunks, citations), metadata);
+    }
 
     const result = streamText({
-      model: google("gemini-2.5-flash"),
-      system: buildSystemPrompt(),
-      messages: modelMessages,
-      maxOutputTokens: 1024,
-      temperature: 0.5,
+      model: getLanguageModel(),
+      system: buildSystemPrompt(chunks),
+      messages: await convertToModelMessages(messages),
+      maxOutputTokens: 900,
+      temperature: 0.35,
+      onFinish: () => {
+        logConversation({
+          question,
+          answered: usefulContext,
+          escalated: !usefulContext,
+          rateLimited: false,
+          citations: usefulContext ? citations : [],
+        });
+      },
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse<SupportUIMessage>({
+      sendSources: true,
+      messageMetadata: ({ part }) => {
+        if (part.type === "start" || part.type === "finish") return metadata;
+        return undefined;
+      },
+    });
   } catch (err) {
     console.error("[/api/chat]", err);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+    return assistantResponse(
+      `I could not answer that request. ${theme.escalation.label} can help while I recover.`,
+      { tier: theme.tier, escalated: true },
+      500
     );
   }
 }
