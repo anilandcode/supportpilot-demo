@@ -1,9 +1,9 @@
-import { getStatsSnapshot } from "@/lib/analytics";
+import { getDashboardMetrics } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  return Response.json(getStatsSnapshot(), {
+  return Response.json(await getDashboardMetrics(), {
     headers: {
       "Cache-Control": "no-store",
     },

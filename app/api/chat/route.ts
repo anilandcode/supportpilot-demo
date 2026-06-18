@@ -7,7 +7,7 @@ import {
   type UIMessage,
 } from "ai";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
-import { logConversation } from "@/lib/analytics";
+import { appendAuditLog, createAiRun } from "@/lib/db/support";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
 import { buildSystemPrompt } from "@/lib/system-prompt";
@@ -33,6 +33,41 @@ function toCitations(chunks: Chunk[]): Citation[] {
     url: chunk.url,
     score: chunk.score,
   }));
+}
+
+async function logChatRun(input: {
+  question: string;
+  response: string;
+  answered: boolean;
+  escalated: boolean;
+  rateLimited: boolean;
+  citations: Citation[];
+  latencyMs?: number;
+}) {
+  const run = await createAiRun({
+    ticketId: null,
+    userId: null,
+    prompt: input.question,
+    response: input.response,
+    model: getModelReadiness().ready ? process.env.LLM_PROVIDER || "google" : "demo-enterprise",
+    latencyMs: input.latencyMs ?? 0,
+    confidence: input.answered ? 0.84 : 0.45,
+    approvalStatus: input.escalated ? "escalated" : "approved",
+    escalationReason: input.escalated ? "Customer chat requires human follow-up" : null,
+    riskFlags: input.rateLimited ? ["rate_limited"] : input.escalated ? ["low_confidence"] : [],
+    sources: input.citations.map((citation) => ({
+      source: citation.source,
+      score: citation.score,
+    })),
+    rationale: input.answered ? "Answered from retrieved approved support knowledge." : "Could not answer confidently from retrieved knowledge.",
+  });
+
+  await appendAuditLog({
+    ticketId: null,
+    userId: null,
+    action: "chat.completed",
+    details: { aiRunId: run.id, answered: input.answered, escalated: input.escalated, rateLimited: input.rateLimited },
+  });
 }
 
 function containsSensitiveData(text: string): boolean {
@@ -101,8 +136,9 @@ export async function POST(req: Request) {
       const retrySeconds = Math.max(Math.ceil((rate.resetAt - Date.now()) / 1000), 1);
       const text = `You have hit the demo rate limit. Try again in about ${retrySeconds} seconds, or ${theme.escalation.label.toLowerCase()} for help.`;
       const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;
-      logConversation({
+      await logChatRun({
         question,
+        response: text,
         answered: false,
         escalated: true,
         rateLimited: true,
@@ -115,8 +151,9 @@ export async function POST(req: Request) {
       const text =
         "Please do not share passwords, payment details, tokens, or other sensitive credentials here. If you already shared one, rotate it and contact a human for account help.";
       const metadata = { tier: theme.tier, escalated: true } satisfies ChatMetadata;
-      logConversation({
+      await logChatRun({
         question,
+        response: text,
         answered: false,
         escalated: true,
         rateLimited: false,
@@ -136,29 +173,34 @@ export async function POST(req: Request) {
 
     const readiness = getModelReadiness();
     if (!readiness.ready) {
-      logConversation({
+      const response = localAnswer(question, chunks, citations);
+      await logChatRun({
         question,
+        response,
         answered: usefulContext,
         escalated: !usefulContext,
         rateLimited: false,
         citations: usefulContext ? citations : [],
       });
-      return assistantResponse(localAnswer(question, chunks, citations), metadata);
+      return assistantResponse(response, metadata);
     }
 
+    const startedAt = Date.now();
     const result = streamText({
       model: getLanguageModel(),
       system: buildSystemPrompt(chunks),
       messages: await convertToModelMessages(messages),
       maxOutputTokens: 900,
       temperature: 0.35,
-      onFinish: () => {
-        logConversation({
+      onFinish: async ({ text }) => {
+        await logChatRun({
           question,
+          response: text,
           answered: usefulContext,
           escalated: !usefulContext,
           rateLimited: false,
           citations: usefulContext ? citations : [],
+          latencyMs: Date.now() - startedAt,
         });
       },
     });

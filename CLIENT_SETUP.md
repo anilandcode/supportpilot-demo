@@ -1,16 +1,17 @@
 # Client Setup Runbook
 
-Use this checklist to clone and ship a new white-label SupportPilot instance.
+Use this checklist to ship a white-label SupportPilot instance. Lite mode can go live first; Enterprise mode adds Supabase, roles, RAG, tickets, approval, audit, and analytics.
 
-## 1. Clone and install
+## 1. Clone and Install
 
 ```bash
 git clone <repo-url> supportpilot-client
 cd supportpilot-client
 npm install
+cp .env.local.example .env.local
 ```
 
-## 2. Configure the client
+## 2. Configure Brand and Tier
 
 Edit `theme.config.ts`.
 
@@ -19,63 +20,97 @@ Set:
 - `productName`
 - `botName`
 - `company`
-- `colors.accent`, `colors.fg`, `colors.bg`, `colors.surface`, `colors.card`
-- `welcome`
-- `suggestions`
-- `escalation.url`
-- `tier`
+- logo/avatar URLs
+- colors, radius, font, and mode
+- welcome copy
+- suggestion chips
+- escalation URL and label
+- `tier: "lite" | "enterprise"`
 
-Drop optional logo/avatar files into `public/` and point `logoUrl` or `avatarUrl` to them.
+## 3. Lite Knowledge
 
-## 3. Add knowledge
+Replace sample files in `/knowledge` with client docs:
 
-Replace the sample files in `/knowledge` with the client's docs:
+- pricing
+- features
+- integrations
+- security
+- billing
+- support policies
 
-- `pricing.md`
-- `features.md`
-- `integrations.md`
-- `security.md`
-- `billing.md`
-- any extra `.md` or `.txt` files
+Use clear Markdown headings because Lite citations are generated as `filename#heading`.
 
-Use clear headings because citations are generated as `filename#heading`.
+## 4. Enterprise Supabase
 
-## 4. Add environment variables
-
-Lite:
-
-```bash
-GOOGLE_GENERATIVE_AI_API_KEY=...
-LLM_PROVIDER=google
-GOOGLE_MODEL=gemini-2.5-flash
-```
-
-Enterprise, when vector retrieval is wired:
+1. Create a Supabase project.
+2. Apply `supabase/migrations/001_enterprise_supportpilot.sql`.
+3. Run `supabase/seed.sql` for demo data.
+4. Create a Storage bucket for source files if the client wants original uploads retained.
+5. Add these env vars:
 
 ```bash
-SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
-## 5. Verify locally
+Seed staff password:
+
+```text
+SupportPilot2026!
+```
+
+## 5. LLM Provider
+
+Choose one provider:
+
+```bash
+LLM_PROVIDER=google
+GOOGLE_GENERATIVE_AI_API_KEY=...
+GOOGLE_MODEL=gemini-2.5-flash
+```
+
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=...
+ANTHROPIC_MODEL=claude-3-5-haiku-latest
+```
+
+## 6. Optional Sentry
+
+```bash
+SENTRY_DSN=...
+NEXT_PUBLIC_SENTRY_DSN=...
+SENTRY_ORG=...
+SENTRY_PROJECT=...
+SENTRY_AUTH_TOKEN=...
+```
+
+## 7. Verify Locally
 
 ```bash
 npm run typecheck
+npm run test:enterprise
 npm run build
 npm run dev
 ```
 
-Open `http://localhost:3000`, ask one pricing question, one security question, and one off-topic question.
+Open:
 
-## 6. Deploy
+- `http://localhost:3000/admin`
+- `http://localhost:3000/admin/tickets`
+- `http://localhost:3000/admin/knowledge`
+- `http://localhost:3000/admin/approvals`
+- `http://localhost:3000/admin/analytics`
+- `http://localhost:3000/portal`
 
-Create a Vercel project, add the env vars above, and deploy.
-
-```bash
-vercel deploy --prod
-```
-
-## 7. Install the widget
+## 8. Install the Widget
 
 Script embed:
 
@@ -89,9 +124,12 @@ Iframe fallback:
 <iframe src="https://your-client-domain.example/embed" width="400" height="620" style="border:0;border-radius:18px"></iframe>
 ```
 
-## Platform notes
+## 9. Deploy
 
-- Webflow: paste the script before `</body>` in custom code.
-- WordPress: add the script through a header/footer code plugin.
-- Shopify: paste the script in `theme.liquid` before `</body>`.
-- Plain HTML: paste the script before `</body>`.
+Create a Vercel project, add env vars, and deploy.
+
+```bash
+vercel deploy --prod
+```
+
+After deployment, upload approved docs in `/admin/knowledge`, draft a normal ticket reply, draft a high-risk ticket reply, approve/edit/reject one draft, and confirm `/admin/analytics` updates.

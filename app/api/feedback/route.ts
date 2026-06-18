@@ -1,4 +1,4 @@
-import { logFeedback } from "@/lib/analytics";
+import { appendFeedback } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -11,6 +11,6 @@ export async function POST(req: Request) {
     return Response.json({ error: "messageId and value are required" }, { status: 400 });
   }
 
-  logFeedback({ messageId, value });
+  await appendFeedback({ messageId, rating: value });
   return Response.json({ ok: true });
 }

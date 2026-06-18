@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { DEFAULT_KNOWLEDGE_FILES, type KnowledgeFile } from "@/lib/knowledge";
+import { retrieveEnterpriseChunks } from "@/lib/rag/retrieval";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { theme } from "@/lib/theme";
 
 export type Chunk = {
@@ -149,13 +151,24 @@ export class EnterpriseRetriever implements Retriever {
   private readonly fallback = new LiteRetriever();
 
   async retrieve(query: string, k = 5): Promise<Chunk[]> {
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (!hasSupabaseAdminEnv()) {
+      const enterpriseChunks = await retrieveEnterpriseChunks(query, k);
+      if (enterpriseChunks.length > 0) {
+        return enterpriseChunks.map((chunk) => ({
+          text: chunk.content,
+          source: `${chunk.source}#${chunk.heading}`,
+          score: chunk.score ?? 0,
+        }));
+      }
       return this.fallback.retrieve(query, k);
     }
 
-    // The vector path is intentionally isolated behind this interface. The UI,
-    // prompt, citations, and analytics do not change when Supabase pgvector is wired.
-    return this.fallback.retrieve(query, k);
+    const enterpriseChunks = await retrieveEnterpriseChunks(query, k);
+    return enterpriseChunks.map((chunk) => ({
+      text: chunk.content,
+      source: `${chunk.source}#${chunk.heading}`,
+      score: chunk.score ?? 0,
+    }));
   }
 }
 

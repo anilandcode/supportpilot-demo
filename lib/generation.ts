@@ -1,4 +1,6 @@
 import { google } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
+import { openai } from "@ai-sdk/openai";
 import type { LanguageModel } from "ai";
 
 export type ProviderName = "google" | "openai" | "anthropic";
@@ -19,18 +21,21 @@ export function getModelReadiness(): { ready: boolean; reason?: string } {
       : { ready: false, reason: "GOOGLE_GENERATIVE_AI_API_KEY is not configured." };
   }
 
-  return {
-    ready: false,
-    reason: `${provider} is selected, but this demo installs only the Google provider by default.`,
-  };
+  if (provider === "openai") {
+    return process.env.OPENAI_API_KEY
+      ? { ready: true }
+      : { ready: false, reason: "OPENAI_API_KEY is not configured." };
+  }
+
+  return process.env.ANTHROPIC_API_KEY
+    ? { ready: true }
+    : { ready: false, reason: "ANTHROPIC_API_KEY is not configured." };
 }
 
 export function getLanguageModel(): LanguageModel {
   const provider = getProviderName();
 
-  if (provider !== "google") {
-    throw new Error(`${provider} provider package is not installed in this demo.`);
-  }
-
+  if (provider === "openai") return openai(process.env.OPENAI_MODEL || "gpt-4o-mini");
+  if (provider === "anthropic") return anthropic(process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-latest");
   return google(process.env.GOOGLE_MODEL || "gemini-2.5-flash");
 }
