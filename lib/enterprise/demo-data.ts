@@ -99,7 +99,7 @@ const docBodies = [
   ["doc_slack", "Slack Integration", "product_doc", "Slack users can create issues, receive channel notifications, unfurl links, and manage notification rules."],
   ["doc_gdpr", "GDPR and Data Residency", "policy", "Enterprise customers can choose EU data residency. GDPR deletion requests are completed within 30 days."],
   ["doc_billing", "Billing Operations", "policy", "Annual billing saves 20 percent. Upgrades are prorated mid-cycle and downgrades apply at period end."],
-  ["doc_roadmaps", "Roadmaps", "product_doc", "Roadmaps are available on Pro and above and can be shared externally using read-only links."],
+  ["doc_dpa", "Data Processing Agreement", "policy", "A signed DPA is available to Business and Enterprise customers after legal review and account verification."],
   ["doc_api", "API Rate Limits", "product_doc", "API keys are created from Settings > API. 429 errors mean the integration exceeded 1,000 requests per minute."],
 ] as const;
 
@@ -140,7 +140,7 @@ export const demoAiRuns: AIRun[] = demoTickets.slice(0, 10).map((ticket, index) 
   model: "demo-enterprise",
   latencyMs: 850 + index * 42,
   confidence: ticket.riskLevel === "critical" ? 0.61 : ticket.riskLevel === "high" ? 0.72 : 0.86,
-  approvalStatus: ticket.riskLevel === "critical" || ticket.status === "escalated" ? "escalated" : index % 3 === 0 ? "approved" : "draft",
+  approvalStatus: ticket.riskLevel === "critical" || ticket.riskLevel === "high" || ticket.status === "escalated" ? "escalated" : index % 3 === 0 ? "approved" : "draft",
   escalationReason: ticket.escalationReason,
   riskFlags: ticket.escalationReason ? [ticket.escalationReason] : [],
   sources: [{ source: demoDocumentChunks[index % demoDocumentChunks.length].source, chunkId: demoDocumentChunks[index % demoDocumentChunks.length].id, score: 0.88 }],
