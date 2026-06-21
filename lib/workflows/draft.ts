@@ -15,7 +15,7 @@ export async function draftTicketReply(ticketId: string, userId: string | null):
     ticket.customer.plan,
     ...ticket.messages.map((message) => message.body),
   ].join("\n");
-  const chunks = await retrieveEnterpriseChunks(ticketContext, 5);
+  const chunks = await retrieveEnterpriseChunks(ticketContext, 5, ticket.workspaceId);
   const confidence = calculateConfidence(chunks);
   const risk = assessTicketRisk(ticket, ticketContext, confidence);
   const prompt = buildDraftPrompt(ticketContext, chunks.map((chunk) => `${chunk.source}#${chunk.heading}: ${chunk.content}`).join("\n\n"));
@@ -35,6 +35,8 @@ export async function draftTicketReply(ticketId: string, userId: string | null):
   }
 
   const aiRun = await createAiRun({
+    tenantId: ticket.tenantId,
+    workspaceId: ticket.workspaceId,
     ticketId: ticket.id,
     userId,
     prompt,

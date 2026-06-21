@@ -4,6 +4,70 @@ export type TicketPriority = "low" | "medium" | "high" | "urgent";
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 export type MessageSender = "customer" | "agent" | "ai";
 export type ApprovalStatus = "draft" | "approved" | "edited" | "rejected" | "escalated";
+export type MembershipRole = "owner" | "admin" | "manager" | "agent" | "viewer";
+export type DomainStatus = "pending" | "verified" | "blocked";
+export type UsageEventType =
+  | "chat.message"
+  | "chat.answered"
+  | "chat.escalated"
+  | "knowledge.uploaded"
+  | "ai_run.created"
+  | "approval.decided"
+  | "email.escalated";
+
+export type Organization = {
+  id: string;
+  name: string;
+  slug: string;
+  plan: "Lite" | "Agency" | "Pro" | "Enterprise";
+  createdAt: string;
+};
+
+export type Workspace = {
+  id: string;
+  tenantId: string;
+  name: string;
+  slug: string;
+  botName: string;
+  brandColor: string;
+  accentForeground: string;
+  welcomeMessage: string;
+  escalationEmail: string;
+  calendlyUrl: string | null;
+  widgetKey: string;
+  monthlyReplyLimit: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Membership = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  userId: string;
+  role: MembershipRole;
+};
+
+export type WorkspaceDomain = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  domain: string;
+  status: DomainStatus;
+  createdAt: string;
+};
+
+export type WidgetConfig = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  launcherLabel: string;
+  position: "bottom-right" | "bottom-left";
+  showBranding: boolean;
+  privacyText: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type EnterpriseUser = {
   id: string;
@@ -14,6 +78,8 @@ export type EnterpriseUser = {
 
 export type Customer = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   name: string;
   email: string;
   company: string;
@@ -24,6 +90,8 @@ export type Customer = {
 
 export type Ticket = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   subject: string;
   status: TicketStatus;
   priority: TicketPriority;
@@ -39,6 +107,8 @@ export type Ticket = {
 
 export type TicketMessage = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   ticketId: string;
   sender: MessageSender;
   authorId: string | null;
@@ -48,8 +118,11 @@ export type TicketMessage = {
 
 export type KnowledgeDoc = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   title: string;
   sourceType: "faq" | "product_doc" | "policy" | "onboarding" | "upload";
+  sourceVersion: number;
   approved: boolean;
   url: string | null;
   content: string;
@@ -58,17 +131,24 @@ export type KnowledgeDoc = {
 
 export type DocumentChunk = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   docId: string;
   source: string;
   heading: string;
   content: string;
   chunkIndex: number;
   approved: boolean;
+  embeddingModel: string;
+  embeddingVersion: string;
+  contentHash: string;
   score?: number;
 };
 
 export type AIRun = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   ticketId: string | null;
   userId: string | null;
   prompt: string;
@@ -86,6 +166,8 @@ export type AIRun = {
 
 export type AIFeedback = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   aiRunId: string | null;
   messageId: string | null;
   userId: string | null;
@@ -95,6 +177,8 @@ export type AIFeedback = {
 
 export type AuditLog = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   ticketId: string | null;
   userId: string | null;
   action: string;
@@ -104,11 +188,35 @@ export type AuditLog = {
 
 export type EscalationRule = {
   id: string;
+  tenantId: string;
+  workspaceId: string;
   name: string;
   trigger: string;
   riskLevel: RiskLevel;
   requiresManagerApproval: boolean;
   active: boolean;
+};
+
+export type ApprovalPolicy = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  riskCategory: string;
+  minConfidenceToAutoSend: number;
+  requireApproval: boolean;
+  allowedActions: string[];
+  approverRole: MembershipRole;
+  active: boolean;
+};
+
+export type UsageEvent = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  eventType: UsageEventType;
+  quantity: number;
+  metadata: Record<string, unknown>;
+  createdAt: string;
 };
 
 export type TicketWithRelations = Ticket & {
@@ -137,4 +245,11 @@ export type DraftResult = {
   rationale: string;
   riskFlags: string[];
   requiresManagerApproval: boolean;
+};
+
+export type WorkspaceLaunchState = {
+  workspace: Workspace;
+  widgetConfig: WidgetConfig;
+  domains: WorkspaceDomain[];
+  approvalPolicies: ApprovalPolicy[];
 };

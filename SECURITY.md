@@ -2,7 +2,7 @@
 
 ## Authentication
 
-Enterprise mode uses Supabase Auth. `public.users` is the role-backed profile table and references `auth.users`. The `/admin` workspace is protected by `proxy.ts` when Supabase env vars are configured.
+Enterprise mode uses Supabase Auth. `public.users` is the role-backed profile table and references `auth.users`. `public.memberships` maps staff users into workspaces. The `/admin` workspace is protected by `proxy.ts` when Supabase env vars are configured.
 
 ## Roles
 
@@ -10,10 +10,13 @@ Enterprise mode uses Supabase Auth. `public.users` is the role-backed profile ta
 - `support_agent`: can triage tickets, draft AI replies, approve normal-risk drafts, and write support messages.
 - `support_manager`: can review escalated/high-risk drafts and manage escalation decisions.
 - `admin`: can manage staff profile roles, audit visibility, docs, and rules.
+- workspace membership roles: `owner`, `admin`, `manager`, `agent`, and `viewer` scope staff access to a workspace.
 
 ## RLS
 
-The migration enables RLS on every enterprise table. Policies separate customer-owned access from support staff access. Service-role operations are limited to server code in `lib/db/support.ts` and must never be exposed to the browser.
+The migrations enable RLS on every enterprise table. Policies separate customer-owned access from support staff access, then scope staff access through `public.can_access_workspace()` and `public.can_manage_workspace()`. Service-role operations are limited to server code in `lib/db/support.ts` and must never be exposed to the browser.
+
+Widget-facing routes also enforce `workspace_domains` origin checks. A script installed on an unverified host cannot fetch widget config or post chat messages for that workspace.
 
 ## Secrets
 
@@ -24,8 +27,10 @@ Required production secrets:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - one provider key for `LLM_PROVIDER`
 - optional `SENTRY_DSN`
+- optional `RESEND_API_KEY`
+- optional `NEXT_PUBLIC_POSTHOG_KEY`
 
-`SUPABASE_SERVICE_ROLE_KEY`, provider keys, and Sentry auth tokens belong only in server-side deployment env vars.
+`SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, and Sentry auth tokens belong only in server-side deployment env vars.
 
 ## AI Safety Boundaries
 
@@ -34,7 +39,8 @@ Required production secrets:
 - Prompts instruct the model to answer from retrieved approved context and escalate low-confidence cases.
 - Risk flags cover low confidence, angry sentiment, legal/policy, billing/refund, and sensitive data.
 - Every draft and decision writes an audit event.
+- Usage events track chat, approval, knowledge upload, and escalation activity without storing raw secrets.
 
 ## Current Limits
 
-The app creates ticket messages on approval but does not send email or push to an external helpdesk. Add a connector only after final customer-copy review and audit logging succeed.
+The app can send optional escalation email through Resend, but it does not yet sync approved replies into an external helpdesk. Add Zendesk, Intercom, Slack, or CRM connectors only after final customer-copy review and audit logging succeed.

@@ -28,6 +28,79 @@ insert into public.users (id, email, full_name, role) values
   ('01000000-0000-4000-8000-000000000005', 'admin@acmedesk.example', 'Anil Pervaiz', 'admin')
 on conflict (id) do update set email = excluded.email, full_name = excluded.full_name, role = excluded.role;
 
+insert into public.organizations (id, name, slug, plan)
+values ('70000000-0000-4000-8000-000000000001', 'AcmeDesk', 'acmedesk', 'Lite')
+on conflict (id) do update set name = excluded.name, slug = excluded.slug, plan = excluded.plan;
+
+insert into public.workspaces (
+  id,
+  tenant_id,
+  name,
+  slug,
+  bot_name,
+  brand_color,
+  accent_foreground,
+  welcome_message,
+  escalation_email,
+  calendly_url,
+  widget_key,
+  monthly_reply_limit
+) values (
+  '70000000-0000-4000-8000-000000000002',
+  '70000000-0000-4000-8000-000000000001',
+  'AcmeDesk Support',
+  'acmedesk-support',
+  'Pilot',
+  '#10b981',
+  '#ffffff',
+  'Hi, I''m Pilot. Ask me anything about AcmeDesk pricing, integrations, billing, or security.',
+  'support@acmedesk.example',
+  'https://calendly.com/anilpervaiz/15min',
+  'wk_demo_acmedesk',
+  1000
+)
+on conflict (id) do update set
+  name = excluded.name,
+  bot_name = excluded.bot_name,
+  brand_color = excluded.brand_color,
+  welcome_message = excluded.welcome_message,
+  escalation_email = excluded.escalation_email,
+  calendly_url = excluded.calendly_url,
+  widget_key = excluded.widget_key,
+  updated_at = now();
+
+insert into public.memberships (tenant_id, workspace_id, user_id, role)
+select
+  '70000000-0000-4000-8000-000000000001',
+  '70000000-0000-4000-8000-000000000002',
+  id,
+  case
+    when role = 'admin' then 'owner'::public.membership_role
+    when role = 'support_manager' then 'manager'::public.membership_role
+    when role = 'support_agent' then 'agent'::public.membership_role
+    else 'viewer'::public.membership_role
+  end
+from public.users
+where role <> 'customer'
+on conflict (workspace_id, user_id) do update set role = excluded.role;
+
+insert into public.workspace_domains (tenant_id, workspace_id, domain, status) values
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', 'localhost', 'verified'),
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', '127.0.0.1', 'verified'),
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', 'supportpilot-demo.vercel.app', 'verified')
+on conflict (workspace_id, domain) do update set status = excluded.status;
+
+insert into public.widget_configs (tenant_id, workspace_id, launcher_label, position, show_branding, privacy_text)
+values (
+  '70000000-0000-4000-8000-000000000001',
+  '70000000-0000-4000-8000-000000000002',
+  'Chat with Pilot',
+  'bottom-right',
+  true,
+  'Answers are generated from approved AcmeDesk support sources and may be escalated to a human.'
+)
+on conflict (workspace_id) do update set launcher_label = excluded.launcher_label, position = excluded.position, show_branding = excluded.show_branding, privacy_text = excluded.privacy_text, updated_at = now();
+
 insert into public.customers (id, name, email, company, plan, health_score, metadata) values
   ('00000000-0000-4000-8000-000000000001', 'Maya Patel', 'maya@northstar.example', 'Northstar Labs', 'Business', 82, '{"seats":"38","region":"US"}'),
   ('00000000-0000-4000-8000-000000000002', 'Jon Bell', 'jon@riverline.example', 'Riverline Finance', 'Enterprise', 64, '{"seats":"140","region":"EU"}'),
@@ -49,7 +122,7 @@ insert into public.knowledge_docs (id, title, source_type, approved, content) va
   ('10000000-0000-4000-8000-000000000010', 'API Rate Limits', 'product_doc', true, 'API keys are created from Settings > API. 429 errors mean the integration exceeded 1,000 requests per minute.')
 on conflict (id) do update set title = excluded.title, source_type = excluded.source_type, approved = excluded.approved, content = excluded.content;
 
-insert into public.document_chunks (id, doc_id, source, heading, content, chunk_index, approved, embedding)
+insert into public.document_chunks (id, doc_id, source, heading, content, chunk_index, approved, embedding_model, embedding_version, content_hash, embedding)
 select
   ('11000000-0000-4000-8000-' || lpad(slot::text, 12, '0'))::uuid,
   id,
@@ -58,6 +131,9 @@ select
   content,
   slot,
   true,
+  'deterministic-hash',
+  'v1',
+  md5(content),
   public.seed_embedding(slot)
 from (
   values
@@ -72,7 +148,13 @@ from (
     (9, '10000000-0000-4000-8000-000000000009'::uuid, 'Data Processing Agreement', 'A signed DPA is available to Business and Enterprise customers after legal review and account verification.'),
     (10, '10000000-0000-4000-8000-000000000010'::uuid, 'API Rate Limits', 'API keys are created from Settings > API. 429 errors mean the integration exceeded 1,000 requests per minute.')
 ) as docs(slot, id, title, content)
-on conflict (id) do update set content = excluded.content, approved = excluded.approved, embedding = excluded.embedding;
+on conflict (id) do update set
+  content = excluded.content,
+  approved = excluded.approved,
+  embedding_model = excluded.embedding_model,
+  embedding_version = excluded.embedding_version,
+  content_hash = excluded.content_hash,
+  embedding = excluded.embedding;
 
 insert into public.tickets (id, subject, status, priority, risk_level, customer_id, assigned_agent_id, escalation_reason, sentiment, tags, created_at, updated_at) values
   ('20000000-0000-4000-8000-000000000001', 'SOC 2 report request', 'new', 'medium', 'medium', '00000000-0000-4000-8000-000000000001', '01000000-0000-4000-8000-000000000002', null, 'calm', array['soc','security'], now() - interval '40 hours', now() - interval '33 hours'),
@@ -173,3 +255,34 @@ insert into public.escalation_rules (id, name, trigger, risk_level, requires_man
   ('60000000-0000-4000-8000-000000000004', 'Billing/refund risk', 'refund|billing|invoice|charge', 'high', true),
   ('60000000-0000-4000-8000-000000000005', 'Sensitive data exposure', 'password|token|secret|api key', 'critical', true)
 on conflict (id) do update set trigger = excluded.trigger, risk_level = excluded.risk_level, requires_manager_approval = excluded.requires_manager_approval;
+
+insert into public.approval_policies (
+  tenant_id,
+  workspace_id,
+  risk_category,
+  min_confidence_to_auto_send,
+  require_approval,
+  allowed_actions,
+  approver_role
+) values
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', 'low_confidence', 0.72, true, array['draft_reply','email_escalation'], 'manager'),
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', 'billing_or_refund', 0.90, true, array['draft_reply'], 'manager'),
+  ('70000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000002', 'legal_or_policy', 0.95, true, array['draft_reply'], 'manager')
+on conflict (workspace_id, risk_category) do update set
+  min_confidence_to_auto_send = excluded.min_confidence_to_auto_send,
+  require_approval = excluded.require_approval,
+  allowed_actions = excluded.allowed_actions,
+  approver_role = excluded.approver_role,
+  active = true;
+
+insert into public.usage_events (id, tenant_id, workspace_id, event_type, quantity, metadata, created_at)
+select
+  ('65000000-0000-4000-8000-' || lpad(row_number() over (order by id)::text, 12, '0'))::uuid,
+  tenant_id,
+  workspace_id,
+  case when approval_status = 'escalated' then 'chat.escalated'::public.usage_event_type else 'chat.answered'::public.usage_event_type end,
+  1,
+  jsonb_build_object('aiRunId', id, 'model', model, 'confidence', confidence),
+  created_at
+from public.ai_runs
+on conflict (id) do update set event_type = excluded.event_type, metadata = excluded.metadata, created_at = excluded.created_at;

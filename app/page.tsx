@@ -6,8 +6,8 @@ import { WidgetBubble } from "@/components/ui/widget-demo";
 import { theme } from "@/lib/theme";
 import { FileText, Sparkles, Monitor, Calendar } from "lucide-react";
 
-const EMBED_SNIPPET = `<script async src="https://supportpilot-demo.vercel.app/widget.js" data-accent="${theme.colors.accent}"></script>`;
-const IFRAME_SNIPPET = `<iframe src="https://supportpilot-demo.vercel.app/embed" width="400" height="620" style="border:0;border-radius:18px"></iframe>`;
+const EMBED_SNIPPET = `<script async src="https://supportpilot-demo.vercel.app/widget.js" data-workspace="wk_demo_acmedesk" data-accent="${theme.colors.accent}"></script>`;
+const IFRAME_SNIPPET = `<iframe src="https://supportpilot-demo.vercel.app/embed?workspace=wk_demo_acmedesk" width="400" height="620" style="border:0;border-radius:18px"></iframe>`;
 
 // ─── Static hero chat preview ─────────────────────────────────────────────────
 

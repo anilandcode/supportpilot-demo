@@ -7,20 +7,22 @@
 - Add scheduled eval runs for groundedness, citations, escalation correctness, and response latency.
 - Add row-level automated tests against a Supabase branch database.
 - Add deployment health checks for `/api/stats`, `/api/chat`, and draft/decision routes.
+- Add durable file retention in Supabase Storage for original uploaded sources.
+- Add rate-limit persistence by workspace instead of in-memory demo limits.
 
 ## Multi-Tenant Support
 
-- Add `organizations` and `memberships`.
-- Scope customers, tickets, docs, chunks, AI runs, feedback, audit logs, and rules by organization.
+- Add workspace creation and invite flows beyond the seeded demo workspace.
+- Add tenant-scoped billing and plan enforcement.
 - Add organization-level provider settings and model policies.
-- Add custom domains and per-client widget keys.
+- Add custom domain verification automation rather than manual verified-domain rows.
 
 ## Helpdesk Integrations
 
 - Zendesk and Intercom ticket sync.
 - Slack escalation notifications.
 - HubSpot or Salesforce customer metadata sync.
-- Email sending after approved messages.
+- Send approved replies through connected email/helpdesk channels.
 
 ## Governance
 

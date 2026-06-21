@@ -1,11 +1,12 @@
 import { listDocumentChunks } from "@/lib/db/support";
+import { DEMO_TENANT_ID, DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import type { DocumentChunk } from "@/lib/enterprise/types";
 import { createDeterministicEmbedding } from "@/lib/rag/embeddings";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const STOP_WORDS = new Set(["the", "and", "for", "with", "that", "this", "from", "your", "you", "are", "can", "does"]);
 
-export async function retrieveEnterpriseChunks(query: string, k = 5): Promise<DocumentChunk[]> {
+export async function retrieveEnterpriseChunks(query: string, k = 5, workspaceId = DEMO_WORKSPACE_ID): Promise<DocumentChunk[]> {
   const supabase = createSupabaseAdminClient();
   if (supabase) {
     const { data, error } = await supabase.rpc("match_document_chunks", {
@@ -17,18 +18,23 @@ export async function retrieveEnterpriseChunks(query: string, k = 5): Promise<Do
     if (!error && data?.length) {
       return data.map((row: any) => ({
         id: row.id,
+        tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+        workspaceId: row.workspace_id ?? workspaceId,
         docId: row.doc_id,
         source: row.source,
         heading: row.heading,
         content: row.content,
         chunkIndex: row.chunk_index,
         approved: true,
+        embeddingModel: row.embedding_model ?? "deterministic-hash",
+        embeddingVersion: row.embedding_version ?? "v1",
+        contentHash: row.content_hash ?? row.id,
         score: row.similarity,
       }));
     }
   }
 
-  const chunks = await listDocumentChunks();
+  const chunks = await listDocumentChunks(workspaceId);
   return scoreChunks(query, chunks).slice(0, k);
 }
 

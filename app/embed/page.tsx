@@ -7,7 +7,14 @@ export const metadata: Metadata = {
   robots: "noindex, nofollow",
 };
 
-export default function EmbedPage() {
+type EmbedPageProps = {
+  searchParams: Promise<{ workspace?: string; workspaceId?: string }>;
+};
+
+export default async function EmbedPage({ searchParams }: EmbedPageProps) {
+  const params = await searchParams;
+  const workspaceId = params.workspace || params.workspaceId;
+
   return (
     <>
       {/*
@@ -23,7 +30,7 @@ export default function EmbedPage() {
         }
       `}</style>
       <main style={{ width: "100vw", height: "100vh" }}>
-        <ChatWindow />
+        <ChatWindow workspaceId={workspaceId} />
       </main>
     </>
   );

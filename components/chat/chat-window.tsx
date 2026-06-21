@@ -13,17 +13,24 @@ import { theme } from "@/lib/theme";
 import type { ChatMetadata } from "@/lib/types";
 
 const CLIENT_MESSAGE_LIMIT = 8;
-const transport = new DefaultChatTransport<UIMessage<ChatMetadata>>({ api: "/api/chat" });
 
 type ChatWindowProps = {
   onClose?: () => void;
+  workspaceId?: string;
 };
 
 function getTextContent(msg: UIMessage): string {
   return msg.parts.filter(isTextUIPart).map((p) => p.text).join("");
 }
 
-export function ChatWindow({ onClose }: ChatWindowProps = {}) {
+export function ChatWindow({ onClose, workspaceId }: ChatWindowProps = {}) {
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport<UIMessage<ChatMetadata>>({
+        api: workspaceId ? `/api/chat?workspace=${encodeURIComponent(workspaceId)}` : "/api/chat",
+      }),
+    [workspaceId],
+  );
   const { messages, status, sendMessage, clearError, error } = useChat<UIMessage<ChatMetadata>>({
     transport,
   });

@@ -1,14 +1,18 @@
 import type { DocumentChunk } from "@/lib/enterprise/types";
 
 const MAX_CHARS = 900;
+export type PendingDocumentChunk = Omit<
+  DocumentChunk,
+  "id" | "tenantId" | "workspaceId" | "docId" | "approved" | "embeddingModel" | "embeddingVersion" | "contentHash"
+>;
 
 export function chunkDocument(input: {
   docId: string;
   title: string;
   content: string;
-}): Omit<DocumentChunk, "id" | "docId" | "approved">[] {
+}): PendingDocumentChunk[] {
   const sections = splitSections(input.content);
-  const chunks: Omit<DocumentChunk, "id" | "docId" | "approved">[] = [];
+  const chunks: PendingDocumentChunk[] = [];
 
   for (const section of sections) {
     const paragraphs = section.content.split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);

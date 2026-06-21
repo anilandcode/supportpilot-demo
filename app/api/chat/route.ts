@@ -6,8 +6,9 @@ import {
   streamText,
   type UIMessage,
 } from "ai";
+import { captureProductEvent } from "@/lib/analytics/events";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
-import { appendAuditLog, createAiRun } from "@/lib/db/support";
+import { appendAuditLog, createAiRun, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
 import { buildSystemPrompt } from "@/lib/system-prompt";
@@ -36,6 +37,8 @@ function toCitations(chunks: Chunk[]): Citation[] {
 }
 
 async function logChatRun(input: {
+  tenantId: string;
+  workspaceId: string;
   question: string;
   response: string;
   answered: boolean;
@@ -45,6 +48,8 @@ async function logChatRun(input: {
   latencyMs?: number;
 }) {
   const run = await createAiRun({
+    tenantId: input.tenantId,
+    workspaceId: input.workspaceId,
     ticketId: null,
     userId: null,
     prompt: input.question,
@@ -62,7 +67,19 @@ async function logChatRun(input: {
     rationale: input.answered ? "Answered from retrieved approved support knowledge." : "Could not answer confidently from retrieved knowledge.",
   });
 
+  await recordUsageEvent({
+    workspaceId: input.workspaceId,
+    eventType: input.escalated ? "chat.escalated" : "chat.answered",
+    metadata: { aiRunId: run.id, answered: input.answered, rateLimited: input.rateLimited },
+  });
+  await captureProductEvent({
+    workspaceId: input.workspaceId,
+    event: input.escalated ? "chat.escalated" : "chat.answered",
+    properties: { ai_run_id: run.id, answered: input.answered, rate_limited: input.rateLimited },
+  });
   await appendAuditLog({
+    tenantId: input.tenantId,
+    workspaceId: input.workspaceId,
     ticketId: null,
     userId: null,
     action: "chat.completed",
@@ -116,6 +133,20 @@ function localAnswer(question: string, chunks: Chunk[], citations: Citation[]): 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const url = new URL(req.url);
+    const requestedWorkspace =
+      body.workspaceId ||
+      body.workspace ||
+      url.searchParams.get("workspaceId") ||
+      url.searchParams.get("workspace") ||
+      req.headers.get("x-supportpilot-workspace") ||
+      undefined;
+    const workspace = await getWorkspace(requestedWorkspace);
+    const originAllowed = await isOriginAllowed(workspace.id, req.headers.get("origin"));
+    if (!originAllowed) {
+      return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
+    }
+
     const messages = body.messages as UIMessage[] | undefined;
 
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -131,12 +162,20 @@ export async function POST(req: Request) {
       });
     }
 
+    await recordUsageEvent({
+      workspaceId: workspace.id,
+      eventType: "chat.message",
+      metadata: { origin: req.headers.get("origin") },
+    });
+
     const rate = checkRateLimit(getClientKey(req));
     if (!rate.allowed) {
       const retrySeconds = Math.max(Math.ceil((rate.resetAt - Date.now()) / 1000), 1);
       const text = `You have hit the demo rate limit. Try again in about ${retrySeconds} seconds, or ${theme.escalation.label.toLowerCase()} for help.`;
       const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;
       await logChatRun({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
         question,
         response: text,
         answered: false,
@@ -152,6 +191,8 @@ export async function POST(req: Request) {
         "Please do not share passwords, payment details, tokens, or other sensitive credentials here. If you already shared one, rotate it and contact a human for account help.";
       const metadata = { tier: theme.tier, escalated: true } satisfies ChatMetadata;
       await logChatRun({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
         question,
         response: text,
         answered: false,
@@ -162,7 +203,7 @@ export async function POST(req: Request) {
       return assistantResponse(text, metadata);
     }
 
-    const chunks = await getRetriever().retrieve(question, 5);
+    const chunks = await getRetriever(workspace.id).retrieve(question, 5);
     const citations = toCitations(chunks);
     const usefulContext = hasUsefulContext(chunks);
     const metadata = {
@@ -175,6 +216,8 @@ export async function POST(req: Request) {
     if (!readiness.ready) {
       const response = localAnswer(question, chunks, citations);
       await logChatRun({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
         question,
         response,
         answered: usefulContext,
@@ -194,6 +237,8 @@ export async function POST(req: Request) {
       temperature: 0.35,
       onFinish: async ({ text }) => {
         await logChatRun({
+          tenantId: workspace.tenantId,
+          workspaceId: workspace.id,
           question,
           response: text,
           answered: usefulContext,

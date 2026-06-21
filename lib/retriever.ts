@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import { DEFAULT_KNOWLEDGE_FILES, type KnowledgeFile } from "@/lib/knowledge";
 import { retrieveEnterpriseChunks } from "@/lib/rag/retrieval";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
@@ -150,9 +151,11 @@ export class LiteRetriever implements Retriever {
 export class EnterpriseRetriever implements Retriever {
   private readonly fallback = new LiteRetriever();
 
+  constructor(private readonly workspaceId = DEMO_WORKSPACE_ID) {}
+
   async retrieve(query: string, k = 5): Promise<Chunk[]> {
     if (!hasSupabaseAdminEnv()) {
-      const enterpriseChunks = await retrieveEnterpriseChunks(query, k);
+      const enterpriseChunks = await retrieveEnterpriseChunks(query, k, this.workspaceId);
       if (enterpriseChunks.length > 0) {
         return enterpriseChunks.map((chunk) => ({
           text: chunk.content,
@@ -163,7 +166,7 @@ export class EnterpriseRetriever implements Retriever {
       return this.fallback.retrieve(query, k);
     }
 
-    const enterpriseChunks = await retrieveEnterpriseChunks(query, k);
+    const enterpriseChunks = await retrieveEnterpriseChunks(query, k, this.workspaceId);
     return enterpriseChunks.map((chunk) => ({
       text: chunk.content,
       source: `${chunk.source}#${chunk.heading}`,
@@ -172,9 +175,9 @@ export class EnterpriseRetriever implements Retriever {
   }
 }
 
-export function getRetriever(): Retriever {
+export function getRetriever(workspaceId = DEMO_WORKSPACE_ID): Retriever {
   const tier = theme.tier as "lite" | "enterprise";
-  return tier === "enterprise" ? new EnterpriseRetriever() : new LiteRetriever();
+  return tier === "enterprise" ? new EnterpriseRetriever(workspaceId) : new LiteRetriever();
 }
 
 export function formatContext(chunks: Chunk[]): string {

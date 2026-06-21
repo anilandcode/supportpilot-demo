@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, CheckSquare, Database, Inbox, LayoutDashboard, ShieldCheck } from "lucide-react";
+import { BarChart3, CheckSquare, Database, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
 import { getCurrentEnterpriseUser } from "@/lib/auth/roles";
 import { theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/admin/knowledge", label: "Knowledge", icon: Database },
   { href: "/admin/approvals", label: "Approvals", icon: CheckSquare },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 type AdminShellProps = {

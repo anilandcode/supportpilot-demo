@@ -13,6 +13,10 @@ npm run test:enterprise
 The script verifies:
 
 - 5 customers
+- 1 organization and 1 workspace
+- at least 4 workspace memberships
+- at least 3 verified domains
+- widget config
 - 20 tickets
 - 10 knowledge articles
 - at least 5 policy docs
@@ -21,6 +25,10 @@ The script verifies:
 - 10 AI draft replies
 - audit logs
 - escalation rules
+- approval policies
+- usage events
+- tenant/workspace fields on tenant-owned demo rows
+- chunk embedding metadata
 - risky drafts routed to review
 
 ## Manual Evaluation Matrix
@@ -33,6 +41,8 @@ The script verifies:
 | Human approval | AI drafts do not create customer messages until approved or edited by staff. |
 | Acceptance rate | `/admin/analytics` reflects approved and edited AI runs as accepted. |
 | Missing topics | Low-confidence runs appear as missing-topic candidates. |
+| Workspace scoping | Widget config, chat logging, knowledge retrieval, and analytics resolve the active workspace key. |
+| Origin gating | Unverified widget origins receive a 403 from widget config and chat APIs. |
 | Responsive UI | `/admin/tickets`, ticket detail, knowledge, approvals, analytics, and `/portal` fit desktop and mobile widths. |
 
 ## Suggested Live Supabase Test
@@ -42,4 +52,5 @@ The script verifies:
 3. Sign in as `ava@acmedesk.example`, `lena@acmedesk.example`, and `admin@acmedesk.example` using the seed password.
 4. Draft normal, refund, billing, legal, angry, and low-confidence tickets.
 5. Approve, edit, reject, and escalate drafts.
-6. Confirm `ai_runs`, `ticket_messages`, and `audit_logs` changed as expected.
+6. Open `/admin/settings`, add a verified domain, and confirm the widget snippet includes the workspace key.
+7. Confirm `ai_runs`, `ticket_messages`, `audit_logs`, and `usage_events` changed as expected.

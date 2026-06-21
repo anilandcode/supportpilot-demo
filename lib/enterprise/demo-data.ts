@@ -1,14 +1,21 @@
 import type {
   AIFeedback,
   AIRun,
+  ApprovalPolicy,
   AuditLog,
   Customer,
   DocumentChunk,
   EnterpriseUser,
   EscalationRule,
   KnowledgeDoc,
+  Membership,
+  Organization,
   Ticket,
   TicketMessage,
+  UsageEvent,
+  WidgetConfig,
+  Workspace,
+  WorkspaceDomain,
 } from "@/lib/enterprise/types";
 
 const now = new Date("2026-06-18T09:00:00.000Z");
@@ -16,6 +23,49 @@ const now = new Date("2026-06-18T09:00:00.000Z");
 function iso(minutesAgo: number) {
   return new Date(now.getTime() - minutesAgo * 60_000).toISOString();
 }
+
+export const DEMO_TENANT_ID = "70000000-0000-4000-8000-000000000001";
+export const DEMO_WORKSPACE_ID = "70000000-0000-4000-8000-000000000002";
+const DEFAULT_EMBEDDING_MODEL = "deterministic-hash";
+const DEFAULT_EMBEDDING_VERSION = "v1";
+
+function contentHash(content: string) {
+  let hash = 0;
+  for (let index = 0; index < content.length; index++) {
+    hash = (hash << 5) - hash + content.charCodeAt(index);
+    hash |= 0;
+  }
+  return `demo_${Math.abs(hash).toString(36)}`;
+}
+
+export const demoOrganizations: Organization[] = [
+  {
+    id: DEMO_TENANT_ID,
+    name: "AcmeDesk",
+    slug: "acmedesk",
+    plan: "Lite",
+    createdAt: iso(7200),
+  },
+];
+
+export const demoWorkspaces: Workspace[] = [
+  {
+    id: DEMO_WORKSPACE_ID,
+    tenantId: DEMO_TENANT_ID,
+    name: "AcmeDesk Support",
+    slug: "acmedesk-support",
+    botName: "Pilot",
+    brandColor: "#10b981",
+    accentForeground: "#ffffff",
+    welcomeMessage: "Hi, I'm Pilot. Ask me anything about AcmeDesk pricing, integrations, billing, or security.",
+    escalationEmail: "support@acmedesk.example",
+    calendlyUrl: "https://calendly.com/anilpervaiz/15min",
+    widgetKey: "wk_demo_acmedesk",
+    monthlyReplyLimit: 1000,
+    createdAt: iso(7200),
+    updatedAt: iso(120),
+  },
+];
 
 export const demoUsers: EnterpriseUser[] = [
   { id: "usr_customer_maya", email: "maya@northstar.example", fullName: "Maya Patel", role: "customer" },
@@ -25,12 +75,42 @@ export const demoUsers: EnterpriseUser[] = [
   { id: "usr_admin_anil", email: "admin@acmedesk.example", fullName: "Anil Pervaiz", role: "admin" },
 ];
 
+export const demoMemberships: Membership[] = demoUsers
+  .filter((user) => user.role !== "customer")
+  .map((user) => ({
+    id: `mbr_${user.id}`,
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    userId: user.id,
+    role: user.role === "admin" ? "owner" : user.role === "support_manager" ? "manager" : "agent",
+  }));
+
+export const demoDomains: WorkspaceDomain[] = [
+  { id: "dom_localhost", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "localhost", status: "verified", createdAt: iso(7100) },
+  { id: "dom_127", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "127.0.0.1", status: "verified", createdAt: iso(7100) },
+  { id: "dom_demo", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "supportpilot-demo.vercel.app", status: "verified", createdAt: iso(7000) },
+];
+
+export const demoWidgetConfigs: WidgetConfig[] = [
+  {
+    id: "wcfg_acmedesk",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    launcherLabel: "Chat with Pilot",
+    position: "bottom-right",
+    showBranding: true,
+    privacyText: "Answers are generated from approved AcmeDesk support sources and may be escalated to a human.",
+    createdAt: iso(7100),
+    updatedAt: iso(120),
+  },
+];
+
 export const demoCustomers: Customer[] = [
-  { id: "cus_northstar", name: "Maya Patel", email: "maya@northstar.example", company: "Northstar Labs", plan: "Business", healthScore: 82, metadata: { seats: "38", region: "US" } },
-  { id: "cus_riverline", name: "Jon Bell", email: "jon@riverline.example", company: "Riverline Finance", plan: "Enterprise", healthScore: 64, metadata: { seats: "140", region: "EU" } },
-  { id: "cus_halo", name: "Priya Shah", email: "priya@halo.example", company: "Halo Health", plan: "Pro", healthScore: 76, metadata: { seats: "22", region: "US" } },
-  { id: "cus_vector", name: "Chris Wong", email: "chris@vector.example", company: "Vector Ops", plan: "Free", healthScore: 58, metadata: { seats: "4", region: "APAC" } },
-  { id: "cus_evergreen", name: "Nora Smith", email: "nora@evergreen.example", company: "Evergreen Retail", plan: "Business", healthScore: 91, metadata: { seats: "55", region: "US" } },
+  { id: "cus_northstar", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Maya Patel", email: "maya@northstar.example", company: "Northstar Labs", plan: "Business", healthScore: 82, metadata: { seats: "38", region: "US" } },
+  { id: "cus_riverline", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Jon Bell", email: "jon@riverline.example", company: "Riverline Finance", plan: "Enterprise", healthScore: 64, metadata: { seats: "140", region: "EU" } },
+  { id: "cus_halo", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Priya Shah", email: "priya@halo.example", company: "Halo Health", plan: "Pro", healthScore: 76, metadata: { seats: "22", region: "US" } },
+  { id: "cus_vector", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Chris Wong", email: "chris@vector.example", company: "Vector Ops", plan: "Free", healthScore: 58, metadata: { seats: "4", region: "APAC" } },
+  { id: "cus_evergreen", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Nora Smith", email: "nora@evergreen.example", company: "Evergreen Retail", plan: "Business", healthScore: 91, metadata: { seats: "55", region: "US" } },
 ];
 
 const ticketSubjects = [
@@ -58,6 +138,8 @@ const ticketSubjects = [
 
 export const demoTickets: Ticket[] = ticketSubjects.map((ticket, index) => ({
   id: ticket[0],
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   subject: ticket[1],
   status: ticket[2],
   priority: ticket[3],
@@ -74,6 +156,8 @@ export const demoTickets: Ticket[] = ticketSubjects.map((ticket, index) => ({
 export const demoMessages: TicketMessage[] = demoTickets.flatMap((ticket, index) => [
   {
     id: `${ticket.id}_msg_customer`,
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
     ticketId: ticket.id,
     sender: "customer",
     authorId: null,
@@ -82,6 +166,8 @@ export const demoMessages: TicketMessage[] = demoTickets.flatMap((ticket, index)
   },
   {
     id: `${ticket.id}_msg_agent_note`,
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
     ticketId: ticket.id,
     sender: "agent",
     authorId: ticket.assignedAgentId,
@@ -105,8 +191,11 @@ const docBodies = [
 
 export const demoKnowledgeDocs: KnowledgeDoc[] = docBodies.map((doc, index) => ({
   id: doc[0],
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   title: doc[1],
   sourceType: doc[2],
+  sourceVersion: 1,
   approved: true,
   url: null,
   content: doc[3],
@@ -115,24 +204,37 @@ export const demoKnowledgeDocs: KnowledgeDoc[] = docBodies.map((doc, index) => (
 
 export const demoDocumentChunks: DocumentChunk[] = demoKnowledgeDocs.map((doc, index) => ({
   id: `${doc.id}_chunk_1`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   docId: doc.id,
   source: `${doc.title}`,
   heading: doc.title,
   content: doc.content,
   chunkIndex: index,
   approved: doc.approved,
+  embeddingModel: DEFAULT_EMBEDDING_MODEL,
+  embeddingVersion: DEFAULT_EMBEDDING_VERSION,
+  contentHash: contentHash(doc.content),
 }));
 
 export const demoEscalationRules: EscalationRule[] = [
-  { id: "rule_low_confidence", name: "Low confidence", trigger: "confidence < 0.72", riskLevel: "medium", requiresManagerApproval: false, active: true },
-  { id: "rule_angry", name: "Angry sentiment", trigger: "sentiment = angry", riskLevel: "high", requiresManagerApproval: true, active: true },
-  { id: "rule_legal", name: "Legal or policy risk", trigger: "legal|policy|DPA|GDPR", riskLevel: "critical", requiresManagerApproval: true, active: true },
-  { id: "rule_billing", name: "Billing/refund risk", trigger: "refund|billing|invoice|charge", riskLevel: "high", requiresManagerApproval: true, active: true },
-  { id: "rule_sensitive", name: "Sensitive data exposure", trigger: "password|token|secret|api key", riskLevel: "critical", requiresManagerApproval: true, active: true },
+  { id: "rule_low_confidence", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Low confidence", trigger: "confidence < 0.72", riskLevel: "medium", requiresManagerApproval: false, active: true },
+  { id: "rule_angry", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Angry sentiment", trigger: "sentiment = angry", riskLevel: "high", requiresManagerApproval: true, active: true },
+  { id: "rule_legal", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Legal or policy risk", trigger: "legal|policy|DPA|GDPR", riskLevel: "critical", requiresManagerApproval: true, active: true },
+  { id: "rule_billing", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Billing/refund risk", trigger: "refund|billing|invoice|charge", riskLevel: "high", requiresManagerApproval: true, active: true },
+  { id: "rule_sensitive", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "Sensitive data exposure", trigger: "password|token|secret|api key", riskLevel: "critical", requiresManagerApproval: true, active: true },
+];
+
+export const demoApprovalPolicies: ApprovalPolicy[] = [
+  { id: "pol_low_confidence", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, riskCategory: "low_confidence", minConfidenceToAutoSend: 0.72, requireApproval: true, allowedActions: ["draft_reply", "email_escalation"], approverRole: "manager", active: true },
+  { id: "pol_billing", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, riskCategory: "billing_or_refund", minConfidenceToAutoSend: 0.9, requireApproval: true, allowedActions: ["draft_reply"], approverRole: "manager", active: true },
+  { id: "pol_legal", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, riskCategory: "legal_or_policy", minConfidenceToAutoSend: 0.95, requireApproval: true, allowedActions: ["draft_reply"], approverRole: "manager", active: true },
 ];
 
 export const demoAiRuns: AIRun[] = demoTickets.slice(0, 10).map((ticket, index) => ({
   id: `airun_${String(index + 1).padStart(2, "0")}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   ticketId: ticket.id,
   userId: ticket.assignedAgentId,
   prompt: `Draft a support reply for ${ticket.subject}`,
@@ -150,6 +252,8 @@ export const demoAiRuns: AIRun[] = demoTickets.slice(0, 10).map((ticket, index) 
 
 export const demoFeedback: AIFeedback[] = demoAiRuns.slice(0, 6).map((run, index) => ({
   id: `fb_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   aiRunId: run.id,
   messageId: null,
   userId: run.userId,
@@ -159,9 +263,21 @@ export const demoFeedback: AIFeedback[] = demoAiRuns.slice(0, 6).map((run, index
 
 export const demoAuditLogs: AuditLog[] = demoAiRuns.map((run, index) => ({
   id: `audit_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
   ticketId: run.ticketId,
   userId: run.userId,
   action: `ai_run.${run.approvalStatus}`,
   details: { confidence: run.confidence, riskFlags: run.riskFlags, model: run.model },
   createdAt: iso(400 - index * 18),
+}));
+
+export const demoUsageEvents: UsageEvent[] = demoAiRuns.map((run, index) => ({
+  id: `usage_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  eventType: run.approvalStatus === "escalated" ? "chat.escalated" : "chat.answered",
+  quantity: 1,
+  metadata: { aiRunId: run.id, model: run.model, confidence: run.confidence },
+  createdAt: iso(300 - index * 12),
 }));

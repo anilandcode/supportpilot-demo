@@ -16,7 +16,7 @@ export default function WidgetTestPage() {
           This page loads the same async script that a client would paste into Webflow, WordPress, Shopify, or plain HTML.
         </p>
       </div>
-      <script async src="/widget.js" data-accent={theme.colors.accent} />
+      <script async src="/widget.js" data-workspace="wk_demo_acmedesk" data-accent={theme.colors.accent} />
     </main>
   );
 }

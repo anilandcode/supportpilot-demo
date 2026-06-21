@@ -8,6 +8,8 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Tailwind CSS v4
 - Vercel AI SDK v6 with Google, OpenAI, or Anthropic providers
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
+- Workspace settings, verified widget domains, usage events, and approval policies
+- Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
 
@@ -34,15 +36,20 @@ The app works without provider or Supabase credentials by using deterministic se
 - `/admin/knowledge` - doc upload, ingestion status, approved source list
 - `/admin/approvals` - high-risk draft approval queue
 - `/admin/analytics` - resolution, acceptance, response, escalation, and missing-topic metrics
+- `/admin/settings` - workspace brand, escalation email, widget key, verified domains, approval policies
 
 ## API
 
-- `POST /api/chat` - embeddable/customer chat, with Lite fallback and enterprise AI run/audit logging
-- `GET /api/stats` - dashboard metrics from the enterprise service layer
+- `POST /api/chat` - embeddable/customer chat, with Lite fallback, workspace origin checks, and enterprise AI run/audit logging
+- `GET /api/widget/config` - public widget configuration scoped by workspace key and verified origin
+- `GET /api/stats` - dashboard metrics from the enterprise service layer, optionally scoped by `workspace`
 - `POST /api/feedback` - answer feedback logging
-- `POST /api/knowledge/upload` - upload `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
+- `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
 - `POST /api/tickets/[ticketId]/draft` - create AI draft reply with citations, confidence, rationale, risk flags, and `ai_run`
 - `PATCH /api/ai-runs/[aiRunId]/decision` - approve, edit, reject, or escalate drafts with audit logs
+- `PATCH /api/workspaces/[workspaceId]/settings` - update workspace identity, brand, welcome copy, and escalation routing
+- `POST /api/workspaces/[workspaceId]/domains` - add a verified widget origin
+- `POST /api/escalations/email` - optional Resend-backed escalation email with audit and usage logging
 
 ## Enterprise Env
 
@@ -64,11 +71,23 @@ NEXT_PUBLIC_SENTRY_DSN=...
 SENTRY_ORG=...
 SENTRY_PROJECT=...
 SENTRY_AUTH_TOKEN=...
+
+NEXT_PUBLIC_APP_URL=...
+RESEND_API_KEY=...
+ESCALATION_FROM_EMAIL=...
+NEXT_PUBLIC_POSTHOG_KEY=...
+NEXT_PUBLIC_POSTHOG_HOST=...
 ```
 
 ## Supabase
 
-Apply `supabase/migrations/001_enterprise_supportpilot.sql`, then run `supabase/seed.sql`. The seed includes 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, and escalation rules.
+Apply `supabase/migrations/001_enterprise_supportpilot.sql` and `supabase/migrations/002_light_mvp_productization.sql`, then run `supabase/seed.sql`. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, and usage events.
+
+Default workspace key:
+
+```text
+wk_demo_acmedesk
+```
 
 Seed staff password:
 
@@ -90,6 +109,7 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 ## Docs
 
 - `ENTERPRISE_AUDIT.md` - requirement status and evidence
+- `DESIGN.md` - product UX and design system decisions
 - `ARCHITECTURE.md` - Supabase, RAG, workflow, auth, observability
 - `SECURITY.md` - RLS, roles, secrets, AI safety boundaries
 - `EVALS.md` - automated and manual evaluation plan

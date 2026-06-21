@@ -4,9 +4,17 @@
 
   var script = document.currentScript;
   var scriptUrl = script && script.src ? new URL(script.src) : new URL(window.location.href);
+  var workspace = (script && (script.dataset.workspace || script.dataset.workspaceId)) || "";
   var embedUrl = (script && script.dataset.embedUrl) || new URL("/embed", scriptUrl.origin).toString();
   var accent = (script && script.dataset.accent) || "#2563eb";
   var label = (script && script.dataset.label) || "Chat";
+  var position = (script && script.dataset.position) || "bottom-right";
+
+  function withWorkspace(url) {
+    var nextUrl = new URL(url, scriptUrl.origin);
+    if (workspace) nextUrl.searchParams.set("workspace", workspace);
+    return nextUrl.toString();
+  }
 
   function setStyles(node, styles) {
     Object.keys(styles).forEach(function (key) {
@@ -18,14 +26,14 @@
   root.setAttribute("data-supportpilot-widget", "true");
   setStyles(root, {
     position: "fixed",
-    right: "24px",
     bottom: "24px",
     zIndex: "2147483000",
     fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
   });
+  setStyles(root, position === "bottom-left" ? { left: "24px" } : { right: "24px" });
 
   var frame = document.createElement("iframe");
-  frame.src = embedUrl;
+  frame.src = withWorkspace(embedUrl);
   frame.title = label;
   frame.loading = "lazy";
   frame.allow = "clipboard-write";
@@ -72,6 +80,27 @@
 
   root.appendChild(frame);
   root.appendChild(button);
+
+  var configUrl = new URL("/api/widget/config", scriptUrl.origin);
+  if (workspace) configUrl.searchParams.set("workspace", workspace);
+  fetch(configUrl.toString(), { credentials: "omit" })
+    .then(function (response) {
+      if (!response.ok) return null;
+      return response.json();
+    })
+    .then(function (config) {
+      if (!config) return;
+      accent = config.workspace && config.workspace.brandColor ? config.workspace.brandColor : accent;
+      label = config.widgetConfig && config.widgetConfig.launcherLabel ? config.widgetConfig.launcherLabel : label;
+      position = config.widgetConfig && config.widgetConfig.position ? config.widgetConfig.position : position;
+      button.style.background = accent;
+      button.setAttribute("aria-label", "Open " + label);
+      frame.title = label;
+      root.style.left = position === "bottom-left" ? "24px" : "";
+      root.style.right = position === "bottom-left" ? "" : "24px";
+    })
+    .catch(function () {});
+
   document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(root);
   });
