@@ -37,6 +37,19 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
       description="Filter customer tickets by status, priority, assigned agent, and AI risk level."
       active="/admin/tickets"
     >
+      <div className="mb-4 flex flex-wrap gap-2">
+        {[
+          { label: "Needs approval", href: "/admin/tickets?status=escalated" },
+          { label: "Low confidence", href: "/admin/tickets?risk=medium" },
+          { label: "Billing disputes", href: "/admin/tickets?priority=urgent&risk=high" },
+          { label: "Unassigned", href: "/admin/tickets?agent=all&status=new" },
+          { label: "Stale knowledge", href: "/admin/tickets?risk=critical" },
+        ].map((view) => (
+          <a key={view.label} href={view.href} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground-2 hover:border-accent hover:text-accent">
+            {view.label}
+          </a>
+        ))}
+      </div>
       <form className="mb-5 grid gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4">
         <Select name="status" label="Status" value={params.status ?? "all"} options={["all", "new", "in_progress", "escalated", "resolved"]} />
         <Select name="priority" label="Priority" value={params.priority ?? "all"} options={["all", "low", "medium", "high", "urgent"]} />

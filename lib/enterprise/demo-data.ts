@@ -1,5 +1,6 @@
 import type {
   AIFeedback,
+  AgentRun,
   AIRun,
   ApprovalPolicy,
   AuditLog,
@@ -7,14 +8,25 @@ import type {
   DocumentChunk,
   EnterpriseUser,
   EscalationRule,
+  GoldenQuestion,
+  GroundingCheck,
   KnowledgeDoc,
   Membership,
+  MissingKnowledgeTask,
+  ModelRouteLog,
   Organization,
+  PolicyEvaluation,
+  RetentionSetting,
+  SecurityEvent,
   Ticket,
   TicketMessage,
+  ToolCall,
+  ToolDefinition,
   UsageEvent,
   WidgetConfig,
+  WidgetSession,
   Workspace,
+  WorkspaceChecklistItem,
   WorkspaceDomain,
 } from "@/lib/enterprise/types";
 
@@ -55,7 +67,7 @@ export const demoWorkspaces: Workspace[] = [
     name: "AcmeDesk Support",
     slug: "acmedesk-support",
     botName: "Pilot",
-    brandColor: "#10b981",
+    brandColor: "#4f46e5",
     accentForeground: "#ffffff",
     welcomeMessage: "Hi, I'm Pilot. Ask me anything about AcmeDesk pricing, integrations, billing, or security.",
     escalationEmail: "support@acmedesk.example",
@@ -238,10 +250,22 @@ export const demoAiRuns: AIRun[] = demoTickets.slice(0, 10).map((ticket, index) 
   ticketId: ticket.id,
   userId: ticket.assignedAgentId,
   prompt: `Draft a support reply for ${ticket.subject}`,
+  promptHash: `demo_hash_${index + 1}`,
+  redactedPromptPreview: `Draft a support reply for ${ticket.subject}`,
   response: `Draft reply for ${ticket.subject}: answer from approved documentation, cite the matching source, and route risky details for approval.`,
   model: "demo-enterprise",
+  provider: "demo",
+  modelRoute: ticket.riskLevel === "critical" ? "R5" : ticket.riskLevel === "high" ? "R4" : "R2",
   latencyMs: 850 + index * 42,
+  inputTokens: 620 + index * 12,
+  outputTokens: 190 + index * 7,
+  costEstimateUsd: Number((0.002 + index * 0.0002).toFixed(4)),
   confidence: ticket.riskLevel === "critical" ? 0.61 : ticket.riskLevel === "high" ? 0.72 : 0.86,
+  retrievalScore: ticket.riskLevel === "critical" ? 0.55 : 0.84,
+  generationScore: ticket.riskLevel === "critical" ? 0.68 : 0.88,
+  policyRiskScore: ticket.riskLevel === "critical" ? 0.92 : ticket.riskLevel === "high" ? 0.74 : 0.22,
+  groundingStatus: ticket.riskLevel === "critical" ? "needs_review" : "pass",
+  groundingScore: ticket.riskLevel === "critical" ? 0.66 : 0.89,
   approvalStatus: ticket.riskLevel === "critical" || ticket.riskLevel === "high" || ticket.status === "escalated" ? "escalated" : index % 3 === 0 ? "approved" : "draft",
   escalationReason: ticket.escalationReason,
   riskFlags: ticket.escalationReason ? [ticket.escalationReason] : [],
@@ -280,4 +304,192 @@ export const demoUsageEvents: UsageEvent[] = demoAiRuns.map((run, index) => ({
   quantity: 1,
   metadata: { aiRunId: run.id, model: run.model, confidence: run.confidence },
   createdAt: iso(300 - index * 12),
+}));
+
+const checklist: Array<[WorkspaceChecklistItem["step"], string, string, boolean]> = [
+  ["knowledge_source", "Add knowledge source", "Upload or paste the first approved FAQ, policy, or support article.", true],
+  ["embeddings_generated", "Generate source chunks", "Confirm approved sources have searchable chunks and embedding metadata.", true],
+  ["golden_questions", "Pass five golden questions", "Validate citations and safe refusal behavior before launch.", false],
+  ["brand_disclosure", "Configure brand and disclosure", "Set the assistant name, colors, welcome copy, and AI disclosure.", true],
+  ["escalation_owner", "Set escalation owner", "Add the manager or inbox that receives risky conversations.", true],
+  ["domain_verified", "Verify widget domain", "Restrict the widget to approved customer origins.", true],
+  ["widget_installed", "Install widget", "Place the script or iframe on the customer site.", false],
+  ["monitoring_enabled", "Enable monitoring", "Turn on Sentry and product events for launch visibility.", false],
+];
+
+export const demoChecklistItems: WorkspaceChecklistItem[] = checklist.map(([step, label, description, completed], index) => ({
+  id: `check_${step}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  step,
+  label,
+  description,
+  completed,
+  completedAt: completed ? iso(180 - index * 10) : null,
+  createdAt: iso(800 - index * 8),
+}));
+
+export const demoGoldenQuestions: GoldenQuestion[] = [
+  ["gq_pricing", "What does Pro cost?", ["Pricing and Plans"], 0.92, true],
+  ["gq_refund", "Can I get a refund after renewal?", ["Refund Policy"], 0.74, false],
+  ["gq_soc2", "Can you share the SOC 2 report?", ["Security Overview"], 0.88, true],
+  ["gq_dpa", "Can legal get a DPA?", ["Data Processing Agreement"], 0.69, false],
+  ["gq_rate_limit", "Why am I seeing API 429 errors?", ["API Rate Limits"], 0.9, true],
+].map(([id, question, expectedSources, lastScore, passed], index) => ({
+  id: id as string,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  question: question as string,
+  expectedSources: expectedSources as string[],
+  lastScore: lastScore as number,
+  passed: passed as boolean,
+  createdAt: iso(700 - index * 12),
+}));
+
+export const demoMissingKnowledgeTasks: MissingKnowledgeTask[] = [
+  {
+    id: "mk_refund_exceptions",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    topic: "Refund exceptions for renewal disputes",
+    reason: "Low-confidence and billing-risk drafts need clearer manager policy.",
+    sourceAiRunId: "airun_02",
+    status: "open",
+    createdAt: iso(240),
+  },
+  {
+    id: "mk_dpa_process",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    topic: "DPA approval workflow",
+    reason: "Legal requests cite source availability but lack internal handoff steps.",
+    sourceAiRunId: "airun_07",
+    status: "planned",
+    createdAt: iso(220),
+  },
+];
+
+export const demoModelRouteLogs: ModelRouteLog[] = demoAiRuns.map((run, index) => ({
+  id: `route_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  aiRunId: run.id,
+  route: run.modelRoute ?? "R2",
+  task: run.modelRoute === "R5" ? "critical enterprise review" : run.modelRoute === "R4" ? "high-risk draft" : "easy cited answer",
+  provider: run.provider ?? "demo",
+  model: run.model,
+  latencyMs: run.latencyMs,
+  inputTokens: run.inputTokens ?? 0,
+  outputTokens: run.outputTokens ?? 0,
+  estimatedCostUsd: run.costEstimateUsd ?? 0,
+  confidence: run.confidence,
+  reason: run.riskFlags.length > 0 ? run.riskFlags.join(", ") : "Approved-source answer with low policy risk.",
+  createdAt: run.createdAt,
+}));
+
+export const demoSecurityEvents: SecurityEvent[] = [
+  {
+    id: "sec_origin_blocked",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    eventType: "blocked_origin",
+    severity: "medium",
+    origin: "https://unknown.example",
+    ipHash: "demo_ip_hash",
+    details: { reason: "Origin is not on the verified workspace domain list." },
+    createdAt: iso(96),
+  },
+  {
+    id: "sec_pii_redacted",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    eventType: "pii_redacted",
+    severity: "high",
+    origin: "https://supportpilot-demo.vercel.app",
+    ipHash: "demo_ip_hash",
+    details: { fields: ["email", "phone"] },
+    createdAt: iso(72),
+  },
+];
+
+export const demoWidgetSessions: WidgetSession[] = [
+  {
+    id: "wsess_demo",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    tokenHash: "demo_widget_session_hash",
+    origin: "http://localhost",
+    domain: "localhost",
+    expiresAt: iso(-60),
+    createdAt: iso(30),
+    lastSeenAt: iso(10),
+  },
+];
+
+export const demoRetentionSettings: RetentionSetting[] = [
+  {
+    id: "retention_demo",
+    tenantId: DEMO_TENANT_ID,
+    workspaceId: DEMO_WORKSPACE_ID,
+    conversationDays: 365,
+    auditDays: 730,
+    aiPromptLogging: "redacted",
+    createdAt: iso(7100),
+    updatedAt: iso(120),
+  },
+];
+
+export const demoToolDefinitions: ToolDefinition[] = [
+  { id: "tool_search_knowledge", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "search_knowledge", description: "Search approved knowledge chunks for cited support answers.", readOnly: true, active: true },
+  { id: "tool_ticket_history", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "get_ticket_history", description: "Read ticket conversation history and customer metadata.", readOnly: true, active: true },
+  { id: "tool_workspace_policy", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, name: "get_workspace_policy", description: "Read active approval and escalation policies.", readOnly: true, active: true },
+];
+
+export const demoToolCalls: ToolCall[] = demoAiRuns.slice(0, 4).map((run, index) => ({
+  id: `tool_call_${index + 1}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  aiRunId: run.id,
+  toolName: index % 2 === 0 ? "search_knowledge" : "get_ticket_history",
+  input: { ticketId: run.ticketId },
+  outputSummary: "Read-only enterprise context retrieved for draft generation.",
+  status: "success",
+  createdAt: iso(120 - index * 11),
+}));
+
+export const demoAgentRuns: AgentRun[] = demoAiRuns.slice(0, 4).map((run, index) => ({
+  id: `agent_run_${index + 1}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  ticketId: run.ticketId,
+  aiRunId: run.id,
+  loopStep: "retrieve -> draft -> verify -> policy",
+  outcome: run.approvalStatus === "escalated" ? "approve_required" : "answer",
+  createdAt: iso(110 - index * 9),
+}));
+
+export const demoPolicyEvaluations: PolicyEvaluation[] = demoAiRuns.map((run, index) => ({
+  id: `policy_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  aiRunId: run.id,
+  action: run.approvalStatus === "escalated" ? "approve_required" : "answer",
+  reasons: run.riskFlags.length > 0 ? run.riskFlags : ["approved_sources", "confidence_above_threshold"],
+  requiredRole: run.approvalStatus === "escalated" ? "manager" : null,
+  allowedTools: ["search_knowledge", "get_ticket_history", "get_workspace_policy"],
+  riskLevel: run.policyRiskScore && run.policyRiskScore > 0.8 ? "critical" : run.policyRiskScore && run.policyRiskScore > 0.55 ? "high" : "low",
+  createdAt: iso(95 - index * 5),
+}));
+
+export const demoGroundingChecks: GroundingCheck[] = demoAiRuns.map((run, index) => ({
+  id: `grounding_${run.id}`,
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  aiRunId: run.id,
+  status: run.groundingStatus ?? "pass",
+  score: run.groundingScore ?? 0.86,
+  citationCoverage: run.sources.length > 0 ? 0.9 : 0.2,
+  freshnessScore: 0.82,
+  notes: run.sources.length > 0 ? "Draft includes approved source citations." : "No approved source citation available.",
+  createdAt: iso(90 - index * 5),
 }));

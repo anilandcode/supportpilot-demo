@@ -27,6 +27,10 @@ The script verifies:
 - escalation rules
 - approval policies
 - usage events
+- launch checklist and golden questions
+- model route logs
+- security events
+- grounding checks and policy evaluations
 - tenant/workspace fields on tenant-owned demo rows
 - chunk embedding metadata
 - risky drafts routed to review
@@ -41,8 +45,12 @@ The script verifies:
 | Human approval | AI drafts do not create customer messages until approved or edited by staff. |
 | Acceptance rate | `/admin/analytics` reflects approved and edited AI runs as accepted. |
 | Missing topics | Low-confidence runs appear as missing-topic candidates. |
+| Model routing | R2 handles easy cited answers; R4/R5 handle low-confidence, refund, legal, security, and critical cases. |
+| Prompt privacy | AI runs store redacted previews and prompt hashes rather than raw private content. |
+| Grounding verifier | Drafts with missing citations or low source coverage are marked `needs_review` or `fail`. |
 | Workspace scoping | Widget config, chat logging, knowledge retrieval, and analytics resolve the active workspace key. |
 | Origin gating | Unverified widget origins receive a 403 from widget config and chat APIs. |
+| Widget sessions | When `SUPPORTPILOT_WIDGET_SESSION_SECRET` is configured, unsigned or invalid widget sessions receive a 403. |
 | Responsive UI | `/admin/tickets`, ticket detail, knowledge, approvals, analytics, and `/portal` fit desktop and mobile widths. |
 
 ## Suggested Live Supabase Test

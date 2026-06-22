@@ -1,4 +1,4 @@
-import { getWidgetConfig, getWorkspace, isOriginAllowed } from "@/lib/db/support";
+import { appendSecurityEvent, getWidgetConfig, getWorkspace, isOriginAllowed } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -8,6 +8,15 @@ export async function GET(req: Request) {
   const originAllowed = await isOriginAllowed(workspace.id, req.headers.get("origin"));
 
   if (!originAllowed) {
+    await appendSecurityEvent({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      eventType: "blocked_origin",
+      severity: "medium",
+      origin: req.headers.get("origin"),
+      ipHash: null,
+      details: { route: "/api/widget/config" },
+    });
     return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
   }
 

@@ -1,21 +1,37 @@
 import {
+  demoAgentRuns,
   demoAiRuns,
   demoApprovalPolicies,
   demoAuditLogs,
+  demoChecklistItems,
   demoCustomers,
   demoDomains,
   demoDocumentChunks,
   demoEscalationRules,
   demoFeedback,
+  demoGoldenQuestions,
+  demoGroundingChecks,
   demoKnowledgeDocs,
   demoMemberships,
+  demoMissingKnowledgeTasks,
+  demoModelRouteLogs,
   demoMessages,
   demoOrganizations,
+  demoPolicyEvaluations,
+  demoRetentionSettings,
+  demoSecurityEvents,
   demoTickets,
+  demoToolDefinitions,
   demoUsageEvents,
+  demoWidgetSessions,
   demoWidgetConfigs,
   demoWorkspaces,
 } from "../lib/enterprise/demo-data.ts";
+import { selectModelRoute } from "../lib/ai/model-router.ts";
+import { hasSensitiveFindings, previewRedactedText } from "../lib/security/redaction.ts";
+import { calculateConfidenceBreakdown } from "../lib/workflows/confidence.ts";
+import { verifyGrounding } from "../lib/workflows/grounding.ts";
+import { evaluatePolicy } from "../lib/workflows/policy.ts";
 
 const checks = [
   ["organizations", demoOrganizations.length === 1, demoOrganizations.length],
@@ -34,6 +50,17 @@ const checks = [
   ["escalation rules", demoEscalationRules.length >= 5, demoEscalationRules.length],
   ["approval policies", demoApprovalPolicies.length >= 3, demoApprovalPolicies.length],
   ["usage events", demoUsageEvents.length >= 10, demoUsageEvents.length],
+  ["launch checklist", demoChecklistItems.length === 8, demoChecklistItems.length],
+  ["golden questions", demoGoldenQuestions.length === 5, demoGoldenQuestions.length],
+  ["missing knowledge tasks", demoMissingKnowledgeTasks.length >= 2, demoMissingKnowledgeTasks.length],
+  ["model route logs", demoModelRouteLogs.length === demoAiRuns.length, demoModelRouteLogs.length],
+  ["security events", demoSecurityEvents.length >= 2, demoSecurityEvents.length],
+  ["widget sessions", demoWidgetSessions.length >= 1, demoWidgetSessions.length],
+  ["retention settings", demoRetentionSettings.length === 1, demoRetentionSettings.length],
+  ["read-only tool definitions", demoToolDefinitions.length === 3 && demoToolDefinitions.every((tool) => tool.readOnly), demoToolDefinitions.length],
+  ["agent runs", demoAgentRuns.length >= 4, demoAgentRuns.length],
+  ["policy evaluations", demoPolicyEvaluations.length === demoAiRuns.length, demoPolicyEvaluations.length],
+  ["grounding checks", demoGroundingChecks.length === demoAiRuns.length, demoGroundingChecks.length],
 ] as const;
 
 let failed = 0;
@@ -61,6 +88,17 @@ const tenantOwnedRows = [
   ...demoEscalationRules,
   ...demoApprovalPolicies,
   ...demoUsageEvents,
+  ...demoChecklistItems,
+  ...demoGoldenQuestions,
+  ...demoMissingKnowledgeTasks,
+  ...demoModelRouteLogs,
+  ...demoSecurityEvents,
+  ...demoWidgetSessions,
+  ...demoRetentionSettings,
+  ...demoToolDefinitions,
+  ...demoAgentRuns,
+  ...demoPolicyEvaluations,
+  ...demoGroundingChecks,
 ];
 const allTenantScoped = tenantOwnedRows.every((row) => Boolean(row.tenantId && row.workspaceId));
 console.log(`${allTenantScoped ? "PASS" : "FAIL"} tenant-scoped demo rows: ${tenantOwnedRows.length}`);
@@ -69,6 +107,40 @@ if (!allTenantScoped) failed++;
 const chunkMetadataComplete = demoDocumentChunks.every((chunk) => chunk.embeddingModel && chunk.embeddingVersion && chunk.contentHash);
 console.log(`${chunkMetadataComplete ? "PASS" : "FAIL"} chunk embedding metadata: ${demoDocumentChunks.length}`);
 if (!chunkMetadataComplete) failed++;
+
+const redacted = previewRedactedText("Email maya@example.com and card 4242 4242 4242 4242");
+const redactionOk = redacted.text.includes("[redacted-email]") && redacted.text.includes("[redacted-card]") && hasSensitiveFindings("secret token abc");
+console.log(`${redactionOk ? "PASS" : "FAIL"} redaction and prompt hash: ${redacted.hash.slice(0, 8)}`);
+if (!redactionOk) failed++;
+
+const criticalRoute = selectModelRoute({ task: "ticket_draft", confidence: 0.64, riskLevel: "critical", riskFlags: ["legal_or_policy"] });
+const easyRoute = selectModelRoute({ task: "chat", confidence: 0.88, riskLevel: "low", riskFlags: [] });
+const routingOk = criticalRoute.route === "R5" && easyRoute.route === "R2";
+console.log(`${routingOk ? "PASS" : "FAIL"} deterministic model routing: ${criticalRoute.route}/${easyRoute.route}`);
+if (!routingOk) failed++;
+
+const confidence = calculateConfidenceBreakdown({ bestRetrievalScore: 0.88, citationCount: 2, riskLevel: "low" });
+const confidenceOk = confidence.overall > 0.7 && confidence.policyRiskScore < 0.3;
+console.log(`${confidenceOk ? "PASS" : "FAIL"} confidence breakdown: ${confidence.overall}`);
+if (!confidenceOk) failed++;
+
+const grounding = verifyGrounding({
+  response: "The refund policy requires manager review. [Source: Refund Policy#Refund Policy]",
+  sources: [{ source: "Refund Policy#Refund Policy", score: 0.9 }],
+});
+const groundingOk = grounding.status === "pass";
+console.log(`${groundingOk ? "PASS" : "FAIL"} grounding verifier: ${grounding.status}`);
+if (!groundingOk) failed++;
+
+const policy = evaluatePolicy({
+  content: "Customer asks for a refund after renewal and is angry.",
+  confidence: 0.66,
+  riskFlags: [],
+  riskLevel: "high",
+});
+const policyOk = policy.action === "approve_required" && policy.requiredRole === "manager";
+console.log(`${policyOk ? "PASS" : "FAIL"} policy decision: ${policy.action}`);
+if (!policyOk) failed++;
 
 if (failed > 0) {
   console.error(`\n${failed} enterprise checks failed`);

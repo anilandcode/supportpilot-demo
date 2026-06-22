@@ -21,6 +21,10 @@ export default async function AnalyticsPage() {
         <Metric label="Acceptance rate" value={`${metrics.acceptanceRate}%`} />
         <Metric label="Response time" value={`${metrics.responseTimeMinutes}m`} />
         <Metric label="Escalation rate" value={`${metrics.escalationRate}%`} />
+        <Metric label="Cost per conversation" value={`$${metrics.costPerConversation}`} />
+        <Metric label="Cost per accepted reply" value={`$${metrics.costPerAcceptedReply}`} />
+        <Metric label="Fallback route rate" value={`${metrics.fallbackRate}%`} />
+        <Metric label="Escalated tickets" value={String(metrics.escalatedTickets)} />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-2">

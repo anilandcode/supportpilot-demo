@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Clock, CheckCircle2, ShieldAlert, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, DollarSign, ShieldAlert, TrendingUp } from "lucide-react";
 import { AdminShell } from "@/components/enterprise/admin-shell";
+import { KpiCard } from "@/components/enterprise/kpi-card";
+import { SetupChecklist } from "@/components/enterprise/setup-checklist";
 import { StatusBadge } from "@/components/enterprise/status-badge";
+import { WorkspaceHealthStrip } from "@/components/enterprise/workspace-health-strip";
 import { Card } from "@/components/ui/card";
-import { getDashboardMetrics, listApprovalQueue, listTickets } from "@/lib/db/support";
+import { getDashboardMetrics, getWorkspaceLaunchState, listApprovalQueue, listTickets } from "@/lib/db/support";
 import { theme } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -15,10 +18,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const [metrics, tickets, approvals] = await Promise.all([
+  const [metrics, tickets, approvals, launchState] = await Promise.all([
     getDashboardMetrics(),
     listTickets(),
     listApprovalQueue(),
+    getWorkspaceLaunchState(),
   ]);
   const recentTickets = tickets.slice(0, 6);
 
@@ -28,24 +32,24 @@ export default async function AdminPage() {
       description="Ticket triage, agent-assist AI, escalation workflow, and audit-backed analytics."
       active="/admin"
     >
+      <WorkspaceHealthStrip health={launchState.health} />
+      <div className="mt-4">
+        <SetupChecklist items={launchState.checklist} />
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Total tickets", value: metrics.totalTickets, icon: Clock },
-          { label: "Resolved", value: metrics.resolvedTickets, icon: CheckCircle2 },
-          { label: "Escalated", value: metrics.escalatedTickets, icon: ShieldAlert },
-          { label: "AI acceptance", value: `${metrics.acceptanceRate}%`, icon: TrendingUp },
-        ].map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card key={metric.label} className="rounded-2xl p-5">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-foreground-2">{metric.label}</p>
-                <Icon className="h-4 w-4 text-accent" aria-hidden />
-              </div>
-              <p className="mt-3 text-3xl font-semibold tracking-tight">{metric.value}</p>
-            </Card>
-          );
-        })}
+          { label: "Total tickets", value: metrics.totalTickets, detail: "Across seeded enterprise inbox", icon: Clock },
+          { label: "Resolved", value: metrics.resolvedTickets, detail: "Closed through human-approved replies", icon: CheckCircle2 },
+          { label: "Escalated", value: metrics.escalatedTickets, detail: `${metrics.escalationRate}% escalation rate`, icon: ShieldAlert },
+          { label: "AI acceptance", value: `${metrics.acceptanceRate}%`, detail: `$${metrics.costPerAcceptedReply}/accepted reply`, icon: TrendingUp },
+        ].map((metric) => <KpiCard key={metric.label} {...metric} />)}
+      </div>
+
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <KpiCard label="Cost per conversation" value={`$${metrics.costPerConversation}`} detail="Estimated from route logs" icon={DollarSign} />
+        <KpiCard label="Fallback route rate" value={`${metrics.fallbackRate}%`} detail="R4/R5 model routes" icon={ShieldAlert} />
+        <KpiCard label="Missing knowledge" value={launchState.health.missingKnowledge} detail="Open source gaps from feedback" icon={TrendingUp} />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_360px]">

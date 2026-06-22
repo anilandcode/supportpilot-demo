@@ -4,6 +4,11 @@
 
 SupportPilot is a workspace-first AI support product. The first screen for operators is the admin workspace, not a marketing flow: ticket triage, knowledge quality, approvals, analytics, and workspace setup are the primary jobs.
 
+The public site and the admin console now intentionally use different visual strategies:
+
+- Marketing is expressive, premium, and demo-led. The first viewport must make `SupportPilot` unmistakable, show a conversational input, show a cited answer, and show approval governance.
+- Admin is quiet, dense, evidence-first, and built for repeated support work. It should look like an enterprise operations console, not an AI novelty surface.
+
 ## Modes
 
 - Lite: embeddable chat, file-based retrieval, branded widget, and simple client setup.
@@ -37,11 +42,28 @@ Customer navigation:
 
 ## Visual System
 
-- Primary accent: workspace `brandColor`, default `#10b981`.
+- Primary accent: indigo/violet by default, with workspace `brandColor` available for client-branded widgets and customer-facing surfaces.
+- Secondary accent: pink is used only as a marketing highlight, never as the dominant admin color.
 - Backgrounds: quiet neutral surfaces with clear borders.
-- Radius: compact application radius; avoid oversized marketing cards in admin.
-- Typography: small, readable labels; no hero-scale type inside dashboards.
+- Radius: 8px for enterprise admin cards and tables unless an existing component requires a larger radius; marketing preview panels may use larger radii.
+- Typography: admin H1 32, H2 24, H3 18, body 14, label 13, caption/metadata 12, mono 13.
 - Icons: lucide icons for nav, status, upload, settings, snippets, domains, and approval controls.
+- Semantic tokens drive status, priority, risk, confidence, and approval badges. Do not use ad hoc green/red/amber badge classes for new enterprise states.
+- Dark mode variables must be preserved for admin and widget surfaces.
+
+## Admin Component Inventory
+
+- Workspace health strip: launch readiness, checklist count, source count, verified domains, open approvals.
+- Setup checklist: pinned until launch steps are complete.
+- KPI cards: compact metrics with one line of context.
+- Ticket inbox: filters and query-param saved views for approval, confidence, billing, unassigned, and stale knowledge.
+- Approval cards: exact risk reason, confidence meter, sources, editable draft path, destructive decision confirmation, and audit trail.
+- Source drawer: approved chunks, score, source owner, and freshness.
+- Settings hub: Workspace, Knowledge, Approval policies, Escalation routes, Members and roles, Branding, Domains, Security, Billing.
+
+## Widget States
+
+The widget should support visible states for retrieving, drafting, cited answer, low confidence, approval pending, escalated, and feedback. Enterprise mode uses signed widget sessions when configured; Lite/demo mode keeps the unsigned local fallback.
 
 ## Workspace Settings
 
@@ -70,3 +92,5 @@ Install snippet:
 ## Approval UX
 
 Normal-risk AI drafts can be approved or edited by agents. High-risk drafts are routed to manager review. Escalation cues should include the exact risk reason, not a generic warning.
+
+The confidence display is split into retrieval score, generation self-check, and policy risk. AI output is not final copy until a human approves or edits it.

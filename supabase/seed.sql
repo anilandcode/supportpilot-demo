@@ -286,3 +286,88 @@ select
   created_at
 from public.ai_runs
 on conflict (id) do update set event_type = excluded.event_type, metadata = excluded.metadata, created_at = excluded.created_at;
+
+insert into public.workspace_checklist_items (tenant_id, workspace_id, step, label, description, completed, completed_at) values
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','knowledge_source','Add knowledge source','Upload or paste the first approved FAQ, policy, or support article.',true,now() - interval '3 hours'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','embeddings_generated','Generate source chunks','Confirm approved sources have searchable chunks and embedding metadata.',true,now() - interval '2 hours'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','golden_questions','Pass five golden questions','Validate citations and safe refusal behavior before launch.',false,null),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','brand_disclosure','Configure brand and disclosure','Set the assistant name, colors, welcome copy, and AI disclosure.',true,now() - interval '90 minutes'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','escalation_owner','Set escalation owner','Add the manager or inbox that receives risky conversations.',true,now() - interval '80 minutes'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','domain_verified','Verify widget domain','Restrict the widget to approved customer origins.',true,now() - interval '70 minutes'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','widget_installed','Install widget','Place the script or iframe on the customer site.',false,null),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','monitoring_enabled','Enable monitoring','Turn on Sentry and product events for launch visibility.',false,null)
+on conflict (workspace_id, step) do update set label = excluded.label, description = excluded.description, completed = excluded.completed, completed_at = excluded.completed_at;
+
+insert into public.golden_questions (tenant_id, workspace_id, question, expected_sources, last_score, passed) values
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','What does Pro cost?',array['Pricing and Plans'],0.92,true),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','Can I get a refund after renewal?',array['Refund Policy'],0.74,false),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','Can you share the SOC 2 report?',array['Security Overview'],0.88,true),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','Can legal get a DPA?',array['Data Processing Agreement'],0.69,false),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','Why am I seeing API 429 errors?',array['API Rate Limits'],0.90,true)
+on conflict do nothing;
+
+insert into public.retention_settings (tenant_id, workspace_id, conversation_days, audit_days, ai_prompt_logging)
+values ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002',365,730,'redacted')
+on conflict (workspace_id) do update set conversation_days = excluded.conversation_days, audit_days = excluded.audit_days, ai_prompt_logging = excluded.ai_prompt_logging, updated_at = now();
+
+insert into public.tool_definitions (tenant_id, workspace_id, name, description, read_only, active) values
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','search_knowledge','Search approved workspace knowledge chunks for cited support evidence.',true,true),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','get_ticket_history','Read customer metadata and ticket conversation history for agent-assist drafts.',true,true),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','get_workspace_policy','Read approval, escalation, and safety policies before deciding whether to answer.',true,true)
+on conflict (workspace_id, name) do update set description = excluded.description, read_only = true, active = true;
+
+insert into public.missing_knowledge_tasks (tenant_id, workspace_id, topic, reason, status)
+values
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','Refund exceptions for renewal disputes','Low-confidence and billing-risk drafts need clearer manager policy.','open'),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','DPA approval workflow','Legal requests cite source availability but lack internal handoff steps.','planned')
+on conflict do nothing;
+
+insert into public.security_events (tenant_id, workspace_id, event_type, severity, origin, ip_hash, details)
+values
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','blocked_origin','medium','https://unknown.example','demo_ip_hash','{"reason":"Origin is not on the verified workspace domain list."}'::jsonb),
+  ('70000000-0000-4000-8000-000000000001','70000000-0000-4000-8000-000000000002','pii_redacted','high','https://supportpilot-demo.vercel.app','demo_ip_hash','{"fields":["email","phone"]}'::jsonb)
+on conflict do nothing;
+
+insert into public.model_route_logs (tenant_id, workspace_id, ai_run_id, route, task, provider, model, latency_ms, input_tokens, output_tokens, estimated_cost_usd, confidence, reason)
+select
+  tenant_id,
+  workspace_id,
+  id,
+  case when risk_flags && array['Legal approval required','Sensitive data exposure','GDPR request'] then 'R5' else case when approval_status = 'escalated' then 'R4' else 'R2' end end,
+  case when approval_status = 'escalated' then 'high-risk draft' else 'easy cited answer' end,
+  'demo',
+  model,
+  latency_ms,
+  620,
+  190,
+  0.002,
+  confidence,
+  case when array_length(risk_flags, 1) is null then 'Approved-source answer with low policy risk.' else array_to_string(risk_flags, ', ') end
+from public.ai_runs
+on conflict do nothing;
+
+insert into public.grounding_checks (tenant_id, workspace_id, ai_run_id, status, score, citation_coverage, freshness_score, notes)
+select
+  tenant_id,
+  workspace_id,
+  id,
+  case when approval_status = 'escalated' then 'needs_review' else 'pass' end,
+  case when approval_status = 'escalated' then 0.66 else 0.89 end,
+  0.9,
+  0.82,
+  'Seeded draft includes approved source citation metadata.'
+from public.ai_runs
+on conflict do nothing;
+
+insert into public.policy_evaluations (tenant_id, workspace_id, ai_run_id, action, reasons, required_role, allowed_tools, risk_level)
+select
+  tenant_id,
+  workspace_id,
+  id,
+  case when approval_status = 'escalated' then 'approve_required' else 'answer' end,
+  case when array_length(risk_flags, 1) is null then array['approved_sources','confidence_above_threshold'] else risk_flags end,
+  case when approval_status = 'escalated' then 'manager'::public.membership_role else null end,
+  array['search_knowledge','get_ticket_history','get_workspace_policy'],
+  case when approval_status = 'escalated' then 'high'::public.risk_level else 'low'::public.risk_level end
+from public.ai_runs
+on conflict do nothing;

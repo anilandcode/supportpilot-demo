@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Check, Edit3, Flag, X } from "lucide-react";
+import { Bot, Check, Edit3, FileWarning, Flag, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfidenceMeter } from "@/components/enterprise/confidence-meter";
+import { SourceDrawer } from "@/components/enterprise/source-drawer";
 import { StatusBadge } from "@/components/enterprise/status-badge";
 import type { DraftResult, TicketWithRelations } from "@/lib/enterprise/types";
 
@@ -28,6 +30,9 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
 
   async function decide(nextDecision: "approved" | "edited" | "rejected" | "escalated") {
     if (!draft) return;
+    if ((nextDecision === "rejected" || nextDecision === "escalated") && !window.confirm(`Confirm ${nextDecision.replace("_", " ")} for this AI draft?`)) {
+      return;
+    }
     setLoading(true);
     await fetch(`/api/ai-runs/${draft.aiRun.id}/decision`, {
       method: "PATCH",
@@ -36,6 +41,21 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
     });
     setDecision(nextDecision);
     setLoading(false);
+  }
+
+  async function createMissingKnowledge() {
+    if (!draft) return;
+    await fetch("/api/knowledge/missing", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workspaceId: ticket.workspaceId,
+        topic: ticket.subject,
+        reason: "Agent flagged the generated draft as needing better source coverage.",
+        sourceAiRunId: draft.aiRun.id,
+      }),
+    });
+    setDecision("missing knowledge logged");
   }
 
   return (
@@ -59,14 +79,12 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
         </div>
       ) : (
         <div className="mt-5 space-y-4">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="rounded-xl bg-surface p-3">
-              <p className="text-xs text-foreground-3">Confidence</p>
-              <p className="mt-1 font-semibold">{Math.round(draft.confidence * 100)}%</p>
-            </div>
+          <div className="grid gap-3 text-sm">
+            <ConfidenceMeter breakdown={draft.confidenceBreakdown} />
             <div className="rounded-xl bg-surface p-3">
               <p className="text-xs text-foreground-3">Manager approval</p>
-              <p className="mt-1 font-semibold">{draft.requiresManagerApproval ? "Required" : "Not required"}</p>
+              <p className="mt-1 font-semibold">{draft.requiresManagerApproval ? `Required (${draft.policyDecision.requiredRole})` : "Not required"}</p>
+              <p className="mt-1 text-xs text-foreground-3">Policy action: {draft.policyDecision.action.replace(/_/g, " ")}</p>
             </div>
           </div>
 
@@ -81,16 +99,7 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
             <p className="mt-1 text-sm text-foreground-2">{draft.rationale}</p>
           </div>
 
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">Citations</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {draft.citations.map((citation) => (
-                <span key={`${citation.source}-${citation.chunkId}`} className="rounded-full border border-border bg-surface px-3 py-1 text-xs">
-                  {citation.source}
-                </span>
-              ))}
-            </div>
-          </div>
+          <SourceDrawer sources={draft.citations} />
 
           {draft.riskFlags.length > 0 && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
@@ -98,6 +107,10 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
               {draft.riskFlags.join(", ")}
             </div>
           )}
+
+          <div className="rounded-xl border border-border bg-surface p-3 text-sm text-foreground-2">
+            Grounding: <span className="font-semibold text-foreground">{draft.groundingCheck.status.replace("_", " ")}</span> · {Math.round(draft.groundingCheck.score * 100)}% source coverage score.
+          </div>
 
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => decide("approved")} disabled={loading} size="sm">
@@ -115,6 +128,10 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
             <Button onClick={() => decide("escalated")} disabled={loading} size="sm" variant="outline">
               <Flag className="h-4 w-4" aria-hidden />
               Escalate
+            </Button>
+            <Button onClick={createMissingKnowledge} disabled={loading} size="sm" variant="ghost">
+              <FileWarning className="h-4 w-4" aria-hidden />
+              Source gap
             </Button>
           </div>
 

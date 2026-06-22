@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { CheckCircle2, Code2, Globe2, ShieldCheck } from "lucide-react";
+import { Code2, CreditCard, Database, Globe2, Palette, Route, ShieldCheck, Users2 } from "lucide-react";
 import { AdminShell } from "@/components/enterprise/admin-shell";
 import { DomainForm } from "@/components/enterprise/domain-form";
+import { StatusBadge } from "@/components/enterprise/status-badge";
 import { WorkspaceSettingsForm } from "@/components/enterprise/workspace-settings-form";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Card } from "@/components/ui/card";
@@ -16,13 +17,36 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const { workspace, domains, widgetConfig, approvalPolicies } = await getWorkspaceLaunchState();
+  const launchState = await getWorkspaceLaunchState();
+  const { workspace, domains, widgetConfig, approvalPolicies } = launchState;
   const publicBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://supportpilot-demo.vercel.app";
   const widgetSnippet = `<script async src="${publicBaseUrl}/widget.js" data-workspace="${workspace.widgetKey}"></script>`;
   const iframeSnippet = `<iframe src="${publicBaseUrl}/embed?workspace=${workspace.widgetKey}" width="400" height="620" style="border:0;border-radius:18px"></iframe>`;
 
   return (
     <AdminShell title="Workspace settings" description="Branding, widget installation, domain allowlist, and approval policy controls." active="/admin/settings">
+      <div className="mb-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {[
+          { title: "Workspace", desc: workspace.name, icon: Palette },
+          { title: "Knowledge", desc: `${launchState.health.approvedSources} approved chunks`, icon: Database },
+          { title: "Approval policies", desc: `${approvalPolicies.length} active policies`, icon: ShieldCheck },
+          { title: "Escalation routes", desc: workspace.escalationEmail, icon: Route },
+          { title: "Members and roles", desc: "Owner/Admin/Manager/Agent/Analyst/Viewer", icon: Users2 },
+          { title: "Branding", desc: `${workspace.botName} · ${workspace.brandColor}`, icon: Palette },
+          { title: "Domains", desc: `${launchState.health.verifiedDomains} verified origins`, icon: Globe2 },
+          { title: "Billing and usage", desc: `${workspace.monthlyReplyLimit}/mo reply limit`, icon: CreditCard },
+        ].map((item) => {
+          const Icon = item.icon;
+          return (
+            <Card key={item.title} className="rounded-lg p-4 shadow-none">
+              <Icon className="h-4 w-4 text-accent" aria-hidden />
+              <h2 className="mt-3 text-sm font-semibold">{item.title}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-foreground-3">{item.desc}</p>
+            </Card>
+          );
+        })}
+      </div>
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">
           <WorkspaceSettingsForm workspace={workspace} />
@@ -38,10 +62,7 @@ export default async function SettingsPage() {
               {domains.map((domain) => (
                 <div key={domain.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                   <span>{domain.domain}</span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
-                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-                    {domain.status}
-                  </span>
+                  <StatusBadge value={domain.status} />
                 </div>
               ))}
             </div>
@@ -83,6 +104,19 @@ export default async function SettingsPage() {
                 </div>
               ))}
             </div>
+          </Card>
+
+          <Card className="p-5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-accent" aria-hidden />
+              <h2 className="font-semibold">Security and retention</h2>
+            </div>
+            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <Stat label="Prompt logs" value={launchState.retention?.aiPromptLogging ?? "redacted"} />
+              <Stat label="Conversations" value={`${launchState.retention?.conversationDays ?? 365} days`} />
+              <Stat label="Audit logs" value={`${launchState.retention?.auditDays ?? 730} days`} />
+              <Stat label="Security events" value={`${launchState.health.securityEvents24h}/24h`} />
+            </dl>
           </Card>
         </div>
       </div>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 type EmbedPageProps = {
-  searchParams: Promise<{ workspace?: string; workspaceId?: string }>;
+  searchParams: Promise<{ workspace?: string; workspaceId?: string; widgetSession?: string }>;
 };
 
 export default async function EmbedPage({ searchParams }: EmbedPageProps) {
@@ -30,7 +30,7 @@ export default async function EmbedPage({ searchParams }: EmbedPageProps) {
         }
       `}</style>
       <main style={{ width: "100vw", height: "100vh" }}>
-        <ChatWindow workspaceId={workspaceId} />
+        <ChatWindow workspaceId={workspaceId} widgetSession={params.widgetSession} />
       </main>
     </>
   );

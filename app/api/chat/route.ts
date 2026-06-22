@@ -7,10 +7,14 @@ import {
   type UIMessage,
 } from "ai";
 import { captureProductEvent } from "@/lib/analytics/events";
+import { estimateTokenCount, selectModelRoute } from "@/lib/ai/model-router";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
-import { appendAuditLog, createAiRun, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
+import { appendAuditLog, appendSecurityEvent, createAiRun, createModelRouteLog, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
+import { previewRedactedText } from "@/lib/security/redaction";
+import { sanitizeAssistantText } from "@/lib/security/markdown";
+import { getWidgetSessionSecret, verifySignedWidgetSession } from "@/lib/security/widget-session";
 import { buildSystemPrompt } from "@/lib/system-prompt";
 import { theme } from "@/lib/theme";
 import type { ChatMetadata, Citation } from "@/lib/types";
@@ -47,16 +51,38 @@ async function logChatRun(input: {
   citations: Citation[];
   latencyMs?: number;
 }) {
+  const redactedPrompt = previewRedactedText(input.question);
+  const route = selectModelRoute({
+    task: "chat",
+    confidence: input.answered ? 0.84 : 0.45,
+    riskLevel: input.escalated ? "medium" : "low",
+    riskFlags: input.rateLimited ? ["rate_limited"] : input.escalated ? ["low_confidence"] : [],
+    hasLocalEndpoint: Boolean(process.env.LOCAL_MODEL_ENDPOINT),
+  });
+  const inputTokens = estimateTokenCount(input.question);
+  const outputTokens = estimateTokenCount(input.response);
   const run = await createAiRun({
     tenantId: input.tenantId,
     workspaceId: input.workspaceId,
     ticketId: null,
     userId: null,
-    prompt: input.question,
-    response: input.response,
-    model: getModelReadiness().ready ? process.env.LLM_PROVIDER || "google" : "demo-enterprise",
+    prompt: redactedPrompt.text,
+    promptHash: redactedPrompt.hash,
+    redactedPromptPreview: redactedPrompt.text,
+    response: sanitizeAssistantText(input.response),
+    model: route.model,
+    provider: route.provider,
+    modelRoute: route.route,
     latencyMs: input.latencyMs ?? 0,
+    inputTokens,
+    outputTokens,
+    costEstimateUsd: route.estimatedCostUsd,
     confidence: input.answered ? 0.84 : 0.45,
+    retrievalScore: input.citations[0]?.score ?? 0,
+    generationScore: input.answered ? 0.86 : 0.42,
+    policyRiskScore: input.escalated ? 0.58 : 0.18,
+    groundingStatus: input.answered ? "pass" : "needs_review",
+    groundingScore: input.answered ? 0.84 : 0.44,
     approvalStatus: input.escalated ? "escalated" : "approved",
     escalationReason: input.escalated ? "Customer chat requires human follow-up" : null,
     riskFlags: input.rateLimited ? ["rate_limited"] : input.escalated ? ["low_confidence"] : [],
@@ -65,6 +91,21 @@ async function logChatRun(input: {
       score: citation.score,
     })),
     rationale: input.answered ? "Answered from retrieved approved support knowledge." : "Could not answer confidently from retrieved knowledge.",
+  });
+  await createModelRouteLog({
+    tenantId: input.tenantId,
+    workspaceId: input.workspaceId,
+    aiRunId: run.id,
+    route: route.route,
+    task: route.task,
+    provider: route.provider,
+    model: route.model,
+    latencyMs: input.latencyMs ?? 0,
+    inputTokens,
+    outputTokens,
+    estimatedCostUsd: route.estimatedCostUsd,
+    confidence: run.confidence,
+    reason: route.reason,
   });
 
   await recordUsageEvent({
@@ -89,6 +130,10 @@ async function logChatRun(input: {
 
 function containsSensitiveData(text: string): boolean {
   return /\b(password|passcode|secret|api[_\s-]?key|token|card number|cvv|ssn)\b/i.test(text);
+}
+
+function ipHash(req: Request) {
+  return getClientKey(req).replace(/[^a-z0-9]/gi, "_").slice(0, 64);
 }
 
 function assistantResponse(text: string, metadata: ChatMetadata, status = 200): Response {
@@ -144,7 +189,34 @@ export async function POST(req: Request) {
     const workspace = await getWorkspace(requestedWorkspace);
     const originAllowed = await isOriginAllowed(workspace.id, req.headers.get("origin"));
     if (!originAllowed) {
+      await appendSecurityEvent({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        eventType: "blocked_origin",
+        severity: "medium",
+        origin: req.headers.get("origin"),
+        ipHash: ipHash(req),
+        details: { route: "/api/chat" },
+      });
       return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
+    }
+
+    const sessionToken = body.widgetSession || body.session || url.searchParams.get("widgetSession") || req.headers.get("x-supportpilot-widget-session");
+    const widgetSession = verifySignedWidgetSession(typeof sessionToken === "string" ? sessionToken : null, {
+      workspaceId: workspace.id,
+      origin: req.headers.get("origin"),
+    });
+    if (!widgetSession.ok && getWidgetSessionSecret()) {
+      await appendSecurityEvent({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        eventType: "widget_session_invalid",
+        severity: "high",
+        origin: req.headers.get("origin"),
+        ipHash: ipHash(req),
+        details: { reason: widgetSession.reason },
+      });
+      return Response.json({ error: "widget session is invalid" }, { status: 403 });
     }
 
     const messages = body.messages as UIMessage[] | undefined;
@@ -183,6 +255,15 @@ export async function POST(req: Request) {
         rateLimited: true,
         citations: [],
       });
+      await appendSecurityEvent({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        eventType: "rate_limited",
+        severity: "medium",
+        origin: req.headers.get("origin"),
+        ipHash: ipHash(req),
+        details: { resetAt: rate.resetAt },
+      });
       return assistantResponse(text, metadata);
     }
 
@@ -200,12 +281,26 @@ export async function POST(req: Request) {
         rateLimited: false,
         citations: [],
       });
+      await appendSecurityEvent({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        eventType: "pii_redacted",
+        severity: "high",
+        origin: req.headers.get("origin"),
+        ipHash: ipHash(req),
+        details: { reason: "Sensitive credential or payment-like content detected." },
+      });
       return assistantResponse(text, metadata);
     }
 
     const chunks = await getRetriever(workspace.id).retrieve(question, 5);
     const citations = toCitations(chunks);
     const usefulContext = hasUsefulContext(chunks);
+    await recordUsageEvent({
+      workspaceId: workspace.id,
+      eventType: "rag_answer_generated",
+      metadata: { usefulContext, citations: citations.length },
+    });
     const metadata = {
       citations,
       tier: theme.tier,
@@ -214,7 +309,7 @@ export async function POST(req: Request) {
 
     const readiness = getModelReadiness();
     if (!readiness.ready) {
-      const response = localAnswer(question, chunks, citations);
+      const response = sanitizeAssistantText(localAnswer(question, chunks, citations));
       await logChatRun({
         tenantId: workspace.tenantId,
         workspaceId: workspace.id,

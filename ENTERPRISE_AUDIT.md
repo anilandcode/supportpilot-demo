@@ -34,3 +34,25 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Enterprise mode uses Supabase RAG when env vars are configured | PASS | `EnterpriseRetriever` delegates to `retrieveEnterpriseChunks()`, which calls Supabase RPC and falls back to approved chunk scoring. |
 | Portfolio docs | PASS | `DESIGN.md`, `ROLE_ALIGNMENT.md`, `ARCHITECTURE.md`, `EVALS.md`, `SECURITY.md`, `ROADMAP.md`, README, setup, and ingest docs. |
 | Automated verification | PARTIAL | Local typecheck and enterprise dataset checks are implemented. Live Supabase migration/RLS checks require a Supabase project. |
+
+## Updates 07-12 Audit
+
+| Requirement | Status | Evidence |
+| --- | --- | --- |
+| Track update docs as research artifacts | PASS | `Updates/07_Enterprise_Design_System.md` through `Updates/12_Design_and_Model_Upgrade_Summary.md` are preserved as repo docs. |
+| Dual visual strategy for marketing/admin | PASS | `DESIGN.md`, `app/page.tsx`, `app/globals.css`, and admin primitives define expressive marketing and dense enterprise admin surfaces. |
+| Semantic status, priority, risk, confidence tokens | PASS | `app/globals.css`, `theme.config.ts`, `lib/theme.ts`, `components/ui/badge.tsx`, and `components/enterprise/status-badge.tsx`. |
+| Workspace health strip and pinned setup checklist | PASS | `components/enterprise/workspace-health-strip.tsx`, `setup-checklist.tsx`, `/admin`, and `getWorkspaceLaunchState()`. |
+| Approval cards with exact risk reason, confidence, sources, draft, audit | PASS | `/admin/approvals`, `ConfidenceMeter`, `SourceDrawer`, `ApprovalAuditTimeline`, and `TicketAiPanel`. |
+| Source/citation drawer | PASS | `components/enterprise/source-drawer.tsx` in approval cards and ticket AI panel. |
+| Settings hub IA | PASS | `/admin/settings` now exposes Workspace, Knowledge, Approval policies, Escalation routes, Members and roles, Branding, Domains, Security, and Billing cards. |
+| Missing-knowledge loop | PASS | `missing_knowledge_tasks`, `POST /api/knowledge/missing`, negative feedback handling, and ticket AI source-gap action. |
+| Tenant-aware security tables and RLS | PASS | `supabase/migrations/003_updates_enterprise_readiness.sql` adds tenant-scoped readiness/security/model-route tables with workspace RLS. |
+| Redacted AI logging | PASS | `lib/security/redaction.ts`, `/api/chat`, and `draftTicketReply()` store prompt hashes and redacted previews. |
+| Optional signed widget sessions | PASS | `POST /api/widget/session`, `public/widget.js`, and `/api/chat` verification via `SUPPORTPILOT_WIDGET_SESSION_SECRET`. |
+| Deterministic model routing and cost logging | PASS | `lib/ai/model-router.ts`, `model_route_logs`, `/api/model-routes`, draft workflow, and chat logging. |
+| Policy decision shape and approval routing | PASS | `lib/workflows/policy.ts`, `policy_evaluations`, and draft approval status decisions. |
+| Grounding verifier | PASS | `lib/workflows/grounding.ts`, `grounding_checks`, and draft response metadata. |
+| Read-only tool registry scaffolding | PASS | `lib/workflows/tools.ts`, `tool_definitions`, `tool_calls`, and migration seed rows. |
+| Local small-model execution | PARTIAL | Optional endpoint env vars are documented and router-ready; local model execution remains a P2 experiment. |
+| Live Supabase RLS verification | PARTIAL | SQL policies exist; live per-role verification still requires a clean Supabase project with service credentials. |

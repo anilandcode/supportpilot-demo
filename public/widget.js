@@ -9,11 +9,17 @@
   var accent = (script && script.dataset.accent) || "#2563eb";
   var label = (script && script.dataset.label) || "Chat";
   var position = (script && script.dataset.position) || "bottom-right";
+  var widgetSession = "";
 
   function withWorkspace(url) {
     var nextUrl = new URL(url, scriptUrl.origin);
     if (workspace) nextUrl.searchParams.set("workspace", workspace);
+    if (widgetSession) nextUrl.searchParams.set("widgetSession", widgetSession);
     return nextUrl.toString();
+  }
+
+  function updateFrameSrc() {
+    frame.src = withWorkspace(embedUrl);
   }
 
   function setStyles(node, styles) {
@@ -33,7 +39,7 @@
   setStyles(root, position === "bottom-left" ? { left: "24px" } : { right: "24px" });
 
   var frame = document.createElement("iframe");
-  frame.src = withWorkspace(embedUrl);
+  updateFrameSrc();
   frame.title = label;
   frame.loading = "lazy";
   frame.allow = "clipboard-write";
@@ -98,6 +104,24 @@
       frame.title = label;
       root.style.left = position === "bottom-left" ? "24px" : "";
       root.style.right = position === "bottom-left" ? "" : "24px";
+    })
+    .catch(function () {});
+
+  var sessionUrl = new URL("/api/widget/session", scriptUrl.origin);
+  fetch(sessionUrl.toString(), {
+    method: "POST",
+    credentials: "omit",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ workspace: workspace }),
+  })
+    .then(function (response) {
+      if (!response.ok) return null;
+      return response.json();
+    })
+    .then(function (session) {
+      if (!session || !session.required || !session.token) return;
+      widgetSession = session.token;
+      updateFrameSrc();
     })
     .catch(function () {});
 

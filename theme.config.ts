@@ -12,6 +12,18 @@ export type SupportPilotTheme = {
     card: string;
     bubbleUser: string;
   };
+  semantic: {
+    statusNew: string;
+    statusProgress: string;
+    statusResolved: string;
+    priorityLow: string;
+    priorityMedium: string;
+    riskHigh: string;
+    riskCritical: string;
+    confidenceHigh: string;
+    confidenceMid: string;
+    confidenceLow: string;
+  };
   font: string;
   radius: number;
   mode: "light" | "dark" | "auto";
@@ -39,6 +51,18 @@ export const theme = {
     surface: "#f6f8fb",
     card: "#ffffff",
     bubbleUser: "#eef2ff",
+  },
+  semantic: {
+    statusNew: "#2563eb",
+    statusProgress: "#7c3aed",
+    statusResolved: "#059669",
+    priorityLow: "#64748b",
+    priorityMedium: "#d97706",
+    riskHigh: "#ea580c",
+    riskCritical: "#dc2626",
+    confidenceHigh: "#059669",
+    confidenceMid: "#d97706",
+    confidenceLow: "#dc2626",
   },
   font: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
   radius: 16,

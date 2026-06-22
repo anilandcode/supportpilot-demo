@@ -1,5 +1,5 @@
 import { cache } from "react";
-import type { EnterpriseUser, UserRole } from "@/lib/enterprise/types";
+import type { EnterpriseUser, MembershipRole, UserRole } from "@/lib/enterprise/types";
 import { getDemoUser } from "@/lib/supabase/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/config";
@@ -40,4 +40,30 @@ export const getCurrentEnterpriseUser = cache(async (): Promise<EnterpriseUser |
 export async function hasEnterpriseRole(allowedRoles: UserRole[]) {
   const user = await getCurrentEnterpriseUser();
   return Boolean(user && allowedRoles.includes(user.role));
+}
+
+const ROLE_RANK: Record<MembershipRole, number> = {
+  viewer: 10,
+  analyst: 20,
+  agent: 30,
+  manager: 40,
+  admin: 50,
+  owner: 60,
+};
+
+export function profileRoleToMembershipRole(role: UserRole): MembershipRole {
+  if (role === "admin") return "owner";
+  if (role === "support_manager") return "manager";
+  if (role === "support_agent") return "agent";
+  return "viewer";
+}
+
+export function canPerformMembershipAction(role: MembershipRole, minimumRole: MembershipRole) {
+  return ROLE_RANK[role] >= ROLE_RANK[minimumRole];
+}
+
+export async function hasWorkspacePermission(minimumRole: MembershipRole) {
+  const user = await getCurrentEnterpriseUser();
+  if (!user) return false;
+  return canPerformMembershipAction(profileRoleToMembershipRole(user.role), minimumRole);
 }

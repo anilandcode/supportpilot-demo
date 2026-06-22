@@ -4,7 +4,7 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { WidgetBubble } from "@/components/ui/widget-demo";
 import { theme } from "@/lib/theme";
-import { FileText, Sparkles, Monitor, Calendar } from "lucide-react";
+import { Calendar, CheckCircle2, FileText, Monitor, SendHorizonal, ShieldAlert, Sparkles } from "lucide-react";
 
 const EMBED_SNIPPET = `<script async src="https://supportpilot-demo.vercel.app/widget.js" data-workspace="wk_demo_acmedesk" data-accent="${theme.colors.accent}"></script>`;
 const IFRAME_SNIPPET = `<iframe src="https://supportpilot-demo.vercel.app/embed?workspace=wk_demo_acmedesk" width="400" height="620" style="border:0;border-radius:18px"></iframe>`;
@@ -14,84 +14,70 @@ const IFRAME_SNIPPET = `<iframe src="https://supportpilot-demo.vercel.app/embed?
 function HeroChatPreview() {
   return (
     <div
-      className="max-w-md mx-auto rounded-[20px] border border-border p-5 shadow-2xl"
+      className="mx-auto max-w-5xl rounded-[20px] border border-white/30 p-4 shadow-2xl backdrop-blur md:p-5"
       style={{
-        background: "var(--card)",
-        boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
+        background: "rgba(255,255,255,0.78)",
+        boxShadow: "0 32px 80px rgba(67, 56, 202, 0.22)",
       }}
     >
-      {/* Bot message 1 */}
-      <div className="flex gap-3 mb-4">
-        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5">
-          {theme.botName[0]}
-        </div>
-        <div
-          className="rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground border border-border"
-          style={{ background: "var(--card-elevated)" }}
-        >
-          Hey! I&apos;m {theme.botName}. I can answer questions about pricing, features,
-          integrations, or billing.
-        </div>
-      </div>
-
-      {/* User message */}
-      <div className="flex justify-end mb-4">
-        <div className="bg-accent text-white rounded-2xl rounded-tr-sm px-3.5 py-2.5 text-[13px] leading-relaxed max-w-[78%]">
-          How much does Pro cost?
-        </div>
-      </div>
-
-      {/* Bot message 2 */}
-      <div className="flex gap-3 mb-5">
-        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5">
-          {theme.botName[0]}
-        </div>
-        <div className="flex flex-col gap-2">
-          <div
-            className="rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-[13px] leading-relaxed text-foreground border border-border"
-            style={{ background: "var(--card-elevated)" }}
-          >
-            Pro is{" "}
-            <strong className="text-foreground font-semibold">
-              $12/user/month
-            </strong>{" "}
-            — or $9.60 with annual billing (20% off).
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-[16px] border border-border bg-card p-4">
+          <div className="flex items-center gap-3 border-b border-border pb-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-fg">
+              {theme.botName[0]}
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Ask approved support docs</p>
+              <p className="text-xs text-foreground-3">RAG answer · citations · escalation safe</p>
+            </div>
           </div>
-          <span
-            className="self-start inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-3 py-1 border"
-            style={{
-              background: "var(--accent-soft)",
-              color: "var(--accent)",
-              borderColor: "color-mix(in srgb, var(--accent) 25%, transparent)",
-            }}
-          >
-            → Pricing Plans
-          </span>
+          <div className="mt-4 rounded-2xl bg-bubble-user px-4 py-3 text-sm font-medium text-foreground">
+            Can we refund a renewal charge after the customer says they will cancel?
+          </div>
+          <div className="mt-3 rounded-2xl border border-border bg-surface px-4 py-3 text-sm leading-relaxed text-foreground-2">
+            Renewal refunds are not automatically refundable. Route the case to a manager before promising a credit. <span className="font-semibold text-foreground">[Source: Refund Policy#Refund Policy]</span>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color-mix(in_srgb,var(--semantic-risk-high)_24%,transparent)] bg-[color-mix(in_srgb,var(--semantic-risk-high)_10%,transparent)] px-3 py-1 text-xs font-semibold text-[var(--semantic-risk-high)]">
+              <ShieldAlert className="h-3.5 w-3.5" aria-hidden />
+              Billing/refund approval
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color-mix(in_srgb,var(--semantic-confidence-high)_24%,transparent)] bg-[color-mix(in_srgb,var(--semantic-confidence-high)_10%,transparent)] px-3 py-1 text-xs font-semibold text-[var(--semantic-confidence-high)]">
+              <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+              Cited answer
+            </span>
+          </div>
+          <div className="mt-4 flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2.5">
+            <span className="flex-1 text-left text-[13px] text-foreground-3">Ask about pricing, policies, or setup...</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-accent-fg">
+              <SendHorizonal className="h-3.5 w-3.5" aria-hidden />
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Fake input */}
-      <div
-        className="flex items-center gap-2.5 rounded-full border border-border px-4 py-2.5"
-        style={{ background: "var(--background)" }}
-      >
-        <span className="flex-1 text-[13px]" style={{ color: "var(--foreground-3)" }}>
-          Ask a question…
-        </span>
-        <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center shrink-0">
-          <svg
-            width="11"
-            height="11"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" />
-          </svg>
+        <div className="rounded-[16px] border border-border bg-card p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">Manager approval card</p>
+          <h3 className="mt-3 text-lg font-semibold">Refund after renewal charge</h3>
+          <p className="mt-2 text-sm leading-relaxed text-foreground-2">Queued because the draft touches refund policy and angry sentiment. Customer reply is blocked until manager review.</p>
+          <div className="mt-4 space-y-2">
+            {[
+              ["Retrieval", "86%"],
+              ["Generation self-check", "82%"],
+              ["Policy risk", "74%"],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <div className="flex justify-between text-xs text-foreground-3"><span>{label}</span><span>{value}</span></div>
+                <div className="mt-1 h-1.5 rounded-full bg-border">
+                  <div className="h-full rounded-full bg-accent" style={{ width: value }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+            <span className="rounded-lg bg-surface px-2 py-2 font-medium">Approve</span>
+            <span className="rounded-lg bg-surface px-2 py-2 font-medium">Edit</span>
+            <span className="rounded-lg bg-surface px-2 py-2 font-medium">Escalate</span>
+          </div>
         </div>
       </div>
     </div>
@@ -106,7 +92,13 @@ export default function Home() {
       <Nav />
 
       {/* ── Hero ── */}
-      <section className="pt-32 pb-24 px-6 flex flex-col items-center text-center">
+      <section
+        className="relative overflow-hidden px-6 pb-20 pt-28 text-center"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(79,70,229,0.18), rgba(236,72,153,0.12) 42%, rgba(255,255,255,0) 76%)",
+        }}
+      >
         <div className="max-w-3xl mx-auto flex flex-col items-center">
           {/* Badge */}
           <div
@@ -114,17 +106,14 @@ export default function Home() {
             style={{ color: "var(--accent)" }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-accent" aria-hidden />
-            AI-powered · 24/7 · Trained on your docs
+            Enterprise AI support · cited · approval governed
           </div>
 
           {/* Headline */}
           <h1
             className="text-[40px] sm:text-[60px] font-semibold tracking-[-0.03em] leading-[1.05] text-foreground"
           >
-            Stop answering the same{" "}
-            <span className="text-accent">questions.</span>
-            <br />
-            Let AI do it.
+            SupportPilot
           </h1>
 
           {/* Subtitle */}
@@ -132,9 +121,7 @@ export default function Home() {
             className="text-[18px] mt-6 max-w-2xl mx-auto leading-[1.6]"
             style={{ color: "var(--foreground-2)" }}
           >
-            {theme.productName} is a 24/7 AI support agent trained on your docs. It
-            answers instantly, cites sources, and escalates to humans when it
-            matters.
+            Launch a source-grounded AI support workspace in 24 hours, then keep every risky answer behind human approval, audit logs, and tenant-safe retrieval.
           </p>
 
           {/* CTA row */}
@@ -143,7 +130,7 @@ export default function Home() {
               href="#demo"
               className="bg-accent text-white text-[15px] font-medium px-5 py-3 rounded-full hover:bg-accent-hover transition-colors"
             >
-              Try the demo →
+              Try the workspace
             </a>
             <a
               href={theme.escalation.url}
@@ -161,15 +148,13 @@ export default function Home() {
             style={{ color: "var(--foreground-3)" }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden />
-            White-label setup for {theme.company} is live now.
+            Demo workspace for {theme.company}: ticket triage, RAG, approvals, analytics, and widget install.
           </p>
         </div>
+        <div className="mx-auto mt-12 max-w-5xl">
+          <HeroChatPreview />
+        </div>
       </section>
-
-      {/* ── Hero chat preview ── */}
-      <div className="px-6 -mt-4 pb-24">
-        <HeroChatPreview />
-      </div>
 
       {/* ── Stats bar ── */}
       <section className="bg-background border-t border-b border-border py-12">

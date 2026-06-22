@@ -9,6 +9,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Vercel AI SDK v6 with Google, OpenAI, or Anthropic providers
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
 - Workspace settings, verified widget domains, usage events, and approval policies
+- Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, and missing-knowledge tasks
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -42,7 +43,13 @@ The app works without provider or Supabase credentials by using deterministic se
 
 - `POST /api/chat` - embeddable/customer chat, with Lite fallback, workspace origin checks, and enterprise AI run/audit logging
 - `GET /api/widget/config` - public widget configuration scoped by workspace key and verified origin
+- `POST /api/widget/session` - optional signed widget session for verified origins when `SUPPORTPILOT_WIDGET_SESSION_SECRET` is configured
 - `GET /api/stats` - dashboard metrics from the enterprise service layer, optionally scoped by `workspace`
+- `GET /api/onboarding/state` - workspace launch checklist, health, golden questions, missing knowledge, and retention settings
+- `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
+- `GET /api/security/events` - workspace security event feed
+- `GET /api/model-routes` - AI model route/cost/latency log feed
+- `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
 - `POST /api/feedback` - answer feedback logging
 - `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
 - `POST /api/tickets/[ticketId]/draft` - create AI draft reply with citations, confidence, rationale, risk flags, and `ai_run`
@@ -73,6 +80,11 @@ SENTRY_PROJECT=...
 SENTRY_AUTH_TOKEN=...
 
 NEXT_PUBLIC_APP_URL=...
+SUPPORTPILOT_WIDGET_SESSION_SECRET=...
+MODEL_ROUTER_DEFAULT=light
+LOCAL_MODEL_ENDPOINT=...
+LOCAL_EMBEDDING_ENDPOINT=...
+LOCAL_RERANKER_ENDPOINT=...
 RESEND_API_KEY=...
 ESCALATION_FROM_EMAIL=...
 NEXT_PUBLIC_POSTHOG_KEY=...
@@ -81,7 +93,7 @@ NEXT_PUBLIC_POSTHOG_HOST=...
 
 ## Supabase
 
-Apply `supabase/migrations/001_enterprise_supportpilot.sql` and `supabase/migrations/002_light_mvp_productization.sql`, then run `supabase/seed.sql`. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, and usage events.
+Apply `supabase/migrations/001_enterprise_supportpilot.sql`, `supabase/migrations/002_light_mvp_productization.sql`, and `supabase/migrations/003_updates_enterprise_readiness.sql`, then run `supabase/seed.sql`. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -117,3 +129,4 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `ROADMAP.md` - production hardening and integrations
 - `CLIENT_SETUP.md` - client rollout runbook
 - `INGEST.md` - knowledge ingestion flow
+- `Updates/` - update-pass research and implementation requirements from design, workflow, security, agentic, and model-cost planning

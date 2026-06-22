@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ApprovalAuditTimeline } from "@/components/enterprise/approval-audit-timeline";
 import { AdminShell } from "@/components/enterprise/admin-shell";
 import { StatusBadge } from "@/components/enterprise/status-badge";
 import { TicketAiPanel } from "@/components/enterprise/ticket-ai-panel";
 import { Card } from "@/components/ui/card";
-import { getTicket } from "@/lib/db/support";
+import { getTicket, listAuditLogs } from "@/lib/db/support";
 import { theme } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 export default async function TicketDetailPage({ params }: { params: Promise<{ ticketId: string }> }) {
   const { ticketId } = await params;
-  const ticket = await getTicket(ticketId);
+  const [ticket, auditLogs] = await Promise.all([getTicket(ticketId), listAuditLogs(undefined, ticketId)]);
   if (!ticket) notFound();
 
   return (
@@ -52,6 +53,8 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
               ))}
             </div>
           </Card>
+
+          <ApprovalAuditTimeline logs={auditLogs} />
         </div>
 
         <TicketAiPanel ticket={ticket} />

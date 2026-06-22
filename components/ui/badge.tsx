@@ -1,14 +1,15 @@
 import { cn } from "@/lib/utils";
 
 type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: "default" | "accent" | "success" | "error" | "warning" | "info";
+  variant?: "default" | "accent" | "success" | "error" | "warning" | "info" | "semantic";
+  dotClassName?: string;
 };
 
-export function Badge({ className, variant = "default", ...props }: BadgeProps) {
+export function Badge({ className, variant = "default", dotClassName, children, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
         variant === "default" &&
           "bg-accent-soft text-accent border border-[color-mix(in_srgb,var(--color-accent)_20%,transparent)]",
         variant === "accent" && "bg-accent text-accent-fg",
@@ -20,9 +21,13 @@ export function Badge({ className, variant = "default", ...props }: BadgeProps) 
           "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/40",
         variant === "info" &&
           "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/40",
+        variant === "semantic" && "border",
         className
       )}
       {...props}
-    />
+    >
+      {dotClassName && <span className={cn("h-1.5 w-1.5 rounded-full", dotClassName)} aria-hidden />}
+      {children}
+    </span>
   );
 }

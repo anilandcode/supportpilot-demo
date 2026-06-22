@@ -17,19 +17,25 @@ const CLIENT_MESSAGE_LIMIT = 8;
 type ChatWindowProps = {
   onClose?: () => void;
   workspaceId?: string;
+  widgetSession?: string;
 };
 
 function getTextContent(msg: UIMessage): string {
   return msg.parts.filter(isTextUIPart).map((p) => p.text).join("");
 }
 
-export function ChatWindow({ onClose, workspaceId }: ChatWindowProps = {}) {
+export function ChatWindow({ onClose, workspaceId, widgetSession }: ChatWindowProps = {}) {
   const transport = useMemo(
-    () =>
-      new DefaultChatTransport<UIMessage<ChatMetadata>>({
-        api: workspaceId ? `/api/chat?workspace=${encodeURIComponent(workspaceId)}` : "/api/chat",
-      }),
-    [workspaceId],
+    () => {
+      const params = new URLSearchParams();
+      if (workspaceId) params.set("workspace", workspaceId);
+      if (widgetSession) params.set("widgetSession", widgetSession);
+      const query = params.toString();
+      return new DefaultChatTransport<UIMessage<ChatMetadata>>({
+        api: query ? `/api/chat?${query}` : "/api/chat",
+      });
+    },
+    [workspaceId, widgetSession],
   );
   const { messages, status, sendMessage, clearError, error } = useChat<UIMessage<ChatMetadata>>({
     transport,

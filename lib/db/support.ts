@@ -1,25 +1,38 @@
 import {
   DEMO_TENANT_ID,
   DEMO_WORKSPACE_ID,
+  demoAgentRuns,
   demoAiRuns,
   demoApprovalPolicies,
   demoAuditLogs,
+  demoChecklistItems,
   demoCustomers,
   demoDomains,
   demoDocumentChunks,
   demoEscalationRules,
   demoFeedback,
+  demoGoldenQuestions,
+  demoGroundingChecks,
   demoKnowledgeDocs,
   demoMemberships,
+  demoMissingKnowledgeTasks,
+  demoModelRouteLogs,
   demoOrganizations,
   demoMessages,
+  demoPolicyEvaluations,
+  demoRetentionSettings,
+  demoSecurityEvents,
   demoTickets,
+  demoToolCalls,
+  demoToolDefinitions,
   demoUsageEvents,
   demoUsers,
+  demoWidgetSessions,
   demoWidgetConfigs,
   demoWorkspaces,
 } from "@/lib/enterprise/demo-data";
 import type {
+  AgentRun,
   AIRun,
   AIFeedback,
   ApprovalPolicy,
@@ -28,18 +41,29 @@ import type {
   DashboardMetrics,
   DocumentChunk,
   EnterpriseUser,
+  GoldenQuestion,
+  GroundingCheck,
   KnowledgeDoc,
+  MissingKnowledgeTask,
+  ModelRouteLog,
   Organization,
+  PolicyEvaluation,
+  RetentionSetting,
   RiskLevel,
+  SecurityEvent,
   Ticket,
   TicketMessage,
   TicketPriority,
   TicketStatus,
   TicketWithRelations,
+  ToolCall,
+  ToolDefinition,
   UsageEvent,
   UsageEventType,
   WidgetConfig,
+  WidgetSession,
   Workspace,
+  WorkspaceChecklistItem,
   WorkspaceDomain,
   WorkspaceLaunchState,
 } from "@/lib/enterprise/types";
@@ -73,6 +97,18 @@ const localState = {
   escalationRules: [...demoEscalationRules],
   approvalPolicies: [...demoApprovalPolicies],
   usageEvents: [...demoUsageEvents],
+  checklistItems: [...demoChecklistItems],
+  goldenQuestions: [...demoGoldenQuestions],
+  missingKnowledgeTasks: [...demoMissingKnowledgeTasks],
+  modelRouteLogs: [...demoModelRouteLogs],
+  securityEvents: [...demoSecurityEvents],
+  widgetSessions: [...demoWidgetSessions],
+  retentionSettings: [...demoRetentionSettings],
+  toolDefinitions: [...demoToolDefinitions],
+  toolCalls: [...demoToolCalls],
+  agentRuns: [...demoAgentRuns],
+  policyEvaluations: [...demoPolicyEvaluations],
+  groundingChecks: [...demoGroundingChecks],
 };
 
 const DEFAULT_EMBEDDING_MODEL = "deterministic-hash";
@@ -134,9 +170,85 @@ export async function getWorkspace(workspaceId = DEMO_WORKSPACE_ID): Promise<Wor
 
 export async function getWorkspaceLaunchState(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceLaunchState> {
   const workspace = await getWorkspace(workspaceId);
-  const [domains, approvalPolicies] = await Promise.all([listWorkspaceDomains(workspace.id), listApprovalPolicies(workspace.id)]);
+  const [domains, approvalPolicies, checklist, goldenQuestions, missingKnowledge, retention] = await Promise.all([
+    listWorkspaceDomains(workspace.id),
+    listApprovalPolicies(workspace.id),
+    listWorkspaceChecklist(workspace.id),
+    listGoldenQuestions(workspace.id),
+    listMissingKnowledgeTasks(workspace.id),
+    getRetentionSetting(workspace.id),
+  ]);
   const widgetConfig = await getWidgetConfig(workspace.id);
-  return { workspace, domains, widgetConfig, approvalPolicies };
+  const health = await getWorkspaceHealth(workspace.id);
+  return { workspace, domains, widgetConfig, approvalPolicies, checklist, goldenQuestions, missingKnowledge, retention, health };
+}
+
+export async function listWorkspaceChecklist(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceChecklistItem[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("workspace_checklist_items")
+      .select("*")
+      .eq("workspace_id", resolvedWorkspaceId)
+      .order("created_at", { ascending: true });
+    if (!error && data) return data.map(mapChecklistItem);
+  }
+  return localState.checklistItems.filter((item) => item.workspaceId === resolvedWorkspaceId);
+}
+
+export async function completeOnboardingStep(input: { workspaceId?: string; step: WorkspaceChecklistItem["step"] }) {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const item = localState.checklistItems.find((row) => row.workspaceId === workspace.id && row.step === input.step);
+  if (item) {
+    item.completed = true;
+    item.completedAt = new Date().toISOString();
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    await supabase
+      .from("workspace_checklist_items")
+      .update({ completed: true, completed_at: new Date().toISOString() })
+      .eq("workspace_id", workspace.id)
+      .eq("step", input.step);
+  }
+
+  await recordUsageEvent({
+    workspaceId: workspace.id,
+    eventType: "onboarding_step_completed",
+    metadata: { step: input.step },
+  });
+  await appendAuditLog({
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: null,
+    userId: null,
+    action: "onboarding.step.completed",
+    details: { step: input.step },
+  });
+
+  return listWorkspaceChecklist(workspace.id);
+}
+
+export async function listGoldenQuestions(workspaceId = DEMO_WORKSPACE_ID): Promise<GoldenQuestion[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("golden_questions").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: true });
+    if (!error && data) return data.map(mapGoldenQuestion);
+  }
+  return localState.goldenQuestions.filter((question) => question.workspaceId === resolvedWorkspaceId);
+}
+
+export async function getRetentionSetting(workspaceId = DEMO_WORKSPACE_ID): Promise<RetentionSetting | null> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("retention_settings").select("*").eq("workspace_id", resolvedWorkspaceId).maybeSingle();
+    if (!error && data) return mapRetentionSetting(data);
+  }
+  return localState.retentionSettings.find((item) => item.workspaceId === resolvedWorkspaceId) ?? null;
 }
 
 export async function updateWorkspaceSettings(input: {
@@ -527,6 +639,11 @@ export async function updateAiRunDecision(input: {
     eventType: "approval.decided",
     metadata: { aiRunId: run.id, decision: input.decision, ticketId: run.ticketId },
   });
+  await recordUsageEvent({
+    workspaceId: run.workspaceId,
+    eventType: input.decision === "escalated" ? "ticket_escalated" : "approval_decided",
+    metadata: { aiRunId: run.id, decision: input.decision, ticketId: run.ticketId },
+  });
 
   return run;
 }
@@ -557,6 +674,230 @@ export async function appendFeedback(input: {
   return feedback;
 }
 
+export async function listMissingKnowledgeTasks(workspaceId = DEMO_WORKSPACE_ID): Promise<MissingKnowledgeTask[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("missing_knowledge_tasks").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: false });
+    if (!error && data) return data.map(mapMissingKnowledgeTask);
+  }
+  return localState.missingKnowledgeTasks.filter((task) => task.workspaceId === resolvedWorkspaceId);
+}
+
+export async function createMissingKnowledgeTask(input: {
+  workspaceId?: string;
+  topic: string;
+  reason: string;
+  sourceAiRunId?: string | null;
+}): Promise<MissingKnowledgeTask> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const task: MissingKnowledgeTask = {
+    id: publicId("mk"),
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    topic: input.topic,
+    reason: input.reason,
+    sourceAiRunId: input.sourceAiRunId ?? null,
+    status: "open",
+    createdAt: new Date().toISOString(),
+  };
+  localState.missingKnowledgeTasks.unshift(task);
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("missing_knowledge_tasks").insert(toMissingKnowledgeTaskRow(task));
+
+  await appendAuditLog({
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: null,
+    userId: null,
+    action: "knowledge.missing.created",
+    details: { topic: task.topic, reason: task.reason, sourceAiRunId: task.sourceAiRunId },
+  });
+  return task;
+}
+
+export async function createModelRouteLog(
+  input: Omit<ModelRouteLog, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<ModelRouteLog, "tenantId" | "workspaceId">>,
+): Promise<ModelRouteLog> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const log: ModelRouteLog = {
+    ...input,
+    id: publicId("route"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.modelRouteLogs.unshift(log);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("model_route_logs").insert(toModelRouteLogRow(log));
+  await recordUsageEvent({
+    workspaceId: log.workspaceId,
+    eventType: "model_route_used",
+    metadata: { aiRunId: log.aiRunId, route: log.route, provider: log.provider, model: log.model, estimatedCostUsd: log.estimatedCostUsd },
+  });
+  return log;
+}
+
+export async function listModelRouteLogs(workspaceId = DEMO_WORKSPACE_ID): Promise<ModelRouteLog[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("model_route_logs").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: false }).limit(100);
+    if (!error && data) return data.map(mapModelRouteLog);
+  }
+  return localState.modelRouteLogs.filter((log) => log.workspaceId === resolvedWorkspaceId);
+}
+
+export async function appendSecurityEvent(
+  input: Omit<SecurityEvent, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<SecurityEvent, "tenantId" | "workspaceId">>,
+): Promise<SecurityEvent> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const event: SecurityEvent = {
+    ...input,
+    id: publicId("sec"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.securityEvents.unshift(event);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("security_events").insert(toSecurityEventRow(event));
+  await recordUsageEvent({
+    workspaceId: event.workspaceId,
+    eventType: "security_event_logged",
+    metadata: { eventType: event.eventType, severity: event.severity, origin: event.origin },
+  });
+  return event;
+}
+
+export async function listSecurityEvents(workspaceId = DEMO_WORKSPACE_ID): Promise<SecurityEvent[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("security_events").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: false }).limit(100);
+    if (!error && data) return data.map(mapSecurityEvent);
+  }
+  return localState.securityEvents.filter((event) => event.workspaceId === resolvedWorkspaceId);
+}
+
+export async function createWidgetSession(input: {
+  workspaceId?: string;
+  tokenHash: string;
+  origin: string;
+  domain: string;
+  expiresAt: string;
+}): Promise<WidgetSession> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const session: WidgetSession = {
+    id: publicId("wsess"),
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    tokenHash: input.tokenHash,
+    origin: input.origin,
+    domain: input.domain,
+    expiresAt: input.expiresAt,
+    createdAt: new Date().toISOString(),
+    lastSeenAt: null,
+  };
+  localState.widgetSessions.unshift(session);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("widget_sessions").insert(toWidgetSessionRow(session));
+  return session;
+}
+
+export async function appendGroundingCheck(
+  input: Omit<GroundingCheck, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<GroundingCheck, "tenantId" | "workspaceId">>,
+): Promise<GroundingCheck> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const check: GroundingCheck = {
+    ...input,
+    id: publicId("grounding"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.groundingChecks.unshift(check);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("grounding_checks").insert(toGroundingCheckRow(check));
+  return check;
+}
+
+export async function appendPolicyEvaluation(
+  input: Omit<PolicyEvaluation, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<PolicyEvaluation, "tenantId" | "workspaceId">>,
+): Promise<PolicyEvaluation> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const evaluation: PolicyEvaluation = {
+    ...input,
+    id: publicId("policy"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.policyEvaluations.unshift(evaluation);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("policy_evaluations").insert(toPolicyEvaluationRow(evaluation));
+  return evaluation;
+}
+
+export async function appendAgentRun(
+  input: Omit<AgentRun, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<AgentRun, "tenantId" | "workspaceId">>,
+): Promise<AgentRun> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const run: AgentRun = {
+    ...input,
+    id: publicId("agent"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.agentRuns.unshift(run);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("agent_runs").insert(toAgentRunRow(run));
+  return run;
+}
+
+export async function appendToolCall(
+  input: Omit<ToolCall, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<ToolCall, "tenantId" | "workspaceId">>,
+): Promise<ToolCall> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const call: ToolCall = {
+    ...input,
+    id: publicId("toolcall"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.toolCalls.unshift(call);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("tool_calls").insert(toToolCallRow(call));
+  return call;
+}
+
+export async function listToolDefinitions(workspaceId = DEMO_WORKSPACE_ID): Promise<ToolDefinition[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("tool_definitions").select("*").eq("workspace_id", resolvedWorkspaceId).eq("active", true).order("name", { ascending: true });
+    if (!error && data) return data.map(mapToolDefinition);
+  }
+  return localState.toolDefinitions.filter((tool) => tool.workspaceId === resolvedWorkspaceId && tool.active);
+}
+
+export async function listAuditLogs(workspaceId = DEMO_WORKSPACE_ID, ticketId?: string | null): Promise<AuditLog[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    let query = supabase.from("audit_logs").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: false }).limit(100);
+    if (ticketId) query = query.eq("ticket_id", ticketId);
+    const { data, error } = await query;
+    if (!error && data) return data.map(mapAuditLog);
+  }
+  return localState.auditLogs
+    .filter((log) => log.workspaceId === resolvedWorkspaceId && (!ticketId || log.ticketId === ticketId))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export async function appendAuditLog(
   input: Omit<AuditLog, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<AuditLog, "tenantId" | "workspaceId">>,
 ): Promise<AuditLog> {
@@ -580,7 +921,7 @@ export async function getDashboardMetrics(workspaceId = DEMO_WORKSPACE_ID): Prom
   if (supabase) {
     const [{ data: tickets }, { data: aiRuns }] = await Promise.all([
       supabase.from("tickets").select("id,status,subject").eq("workspace_id", resolvedWorkspaceId),
-      supabase.from("ai_runs").select("approval_status,confidence,prompt").eq("workspace_id", resolvedWorkspaceId),
+      supabase.from("ai_runs").select("approval_status,confidence,prompt,cost_estimate_usd,model_route").eq("workspace_id", resolvedWorkspaceId),
     ]);
 
     if (tickets && aiRuns) {
@@ -594,6 +935,8 @@ export async function getDashboardMetrics(workspaceId = DEMO_WORKSPACE_ID): Prom
           approvalStatus: run.approval_status,
           confidence: Number(run.confidence ?? 0),
           prompt: run.prompt ?? "",
+          costEstimateUsd: Number(run.cost_estimate_usd ?? 0),
+          modelRoute: run.model_route ?? null,
         })),
       );
     }
@@ -601,8 +944,39 @@ export async function getDashboardMetrics(workspaceId = DEMO_WORKSPACE_ID): Prom
 
   return calculateMetrics(
     localState.tickets.filter((ticket) => ticket.workspaceId === resolvedWorkspaceId).map((ticket) => ({ id: ticket.id, status: ticket.status, subject: ticket.subject })),
-    localState.aiRuns.filter((run) => run.workspaceId === resolvedWorkspaceId).map((run) => ({ approvalStatus: run.approvalStatus, confidence: run.confidence, prompt: run.prompt })),
+    localState.aiRuns.filter((run) => run.workspaceId === resolvedWorkspaceId).map((run) => ({
+      approvalStatus: run.approvalStatus,
+      confidence: run.confidence,
+      prompt: run.prompt,
+      costEstimateUsd: run.costEstimateUsd ?? 0,
+      modelRoute: run.modelRoute ?? null,
+    })),
   );
+}
+
+export async function getWorkspaceHealth(workspaceId = DEMO_WORKSPACE_ID) {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const [checklist, chunks, domains, approvals, missingKnowledge, securityEvents] = await Promise.all([
+    listWorkspaceChecklist(resolvedWorkspaceId),
+    listDocumentChunks(resolvedWorkspaceId),
+    listWorkspaceDomains(resolvedWorkspaceId),
+    listApprovalQueue(resolvedWorkspaceId),
+    listMissingKnowledgeTasks(resolvedWorkspaceId),
+    listSecurityEvents(resolvedWorkspaceId),
+  ]);
+  const completed = checklist.filter((item) => item.completed).length;
+  const since24h = Date.now() - 24 * 60 * 60 * 1000;
+
+  return {
+    launchReady: checklist.length > 0 && completed === checklist.length && approvals.length === 0,
+    checklistCompleted: completed,
+    checklistTotal: checklist.length,
+    approvedSources: chunks.length,
+    verifiedDomains: domains.filter((domain) => domain.status === "verified").length,
+    openApprovals: approvals.length,
+    missingKnowledge: missingKnowledge.filter((task) => task.status !== "resolved").length,
+    securityEvents24h: securityEvents.filter((event) => new Date(event.createdAt).getTime() >= since24h).length,
+  };
 }
 
 export async function listApprovalQueue(workspaceId = DEMO_WORKSPACE_ID): Promise<AIRun[]> {
@@ -620,7 +994,7 @@ export async function listApprovalQueue(workspaceId = DEMO_WORKSPACE_ID): Promis
 
 function calculateMetrics(
   tickets: { id: string; status: TicketStatus; subject: string }[],
-  aiRuns: { approvalStatus: AIRun["approvalStatus"]; confidence: number; prompt: string }[],
+  aiRuns: { approvalStatus: AIRun["approvalStatus"]; confidence: number; prompt: string; costEstimateUsd?: number; modelRoute?: AIRun["modelRoute"] }[],
 ): DashboardMetrics {
   const totalTickets = tickets.length;
   const resolvedTickets = tickets.filter((ticket) => ticket.status === "resolved").length;
@@ -628,6 +1002,8 @@ function calculateMetrics(
   const decidedRuns = aiRuns.filter((run) => run.approvalStatus !== "draft");
   const acceptedRuns = decidedRuns.filter((run) => run.approvalStatus === "approved" || run.approvalStatus === "edited");
   const lowConfidence = aiRuns.filter((run) => run.confidence < 0.72);
+  const totalCost = aiRuns.reduce((sum, run) => sum + (run.costEstimateUsd ?? 0), 0);
+  const fallbackRuns = aiRuns.filter((run) => run.modelRoute === "R4" || run.modelRoute === "R5");
 
   return {
     totalTickets,
@@ -636,6 +1012,9 @@ function calculateMetrics(
     acceptanceRate: decidedRuns.length === 0 ? 0 : Math.round((acceptedRuns.length / decidedRuns.length) * 100),
     responseTimeMinutes: 14,
     escalationRate: totalTickets === 0 ? 0 : Math.round((escalatedTickets / totalTickets) * 100),
+    costPerConversation: aiRuns.length === 0 ? 0 : Number((totalCost / aiRuns.length).toFixed(4)),
+    costPerAcceptedReply: acceptedRuns.length === 0 ? 0 : Number((totalCost / acceptedRuns.length).toFixed(4)),
+    fallbackRate: aiRuns.length === 0 ? 0 : Math.round((fallbackRuns.length / aiRuns.length) * 100),
     missingTopics: lowConfidence.slice(0, 5).map((run) => ({
       topic: run.prompt.replace(/^Draft a support reply for /, ""),
       count: 1,
@@ -732,6 +1111,118 @@ function mapApprovalPolicy(row: any): ApprovalPolicy {
   };
 }
 
+function mapChecklistItem(row: any): WorkspaceChecklistItem {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    step: row.step,
+    label: row.label,
+    description: row.description,
+    completed: Boolean(row.completed),
+    completedAt: row.completed_at,
+    createdAt: row.created_at,
+  };
+}
+
+function mapGoldenQuestion(row: any): GoldenQuestion {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    question: row.question,
+    expectedSources: row.expected_sources ?? [],
+    lastScore: row.last_score == null ? null : Number(row.last_score),
+    passed: Boolean(row.passed),
+    createdAt: row.created_at,
+  };
+}
+
+function mapRetentionSetting(row: any): RetentionSetting {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    conversationDays: Number(row.conversation_days ?? 365),
+    auditDays: Number(row.audit_days ?? 730),
+    aiPromptLogging: row.ai_prompt_logging ?? "redacted",
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+function mapMissingKnowledgeTask(row: any): MissingKnowledgeTask {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    topic: row.topic,
+    reason: row.reason,
+    sourceAiRunId: row.source_ai_run_id,
+    status: row.status ?? "open",
+    createdAt: row.created_at,
+  };
+}
+
+function mapModelRouteLog(row: any): ModelRouteLog {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    aiRunId: row.ai_run_id,
+    route: row.route,
+    task: row.task,
+    provider: row.provider,
+    model: row.model,
+    latencyMs: Number(row.latency_ms ?? 0),
+    inputTokens: Number(row.input_tokens ?? 0),
+    outputTokens: Number(row.output_tokens ?? 0),
+    estimatedCostUsd: Number(row.estimated_cost_usd ?? 0),
+    confidence: Number(row.confidence ?? 0),
+    reason: row.reason ?? "",
+    createdAt: row.created_at,
+  };
+}
+
+function mapSecurityEvent(row: any): SecurityEvent {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    eventType: row.event_type,
+    severity: row.severity ?? "medium",
+    origin: row.origin,
+    ipHash: row.ip_hash,
+    details: row.details ?? {},
+    createdAt: row.created_at,
+  };
+}
+
+function mapToolDefinition(row: any): ToolDefinition {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    name: row.name,
+    description: row.description,
+    readOnly: Boolean(row.read_only),
+    active: Boolean(row.active),
+  };
+}
+
+function mapAuditLog(row: any): AuditLog {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    ticketId: row.ticket_id,
+    userId: row.user_id,
+    action: row.action,
+    details: row.details ?? {},
+    createdAt: row.created_at,
+  };
+}
+
 function mapCustomer(row: any): Customer {
   return {
     id: row.id,
@@ -819,10 +1310,22 @@ function mapAiRun(row: any): AIRun {
     ticketId: row.ticket_id,
     userId: row.user_id,
     prompt: row.prompt,
+    promptHash: row.prompt_hash ?? null,
+    redactedPromptPreview: row.redacted_prompt_preview ?? null,
     response: row.response,
     model: row.model,
+    provider: row.provider ?? null,
+    modelRoute: row.model_route ?? null,
     latencyMs: row.latency_ms,
+    inputTokens: Number(row.input_tokens ?? 0),
+    outputTokens: Number(row.output_tokens ?? 0),
+    costEstimateUsd: Number(row.cost_estimate_usd ?? 0),
     confidence: Number(row.confidence ?? 0),
+    retrievalScore: row.retrieval_score == null ? undefined : Number(row.retrieval_score),
+    generationScore: row.generation_score == null ? undefined : Number(row.generation_score),
+    policyRiskScore: row.policy_risk_score == null ? undefined : Number(row.policy_risk_score),
+    groundingStatus: row.grounding_status ?? undefined,
+    groundingScore: row.grounding_score == null ? undefined : Number(row.grounding_score),
     approvalStatus: row.approval_status,
     escalationReason: row.escalation_reason,
     riskFlags: row.risk_flags ?? [],
@@ -896,10 +1399,22 @@ function toAiRunRow(run: AIRun) {
     ticket_id: maybeUuid(run.ticketId),
     user_id: maybeUuid(run.userId),
     prompt: run.prompt,
+    prompt_hash: run.promptHash,
+    redacted_prompt_preview: run.redactedPromptPreview,
     response: run.response,
     model: run.model,
+    provider: run.provider,
+    model_route: run.modelRoute,
     latency_ms: run.latencyMs,
+    input_tokens: run.inputTokens ?? 0,
+    output_tokens: run.outputTokens ?? 0,
+    cost_estimate_usd: run.costEstimateUsd ?? 0,
     confidence: run.confidence,
+    retrieval_score: run.retrievalScore,
+    generation_score: run.generationScore,
+    policy_risk_score: run.policyRiskScore,
+    grounding_status: run.groundingStatus,
+    grounding_score: run.groundingScore,
     approval_status: run.approvalStatus,
     escalation_reason: run.escalationReason,
     risk_flags: run.riskFlags,
@@ -932,5 +1447,123 @@ function toAuditLogRow(log: AuditLog) {
     action: log.action,
     details: log.details,
     created_at: log.createdAt,
+  };
+}
+
+function toMissingKnowledgeTaskRow(task: MissingKnowledgeTask) {
+  return {
+    id: maybeUuid(task.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(task.tenantId),
+    workspace_id: maybeUuid(task.workspaceId),
+    topic: task.topic,
+    reason: task.reason,
+    source_ai_run_id: maybeUuid(task.sourceAiRunId),
+    status: task.status,
+    created_at: task.createdAt,
+  };
+}
+
+function toModelRouteLogRow(log: ModelRouteLog) {
+  return {
+    id: maybeUuid(log.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(log.tenantId),
+    workspace_id: maybeUuid(log.workspaceId),
+    ai_run_id: maybeUuid(log.aiRunId),
+    route: log.route,
+    task: log.task,
+    provider: log.provider,
+    model: log.model,
+    latency_ms: log.latencyMs,
+    input_tokens: log.inputTokens,
+    output_tokens: log.outputTokens,
+    estimated_cost_usd: log.estimatedCostUsd,
+    confidence: log.confidence,
+    reason: log.reason,
+    created_at: log.createdAt,
+  };
+}
+
+function toSecurityEventRow(event: SecurityEvent) {
+  return {
+    id: maybeUuid(event.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(event.tenantId),
+    workspace_id: maybeUuid(event.workspaceId),
+    event_type: event.eventType,
+    severity: event.severity,
+    origin: event.origin,
+    ip_hash: event.ipHash,
+    details: event.details,
+    created_at: event.createdAt,
+  };
+}
+
+function toWidgetSessionRow(session: WidgetSession) {
+  return {
+    id: maybeUuid(session.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(session.tenantId),
+    workspace_id: maybeUuid(session.workspaceId),
+    token_hash: session.tokenHash,
+    origin: session.origin,
+    domain: session.domain,
+    expires_at: session.expiresAt,
+    created_at: session.createdAt,
+    last_seen_at: session.lastSeenAt,
+  };
+}
+
+function toGroundingCheckRow(check: GroundingCheck) {
+  return {
+    id: maybeUuid(check.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(check.tenantId),
+    workspace_id: maybeUuid(check.workspaceId),
+    ai_run_id: maybeUuid(check.aiRunId),
+    status: check.status,
+    score: check.score,
+    citation_coverage: check.citationCoverage,
+    freshness_score: check.freshnessScore,
+    notes: check.notes,
+    created_at: check.createdAt,
+  };
+}
+
+function toPolicyEvaluationRow(evaluation: PolicyEvaluation) {
+  return {
+    id: maybeUuid(evaluation.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(evaluation.tenantId),
+    workspace_id: maybeUuid(evaluation.workspaceId),
+    ai_run_id: maybeUuid(evaluation.aiRunId),
+    action: evaluation.action,
+    reasons: evaluation.reasons,
+    required_role: evaluation.requiredRole,
+    allowed_tools: evaluation.allowedTools,
+    risk_level: evaluation.riskLevel,
+    created_at: evaluation.createdAt,
+  };
+}
+
+function toAgentRunRow(run: AgentRun) {
+  return {
+    id: maybeUuid(run.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(run.tenantId),
+    workspace_id: maybeUuid(run.workspaceId),
+    ticket_id: maybeUuid(run.ticketId),
+    ai_run_id: maybeUuid(run.aiRunId),
+    loop_step: run.loopStep,
+    outcome: run.outcome,
+    created_at: run.createdAt,
+  };
+}
+
+function toToolCallRow(call: ToolCall) {
+  return {
+    id: maybeUuid(call.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(call.tenantId),
+    workspace_id: maybeUuid(call.workspaceId),
+    ai_run_id: maybeUuid(call.aiRunId),
+    tool_name: call.toolName,
+    input: call.input,
+    output_summary: call.outputSummary,
+    status: call.status,
+    created_at: call.createdAt,
   };
 }
