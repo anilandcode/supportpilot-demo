@@ -31,11 +31,12 @@ Date: 2026-06-24
 - Missing-knowledge loop through negative feedback and explicit source-gap creation.
 - Analytics cost/fallback metrics from AI run route metadata.
 - Read-only tool registry scaffolding for `search_knowledge`, `get_ticket_history`, and `get_workspace_policy`.
+- Billing page, optional Stripe customer portal handoff, current-period usage meters, model route cost grouping, and enforced Launch/Pro chat limits.
 
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
-- Stripe subscription checkout/customer portal remains a follow-up; current pricing and usage-limit UI is present.
+- Full Stripe subscription lifecycle remains a follow-up: checkout, webhook reconciliation, invoice sync, and customer/price mapping beyond the optional portal session route.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.

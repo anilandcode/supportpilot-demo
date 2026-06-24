@@ -24,7 +24,7 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Human approval before final customer message | PASS | `PATCH /api/ai-runs/[aiRunId]/decision` only appends an agent message on approved or edited decisions. |
 | Manager queue for high-risk drafts | PASS | `/admin/approvals`, `listApprovalQueue()`, and risk flags surface manager-required items. |
 | External send/email/helpdesk integration | PARTIAL | Approval creates the canonical ticket message and audit log; optional Resend escalation email exists at `POST /api/escalations/email`, but approved-reply helpdesk sync is still roadmap. |
-| Required admin UI routes | PASS | `/admin`, `/admin/tickets`, `/admin/tickets/[ticketId]`, `/admin/knowledge`, `/admin/approvals`, `/admin/analytics`. |
+| Required admin UI routes | PASS | `/admin`, `/admin/tickets`, `/admin/tickets/[ticketId]`, `/admin/knowledge`, `/admin/approvals`, `/admin/analytics`, `/admin/billing`. |
 | Workspace settings route | PASS | `/admin/settings` manages workspace identity, brand color, escalation email, Calendly link, verified domains, widget snippets, and approval policy summary. |
 | Customer portal route | PASS | `/portal` uses the existing chat window and keeps the Lite chat experience available. |
 | Knowledge upload for md/txt/pdf/pasted content | PASS | `POST /api/knowledge/upload` parses file or pasted text, chunks content, stores docs/chunks with workspace metadata, and logs audit/usage events. |
@@ -72,9 +72,10 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Approval queue split review workspace | PASS | `/admin/approvals` now has risk tabs, summary metrics, left queue cards, selected review workspace, confidence meter, source drawer, policy reason, audit trail, and sticky decision action bar. |
 | Knowledge source health and missing-knowledge loop | PASS | `/admin/knowledge` shows source table, ingestion/freshness/chunk metrics, selected source detail, chunk previews, and missing-knowledge clusters from `listMissingKnowledgeTasks()`. |
 | Analytics covers RAG quality, approval quality, and model cost | PASS | `/admin/analytics` shows deflection, acceptance, escalation, confidence distribution, missing knowledge, quality metrics, and `model_route_logs`. |
+| Launch/Pro billing page and plan-limit enforcement | PASS | `/admin/billing`, `lib/billing/plans.ts`, `/api/billing/portal`, and `/api/chat` expose current-period usage, model route cost, Stripe portal handoff, and enforced conversation/AI reply limits before generation. |
 | Settings hub has widget preview and contrast/security placeholders | PASS | `/admin/settings` includes settings hub cards, install snippets, verified domains, approval policies, live widget preview, contrast message, and retention/security settings. |
 | Widget citations and approval-pending states are visible | PASS | `components/chat/citations.tsx` renders expandable source cards; `ChatWindow` displays cited-answer and approval-pending banners from metadata. |
 | Semantic badges use explicit token table | PASS | `app/globals.css`, `lib/theme.ts`, `theme.config.ts`, `components/enterprise/status-badge.tsx`, and `DESIGN.md` define and use semantic fill/border/text/dot tokens. |
 | Google Stitch output treated as reference, not pasted production code | PASS | `Updates/16_GoogleStitch_Dashboard_Prompts.md` is preserved as a reference; production implementation remains in local Next.js/Tailwind components. |
-| Stripe subscriptions and live billing limits | PARTIAL | Pricing and usage-limit UI are present; live Stripe subscription wiring remains a Launch/Pro follow-up. |
+| Stripe subscriptions and live billing limits | PARTIAL | Plan-limit enforcement and optional Stripe portal session handoff are implemented; full Stripe subscription lifecycle, checkout, webhook reconciliation, and invoice sync remain Launch/Pro hardening. |
 | External Stitch screenshots/Figma assets in `/design/stitch/` | PARTIAL | Prompt workflow is documented in `Updates/16` and `Updates/18`; no external Stitch image assets are required for the current code pass. |

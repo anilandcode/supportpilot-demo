@@ -8,6 +8,7 @@ import {
 } from "ai";
 import { captureProductEvent } from "@/lib/analytics/events";
 import { estimateTokenCount, selectModelRoute } from "@/lib/ai/model-router";
+import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
 import { appendAuditLog, appendSecurityEvent, createAiRun, createModelRouteLog, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -232,6 +233,53 @@ export async function POST(req: Request) {
       return assistantResponse("Send me a question and I will check the docs.", {
         tier: theme.tier,
       });
+    }
+
+    const billing = await getBillingSnapshot(workspace.id);
+    const planLimitBlock = getPlanLimitBlock(billing);
+    if (planLimitBlock) {
+      const text = `This workspace has reached the ${billing.plan.name} ${planLimitBlock.label.toLowerCase()} limit for the current billing period. ${theme.escalation.label} can review the request or upgrade the plan.`;
+      const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;
+      await recordUsageEvent({
+        workspaceId: workspace.id,
+        eventType: "chat.escalated",
+        metadata: {
+          reason: "plan_limit",
+          metric: planLimitBlock.key,
+          used: planLimitBlock.used,
+          limit: planLimitBlock.limit,
+          plan: billing.plan.key,
+        },
+      });
+      await appendSecurityEvent({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        eventType: "rate_limited",
+        severity: "high",
+        origin: req.headers.get("origin"),
+        ipHash: ipHash(req),
+        details: {
+          reason: "plan_limit",
+          metric: planLimitBlock.key,
+          used: planLimitBlock.used,
+          limit: planLimitBlock.limit,
+          plan: billing.plan.key,
+        },
+      });
+      await appendAuditLog({
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        ticketId: null,
+        userId: null,
+        action: "billing.plan_limit.blocked",
+        details: {
+          metric: planLimitBlock.key,
+          used: planLimitBlock.used,
+          limit: planLimitBlock.limit,
+          plan: billing.plan.key,
+        },
+      });
+      return assistantResponse(text, metadata);
     }
 
     await recordUsageEvent({

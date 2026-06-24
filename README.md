@@ -10,6 +10,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
 - Workspace settings, verified widget domains, usage events, and approval policies
 - Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, and missing-knowledge tasks
+- Launch/Pro billing usage limits with optional Stripe billing portal handoff
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -37,6 +38,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `/admin/knowledge` - doc upload, ingestion status, approved source list
 - `/admin/approvals` - high-risk draft approval queue
 - `/admin/analytics` - resolution, acceptance, response, escalation, and missing-topic metrics
+- `/admin/billing` - Launch/Pro usage limits, model route cost, invoices, and optional Stripe portal
 - `/admin/settings` - workspace brand, escalation email, widget key, verified domains, approval policies
 
 ## API
@@ -49,6 +51,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
 - `GET /api/security/events` - workspace security event feed
 - `GET /api/model-routes` - AI model route/cost/latency log feed
+- `GET|POST /api/billing/portal` - create a Stripe customer portal session when Stripe env vars exist, otherwise return to the demo billing page
 - `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
 - `POST /api/feedback` - answer feedback logging
 - `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
@@ -89,7 +92,13 @@ RESEND_API_KEY=...
 ESCALATION_FROM_EMAIL=...
 NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=...
+STRIPE_SECRET_KEY=...
+STRIPE_CUSTOMER_ID=...
+SUPPORTPILOT_STRIPE_CUSTOMER_ID=...
+STRIPE_BILLING_PORTAL_RETURN_URL=...
 ```
+
+`/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
 
 ## Supabase
 

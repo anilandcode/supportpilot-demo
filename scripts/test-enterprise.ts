@@ -13,10 +13,10 @@ import {
   demoGroundingChecks,
   demoKnowledgeDocs,
   demoMemberships,
+  demoOrganizations,
   demoMissingKnowledgeTasks,
   demoModelRouteLogs,
   demoMessages,
-  demoOrganizations,
   demoPolicyEvaluations,
   demoRetentionSettings,
   demoSecurityEvents,
@@ -28,6 +28,7 @@ import {
   demoWorkspaces,
 } from "../lib/enterprise/demo-data.ts";
 import { selectModelRoute } from "../lib/ai/model-router.ts";
+import { buildBillingSnapshot, getPlanLimitBlock } from "../lib/billing/core.ts";
 import { hasSensitiveFindings, previewRedactedText } from "../lib/security/redaction.ts";
 import { calculateConfidenceBreakdown } from "../lib/workflows/confidence.ts";
 import { verifyGrounding } from "../lib/workflows/grounding.ts";
@@ -141,6 +142,34 @@ const policy = evaluatePolicy({
 const policyOk = policy.action === "approve_required" && policy.requiredRole === "manager";
 console.log(`${policyOk ? "PASS" : "FAIL"} policy decision: ${policy.action}`);
 if (!policyOk) failed++;
+
+const billing = buildBillingSnapshot({
+  workspace: demoWorkspaces[0],
+  organizationPlan: demoOrganizations[0].plan,
+  usageEvents: demoUsageEvents,
+  aiRunCount: demoAiRuns.length,
+  workspaceCount: demoWorkspaces.length,
+  memberCount: demoMemberships.length,
+  knowledgeDocs: demoKnowledgeDocs,
+  routeLogs: demoModelRouteLogs,
+  hasStripePortal: false,
+  now: new Date("2026-06-24T00:00:00.000Z"),
+});
+const billingOk =
+  billing.plan.key === "launch" &&
+  billing.metrics.aiReplies.limit === demoWorkspaces[0].monthlyReplyLimit &&
+  billing.metrics.aiReplies.used === demoAiRuns.length &&
+  billing.metrics.sources.used === demoKnowledgeDocs.length &&
+  getPlanLimitBlock(billing) === null;
+console.log(`${billingOk ? "PASS" : "FAIL"} billing plan limits: ${billing.plan.name}/${billing.metrics.aiReplies.used}/${billing.metrics.aiReplies.limit}`);
+if (!billingOk) failed++;
+
+const routeCostOk =
+  billing.routeCosts.length > 0 &&
+  billing.routeCosts.reduce((sum, route) => sum + route.calls, 0) === demoModelRouteLogs.length &&
+  billing.totalEstimatedCostUsd >= 0;
+console.log(`${routeCostOk ? "PASS" : "FAIL"} billing route cost summary: ${billing.routeCosts.length}`);
+if (!routeCostOk) failed++;
 
 if (failed > 0) {
   console.error(`\n${failed} enterprise checks failed`);
