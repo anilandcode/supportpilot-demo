@@ -22,7 +22,7 @@ export function Nav() {
           <div className="w-8 h-8 rounded-xl bg-accent flex items-center justify-center text-accent-fg text-sm font-bold">
             {theme.botName[0]}
           </div>
-          <span className="text-base font-bold text-foreground tracking-tight">{theme.productName}</span>
+          <span className="text-base font-bold text-foreground">{theme.productName}</span>
         </a>
 
         {/* Desktop links */}

@@ -7,22 +7,26 @@ type StatusBadgeProps = {
 };
 
 const STATUS_STYLES: Record<string, { className: string; dot: string }> = {
-  resolved: { className: "bg-[color-mix(in_srgb,var(--semantic-status-resolved)_12%,transparent)] text-[var(--semantic-status-resolved)] border-[color-mix(in_srgb,var(--semantic-status-resolved)_24%,transparent)]", dot: "bg-[var(--semantic-status-resolved)]" },
-  approved: { className: "bg-[color-mix(in_srgb,var(--semantic-status-resolved)_12%,transparent)] text-[var(--semantic-status-resolved)] border-[color-mix(in_srgb,var(--semantic-status-resolved)_24%,transparent)]", dot: "bg-[var(--semantic-status-resolved)]" },
-  verified: { className: "bg-[color-mix(in_srgb,var(--semantic-status-resolved)_12%,transparent)] text-[var(--semantic-status-resolved)] border-[color-mix(in_srgb,var(--semantic-status-resolved)_24%,transparent)]", dot: "bg-[var(--semantic-status-resolved)]" },
-  new: { className: "bg-[color-mix(in_srgb,var(--semantic-status-new)_12%,transparent)] text-[var(--semantic-status-new)] border-[color-mix(in_srgb,var(--semantic-status-new)_24%,transparent)]", dot: "bg-[var(--semantic-status-new)]" },
-  in_progress: { className: "bg-[color-mix(in_srgb,var(--semantic-status-progress)_12%,transparent)] text-[var(--semantic-status-progress)] border-[color-mix(in_srgb,var(--semantic-status-progress)_24%,transparent)]", dot: "bg-[var(--semantic-status-progress)]" },
-  edited: { className: "bg-[color-mix(in_srgb,var(--semantic-status-progress)_12%,transparent)] text-[var(--semantic-status-progress)] border-[color-mix(in_srgb,var(--semantic-status-progress)_24%,transparent)]", dot: "bg-[var(--semantic-status-progress)]" },
-  pending: { className: "bg-[color-mix(in_srgb,var(--semantic-priority-medium)_12%,transparent)] text-[var(--semantic-priority-medium)] border-[color-mix(in_srgb,var(--semantic-priority-medium)_24%,transparent)]", dot: "bg-[var(--semantic-priority-medium)]" },
-  draft: { className: "bg-[color-mix(in_srgb,var(--semantic-priority-low)_12%,transparent)] text-[var(--semantic-priority-low)] border-[color-mix(in_srgb,var(--semantic-priority-low)_24%,transparent)]", dot: "bg-[var(--semantic-priority-low)]" },
-  escalated: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-high)_12%,transparent)] text-[var(--semantic-risk-high)] border-[color-mix(in_srgb,var(--semantic-risk-high)_24%,transparent)]", dot: "bg-[var(--semantic-risk-high)]" },
-  rejected: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-critical)_12%,transparent)] text-[var(--semantic-risk-critical)] border-[color-mix(in_srgb,var(--semantic-risk-critical)_24%,transparent)]", dot: "bg-[var(--semantic-risk-critical)]" },
-  blocked: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-critical)_12%,transparent)] text-[var(--semantic-risk-critical)] border-[color-mix(in_srgb,var(--semantic-risk-critical)_24%,transparent)]", dot: "bg-[var(--semantic-risk-critical)]" },
-  urgent: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-critical)_12%,transparent)] text-[var(--semantic-risk-critical)] border-[color-mix(in_srgb,var(--semantic-risk-critical)_24%,transparent)]", dot: "bg-[var(--semantic-risk-critical)]" },
-  critical: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-critical)_12%,transparent)] text-[var(--semantic-risk-critical)] border-[color-mix(in_srgb,var(--semantic-risk-critical)_24%,transparent)]", dot: "bg-[var(--semantic-risk-critical)]" },
-  high: { className: "bg-[color-mix(in_srgb,var(--semantic-risk-high)_12%,transparent)] text-[var(--semantic-risk-high)] border-[color-mix(in_srgb,var(--semantic-risk-high)_24%,transparent)]", dot: "bg-[var(--semantic-risk-high)]" },
-  medium: { className: "bg-[color-mix(in_srgb,var(--semantic-priority-medium)_12%,transparent)] text-[var(--semantic-priority-medium)] border-[color-mix(in_srgb,var(--semantic-priority-medium)_24%,transparent)]", dot: "bg-[var(--semantic-priority-medium)]" },
-  low: { className: "bg-[color-mix(in_srgb,var(--semantic-priority-low)_12%,transparent)] text-[var(--semantic-priority-low)] border-[color-mix(in_srgb,var(--semantic-priority-low)_24%,transparent)]", dot: "bg-[var(--semantic-priority-low)]" },
+  new: { className: "bg-[var(--badge-new-bg)] text-[var(--badge-new-text)] border-[var(--badge-new-border)]", dot: "bg-[var(--semantic-status-new)]" },
+  in_progress: { className: "bg-[var(--badge-progress-bg)] text-[var(--badge-progress-text)] border-[var(--badge-progress-border)]", dot: "bg-[var(--semantic-status-progress)]" },
+  waiting: { className: "bg-[var(--badge-waiting-bg)] text-[var(--badge-waiting-text)] border-[var(--badge-waiting-border)]", dot: "bg-[var(--semantic-status-waiting)]" },
+  resolved: { className: "bg-[var(--badge-success-bg)] text-[var(--badge-success-text)] border-[var(--badge-success-border)]", dot: "bg-[var(--semantic-status-resolved)]" },
+  escalated: { className: "bg-[var(--badge-danger-bg)] text-[var(--badge-danger-text)] border-[var(--badge-danger-border)]", dot: "bg-[var(--semantic-confidence-low)]" },
+
+  low: { className: "bg-[var(--badge-neutral-bg)] text-[var(--badge-neutral-text)] border-[var(--badge-neutral-border)]", dot: "bg-[var(--semantic-priority-low)]" },
+  medium: { className: "bg-[var(--badge-progress-bg)] text-[var(--badge-progress-text)] border-[var(--badge-progress-border)]", dot: "bg-[var(--semantic-priority-medium)]" },
+  high: { className: "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]", dot: "bg-[var(--semantic-priority-high)]" },
+  urgent: { className: "bg-[var(--badge-danger-bg)] text-[#991B1B] border-[var(--badge-critical-border)]", dot: "bg-[var(--semantic-risk-critical)]" },
+  critical: { className: "bg-[var(--badge-danger-bg)] text-[#991B1B] border-[var(--badge-critical-border)]", dot: "bg-[var(--semantic-risk-critical)]" },
+
+  draft: { className: "bg-[var(--badge-neutral-bg)] text-[var(--badge-neutral-text)] border-[var(--badge-neutral-border)]", dot: "bg-[var(--semantic-priority-low)]" },
+  pending: { className: "bg-[var(--badge-waiting-bg)] text-[var(--badge-waiting-text)] border-[var(--badge-waiting-border)]", dot: "bg-[var(--semantic-status-waiting)]" },
+  approved: { className: "bg-[var(--badge-success-bg)] text-[var(--badge-success-text)] border-[var(--badge-success-border)]", dot: "bg-[var(--semantic-status-resolved)]" },
+  edited: { className: "bg-[var(--badge-progress-bg)] text-[var(--badge-progress-text)] border-[var(--badge-progress-border)]", dot: "bg-[var(--semantic-status-progress)]" },
+  rejected: { className: "bg-[var(--badge-danger-bg)] text-[var(--badge-danger-text)] border-[var(--badge-danger-border)]", dot: "bg-[var(--semantic-confidence-low)]" },
+
+  verified: { className: "bg-[var(--badge-success-bg)] text-[var(--badge-success-text)] border-[var(--badge-success-border)]", dot: "bg-[var(--semantic-status-resolved)]" },
+  blocked: { className: "bg-[var(--badge-danger-bg)] text-[var(--badge-danger-text)] border-[var(--badge-danger-border)]", dot: "bg-[var(--semantic-confidence-low)]" },
 };
 
 export function StatusBadge({ value, label }: StatusBadgeProps) {

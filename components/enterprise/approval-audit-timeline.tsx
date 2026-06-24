@@ -10,7 +10,7 @@ export function ApprovalAuditTimeline({ logs }: ApprovalAuditTimelineProps) {
     <div className="rounded-lg border border-border bg-surface p-3">
       <div className="flex items-center gap-2">
         <Clock3 className="h-4 w-4 text-accent" aria-hidden />
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">Audit trail</p>
+        <p className="text-xs font-semibold uppercase text-foreground-3">Audit trail</p>
       </div>
       <div className="mt-3 space-y-2">
         {logs.length === 0 ? (

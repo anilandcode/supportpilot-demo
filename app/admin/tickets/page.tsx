@@ -37,6 +37,19 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
       description="Filter customer tickets by status, priority, assigned agent, and AI risk level."
       active="/admin/tickets"
     >
+      <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <label className="flex h-11 items-center rounded-full border border-border bg-card px-4 text-sm text-foreground-3">
+          <span className="sr-only">Search tickets</span>
+          <input
+            name="q"
+            placeholder="Search tickets, customers, source IDs..."
+            className="h-full w-full bg-transparent text-foreground outline-none placeholder:text-foreground-3"
+          />
+        </label>
+        <a href="/admin/approvals" className="inline-flex h-11 items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-accent-fg">
+          Review approvals
+        </a>
+      </div>
       <div className="mb-4 flex flex-wrap gap-2">
         {[
           { label: "Needs approval", href: "/admin/tickets?status=escalated" },
@@ -55,7 +68,7 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
         <Select name="priority" label="Priority" value={params.priority ?? "all"} options={["all", "low", "medium", "high", "urgent"]} />
         <Select name="risk" label="Risk" value={params.risk ?? "all"} options={["all", "low", "medium", "high", "critical"]} />
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground-3">Agent</span>
+          <span className="mb-1 block text-xs font-semibold uppercase text-foreground-3">Agent</span>
           <select name="agent" defaultValue={params.agent ?? "all"} className="h-10 w-full rounded-xl border border-border bg-surface px-3">
             <option value="all">All</option>
             {agents.map((agent) => (
@@ -73,7 +86,7 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
 function Select({ name, label, value, options }: { name: string; label: string; value: string; options: string[] }) {
   return (
     <label className="text-sm">
-      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground-3">{label}</span>
+      <span className="mb-1 block text-xs font-semibold uppercase text-foreground-3">{label}</span>
       <select name={name} defaultValue={value} className="h-10 w-full rounded-xl border border-border bg-surface px-3">
         {options.map((option) => (
           <option key={option} value={option}>{option.replace(/_/g, " ")}</option>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, CheckSquare, Database, Inbox, LayoutDashboard, Settings, ShieldCheck } from "lucide-react";
+import { BarChart3, Bell, CheckSquare, Database, Globe2, Inbox, LayoutDashboard, Search, Settings, ShieldCheck } from "lucide-react";
 import { getCurrentEnterpriseUser } from "@/lib/auth/roles";
 import { theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ export async function AdminShell({ title, description, active, children }: Admin
 
   return (
     <div className="min-h-screen bg-surface text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-border bg-card px-4 py-5 lg:block">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[248px] border-r border-border bg-card px-4 py-5 lg:block">
         <Link href="/admin" className="flex items-center gap-3 px-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-fg">
             {theme.botName[0]}
@@ -65,16 +65,36 @@ export async function AdminShell({ title, description, active, children }: Admin
         </div>
       </aside>
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-[248px]">
         <header className="sticky top-0 z-10 border-b border-border bg-card/90 px-4 py-4 backdrop-blur lg:px-8">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold">
+                Acme Support
+              </span>
+              <span className="inline-flex h-9 items-center gap-2 rounded-full border border-[var(--badge-success-border)] bg-[var(--badge-success-bg)] px-3 text-xs font-semibold text-[var(--badge-success-text)]">
+                <Globe2 className="h-3.5 w-3.5" aria-hidden />
+                Domain verified
+              </span>
+            </div>
+            <div className="flex flex-1 items-center justify-end gap-2">
+              <label className="hidden h-9 min-w-[280px] max-w-md flex-1 items-center gap-2 rounded-full border border-border bg-surface px-3 text-sm text-foreground-3 md:flex">
+                <Search className="h-4 w-4" aria-hidden />
+                <span>Search tickets, sources, policies...</span>
+              </label>
+              <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground-2 hover:bg-surface" aria-label="Notifications">
+                <Bell className="h-4 w-4" aria-hidden />
+              </button>
+              <Link href="/portal" className="inline-flex h-9 items-center justify-center rounded-full border border-border px-4 text-sm font-medium text-foreground-2 hover:bg-surface">
+                Customer portal
+              </Link>
+            </div>
+          </div>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+              <h1 className="text-2xl font-semibold">{title}</h1>
               <p className="mt-1 text-sm text-foreground-2">{description}</p>
             </div>
-            <Link href="/portal" className="inline-flex h-9 items-center justify-center rounded-full border border-border px-4 text-sm font-medium text-foreground-2 hover:bg-surface">
-              Customer portal
-            </Link>
           </div>
         </header>
         <main className="px-4 py-6 lg:px-8">{children}</main>

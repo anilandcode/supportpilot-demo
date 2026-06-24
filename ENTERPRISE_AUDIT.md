@@ -56,3 +56,25 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Read-only tool registry scaffolding | PASS | `lib/workflows/tools.ts`, `tool_definitions`, `tool_calls`, and migration seed rows. |
 | Local small-model execution | PARTIAL | Optional endpoint env vars are documented and router-ready; local model execution remains a P2 experiment. |
 | Live Supabase RLS verification | PARTIAL | SQL policies exist; live per-role verification still requires a clean Supabase project with service credentials. |
+
+## Updates 13-18 Audit
+
+| Requirement | Status | Evidence |
+| --- | --- | --- |
+| Add update docs 13-18 as research artifacts | PASS | `Updates/13_Design_Direction_Decision.md` through `Updates/18_Redesign_Action_Plan.md` are present and indexed in `README.md`. |
+| Lock LynAI visual direction + Agentra IA + SupportPilot enterprise trust | PASS | `DESIGN.md` documents the locked direction; `app/page.tsx` implements the dashboard-forward hero, governance copy, product proof, and full IA. |
+| Keep indigo-violet brand with amber marketing warmth | PASS | `theme.config.ts`, `lib/theme.ts`, and `app/globals.css` set `#6D56FF` primary, `#F86EBC` secondary, and `#FFB24A` warm accent. |
+| Premium landing page with required sections | PASS | `/` now includes hero, proof strip, stats, how it works, use cases, agentic features, widget demo, security/trust, integrations, analytics, pricing, testimonials, FAQ, final CTA, and procurement footer. |
+| Hero shows dashboard, widget, cited answer, approval queue, confidence, and sources | PASS | `HeroProductMockup()` and `WidgetPreview()` in `app/page.tsx` show Overview KPIs, approval queue, refund/SSO examples, citations, confidence, and manager review. |
+| Launch/Pro/Enterprise pricing and enterprise-safe copy | PASS | `app/page.tsx` pricing uses Launch `$49/mo`, Pro `$149/mo`, and Enterprise custom; FAQ avoids unsupported SOC 2 compliance claims. |
+| Console remains restrained, dense, evidence-first | PASS | `components/enterprise/admin-shell.tsx`, `/admin/tickets`, `/admin/approvals`, `/admin/knowledge`, and `/admin/analytics` use compact tables, borders, source/citation panels, route metadata, and audit surfaces. |
+| Ticket inbox table-first workflow with saved views | PASS | `/admin/tickets` adds search and saved views; `TicketList` renders ID, customer, subject, intent, status, priority, AI confidence, sources, assignee, and last activity. |
+| Approval queue split review workspace | PASS | `/admin/approvals` now has risk tabs, summary metrics, left queue cards, selected review workspace, confidence meter, source drawer, policy reason, audit trail, and sticky decision action bar. |
+| Knowledge source health and missing-knowledge loop | PASS | `/admin/knowledge` shows source table, ingestion/freshness/chunk metrics, selected source detail, chunk previews, and missing-knowledge clusters from `listMissingKnowledgeTasks()`. |
+| Analytics covers RAG quality, approval quality, and model cost | PASS | `/admin/analytics` shows deflection, acceptance, escalation, confidence distribution, missing knowledge, quality metrics, and `model_route_logs`. |
+| Settings hub has widget preview and contrast/security placeholders | PASS | `/admin/settings` includes settings hub cards, install snippets, verified domains, approval policies, live widget preview, contrast message, and retention/security settings. |
+| Widget citations and approval-pending states are visible | PASS | `components/chat/citations.tsx` renders expandable source cards; `ChatWindow` displays cited-answer and approval-pending banners from metadata. |
+| Semantic badges use explicit token table | PASS | `app/globals.css`, `lib/theme.ts`, `theme.config.ts`, `components/enterprise/status-badge.tsx`, and `DESIGN.md` define and use semantic fill/border/text/dot tokens. |
+| Google Stitch output treated as reference, not pasted production code | PASS | `Updates/16_GoogleStitch_Dashboard_Prompts.md` is preserved as a reference; production implementation remains in local Next.js/Tailwind components. |
+| Stripe subscriptions and live billing limits | PARTIAL | Pricing and usage-limit UI are present; live Stripe subscription wiring remains a Launch/Pro follow-up. |
+| External Stitch screenshots/Figma assets in `/design/stitch/` | PARTIAL | Prompt workflow is documented in `Updates/16` and `Updates/18`; no external Stitch image assets are required for the current code pass. |

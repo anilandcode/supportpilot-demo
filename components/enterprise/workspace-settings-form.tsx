@@ -42,7 +42,7 @@ export function WorkspaceSettingsForm({ workspace }: { workspace: Workspace }) {
         <Field name="name" label="Workspace name" defaultValue={workspace.name} />
         <Field name="botName" label="Bot name" defaultValue={workspace.botName} />
         <label className="text-sm">
-          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground-3">Brand color</span>
+          <span className="mb-1 block text-xs font-semibold uppercase text-foreground-3">Brand color</span>
           <div className="flex h-10 items-center gap-2 rounded-xl border border-border bg-surface px-3">
             <input name="brandColor" type="color" defaultValue={workspace.brandColor} className="h-6 w-8 rounded border-0 bg-transparent p-0" />
             <span className="text-xs text-foreground-3">{workspace.brandColor}</span>
@@ -51,7 +51,7 @@ export function WorkspaceSettingsForm({ workspace }: { workspace: Workspace }) {
         <Field name="escalationEmail" label="Escalation email" defaultValue={workspace.escalationEmail} type="email" />
         <Field name="calendlyUrl" label="Calendly link" defaultValue={workspace.calendlyUrl ?? ""} className="md:col-span-2" />
         <label className="text-sm md:col-span-2">
-          <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground-3">Welcome message</span>
+          <span className="mb-1 block text-xs font-semibold uppercase text-foreground-3">Welcome message</span>
           <textarea
             name="welcomeMessage"
             defaultValue={workspace.welcomeMessage}
@@ -86,7 +86,7 @@ function Field({
 }) {
   return (
     <label className={`text-sm ${className}`}>
-      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-foreground-3">{label}</span>
+      <span className="mb-1 block text-xs font-semibold uppercase text-foreground-3">{label}</span>
       <input name={name} type={type} defaultValue={defaultValue} className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm" />
     </label>
   );

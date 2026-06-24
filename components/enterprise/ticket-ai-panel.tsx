@@ -95,7 +95,7 @@ export function TicketAiPanel({ ticket }: TicketAiPanelProps) {
           />
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">Why suggested</p>
+            <p className="text-xs font-semibold uppercase text-foreground-3">Why suggested</p>
             <p className="mt-1 text-sm text-foreground-2">{draft.rationale}</p>
           </div>
 

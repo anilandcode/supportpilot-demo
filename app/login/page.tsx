@@ -13,7 +13,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="mb-6">
           <p className="text-sm font-semibold text-accent">{theme.productName}</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">Enterprise sign in</h1>
+          <h1 className="mt-2 text-3xl font-semibold">Enterprise sign in</h1>
           <p className="mt-2 text-sm text-foreground-2">
             Access the support workspace with a Supabase-backed agent, manager, or admin account.
           </p>

@@ -1,9 +1,21 @@
 # SupportPilot Updates Implementation Tracker
 
-Date: 2026-06-22
+Date: 2026-06-24
 
 ## P0 Implemented
 
+- Update docs `13` through `18` added and indexed in `README.md`.
+- Locked LynAI-inspired marketing visuals, Agentra IA, and SupportPilot enterprise-trust design direction in `DESIGN.md`.
+- Premium landing page rebuilt with dashboard hero, cited answer widget proof, approval/risk proof, stats, workflow, use cases, agentic features, live demo, security, integrations, analytics, Launch/Pro/Enterprise pricing, testimonials, FAQ, final CTA, and footer.
+- Indigo-violet primary, pink secondary, amber marketing warmth, neutral console, dark proof-band, and semantic badge tokens expanded across `app/globals.css`, `theme.config.ts`, and `lib/theme.ts`.
+- Explicit semantic badge primitive for ticket status, priority, risk, confidence, approval, and domain/security states.
+- Admin shell updated with 248px sidebar, workspace switcher, verified-domain badge, search affordance, notification icon, and dense topbar.
+- Ticket inbox converted to a table-first workflow with saved views, search, confidence, source count, assignee, and last activity columns.
+- Approvals redesigned as a split queue/review workspace with queue reason, confidence meter, policy reason, source cards, audit trail, and sticky decision action bar.
+- Knowledge page redesigned around source health, ingestion/freshness, selected source detail, chunk preview, and missing-knowledge clusters.
+- Analytics page expanded with resolution funnel, confidence distribution, quality metrics, missing-knowledge clusters, and model route/cost table.
+- Settings page now includes live widget preview and contrast/security status alongside snippets, domains, policies, retention, and billing placeholders.
+- Widget citations expanded into source cards; chat widget now shows cited-answer and approval-pending banners.
 - Semantic design tokens and status badges for ticket status, priority, approval, risk, domain, and confidence states.
 - Marketing first viewport with SupportPilot-first positioning, conversational input, cited answer, and approval proof card.
 - Workspace health strip, launch checklist, and setup state exposed through `/admin` and `GET /api/onboarding/state`.
@@ -22,6 +34,8 @@ Date: 2026-06-22
 
 ## Deferred
 
+- Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
+- Stripe subscription checkout/customer portal remains a follow-up; current pricing and usage-limit UI is present.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.

@@ -47,7 +47,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
             <div className="divide-y divide-border">
               {ticket.messages.map((message) => (
                 <div key={message.id} className="px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">{message.sender}</p>
+                  <p className="text-xs font-semibold uppercase text-foreground-3">{message.sender}</p>
                   <p className="mt-2 text-sm leading-relaxed text-foreground-2">{message.body}</p>
                 </div>
               ))}
@@ -66,7 +66,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ t
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-wide text-foreground-3">{label}</dt>
+      <dt className="text-xs font-semibold uppercase text-foreground-3">{label}</dt>
       <dd className="mt-1 text-sm font-medium">{value}</dd>
     </div>
   );

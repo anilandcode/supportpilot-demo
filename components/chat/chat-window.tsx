@@ -49,7 +49,6 @@ export function ChatWindow({ onClose, workspaceId, widgetSession }: ChatWindowPr
   const visibleMessages = messages.filter((message) => message.role !== "system");
   const userMessageCount = messages.filter((message) => message.role === "user").length;
   const showEscalation = Boolean(error) || userMessageCount >= 3 || visibleMessages.some((message) => message.metadata?.escalated);
-  const configuredTier = theme.tier as "lite" | "enterprise";
   const lastMetadata = useMemo(() => {
     return [...visibleMessages].reverse().find((message) => message.role === "assistant")?.metadata;
   }, [visibleMessages]);
@@ -88,7 +87,7 @@ export function ChatWindow({ onClose, workspaceId, widgetSession }: ChatWindowPr
           <span className="text-sm font-semibold leading-tight text-foreground">{theme.botName}</span>
           <span className="flex items-center gap-1.5 text-xs text-foreground-2">
             <ShieldCheck className="h-3.5 w-3.5 text-accent" aria-hidden />
-            {configuredTier === "enterprise" ? "Enterprise RAG" : "Lite docs mode"}
+            AI answers from approved docs
           </span>
         </div>
 
@@ -103,6 +102,18 @@ export function ChatWindow({ onClose, workspaceId, widgetSession }: ChatWindowPr
           </button>
         )}
       </div>
+
+      {lastMetadata?.citations && lastMetadata.citations.length > 0 && (
+        <div className="mx-4 mt-3 rounded-xl border border-[var(--badge-success-border)] bg-[var(--badge-success-bg)] px-3 py-2 text-xs font-medium text-[var(--badge-success-text)]">
+          Cited answer generated from {lastMetadata.citations.length} approved source{lastMetadata.citations.length === 1 ? "" : "s"}.
+        </div>
+      )}
+
+      {lastMetadata?.escalated && (
+        <div className="mx-4 mt-3 rounded-xl border border-[var(--badge-waiting-border)] bg-[var(--badge-waiting-bg)] px-3 py-2 text-xs font-medium text-[var(--badge-waiting-text)]">
+          Approval pending. A sensitive or low-confidence request was routed to a human before any final answer is sent.
+        </div>
+      )}
 
       {(error || isRateLimited) && (
         <div

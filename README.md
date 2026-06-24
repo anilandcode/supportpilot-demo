@@ -26,7 +26,7 @@ The app works without provider or Supabase credentials by using deterministic se
 
 ## Routes
 
-- `/` - marketing page and live Lite demo
+- `/` - premium marketing page with dashboard hero, widget proof, pricing, security, FAQ, and demo CTAs
 - `/embed` - iframe chat panel
 - `/widget-test` - script embed test page
 - `/portal` - customer-facing support/chat entry point
@@ -129,4 +129,11 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `ROADMAP.md` - production hardening and integrations
 - `CLIENT_SETUP.md` - client rollout runbook
 - `INGEST.md` - knowledge ingestion flow
-- `Updates/` - update-pass research and implementation requirements from design, workflow, security, agentic, and model-cost planning
+- `UPDATES_IMPLEMENTATION_TRACKER.md` - compact implementation tracker for update passes
+- `Updates/07_Enterprise_Design_System.md` through `Updates/12_Design_and_Model_Upgrade_Summary.md` - enterprise readiness, security, workflow, agentic, and model-cost planning
+- `Updates/13_Design_Direction_Decision.md` - locked LynAI visual direction, Agentra IA, and SupportPilot trust layer
+- `Updates/14_Landing_Page_IA_and_Copy.md` - definitive landing IA, copy, pricing, FAQ, trust, and widget proof sections
+- `Updates/15_ChatGPT_Landing_Build_Prompt.md` - self-contained landing HTML generation prompt used as implementation reference
+- `Updates/16_GoogleStitch_Dashboard_Prompts.md` - admin, ticket, approval, knowledge, analytics, settings, security, billing, and widget screen prompts
+- `Updates/17_Feature_Set_Matrix.md` - Launch, Pro, and Enterprise feature/tier matrix
+- `Updates/18_Redesign_Action_Plan.md` - phased redesign and launch-readiness action plan

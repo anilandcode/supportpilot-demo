@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Code2, CreditCard, Database, Globe2, Palette, Route, ShieldCheck, Users2 } from "lucide-react";
+import { Bot, CheckCircle2, Code2, CreditCard, Database, Globe2, Palette, Route, ShieldCheck, Users2 } from "lucide-react";
 import { AdminShell } from "@/components/enterprise/admin-shell";
 import { DomainForm } from "@/components/enterprise/domain-form";
 import { StatusBadge } from "@/components/enterprise/status-badge";
@@ -88,6 +88,39 @@ export default async function SettingsPage() {
 
           <Card className="p-5">
             <div className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-accent" aria-hidden />
+              <h2 className="font-semibold">Live widget preview</h2>
+            </div>
+            <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface">
+              <div className="flex items-center justify-between border-b border-border px-4 py-3" style={{ background: workspace.brandColor, color: workspace.accentForeground }}>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-xs font-bold">{workspace.botName.slice(0, 1)}</span>
+                  <div>
+                    <p className="text-sm font-semibold">{workspace.botName}</p>
+                    <p className="text-xs opacity-80">AI answers from approved docs</p>
+                  </div>
+                </div>
+                <span className="text-xs">Online</span>
+              </div>
+              <div className="space-y-3 p-4">
+                <div className="rounded-2xl bg-card px-3 py-2 text-sm text-foreground-2">How do I configure SSO?</div>
+                <div className="rounded-2xl border border-border bg-card px-3 py-2 text-sm text-foreground-2">
+                  I found the SSO guide. This needs review because SSO is a security-sensitive topic.
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <StatusBadge value="medium" label="68% confidence" />
+                    <StatusBadge value="pending" label="approval pending" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 rounded-xl border border-[var(--badge-success-border)] bg-[var(--badge-success-bg)] p-3 text-sm text-[var(--badge-success-text)]">
+              <CheckCircle2 className="mr-2 inline h-4 w-4" aria-hidden />
+              Primary color passes AA on white text in the demo theme.
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <div className="flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-accent" aria-hidden />
               <h2 className="font-semibold">Approval policies</h2>
             </div>
@@ -128,7 +161,7 @@ function Snippet({ label, value }: { label: string; value: string }) {
   return (
     <div className="mt-4 rounded-xl border border-border bg-surface p-3">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">{label}</p>
+        <p className="text-xs font-semibold uppercase text-foreground-3">{label}</p>
         <CopyButton text={value} />
       </div>
       <code className="mt-3 block break-all rounded-lg bg-background p-3 text-xs text-foreground-2">{value}</code>

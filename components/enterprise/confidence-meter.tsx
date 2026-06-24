@@ -9,7 +9,7 @@ export function ConfidenceMeter({ breakdown }: ConfidenceMeterProps) {
   return (
     <div className="rounded-lg border border-border bg-surface p-3">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-3">Confidence</p>
+        <p className="text-xs font-semibold uppercase text-foreground-3">Confidence</p>
         <StatusBadge value={breakdown.overall >= 0.75 ? "high" : breakdown.overall >= 0.62 ? "medium" : "low"} label={`${Math.round(breakdown.overall * 100)}%`} />
       </div>
       <div className="mt-3 space-y-2">

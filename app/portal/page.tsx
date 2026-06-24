@@ -14,7 +14,7 @@ export default function PortalPage() {
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_420px]">
         <section>
           <Link href="/" className="text-sm font-medium text-accent">← Back to site</Link>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight">Customer support portal</h1>
+          <h1 className="mt-6 text-4xl font-semibold">Customer support portal</h1>
           <p className="mt-4 max-w-2xl text-foreground-2">
             Customers can ask questions, create support context, and get grounded answers from approved docs. Risky cases route into the enterprise ticket workflow.
           </p>
