@@ -1,92 +1,99 @@
+import { ArrowUpRight } from "lucide-react";
 import { theme } from "@/lib/theme";
 
 const FOOTER_COLUMNS = [
   {
     title: "Product",
     links: [
-      ["Overview", "/admin"],
-      ["Widget", "/embed"],
-      ["Approvals", "/admin/approvals"],
-      ["Knowledge", "/admin/knowledge"],
-      ["Analytics", "/admin/analytics"],
+      ["Overview", "#product"],
+      ["Support flow", "#support-flow"],
       ["Integrations", "#integrations"],
+      ["Analytics", "#analytics"],
+      ["Pricing", "#pricing"],
+      ["Admin console", "/admin"],
     ],
   },
   {
-    title: "Solutions",
+    title: "Workspace",
     links: [
-      ["SaaS support", "#use-cases"],
-      ["Agencies", "#pricing"],
-      ["Enterprise support", "#security"],
-      ["Internal support", "#product"],
+      ["Tickets", "/admin/tickets"],
+      ["Knowledge", "/admin/knowledge"],
+      ["Approvals", "/admin/approvals"],
+      ["Settings", "/admin/settings"],
+      ["Portal", "/portal"],
+      ["Embed", "/embed"],
     ],
   },
   {
-    title: "Resources",
+    title: "Trust",
     links: [
-      ["Docs", "/admin/knowledge"],
       ["Security", "#security"],
-      ["Changelog", "/admin/analytics"],
-      ["Blog", "#faq"],
+      ["Sources", "#support-flow"],
+      ["Audit logs", "/admin/approvals"],
+      ["Model routing", "/admin/analytics"],
+      ["Docs", "#docs"],
       ["Status", "/api/stats"],
     ],
   },
   {
     title: "Company",
     links: [
-      ["About", "#product"],
-      ["Contact", theme.escalation.url],
-      ["Privacy", "#security"],
-      ["Terms", "#faq"],
-      ["DPA", "#security"],
-      ["Subprocessors", "#integrations"],
+      ["Solutions", "#solutions"],
+      ["Use cases", "#solutions"],
+      ["FAQ", "#docs"],
+      ["Book demo", theme.escalation.url],
+      ["Login", "/login"],
+      ["Widget test", "/widget-test"],
     ],
   },
 ] as const;
 
+const marqueeItems = ["Cited answers", "Human approval", "Verified domains", "Audit-ready workflow", "Knowledge gaps", "Model route logs"];
+
 export function Footer() {
   return (
-    <footer className="dark-proof px-6 py-14 text-white">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_2fr]">
-          <div>
-            <a href="/" className="inline-flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-sm font-bold text-[var(--brand-primary-dark)]">
-                SP
-              </span>
-              <span className="text-base font-semibold">{theme.productName}</span>
-            </a>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-white/68">
-              White-label AI support with cited answers, confidence scoring, human approval, and audit-ready workflows.
-            </p>
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/16 bg-white/8 px-3 py-1.5 text-xs font-medium text-white/78">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--semantic-confidence-high)]" aria-hidden />
-              Demo workspace online
+    <footer className="marketing-footer">
+      <div className="marketing-footer-main">
+        <div className="marketing-footer-brand">
+          <a href="/" aria-label={`${theme.productName} home`}>
+            <span>SP</span>
+            <b>{theme.productName}</b>
+          </a>
+          <p>
+            Warm, branded AI support for customers. Dense, evidence-first oversight for the operators who approve it.
+          </p>
+          <a href={theme.escalation.url} target="_blank" rel="noopener noreferrer">
+            Book a demo <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </a>
+        </div>
+
+        <div className="marketing-footer-grid">
+          {FOOTER_COLUMNS.map((column) => (
+            <div className="marketing-footer-col" key={column.title}>
+              <h2>{column.title}</h2>
+              <ul>
+                {column.links.map(([label, href]) => (
+                  <li key={label}>
+                    <a href={href}>{label}</a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {FOOTER_COLUMNS.map((column) => (
-              <div key={column.title}>
-                <h2 className="text-sm font-semibold text-white">{column.title}</h2>
-                <ul className="mt-4 space-y-3">
-                  {column.links.map(([label, href]) => (
-                    <li key={label}>
-                      <a href={href} className="text-sm text-white/62 transition-colors hover:text-white">
-                        {label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
+      </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/12 pt-6 text-xs text-white/52 sm:flex-row sm:items-center sm:justify-between">
-          <span>© 2026 {theme.productName}. White-label AI support with cited answers and human approval.</span>
-          <span>Built for launch pilots, Pro support teams, and enterprise readiness.</span>
+      <div className="marketing-footer-marquee" aria-hidden>
+        <div>
+          {[...marqueeItems, ...marqueeItems].map((item, index) => (
+            <span key={`${item}-${index}`}>{item}</span>
+          ))}
         </div>
+      </div>
+
+      <div className="marketing-footer-bottom">
+        <span>© 2026 {theme.productName}. White-label AI support.</span>
+        <span>No autonomous refunds, account changes, or external writes without approval.</span>
       </div>
     </footer>
   );

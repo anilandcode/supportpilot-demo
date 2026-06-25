@@ -42,26 +42,28 @@ Customer navigation:
 
 ## Visual System
 
-- Locked direction: **LynAI visual energy + Agentra product logic + SupportPilot enterprise trust**.
-- Marketing uses a vivid, dashboard-forward SaaS expression with the real product workflow in view: cited answers, confidence, approval queue, human handoff, source freshness, and model-cost analytics.
+- Locked direction: **warm editorial LynAI-style marketing + SupportPilot enterprise trust + restrained admin console**.
+- Marketing is a separate public-site system: cream canvas, 1208px rail, hairline borders, IBM Plex Sans display type, Inter UI text, yellow CTAs, orange/periwinkle product graphics, a yellow support-flow canvas, and black enterprise/footer bands.
+- Marketing must show the product workflow without obscuring it: dashboard, cited answer, source chips, confidence, approval queue, support-flow tabs, analytics board, pricing, FAQ, and a final widget CTA.
 - Console uses a restrained Vercel/Linear/Stripe/shadcn-style operations surface: light canvas, compact tables, thin borders, dense metrics, and visible evidence near every AI action.
-- Primary accent: indigo/violet `#6D56FF`, with workspace `brandColor` available for client-branded widgets and customer-facing surfaces.
-- Secondary accent: pink `#F86EBC` is used only as a marketing highlight, never as the dominant admin color.
-- Warm accent: amber `#FFB24A` is allowed for marketing glow, tiny highlights, and charts; it is not a primary control color.
-- Backgrounds: quiet neutral surfaces with clear borders. Marketing may use the configured hero gradient; admin remains neutral.
-- Radius: 12-16px for enterprise admin cards and tables; marketing mockups can use 24-32px radii.
-- Typography: admin H1 32, H2 24, H3 18, body 14, label 13, caption/metadata 12, mono 13. Marketing may use larger display sizes, but all text uses normal letter spacing.
+- Marketing tokens live in `app/globals.css` under `--m-*` and `.marketing-*` selectors. Enterprise/admin tokens remain intact for `/admin`, `/portal`, `/embed`, and widget surfaces.
+- Primary enterprise accent remains indigo/violet `#6D56FF`, with workspace `brandColor` available for client-branded widgets and customer-facing surfaces.
+- Semantic colors for status, risk, priority, approval, and confidence are protected tokens; tenant color overrides must not replace those meanings.
+- Radius: 8px for editorial marketing controls and hairline product frames; 12-16px for enterprise admin cards and tables.
+- Typography: marketing display uses IBM Plex Sans 400-600; admin H1 32, H2 24, H3 18, body 14, label 13, caption/metadata 12, mono 13. Text uses normal letter spacing.
 - Icons: lucide icons for nav, status, upload, settings, snippets, domains, and approval controls.
 - Semantic tokens drive status, priority, risk, confidence, and approval badges. Do not use ad hoc green/red/amber badge classes for new enterprise states.
 - Dark mode variables must be preserved for admin and widget surfaces.
 
 ## Marketing Page Requirements
 
-- The first viewport must state the literal offer: white-label AI support with cited answers and human approval.
-- The hero visual must show a dashboard, widget, cited answer, confidence score, and approval-required state.
-- Required sections: social proof/category strip, stats, how it works, use cases, agentic features, live widget demo, security/trust, integrations, analytics proof, pricing, testimonials, FAQ, final CTA, and footer.
-- CTAs are `Book demo` and `Try widget`. The site should not imply autonomous refunds, billing mutations, or unsupported compliance claims.
-- Pricing is Launch `$49/mo`, Pro `$149/mo`, and Enterprise custom from `$499/mo` positioning, with Pro highlighted for growing support teams.
+- The first viewport must state the literal offer: AI support with evidence, approvals, and a human fallback.
+- The hero product dashboard must remain unobscured. Citation, approval, and confidence proof belongs inside the dashboard rather than as floating overlay cards.
+- Required sections: announcement strip, sticky nav, centered hero, product dashboard, trust strip, evidence/approval/insight story rows, integrations rail, support-flow tabbed canvas, enterprise governance, analytics board, signal marquee, pricing, use cases/testimonial, FAQ, final CTA, and black grid footer.
+- Stable anchors: `#product`, `#integrations`, `#support-flow`, `#security`, `#analytics`, `#pricing`, `#solutions`, `#docs`, and `#demo`.
+- CTAs are `Book demo`, `Try widget`, and product route links. Demo CTAs use `theme.escalation.url`; product links keep `/admin`, `/portal`, `/embed`, `/admin/knowledge`, and `/admin/analytics` available.
+- The site should not imply autonomous refunds, billing mutations, account changes, or unsupported compliance claims.
+- Pricing is Launch `$49/mo`, Pro `$149/mo`, and Enterprise custom, with Pro highlighted for growing support teams.
 
 ## Semantic Status Rules
 

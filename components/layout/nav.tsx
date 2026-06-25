@@ -1,102 +1,105 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { theme } from "@/lib/theme";
 
 const LINKS = [
   { label: "Product", href: "#product" },
-  { label: "How it works", href: "#how-it-works" },
+  { label: "Integrations", href: "#integrations" },
+  { label: "Support flow", href: "#support-flow" },
   { label: "Security", href: "#security" },
+  { label: "Analytics", href: "#analytics" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Docs", href: "/admin/knowledge" },
-  { label: "Login", href: "/login" },
-];
+  { label: "Docs", href: "#docs" },
+] as const;
+
+const PRODUCT_LINKS = [
+  { label: "Admin", href: "/admin" },
+  { label: "Portal", href: "/portal" },
+  { label: "Embed", href: "/embed" },
+] as const;
 
 export function Nav() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-30 border-b border-white/50 bg-white/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-6">
-        <a href="/" className="flex shrink-0 items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-fg shadow-sm">
-            SP
-          </span>
-          <span className="text-[15px] font-semibold text-foreground">{theme.productName}</span>
+    <header className="marketing-nav">
+      <div className="marketing-promo">
+        <span>SupportPilot demo workspace</span>
+        <a href="/admin">Open the enterprise console</a>
+      </div>
+
+      <div className="marketing-nav-inner">
+        <a href="/" className="marketing-brand" aria-label={`${theme.productName} home`}>
+          <span className="marketing-brand-mark">SP</span>
+          <span>{theme.productName}</span>
         </a>
 
-        <nav className="hidden items-center gap-6 lg:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="text-[14px] text-foreground-2 transition-colors hover:text-foreground"
-            >
-              {l.label}
+        <nav className="marketing-nav-links" aria-label="Marketing">
+          {LINKS.map((link) => (
+            <a key={link.label} href={link.href}>
+              {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-2 md:flex">
-          <a
-            href="#demo"
-            className="inline-flex h-10 items-center rounded-full border border-border bg-white/80 px-4 text-sm font-medium text-foreground-2 transition-colors hover:border-accent hover:text-accent"
-          >
-            Try widget
+        <div className="marketing-nav-actions">
+          <a href="/login">Login</a>
+          <a className="marketing-button marketing-button-outline" href="/admin">
+            Admin
           </a>
-          <a
-            href={theme.escalation.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-accent-fg shadow-sm transition-colors hover:bg-accent-hover"
-          >
-            Book demo
+          <a className="marketing-button marketing-button-primary" href={theme.escalation.url} target="_blank" rel="noopener noreferrer">
+            Book demo <ArrowUpRight className="h-4 w-4" aria-hidden />
           </a>
         </div>
 
         <button
-          onClick={() => setOpen(!open)}
+          type="button"
+          className="marketing-menu-button"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="flex rounded-lg p-2 text-foreground-2 transition-colors hover:text-foreground lg:hidden"
+          aria-controls="marketing-mobile-menu"
+          aria-expanded={open}
+          onClick={() => setOpen((current) => !current)}
         >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
         </button>
       </div>
 
-      {open && (
-        <div className="border-t border-border bg-card px-6 py-5 lg:hidden">
-          <div className="flex flex-col gap-1">
-            {LINKS.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="border-b border-border py-3 text-[14px] text-foreground-2 transition-colors last:border-0 hover:text-foreground"
-              >
-                {l.label}
-              </a>
-            ))}
-          </div>
-          <div className="mt-4 grid gap-2">
-            <a
-              href="#demo"
-              onClick={() => setOpen(false)}
-              className="py-3 text-center text-[14px] font-medium text-accent"
-            >
-              Try widget
+      <div id="marketing-mobile-menu" className="marketing-mobile-menu" aria-hidden={!open} hidden={!open}>
+        <nav aria-label="Mobile marketing">
+          {[...LINKS, ...PRODUCT_LINKS].map((link) => (
+            <a key={link.label} href={link.href} onClick={() => setOpen(false)}>
+              {link.label}
             </a>
-            <a
-              href={theme.escalation.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-accent py-3 text-center text-[14px] font-semibold text-accent-fg transition-colors hover:bg-accent-hover"
-            >
-              Book demo
-            </a>
-          </div>
+          ))}
+        </nav>
+        <div>
+          <a className="marketing-button marketing-button-outline" href="#demo" onClick={() => setOpen(false)}>
+            Try widget
+          </a>
+          <a
+            className="marketing-button marketing-button-primary"
+            href={theme.escalation.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+          >
+            Book demo <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </a>
         </div>
-      )}
+      </div>
     </header>
   );
 }

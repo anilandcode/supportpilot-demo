@@ -79,3 +79,16 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Google Stitch output treated as reference, not pasted production code | PASS | `Updates/16_GoogleStitch_Dashboard_Prompts.md` is preserved as a reference; production implementation remains in local Next.js/Tailwind components. |
 | Stripe subscriptions and live billing limits | PARTIAL | Plan-limit enforcement and optional Stripe portal session handoff are implemented; full Stripe subscription lifecycle, checkout, webhook reconciliation, and invoice sync remain Launch/Pro hardening. |
 | External Stitch screenshots/Figma assets in `/design/stitch/` | PARTIAL | Prompt workflow is documented in `Updates/16` and `Updates/18`; no external Stitch image assets are required for the current code pass. |
+
+## Design Upgrade Audit
+
+| Requirement | Status | Evidence |
+| --- | --- | --- |
+| Add `Design Upgrade/` artifacts while ignoring system junk | PASS | `Design Upgrade/SUPPORTPILOT_DESIGN.md`, `supportpilot-lynai-stage-14-clean.html`, and `deep-research-report (1).md` are preserved; `.DS_Store` remains ignored by `.gitignore`. |
+| Treat Veritas research as unrelated implementation input | PASS | The implementation uses `SUPPORTPILOT_DESIGN.md` and the clean HTML prototype only; no Veritas research requirements drive code changes. |
+| Replace homepage with LynAI-style SupportPilot marketing site | PASS | `app/page.tsx` now renders `components/marketing/landing-page.tsx`, which covers hero, trust strip, story rows, integrations, support-flow tabs, enterprise governance, analytics, pricing, testimonial/use cases, FAQ, CTA, and footer. |
+| Keep admin, portal, embed, widget, backend, API, Supabase, and RAG contracts unchanged | PASS | Changes are scoped to `app/page.tsx`, marketing layout components, marketing CSS, font links, and docs. |
+| Add clean marketing tokens without breaking enterprise tokens | PASS | `app/globals.css` adds `--m-*` marketing tokens and `.marketing-*` selectors while leaving existing enterprise/admin token names intact. |
+| Accessible interactions for mobile menu, tabs, FAQ, carousel, and reduced motion | PASS | `components/layout/nav.tsx` adds `aria-expanded`, hidden state, and Escape close; `landing-page.tsx` adds tab keyboard support, FAQ buttons, testimonial controls, and CSS reduced-motion fallbacks. |
+| Stable marketing anchors and existing product links | PASS | `#product`, `#integrations`, `#support-flow`, `#security`, `#analytics`, `#pricing`, `#solutions`, `#docs`, and `#demo` are present; links to `/admin`, `/portal`, `/embed`, knowledge, analytics, and demo URL are preserved. |
+| Update docs for design direction and repo index | PASS | `DESIGN.md` records the warm editorial marketing system and admin boundary; `README.md` indexes `Design Upgrade/`. |

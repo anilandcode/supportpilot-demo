@@ -146,3 +146,4 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `Updates/16_GoogleStitch_Dashboard_Prompts.md` - admin, ticket, approval, knowledge, analytics, settings, security, billing, and widget screen prompts
 - `Updates/17_Feature_Set_Matrix.md` - Launch, Pro, and Enterprise feature/tier matrix
 - `Updates/18_Redesign_Action_Plan.md` - phased redesign and launch-readiness action plan
+- `Design Upgrade/` - LynAI-style SupportPilot marketing handoff, clean HTML prototype, and related design artifacts

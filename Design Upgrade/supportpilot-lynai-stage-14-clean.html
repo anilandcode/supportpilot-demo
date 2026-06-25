@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffbf5" />
+  <title>SupportPilot — AI support with evidence and control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      /* LynAI visual system: these tokens intentionally remain the foundation */
+      --canvas:#fffbf5;
+      --surface:#ffffff;
+      --ink:#210d02;
+      --muted:#4f4d49;
+      --rule:rgba(25,21,22,.10);
+      --rule-strong:rgba(25,21,22,.16);
+      --yellow:#ffd84b;
+      --orange:#fa8f1f;
+      --orange-warm:#fa7b31;
+      --gold:#aa8322;
+      --powder:#c6dffa;
+      --periwinkle:#b3bbfa;
+      --footer:#070706;
+      --success:#2d9a4e;
+      --shadow:0 22px 50px rgba(77,48,22,.08),0 2px 8px rgba(77,48,22,.04);
+      --max:1208px;
+      --gutter:24px;
+      --section:124px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.55;overflow-x:hidden}
+    h1,h2,h3,h4,p{margin:0}
+    h1,h2,h3,h4{font-family:"IBM Plex Sans",Inter,sans-serif;font-weight:500;letter-spacing:-.055em;line-height:1.04}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .page{position:relative;min-height:100vh}
+    .page::before{content:"";position:absolute;z-index:0;inset:0 auto 0 50%;width:min(var(--max),calc(100% - (var(--gutter) * 2)));transform:translateX(-50%);border-inline:1px solid var(--rule);pointer-events:none}
+    .site-header,.main,.site-footer{position:relative;z-index:1}
+    .shell{width:min(var(--max),calc(100% - (var(--gutter) * 2)));margin-inline:auto}
+    .eyebrow{display:inline-flex;align-items:center;gap:7px;color:#7b5d2e;font-size:11px;line-height:1.35;font-weight:500;letter-spacing:.025em;text-transform:uppercase}
+    .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(250,143,31,.14)}
+    .promo{min-height:36px;display:flex;align-items:center;justify-content:center;gap:7px;padding:7px var(--gutter);background:var(--powder);border-bottom:1px solid var(--rule);font-size:12px;line-height:1.35;text-align:center}
+    .promo b{font-weight:600}.promo a{text-decoration:underline;text-underline-offset:2px}.promo-arrow{font-size:15px;line-height:0;margin-left:2px}
+    .nav{position:relative;min-height:86px;display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;align-items:center;gap:42px;border-bottom:1px solid var(--rule);background:rgba(255,251,245,.82);backdrop-filter:blur(14px)}
+    .brand{display:inline-flex;align-items:center;gap:8px;font-family:"IBM Plex Sans",Inter,sans-serif;font-size:24px;font-weight:600;letter-spacing:-.075em;white-space:nowrap}
+    .brand-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,#f6ad3a,#ffd84b 62%,#b3bbfa);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(33,13,2,.08)}
+    .brand-mark svg{width:16px;height:16px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .nav-links{display:flex;align-items:center;justify-content:center;gap:32px;margin-left:0;font-size:14px;color:var(--muted);white-space:nowrap}
+    .nav-links a{display:inline-flex;gap:5px;align-items:center;transition:opacity .2s}.nav-links a:hover{opacity:.55}.chevron{font-size:13px;line-height:1;margin-top:-2px}
+    .nav-actions{display:flex;align-items:center;justify-self:end;gap:21px;font-size:14px;white-space:nowrap}.login{color:var(--muted)}
+    .button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:11px 18px;border:1px solid transparent;border-radius:8px;font-size:14px;font-weight:500;letter-spacing:-.03em;white-space:nowrap;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+    .button:hover{transform:translateY(-2px);box-shadow:0 9px 18px rgba(33,13,2,.11)}
+    .button-primary{background:var(--yellow);color:var(--ink)}
+    .button-outline{background:#fff;border-color:var(--rule-strong)}
+    .button-dark{background:var(--ink);color:#fff}.button .arrow{font-size:17px;line-height:1;margin-top:-1px}
+    .menu-toggle{display:none;width:38px;height:38px;padding:7px;border:0;background:transparent;cursor:pointer}.menu-toggle span{display:block;width:22px;height:1px;background:var(--ink);margin:5px auto}.mobile-links{display:none}
+
+    /* Hero: retain LynAI's centered editorial composition + gradient browser frame */
+    .hero{padding:92px 0 0;text-align:center;overflow:hidden}
+    .hero-content{max-width:860px;margin:0 auto}.hero .eyebrow{margin-bottom:18px}.hero h1{max-width:830px;margin:0 auto;font-size:clamp(52px,5.35vw,80px);letter-spacing:-.075em}.hero h1 em{font-style:normal;color:#a96e18}
+    .hero-copy{max-width:620px;margin:24px auto 0;color:var(--muted);font-size:16px;letter-spacing:-.018em}
+    .hero-actions{display:flex;justify-content:center;gap:12px;margin-top:30px}
+    .hero-stage{width:min(1030px,100%);height:580px;margin:80px auto 0;padding:0 17px 17px;display:flex;align-items:flex-end;position:relative;isolation:isolate}
+    .hero-stage::before{content:"";position:absolute;inset:0;background:linear-gradient(102deg,#b98225 0%,#f28b21 22%,#fa7b31 45%,#b3bbfa 75%,#c6dffa 100%);z-index:-2}
+    .hero-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.34),rgba(255,255,255,.04));mix-blend-mode:screen;z-index:-1}
+    .product-tabs{position:absolute;left:0;top:-38px;width:100%;height:39px;display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--rule);background:#fff;font-size:10px}
+    .product-tabs span{display:flex;align-items:center;justify-content:center;border-right:1px solid var(--rule);background:#fff}.product-tabs span:last-child{border-right:0}.product-tabs .active{background:var(--powder);font-weight:500}
+    .support-console{width:100%;height:455px;padding:0;background:var(--surface);display:grid;grid-template-columns:184px minmax(0,1fr) 180px;border:1px solid rgba(33,13,2,.13);box-shadow:var(--shadow);overflow:hidden;text-align:left}
+    .console-sidebar{background:#fffdf9;border-right:1px solid var(--rule);padding:18px 14px}.console-head{display:flex;align-items:center;gap:7px;margin-bottom:24px;font-size:11px;font-weight:600}.console-head .mini-mark{width:16px;height:16px;border-radius:5px;background:var(--orange);display:grid;place-items:center;color:var(--ink);font-size:10px}
+    .side-nav{display:grid;gap:4px}.side-nav a{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:4px;color:#5f5852;font-size:10px}.side-nav a.active{background:#f4ecdd;color:var(--ink);font-weight:500}.side-icon{width:13px;height:13px;display:grid;place-items:center;color:#a96e18;font-size:12px}
+    .account-card{display:flex;align-items:center;gap:8px;margin-top:90px;padding:10px 8px;border-top:1px solid var(--rule);font-size:8px}.avatar{width:18px;height:18px;border-radius:50%;background:linear-gradient(140deg,#f6c47b,#9e7e54);flex:0 0 auto}.account-card b{display:block;font-size:8px;font-weight:500}.account-card span{display:block;color:#857b72;font-size:7px}
+    .conversation{padding:19px 20px 12px;min-width:0;background:#fff}.conversation-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid #eee9e1}.ticket-no{font-family:"IBM Plex Sans";font-size:17px;letter-spacing:-.05em}.ticket-status{margin-left:7px;padding:3px 6px;border-radius:3px;background:#efeaff;color:#7058b8;font-size:8px;font-weight:500}.conversation-actions{color:#9f968d;font-size:13px;letter-spacing:4px}
+    .chat-flow{padding-top:14px}.message{display:flex;gap:8px;margin-bottom:12px}.message .person{width:21px;height:21px;border-radius:50%;flex:0 0 auto;background:linear-gradient(145deg,#d8b494,#765846)}.message .bot{display:grid;place-items:center;background:var(--orange);color:#fff;font-size:10px}.bubble{max-width:85%;padding:9px 10px;border-radius:5px;background:#f7f4ef;color:#3d332e;font-size:10px;line-height:1.45}.message.support .bubble{padding:11px;background:#fbfaf7;border:1px solid #eee9e1;box-shadow:0 2px 5px rgba(33,13,2,.03)}.bot-name{display:flex;gap:7px;align-items:center;margin-bottom:5px;font-weight:600;color:#382d27}.ai-label{padding:2px 4px;background:#efeaff;color:#7259ba;border-radius:3px;font-size:7px;font-weight:500}.sources{display:grid;gap:4px;margin-top:8px}.source{display:flex;align-items:center;gap:5px;padding:5px;border:1px solid #eeeae4;background:#fff;font-size:7px;color:#6e635b}.source i{width:8px;height:8px;border-radius:2px;background:var(--periwinkle);display:block}.source b{font-size:7px;color:#453a33}.source span{margin-left:auto;color:#aa9c91}
+    .composer{height:29px;margin-top:9px;border:1px solid #e7e0d8;border-radius:5px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;color:#a29992;font-size:8px}.composer .send{font-size:13px;color:#a96e18}
+    .answer-panel{border-left:1px solid var(--rule);padding:16px 13px;background:#fffdf9}.panel-tabs{display:flex;gap:14px;border-bottom:1px solid var(--rule);margin:-16px -13px 14px;padding:11px 13px 10px;font-size:8px;color:#8a7f75}.panel-tabs b{color:#6245bf;border-bottom:2px solid #6245bf;margin-bottom:-11px;padding-bottom:10px}.panel-label{font-size:8px;color:#6c625a;margin-bottom:4px}.confidence{display:flex;align-items:flex-end;gap:8px;margin-bottom:5px}.confidence strong{font-family:"IBM Plex Sans";font-size:22px;letter-spacing:-.06em}.confidence span{font-size:8px;color:var(--success);margin-bottom:4px}.meter{height:5px;border-radius:99px;background:#e9e4db;overflow:hidden;margin-bottom:13px}.meter i{display:block;width:92%;height:100%;background:var(--success)}.details{display:grid;gap:11px}.detail{padding-bottom:9px;border-bottom:1px solid #eee9e1}.detail:last-child{border-bottom:0}.detail b,.detail span{display:block}.detail b{font-size:8px;font-weight:500;margin-bottom:2px}.detail span{font-size:8px;color:#796e65}.safe{margin-top:17px;padding:8px;border:1px solid rgba(45,154,78,.22);background:#f0f8ef;color:#47744e;font-size:8px;line-height:1.35}.safe b{display:block;font-weight:500;color:#306a3c;margin-bottom:2px}
+    .approval-float{position:absolute;right:-46px;bottom:37px;width:220px;background:#fffaf1;border:1px solid #ebb55f;box-shadow:0 12px 24px rgba(113,71,19,.12);padding:12px 13px;text-align:left}.approval-float::before{content:"";position:absolute;left:0;right:0;top:52%;height:1px;background:#ecd7b8}.approval-row{display:flex;gap:8px;align-items:flex-start}.approval-row + .approval-row{margin-top:15px}.approval-icon{width:22px;height:22px;border-radius:50%;background:#fee8c8;display:grid;place-items:center;color:#a96e18;font-size:12px;flex:0 0 auto}.approval-row b{display:block;font-size:9px;font-weight:500;line-height:1.25}.approval-row span{display:block;font-size:8px;color:#796e65;margin-top:2px}.trust-strip{display:flex;align-items:center;justify-content:center;gap:30px;min-height:63px;padding:14px 0;background:#fffdf9;border-top:1px solid var(--rule);font-size:10px}.trust-item{display:flex;align-items:center;gap:7px;color:#514940}.trust-item i{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fff4d0;color:#a96e18;font-style:normal;font-size:11px}
+
+    /* The first LynAI product-story band, rewritten for SupportPilot content. */
+    .story-section{padding:118px 0 128px}.section-heading{max-width:680px;margin:0 auto 61px;text-align:center}.section-heading .eyebrow{margin-bottom:15px}.section-heading h2{font-size:clamp(40px,4.05vw,58px)}.section-heading p{max-width:530px;margin:17px auto 0;color:var(--muted);font-size:15px}
+    .story-list{display:grid;gap:33px}.story-row{display:grid;grid-template-columns:.92fr 1.08fr;gap:0;min-height:312px;border:1px solid var(--rule);background:#fff}.story-row.reverse{grid-template-columns:1.08fr .92fr}.story-copy{padding:35px 33px;display:flex;flex-direction:column;align-items:flex-start}.story-number{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--yellow);font-size:10px;font-weight:600;margin-bottom:23px}.story-copy h3{font-size:31px;max-width:320px}.story-copy p{max-width:335px;margin-top:14px;font-size:13px;line-height:1.6;color:var(--muted)}.story-link{display:inline-flex;gap:7px;align-items:center;margin-top:auto;padding-top:22px;color:#ad6f16;font-size:12px;font-weight:500}.story-link .arrow{font-size:15px}
+    .story-visual{position:relative;min-height:312px;border-left:1px solid var(--rule);overflow:hidden;background:linear-gradient(145deg,#fff 0%,#faf6ef 100%)}.story-row.reverse .story-visual{order:-1;border-left:0;border-right:1px solid var(--rule)}
+    .visual-cited{padding:36px 42px;background:linear-gradient(120deg,#fff 25%,#fbf8f1 100%)}.doc-window{width:88%;max-width:415px;margin:auto;border:1px solid #e5dfd5;background:#fff;box-shadow:0 10px 20px rgba(33,13,2,.06);padding:15px}.doc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:9px;font-weight:500}.verified{padding:4px 6px;background:#eff7ef;color:#478755;border-radius:3px;font-size:8px}.doc-list{display:grid;gap:6px}.doc-line{display:grid;grid-template-columns:13px 1fr auto;align-items:center;gap:7px;padding:7px 6px;border-top:1px solid #eee9e2;font-size:8px}.doc-line i{display:block;width:11px;height:11px;border-radius:2px;background:var(--periwinkle)}.doc-line b{font-weight:500}.doc-line span{font-size:7px;color:#9c9187}.doc-footer{margin-top:12px;display:flex;gap:6px;align-items:center;color:#4b8755;font-size:8px}.doc-footer i{display:block;width:9px;height:9px;border-radius:50%;background:#ecf7ec;border:1px solid #65a46d}
+    .visual-approval{padding:26px 34px;background:linear-gradient(110deg,#fcf4e8 0%,#fff 54%,#f9f7ef 100%)}.visual-approval .queue{position:absolute;left:13%;right:13%;top:43px;border:1px solid #e6dfd5;background:#fff;box-shadow:var(--shadow);padding:15px}.visual-approval .queue-head{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:500;padding-bottom:11px;border-bottom:1px solid #ede8e0}.visual-approval .queue-head span{color:#6e55ba}.visual-approval .queue-item{display:grid;grid-template-columns:10px 1fr auto;align-items:center;gap:7px;padding:10px 0;border-bottom:1px solid #eee9e1;font-size:9px}.visual-approval .queue-item:last-child{border-bottom:0}.visual-approval .queue-item i{display:block;width:7px;height:7px;border-radius:50%;background:#b3bbfa}.visual-approval .queue-item b{font-weight:500}.visual-approval .queue-item em{font-style:normal;font-size:7px;padding:3px 5px;border-radius:3px;background:#fff0df;color:#b36b18}.visual-approval .queue-item.low em{background:#eff8ef;color:#4a8a52}.visual-approval .queue-item.med em{background:#fff5d7;color:#b18313}
+    .visual-insights{padding:36px 38px;background:linear-gradient(135deg,#f9f6ff 0%,#fff 68%)}.insight-card{width:91%;margin:auto;padding:14px 16px 13px;border:1px solid #e6e0d6;background:#fff;box-shadow:0 9px 18px rgba(33,13,2,.05)}.insight-top{display:flex;justify-content:space-between;font-size:9px;font-weight:500}.mini-chart{height:100px;margin-top:14px;position:relative;border-bottom:1px solid #eee8df;background:repeating-linear-gradient(0deg,transparent 0 24px,#f2eee7 24px 25px)}.mini-chart svg{position:absolute;inset:8px 0 0;width:100%;height:85px}.mini-chart path{fill:none;stroke:#a7b1fa;stroke-width:2.5}.mini-chart path:last-child{stroke:var(--orange)}.metric-triplet{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.metric-triplet strong{font-family:"IBM Plex Sans";font-size:19px;letter-spacing:-.06em;display:block}.metric-triplet span{font-size:7px;color:#7e7369}.metric-triplet .good{color:#338c49}.metric-triplet .violet{color:#7460c7}.metric-triplet .warm{color:#d77216}
+
+    /* LynAI integrations rhythm, now support-stack focused. */
+    .integrations{padding:91px 0 96px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:rgba(255,255,255,.44)}.integrations .section-heading{margin-bottom:35px}.integrations .section-heading h2{font-size:clamp(36px,3.55vw,50px)}.integration-row{display:flex;align-items:center;justify-content:center;gap:27px;flex-wrap:wrap;min-height:44px}.integration{display:flex;align-items:center;gap:8px;color:#3b332d;font-family:"IBM Plex Sans";font-size:14px;font-weight:500;letter-spacing:-.035em}.integration i{width:17px;height:17px;display:grid;place-items:center;border-radius:4px;background:#fff;border:1px solid var(--rule);color:#a06b19;font-style:normal;font-family:Inter;font-size:9px}.integration:nth-child(2) i{border-radius:2px;color:#5576bb}.integration:nth-child(3) i{border-radius:50%;color:#6d5fc5}.integration:nth-child(4) i{color:#61b1b0}.integration:nth-child(5) i{color:#e46427}.integration:nth-child(6) i{color:#1f75bd}.integration:nth-child(7) i{color:#a06814}
+
+    /* Flagship workflow canvas: still LynAI-style, but this is now an operational support UI. */
+    .workflow{padding:118px 0 126px}.workflow-layout{display:grid;grid-template-columns:.83fr 1.17fr;border:1px solid var(--rule);background:#fff;min-height:482px}.workflow-copy{padding:41px 36px;border-right:1px solid var(--rule)}.workflow-copy h2{font-size:43px;max-width:320px}.workflow-copy p{margin-top:17px;color:var(--muted);font-size:13px;line-height:1.6;max-width:327px}.workflow-points{display:grid;gap:11px;margin-top:26px}.workflow-point{display:flex;align-items:center;gap:9px;font-size:12px}.workflow-point::before{content:"✓";display:grid;place-items:center;width:15px;height:15px;border:1px solid rgba(170,131,34,.32);border-radius:50%;font-size:9px;color:#a96e18}.workflow-link{display:inline-flex;gap:7px;margin-top:29px;color:#ad6f16;font-size:12px;font-weight:500}
+    .workflow-ui{position:relative;overflow:hidden;padding:25px 25px 0;background:linear-gradient(135deg,#fffdf9,#fbf9f3)}.workflow-tabs{display:grid;grid-template-columns:repeat(4,1fr);height:47px;border:1px solid var(--rule);border-bottom:0;background:#fff}.workflow-tabs button{border:0;border-right:1px solid var(--rule);background:#fff;color:#6b625a;font-size:10px;cursor:pointer}.workflow-tabs button:last-child{border-right:0}.workflow-tabs button.active{color:var(--ink);background:#fff8e7;box-shadow:inset 0 2px 0 var(--orange);font-weight:500}.tab-dot{display:inline-grid;place-items:center;width:15px;height:15px;margin-right:5px;border:1px solid #d8cdc0;border-radius:50%;font-size:8px}
+    .workflow-pane{min-height:364px;border:1px solid var(--rule);background:#fff;padding:25px 24px;position:relative;overflow:hidden}.workflow-pane[hidden]{display:none}.pane-title{font-size:18px;max-width:310px;line-height:1.2}.pane-sub{max-width:360px;margin-top:6px;color:#72685f;font-size:10px;line-height:1.5}.pane-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(210px,.85fr);gap:18px;align-items:start;margin-top:20px}.search-box{height:34px;max-width:100%;border:1px solid #e7e1d8;border-radius:6px;display:flex;align-items:center;padding:0 11px;color:#a39a93;font-size:9px;background:#fff}.answer-preview{margin-top:11px;padding:14px;border:1px solid #eee9e1;background:#fbfaf7;border-radius:6px}.answer-preview p{font-size:9px;line-height:1.55;color:#443b34}.source-chipbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.source-chip{padding:4px 7px;border:1px solid #ece5da;border-radius:999px;font-size:8px;color:#6f665e;background:#fff}.answer-sources{display:grid;gap:6px;margin-top:12px}.answer-sources div{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;font-size:8px}.answer-sources i{width:9px;height:9px;background:var(--periwinkle);border-radius:2px}.answer-sources span:last-child{color:#887e74}.pane-side{border:1px solid #eee6d9;border-radius:8px;background:linear-gradient(180deg,#fffdf8,#f8f4ea);padding:14px;min-height:218px;position:relative;overflow:hidden}.side-label{display:inline-flex;align-items:center;gap:6px;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#9a815a}.side-label i{width:5px;height:5px;border-radius:50%;background:var(--orange)}.side-title{margin-top:7px;font-size:12px;line-height:1.35;color:#2d1a0c}.side-note{margin-top:4px;font-size:8px;line-height:1.5;color:#7a6e63}.evidence-stack{position:relative;height:138px;margin-top:14px}.evidence-card{position:absolute;left:0;right:36px;padding:10px 11px;border:1px solid #eadfce;border-radius:8px;background:#fff;box-shadow:0 10px 18px rgba(33,13,2,.05)}.evidence-card.small{right:56px}.evidence-card.one{top:0}.evidence-card.two{top:44px;left:14px}.evidence-card.three{top:88px;left:28px}.evidence-card b{display:block;font-size:9px;line-height:1.3;color:#342316}.evidence-card span{display:block;margin-top:5px;font-size:8px;color:#8b7e71}.score-pill{position:absolute;right:0;top:18px;padding:7px 9px;border-radius:999px;background:#fff;border:1px solid #eadfce;font-size:8px;color:#7f6f5f;box-shadow:0 8px 18px rgba(33,13,2,.05)}.score-pill b{color:#2d1a0c}.connector-line{position:absolute;border-left:1px dashed #d4c5b5;height:76px;right:36px;top:46px}.connector-line.two{height:52px;right:20px;top:70px;transform:rotate(55deg);transform-origin:top}.node{position:absolute;width:34px;height:34px;border:1px solid #eadfce;border-radius:8px;background:#fff;display:grid;place-items:center;color:#b07118;box-shadow:0 8px 16px rgba(33,13,2,.05)}.node.a{right:8px;top:56px}.node.b{right:18px;bottom:2px}.confidence-layout,.approval-layout,.handoff-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(200px,.95fr);gap:18px;align-items:start;margin-top:18px}.confidence-screen,.queue,.handoff-screen,.review-card{border:1px solid #eee9e1;background:#fbfaf7;border-radius:7px}.confidence-screen{padding:18px}.confidence-row{display:grid;grid-template-columns:102px 1fr;align-items:center;gap:12px;margin-bottom:13px;font-size:10px}.confidence-row:last-child{margin-bottom:0}.confidence-row b{font-weight:500}.confidence-row span{height:9px;background:#f0ebe5;border-radius:999px;overflow:hidden}.confidence-row i{display:block;height:100%;width:84%;background:linear-gradient(90deg,var(--orange),#e3c88e)}.review-card{padding:14px}.review-card h4{font-size:11px}.review-card p{margin-top:6px;font-size:8px;line-height:1.55;color:#6f645b}.review-chip{display:inline-flex;margin-top:9px;padding:5px 7px;border-radius:999px;background:#fff;border:1px solid #eadfce;font-size:8px;color:#7e6d5b}.queue{width:100%}.queue-head{display:flex;justify-content:space-between;padding:13px 14px;border-bottom:1px solid #eee9e1;font-size:10px;font-weight:500}.queue-item{display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid #eee9e1}.queue-item:last-child{border-bottom:0}.queue-item i{width:8px;height:8px;background:#ff7d3a;border-radius:50%}.queue-item.med i{background:#f0bf59}.queue-item.low i{background:#7da46f}.queue-item b{font-size:10px;font-weight:500;line-height:1.4}.queue-item em{font-style:normal;font-size:8px;color:#aa6e18}.approval-detail{padding:14px}.approval-detail h4{font-size:11px}.detail-list{display:grid;gap:8px;margin-top:10px}.detail-row{display:flex;justify-content:space-between;font-size:8px;color:#6e655c}.detail-row b{font-size:8px;color:#2f2217}.action-row{display:flex;gap:7px;margin-top:12px}.mini-btn{padding:6px 8px;border:1px solid #e3d9cb;background:#fff;border-radius:999px;font-size:8px}.mini-btn.primary{background:#2d1a0c;color:#fff;border-color:#2d1a0c}.handoff-screen{display:grid;gap:12px;padding:12px;background:#fff}.handoff-row{display:grid;grid-template-columns:28px 1fr auto;gap:11px;align-items:center;padding:12px;border:1px solid #eee9e1;background:#fbfaf7;border-radius:7px}.handoff-row i{width:28px;height:28px;border-radius:6px;background:#fff;display:grid;place-items:center;font-style:normal;font-size:10px;color:#a96e18;border:1px solid #eee9e1}.handoff-row b{font-size:10px;line-height:1.45;font-weight:500}.handoff-row span{display:block;font-weight:400;color:#7c7168;font-size:8px}.handoff-row > span:last-child{color:#579067;font-size:8px}.packet-card{padding:14px}.packet-list{display:grid;gap:8px;margin-top:11px}.packet-item{display:flex;justify-content:space-between;align-items:center;padding:7px 8px;background:#fff;border:1px solid #ece6de;border-radius:6px;font-size:8px;color:#6f6258}.packet-item b{color:#2f2217}
+
+    /* Dark enterprise section is part of the LynAI long-page rhythm, recoloured only by its original footer-black family. */
+    .enterprise{background:#080807;color:#fff;overflow:hidden;position:relative}.enterprise::before{content:"";position:absolute;width:760px;height:500px;right:-220px;top:-230px;background:radial-gradient(circle,rgba(170,131,34,.44),rgba(250,123,49,.13) 33%,transparent 68%);pointer-events:none}.enterprise::after{content:"";position:absolute;width:620px;height:470px;left:-285px;bottom:-280px;background:radial-gradient(circle,rgba(179,187,250,.26),transparent 69%);pointer-events:none}.enterprise .shell{position:relative;z-index:1;padding:105px 0 100px}.enterprise-grid{display:grid;grid-template-columns:.73fr 1.27fr;gap:70px}.enterprise-copy .eyebrow{color:#c8b6ff}.enterprise-copy .eyebrow::before{background:#b3bbfa;box-shadow:0 0 0 3px rgba(179,187,250,.18)}.enterprise-copy h2{margin-top:18px;font-size:48px;max-width:375px}.enterprise-copy h2 em{font-style:normal;color:#bda4ff}.enterprise-copy p{max-width:370px;margin-top:18px;color:#c2bdb4;font-size:13px}.enterprise-link{display:inline-flex;gap:8px;margin-top:26px;color:#d2c0ff;font-size:12px;font-weight:500}.enterprise-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.enterprise-card{min-height:164px;padding:20px 17px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.045)}.enterprise-icon{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.22);font-size:14px;color:#f5d47f;margin-bottom:25px}.enterprise-card h3{font-size:19px;letter-spacing:-.045em}.enterprise-card p{margin-top:7px;color:#beb8ae;font-size:10px;line-height:1.55}.enterprise-card span{display:inline-block;margin-top:14px;padding:4px 7px;border-radius:99px;background:rgba(179,187,250,.18);color:#ded6f9;font-size:8px}.enterprise-note{display:flex;align-items:center;gap:9px;grid-column:1/-1;margin-top:0;padding:12px 14px;border:1px solid rgba(255,255,255,.12);font-size:10px;color:#d0cbc2}.enterprise-note i{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#172c17;color:#89d28c;font-style:normal}.enterprise-note a{color:#cfc1ff;text-decoration:underline;text-underline-offset:2px}
+
+
+
+    /* Support intelligence: a LynAI-style editorial dashboard with support-specific reporting. */
+    .analytics{padding:var(--section) 0;background:var(--canvas);overflow:hidden}
+    .analytics-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:58px;align-items:center}
+    .analytics-copy .eyebrow{margin-bottom:17px}.analytics-copy h2{max-width:395px;font-size:47px}.analytics-copy h2 em{font-style:normal;color:#a96e18}.analytics-copy p{max-width:365px;margin-top:18px;color:var(--muted);font-size:13px;line-height:1.62}.analytics-link{display:inline-flex;align-items:center;gap:8px;margin-top:26px;color:#ad6f16;font-size:12px;font-weight:500}
+    .analytics-board{border:1px solid var(--rule);background:#fff;box-shadow:0 16px 34px rgba(77,48,22,.06)}
+    .analytics-board-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--rule);font-size:10px}.analytics-board-top b{font-weight:500}.analytics-range{display:inline-flex;gap:5px;align-items:center;color:#7b7168}.analytics-range i{display:block;width:6px;height:6px;border-radius:50%;background:var(--success)}
+    .analytics-main{display:grid;grid-template-columns:1.15fr .85fr;min-height:346px}
+    .analytics-graph{padding:22px 22px 19px;border-right:1px solid var(--rule)}
+    .graph-title{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:15px}.graph-title b{font-family:"IBM Plex Sans",Inter,sans-serif;font-size:17px;letter-spacing:-.055em}.graph-title span{font-size:9px;color:#7a7067}.graph-key{display:flex;gap:13px;margin-top:4px;color:#766b61;font-size:8px}.graph-key span{display:inline-flex;align-items:center;gap:5px}.graph-key i{width:7px;height:7px;border-radius:50%;background:var(--orange)}.graph-key span:last-child i{background:var(--periwinkle)}
+    .support-graph{position:relative;height:175px;margin-top:16px;border-bottom:1px solid #e9e3db;background:repeating-linear-gradient(to bottom,transparent 0,transparent 42px,#f1ede7 43px)}
+    .support-graph svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.support-graph .area{fill:rgba(250,143,31,.10)}.support-graph .main-line{fill:none;stroke:var(--orange);stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}.support-graph .secondary-line{fill:none;stroke:#9ca6ed;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4 4}.support-graph .end-dot{fill:var(--orange);stroke:#fff;stroke-width:2.5}
+    .graph-dates{display:flex;justify-content:space-between;padding-top:9px;color:#978d83;font-size:8px}
+    .analytics-side{padding:20px 17px;background:#fffdf9}.side-title{font-size:11px;font-weight:500;margin-bottom:13px}.topic-list{display:grid;gap:9px}.topic{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eee8e0}.topic:last-child{border-bottom:0}.topic i{width:18px;height:18px;display:grid;place-items:center;border-radius:4px;background:#fff1db;color:#d36f15;font-style:normal;font-size:9px}.topic b{font-size:9px;font-weight:500}.topic span{color:#8c8177;font-size:8px}.topic a{display:inline-flex;gap:5px;margin-top:13px;color:#ad6f16;font-size:9px;font-weight:500}
+    .analytics-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);background:#fff}.analytics-stat{min-height:92px;padding:15px 15px;border-right:1px solid var(--rule)}.analytics-stat:last-child{border-right:0}.analytics-stat span{display:block;color:#766c63;font-size:8px}.analytics-stat strong{display:block;margin-top:4px;font-family:"IBM Plex Sans",Inter,sans-serif;font-size:27px;font-weight:500;letter-spacing:-.075em}.analytics-stat small{display:block;margin-top:1px;font-size:8px;color:var(--success)}.analytics-stat:nth-child(2) small{color:#7764c0}.analytics-stat:nth-child(3) small{color:#d76e1d}.analytics-stat:nth-child(4) small{color:#aa8322}
+
+
+
+    /* Stage 5 — pricing, social proof, FAQ, final conversion, and footer */
+    .pricing{padding:var(--section) 0;background:linear-gradient(180deg,#fffdf9 0%,var(--canvas) 100%);border-top:1px solid var(--rule)}
+    .pricing-top{display:flex;align-items:flex-end;justify-content:space-between;gap:36px;margin-bottom:42px}.pricing-top .section-heading{margin:0;text-align:left;max-width:640px}.pricing-top .section-heading h2{max-width:610px}.pricing-top .section-heading p{max-width:530px;margin-left:0}
+    .billing-toggle{flex:0 0 auto;display:flex;align-items:center;gap:11px;padding:7px 10px 7px 13px;border:1px solid var(--rule);background:#fff;font-size:10px;color:#74695e}.billing-toggle b{color:var(--ink);font-weight:500}.switch{position:relative;width:30px;height:17px;padding:0;border:0;border-radius:99px;background:var(--ink);cursor:pointer}.switch::after{content:"";position:absolute;top:3px;left:3px;width:11px;height:11px;border-radius:50%;background:#fff;transition:transform .2s}.switch.annual::after{transform:translateX(13px)}.billing-save{padding:4px 7px;border-radius:99px;background:#fff2d9;color:#9c6517;font-size:8px;font-weight:500}
+    .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);background:#fff;box-shadow:0 14px 34px rgba(77,48,22,.045)}
+    .price-card{position:relative;min-height:465px;padding:27px 27px 24px;border-right:1px solid var(--rule);background:#fff}.price-card:last-child{border-right:0}.price-card.featured{margin:-1px 0;border:1px solid rgba(177,162,244,.76);background:linear-gradient(145deg,rgba(179,187,250,.20),rgba(255,255,255,.95) 38%,rgba(255,216,75,.12));box-shadow:0 12px 22px rgba(126,101,196,.08);z-index:1}.plan-tag{display:inline-flex;align-items:center;gap:6px;min-height:22px;margin-bottom:14px;padding:4px 7px;border-radius:4px;background:#fff3d8;color:#9a6115;font-size:8px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}.price-card.featured .plan-tag{background:#eeeaff;color:#6953ac}.plan-name{font-family:"IBM Plex Sans",Inter,sans-serif;font-size:24px;line-height:1;letter-spacing:-.065em}.plan-summary{min-height:38px;margin-top:9px;color:#6f655c;font-size:10px;line-height:1.45}.price{display:flex;align-items:flex-end;gap:5px;margin-top:18px}.price strong{font-family:"IBM Plex Sans",Inter,sans-serif;font-size:43px;line-height:.92;font-weight:500;letter-spacing:-.085em}.price strong.custom{font-size:33px}.price span{padding-bottom:4px;color:#786e64;font-size:9px}.plan-note{min-height:17px;margin-top:5px;color:#93887e;font-size:8px}.price-card .button{width:100%;min-height:43px;margin:19px 0 18px;border-radius:5px;font-size:12px}.price-card.featured .button{background:var(--ink);color:#fff}.plan-features{display:grid;gap:9px;margin:0;padding:0;list-style:none}.plan-features li{position:relative;padding-left:17px;color:#5b5149;font-size:10px;line-height:1.35}.plan-features li::before{content:"✓";position:absolute;left:0;top:-1px;color:var(--success);font-size:11px;font-weight:600}.plan-features li.muted{color:#94897f}.plan-features li.muted::before{content:"–";color:#b8aea4}.plan-footer{display:flex;align-items:center;gap:6px;margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);color:#8a7e73;font-size:8px}.plan-footer i{width:6px;height:6px;border-radius:50%;background:var(--success)}
+    .proof{padding:0 0 var(--section);background:var(--canvas)}.proof-grid{display:grid;grid-template-columns:.8fr 1.2fr;border:1px solid var(--rule);background:#fff}.use-case-panel{padding:36px 34px;border-right:1px solid var(--rule)}.use-case-panel h2{margin-top:13px;font-size:42px;max-width:340px}.use-case-panel p{max-width:340px;margin-top:17px;color:var(--muted);font-size:13px}.use-case-list{display:grid;gap:0;margin-top:27px;border-top:1px solid var(--rule)}.use-case{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--rule);font-size:11px}.use-case i{display:grid;place-items:center;width:19px;height:19px;margin-right:9px;border-radius:5px;background:#fff0db;color:#c76b16;font-size:10px;font-style:normal}.use-case span{display:flex;align-items:center}.use-case b{font-size:11px;font-weight:500}.use-case em{color:#ad6e17;font-style:normal;font-size:14px}.testimonial-panel{position:relative;padding:36px 34px;overflow:hidden}.testimonial-panel::after{content:"\201C";position:absolute;right:25px;top:7px;color:rgba(250,143,31,.10);font-family:Georgia,serif;font-size:150px;line-height:1}.testimonial-label{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;color:#887d73;font-size:9px;text-transform:uppercase;letter-spacing:.05em}.testimonial-label .pager{display:flex;gap:4px}.testimonial-label .pager i{width:5px;height:5px;border-radius:50%;background:#d7cec4}.testimonial-label .pager i.active{width:18px;border-radius:99px;background:var(--orange)}.quote{position:relative;z-index:1;max-width:620px;font-family:"IBM Plex Sans",Inter,sans-serif;font-size:31px;font-weight:500;line-height:1.13;letter-spacing:-.062em}.quote em{font-style:normal;color:#a66c1b}.person-row{position:relative;z-index:1;display:flex;align-items:center;gap:11px;margin-top:35px}.person-row .avatar{width:34px;height:34px;background:linear-gradient(145deg,#d4b194,#65432f)}.person-row b{display:block;font-size:11px;font-weight:500}.person-row span{display:block;margin-top:1px;color:#8f847b;font-size:9px}.quote-controls{position:absolute;right:34px;bottom:34px;z-index:1;display:flex;gap:7px}.quote-controls button{display:grid;place-items:center;width:31px;height:31px;padding:0;border:1px solid var(--rule);background:#fff;color:#6c6056;cursor:pointer}.quote-controls button:hover{border-color:var(--orange);color:var(--orange)}
+    .faq{padding:var(--section) 0;border-top:1px solid var(--rule);background:#fffdf9}.faq-top{text-align:center;max-width:650px;margin:0 auto 40px}.faq-top h2{margin-top:13px;font-size:48px}.faq-top p{margin-top:16px;color:var(--muted);font-size:13px}.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;max-width:980px;margin:0 auto}.faq-item{border-top:1px solid var(--rule)}.faq-item:nth-last-child(-n+2){border-bottom:1px solid var(--rule)}.faq-question{display:flex;align-items:center;justify-content:space-between;width:100%;padding:17px 0;border:0;background:transparent;color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:-.02em;text-align:left;cursor:pointer}.faq-question span:last-child{flex:0 0 auto;margin-left:15px;color:#8b7e73;font-size:16px;line-height:1;transition:transform .2s}.faq-item.open .faq-question span:last-child{transform:rotate(45deg);color:var(--orange)}.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.faq-answer>div{overflow:hidden}.faq-answer p{padding:0 23px 0 0;color:#6c6158;font-size:10px;line-height:1.65}.faq-item.open .faq-answer{grid-template-rows:1fr}.faq-item.open .faq-answer p{padding-bottom:17px}
+    .conversion{position:relative;overflow:hidden;padding:78px 0;background:linear-gradient(105deg,#b67d2a 0%,#fb8d21 26%,#fc9141 46%,#b7bff9 74%,#c7e1fa 100%)}.conversion::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.3),rgba(255,255,255,.02));mix-blend-mode:screen}.conversion .shell{position:relative;z-index:1}.conversion-layout{display:grid;grid-template-columns:.95fr 1.05fr;align-items:center;gap:80px}.conversion-copy{max-width:520px;color:var(--ink)}.conversion-copy .eyebrow{color:#5f3b0f}.conversion-copy h2{margin-top:13px;font-size:55px}.conversion-copy p{max-width:430px;margin-top:17px;font-size:14px;line-height:1.5}.conversion-copy .button{margin-top:26px;background:var(--ink);color:#fff}.widget-demo{position:relative;justify-self:end;width:min(420px,100%);padding:10px;background:rgba(255,255,255,.63);border:1px solid rgba(255,255,255,.72);box-shadow:0 23px 50px rgba(91,55,15,.21);backdrop-filter:blur(10px)}.widget-frame{background:#fff;border:1px solid rgba(33,13,2,.10);box-shadow:0 8px 20px rgba(33,13,2,.08)}.widget-top{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border-bottom:1px solid var(--rule);font-size:9px}.widget-brand{display:flex;align-items:center;gap:6px;font-weight:600}.widget-brand i{display:grid;place-items:center;width:16px;height:16px;border-radius:4px;background:var(--orange);font-style:normal;font-size:9px}.widget-status{display:inline-flex;align-items:center;gap:4px;color:#587552;font-size:8px}.widget-status::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--success)}.widget-body{padding:14px}.widget-question{margin-left:auto;max-width:72%;padding:8px 9px;border-radius:6px 6px 1px 6px;background:#f7f0e5;color:#4c3c2d;font-size:9px;line-height:1.45}.widget-answer{display:flex;gap:7px;margin-top:11px}.widget-answer i{display:grid;place-items:center;flex:0 0 18px;height:18px;border-radius:5px;background:var(--orange);font-style:normal;font-size:9px}.widget-answer p{padding:9px;border:1px solid #eee8de;background:#fffdf9;font-size:9px;line-height:1.48}.widget-citation{display:inline-flex;gap:4px;margin:6px 0 0 25px;padding:4px 6px;border-radius:3px;background:#ecf5e9;color:#558d54;font-size:7px}.widget-input{display:flex;align-items:center;gap:8px;margin:0 14px 14px;padding:8px 9px;border:1px solid var(--rule);color:#9a9085;font-size:8px}.widget-input b{margin-left:auto;color:var(--orange);font-size:12px}.widget-floating{position:absolute;right:-27px;bottom:-25px;display:grid;place-items:center;width:55px;height:55px;border-radius:50%;background:var(--ink);color:#fff;box-shadow:0 9px 22px rgba(33,13,2,.26);font-size:20px}
+    .site-footer{position:relative;z-index:1;background:var(--footer);color:#f7f2ec}.footer-main{display:grid;grid-template-columns:1.3fr repeat(4,.7fr);gap:34px;padding:66px 0 48px}.footer-brand .brand{color:#fff;font-size:22px}.footer-brand .brand-mark{background:linear-gradient(140deg,#f6ad3a,#ffd84b 62%,#b3bbfa)}.footer-brand p{max-width:265px;margin-top:15px;color:#a99f97;font-size:10px;line-height:1.65}.footer-social{display:flex;gap:7px;margin-top:22px}.footer-social a{display:grid;place-items:center;width:27px;height:27px;border:1px solid rgba(255,255,255,.15);color:#bdb4ac;font-size:10px}.footer-col h3{margin:0 0 15px;color:#7d7269;font-family:Inter,Arial,sans-serif;font-size:9px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}.footer-col a{display:block;margin-bottom:10px;color:#d3cbc4;font-size:10px}.footer-col a:hover{color:#ffd84b}.footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:19px 0;border-top:1px solid rgba(255,255,255,.1);color:#776d66;font-size:9px}.status-pill{display:inline-flex;align-items:center;gap:7px;color:#a99e95}.status-pill i{width:6px;height:6px;border-radius:50%;background:#58ad5c;box-shadow:0 0 0 3px rgba(88,173,92,.14)}
+
+    .stage-note{padding:20px 0 27px;text-align:center;color:#7f746a;font-size:11px;border-top:1px solid var(--rule)}
+    @media (max-width:1080px){
+      .nav{gap:24px}.nav-links{gap:19px;font-size:13px}.nav-actions{gap:14px}.support-console{grid-template-columns:150px minmax(0,1fr) 162px}.approval-float{right:-10px}.enterprise-grid{gap:40px}.enterprise-cards{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:760px){
+      :root{--gutter:16px;--section:78px}.page::before{width:calc(100% - 32px)}.promo{font-size:11px;gap:5px}.nav{min-height:70px}.brand{font-size:22px}.nav-links,.nav-actions{display:none}.menu-toggle{display:block}.mobile-links{display:none;position:absolute;z-index:20;top:70px;left:0;right:0;padding:14px 16px 17px;border-bottom:1px solid var(--rule);background:var(--canvas);box-shadow:0 16px 24px rgba(33,13,2,.06)}.mobile-links.open{display:grid;gap:4px}.mobile-links a{padding:10px 0;font-size:14px;border-bottom:1px solid var(--rule)}.mobile-links a:last-child{border-bottom:0}.hero{padding-top:63px}.hero h1{font-size:48px}.hero-copy{font-size:15px}.hero-actions{flex-direction:column;padding:0 12px}.hero-actions .button{width:100%}.hero-stage{height:440px;margin-top:61px;padding:0 8px 8px}.product-tabs{top:-33px;height:34px;font-size:8px}.support-console{height:350px;grid-template-columns:92px minmax(0,1fr)}.console-sidebar{padding:12px 8px}.console-head{font-size:0;justify-content:center;margin-bottom:16px}.console-head .mini-mark{width:19px;height:19px}.side-nav a{padding:6px 4px;font-size:0;justify-content:center}.side-icon{font-size:12px;width:15px}.account-card{display:none}.conversation{padding:14px 12px 9px}.ticket-no{font-size:14px}.conversation-actions{display:none}.bubble{font-size:8px;padding:7px}.message.support .bubble{padding:8px}.answer-panel{display:none}.approval-float{right:-9px;bottom:16px;width:172px;padding:9px}.approval-row b{font-size:8px}.approval-row span{font-size:7px}.approval-icon{width:19px;height:19px}.trust-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 6px;padding:18px 15px;justify-items:start;font-size:9px}.trust-item i{width:16px;height:16px}.story-section{padding:var(--section) 0}.section-heading{margin-bottom:36px}.section-heading h2{font-size:39px}.section-heading p{font-size:14px}.story-list{gap:18px}.story-row,.story-row.reverse{display:flex;flex-direction:column}.story-row.reverse .story-visual{order:0}.story-copy{padding:27px 23px}.story-copy h3{font-size:29px}.story-link{margin-top:20px}.story-visual,.story-row.reverse .story-visual{min-height:268px;border-left:0;border-right:0;border-top:1px solid var(--rule)}.visual-cited{padding:29px 22px}.doc-window{width:100%}.visual-approval{padding:18px}.queue{left:8%;right:8%;top:30px}.visual-insights{padding:25px 18px}.insight-card{width:100%}.integrations{padding:66px 0}.integration-row{justify-content:flex-start;gap:16px 20px}.integration{font-size:13px}.workflow{padding:var(--section) 0}.workflow-layout{display:block}.workflow-copy{border-right:0;border-bottom:1px solid var(--rule);padding:31px 23px}.workflow-copy h2{font-size:39px}.workflow-ui{padding:18px 0 0}.workflow-tabs{height:44px}.workflow-tabs button{font-size:0}.tab-dot{margin:0;font-size:8px}.workflow-pane{padding:20px 17px;min-height:0}.pane-grid,.confidence-layout,.approval-layout,.handoff-layout{grid-template-columns:1fr}.pane-side{min-height:0}.evidence-stack{height:152px}.workflow-copy p,.pane-sub{max-width:none}.enterprise .shell{padding:74px 0}.enterprise-grid{display:block}.enterprise-copy h2{font-size:41px}.enterprise-copy p{font-size:13px}.enterprise-cards{grid-template-columns:1fr;margin-top:36px}.enterprise-card{min-height:0}.enterprise-note{font-size:9px}.analytics{padding:var(--section) 0}.analytics-layout{display:block}.analytics-copy{padding:0 23px}.analytics-copy h2{font-size:39px}.analytics-board{margin-top:36px}.analytics-main{grid-template-columns:1fr}.analytics-graph{padding:20px 17px}.analytics-side{padding:18px 17px;border-top:1px solid var(--rule)}.analytics-stats{grid-template-columns:repeat(2,1fr)}.analytics-stat:nth-child(2){border-right:0}.analytics-stat:nth-child(-n+2){border-bottom:1px solid var(--rule)}.stage-note{font-size:10px;padding:16px 20px 20px}
+    }
+
+    @media (max-width:760px){
+      .pricing{padding:var(--section) 0}.pricing-top{display:block;margin-bottom:31px}.pricing-top .section-heading{text-align:left}.pricing-top .section-heading h2{font-size:39px}.billing-toggle{width:max-content;margin-top:20px}.pricing-grid{grid-template-columns:1fr}.price-card,.price-card:last-child{min-height:0;padding:25px 22px;border-right:0;border-bottom:1px solid var(--rule)}.price-card:last-child{border-bottom:0}.price-card.featured{margin:0;border:0;border-bottom:1px solid rgba(177,162,244,.76)}.price strong{font-size:40px}.proof{padding-bottom:var(--section)}.proof-grid{grid-template-columns:1fr}.use-case-panel{padding:29px 23px;border-right:0;border-bottom:1px solid var(--rule)}.use-case-panel h2{font-size:38px}.testimonial-panel{padding:29px 23px;min-height:340px}.quote{font-size:27px}.quote-controls{right:23px;bottom:23px}.faq{padding:var(--section) 0}.faq-top{margin-bottom:28px;text-align:left}.faq-top h2{font-size:39px}.faq-grid{display:block}.faq-item:nth-last-child(-n+2){border-bottom:0}.faq-item:last-child{border-bottom:1px solid var(--rule)}.faq-question{font-size:11px}.conversion{padding:65px 0 75px}.conversion-layout{grid-template-columns:1fr;gap:41px}.conversion-copy h2{font-size:43px}.conversion-copy p{font-size:13px}.widget-demo{justify-self:stretch;width:calc(100% - 12px);margin-left:0}.widget-floating{right:-12px;bottom:-18px}.footer-main{grid-template-columns:repeat(2,1fr);gap:32px 22px;padding:52px 0 36px}.footer-brand{grid-column:1/-1}.footer-bottom{align-items:flex-start;flex-direction:column;gap:8px}
+    }
+
+
+
+    /* ===== Stage 5: original LynAI fidelity pass ===== */
+    .line-texture{background-image:repeating-linear-gradient(90deg,rgba(65,42,20,.075) 0 1px,transparent 1px 10px)}
+
+    /* The integrations section now follows the original LynAI editorial rail: stripe lead-in, large title, boxed icon rail, CTA footer. */
+    .integrations{padding:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--canvas)}
+    .integration-frame{border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+    .integration-lead{height:132px;border-bottom:1px solid var(--rule);background-color:#fffdf8;background-image:repeating-linear-gradient(90deg,rgba(65,42,20,.075) 0 1px,transparent 1px 10px)}
+    .integration-intro{padding:78px 20px 68px;text-align:center;background:rgba(255,255,255,.52)}
+    .integration-kicker{display:inline-flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid #ece3d6;border-radius:9px;background:#fffdf9;color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .integration-kicker i{width:9px;height:9px;border-radius:3px;background:var(--orange)}
+    .integration-intro h2{max-width:760px;margin:27px auto 0;font-family:"IBM Plex Sans",Inter,sans-serif;font-size:clamp(42px,5vw,72px);font-weight:500;line-height:.97;letter-spacing:-.075em}
+    .integration-intro p{max-width:480px;margin:19px auto 0;color:#72685f;font-size:13px;line-height:1.6}
+    .integration-rail-window{overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#fff}
+    .integration-rail{display:flex;width:max-content;min-width:100%;animation:integrationRail 28s linear infinite}
+    .integration-rail:hover{animation-play-state:paused}
+    .integration-cell{display:grid;place-items:center;flex:0 0 124px;height:142px;border-right:1px solid var(--rule);background:#fff}
+    .integration-cell:first-child{border-left:1px solid var(--rule)}
+    .tool-mark{position:relative;display:grid;place-items:center;width:53px;height:53px;font-style:normal;font-family:Inter,Arial,sans-serif;font-size:0;filter:drop-shadow(0 8px 8px rgba(33,13,2,.03))}
+    .tool-mark::before,.tool-mark::after{content:"";position:absolute}
+    .tool-notion{border-radius:8px;background:#191919}.tool-notion::before{width:26px;height:29px;border:3px solid #fff;border-radius:3px}.tool-notion::after{content:"N";position:relative;color:#fff;font-size:18px;font-weight:600}
+    .tool-gdocs{border-radius:6px;background:#4a86e8}.tool-gdocs::before{width:19px;height:27px;border:2px solid #fff;border-radius:2px}.tool-gdocs::after{width:12px;height:2px;left:21px;top:20px;background:#fff;box-shadow:0 6px 0 #fff,0 12px 0 #fff}
+    .tool-confluence{background:transparent}.tool-confluence::before{width:42px;height:21px;top:9px;border-radius:20px 20px 8px 8px;background:#4a61d8;transform:skewX(-18deg)}.tool-confluence::after{width:40px;height:18px;bottom:9px;border-radius:8px 8px 20px 20px;background:#8c67ef;transform:skewX(-18deg)}
+    .tool-slack{border-radius:12px;background:conic-gradient(from 45deg,#e84c3d 0 25%,#f3c62d 0 50%,#56b964 0 75%,#4e78df 0)}.tool-slack::before{inset:12px;border-radius:8px;background:#fff}.tool-slack::after{width:16px;height:16px;border-radius:5px;background:#fff;box-shadow:10px 0 0 #fff,0 10px 0 #fff,10px 10px 0 #fff}
+    .tool-zendesk{background:transparent}.tool-zendesk::before{left:7px;top:6px;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:21px solid #03363d}.tool-zendesk::after{right:7px;bottom:6px;border-left:18px solid transparent;border-right:18px solid transparent;border-top:21px solid #03363d}
+    .tool-intercom{border-radius:50%;background:#256bff}.tool-intercom::before{width:26px;height:21px;border-radius:13px 13px 9px 9px;border:3px solid #fff}.tool-intercom::after{width:3px;height:16px;top:18px;background:#fff;box-shadow:6px 0 0 #fff,12px 0 0 #fff,18px 0 0 #fff}
+    .tool-hubspot{background:transparent}.tool-hubspot::before{width:29px;height:29px;border-radius:50%;border:5px solid #ff7024}.tool-hubspot::after{width:13px;height:5px;right:0;top:7px;background:#ff7024;box-shadow:-28px 31px 0 -1px #ff7024;transform:rotate(28deg)}
+    .tool-stripe{border-radius:13px;background:#635bff}.tool-stripe::after{content:"S";position:relative;color:#fff;font-size:28px;font-weight:600;font-style:italic}
+    .tool-salesforce{border-radius:50%;background:#1b96ff}.tool-salesforce::after{content:"☁";position:relative;color:#fff;font-size:32px;line-height:1}
+    .tool-linear{background:transparent}.tool-linear::before{width:43px;height:43px;background:linear-gradient(135deg,transparent 0 24%,#5e6df5 25% 33%,transparent 34% 42%,#8b59dc 43% 51%,transparent 52% 60%,#5e6df5 61% 69%,transparent 70%);transform:rotate(-25deg)}
+    .integration-cta{display:flex;align-items:center;justify-content:center;gap:12px;padding:36px 20px 38px;background:rgba(255,255,255,.48);font-size:14px;font-weight:500}.integration-cta span{font-size:22px;color:#8b5f1b;transition:transform .25s ease}.integration-cta:hover span{transform:translateX(5px)}
+    @keyframes integrationRail{to{transform:translateX(-50%)}}
+
+    /* Full-width SupportPilot response flow. It adopts LynAI's yellow striped analytics canvas while using a genuine support workflow visual. */
+    .support-flow{padding:0 0 122px;background:var(--canvas)}
+    .support-flow .shell{border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+    .support-flow-tabs{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#fffbf5}
+    .support-flow-tabs button{height:72px;border:0;border-right:1px solid var(--rule);background:transparent;font-family:Inter,Arial,sans-serif;color:#2c1a0f;font-size:12px;font-weight:500;cursor:pointer;transition:background .2s ease,color .2s ease}
+    .support-flow-tabs button:last-child{border-right:0}.support-flow-tabs button.active{background:#c9def7}.support-flow-tabs button:hover{background:#fff3d6}
+    .support-flow-surface{position:relative;padding:107px 82px 42px;overflow:hidden;background:#ffd812;background-image:repeating-linear-gradient(90deg,rgba(111,80,0,.16) 0 1px,transparent 1px 10px)}
+    .support-flow-surface::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(181,191,255,.52),transparent 28%),radial-gradient(circle at 18% 84%,rgba(255,138,31,.28),transparent 34%);pointer-events:none}
+    .flow-board{position:relative;z-index:1;min-height:484px;padding:38px 47px 0;border:1px solid rgba(75,45,0,.16);border-radius:11px 11px 0 0;background:#fff;box-shadow:0 24px 46px rgba(104,69,0,.14)}
+    .flow-board-top{display:flex;align-items:center;justify-content:space-between;gap:20px}.flow-board-title{font-size:17px;font-weight:500;letter-spacing:-.045em}.flow-range{display:inline-flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #ede7de;border-radius:9px;color:#4e4035;font-size:10px}.flow-range i{display:block;width:15px;height:15px;border:1px solid #64554a;border-radius:4px}.flow-range b{font-size:12px;font-weight:500}
+    .flow-graphic{position:relative;height:294px;margin-top:27px;border:1px solid #eee8df;overflow:hidden;background:linear-gradient(180deg,#fff,#fcfbf9)}
+    .flow-graphic::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 33.33%,rgba(51,32,16,.1) 33.42% 33.52%,transparent 33.62% 66.66%,rgba(51,32,16,.1) 66.75% 66.85%,transparent 66.95%),linear-gradient(0deg,rgba(51,32,16,.08) 1px,transparent 1px);background-size:100% 100%,100% 100%;pointer-events:none}
+    .flow-graphic svg{position:absolute;inset:0;width:100%;height:100%;z-index:1}.flow-graphic .funnel-alpha{fill:#b59020}.flow-graphic .funnel-beta{fill:#ff941c}.flow-graphic .funnel-gamma{fill:#adb6ff}.flow-graphic .funnel-soft{fill:rgba(255,244,222,.82)}.flow-graphic .funnel-lilac{fill:rgba(228,231,255,.8)}.flow-graphic text{font-family:Inter,Arial,sans-serif;fill:#28170b;font-size:13px;font-weight:600}.flow-graphic .label-pill{fill:#fff}.flow-graphic .label-stroke{stroke:#e8e2dc;stroke-width:1}.flow-graphic .axis-label{font-size:11px;font-weight:500;fill:#766b61}.flow-graphic .axis-num{font-family:"IBM Plex Sans";font-size:25px;font-weight:500;letter-spacing:-.07em;fill:#210d02}
+    .flow-board-foot{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #eee8df;border-top:0}.flow-metric{padding:19px 18px;border-right:1px solid #eee8df}.flow-metric:last-child{border-right:0}.flow-metric span{display:block;color:#756a60;font-size:9px}.flow-metric strong{display:block;margin-top:6px;font-family:"IBM Plex Sans",Inter,sans-serif;font-size:26px;line-height:1;font-weight:500;letter-spacing:-.075em}.flow-metric small{display:block;margin-top:5px;color:#8a7d71;font-size:8px}
+    .flow-caption{position:relative;z-index:1;max-width:690px;margin:37px auto 0;text-align:center;color:#634615;font-size:12px;line-height:1.6}.flow-caption b{display:block;margin-bottom:8px;color:#322010;font-size:11px;font-weight:500}.flow-person{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-right:7px;border-radius:50%;background:linear-gradient(150deg,#eda679,#b77044);vertical-align:middle;color:#fff;font-size:9px}
+
+    /* Richer, more visual version of the second LynAI analytics sequence. */
+    .analytics{padding:118px 0 124px;background:var(--canvas)}
+    .analytics .shell{border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+    .analytics-layout{display:block}.analytics-copy{padding:0 22px;text-align:center}.analytics-copy .eyebrow{margin-bottom:14px}.analytics-copy h2{max-width:720px;margin:0 auto;font-size:clamp(40px,4.5vw,62px);line-height:.98}.analytics-copy p{max-width:540px;margin:18px auto 0}.analytics-link{margin-top:20px}
+    .analytics-board{max-width:1040px;margin:54px auto 0;border:1px solid var(--rule);box-shadow:none;overflow:hidden}.analytics-board-top{padding:15px 20px;background:#fff}.analytics-main{grid-template-columns:1.08fr .92fr;min-height:320px}.analytics-graph{padding:29px 28px 24px}.graph-title{font-size:12px}.graph-title b{font-size:14px}.analytics-side{padding:24px 21px;background:linear-gradient(135deg,#fff8e8,#fbf8ff)}.analytics-stats{background:#fff}.analytics-stat{min-height:100px}.analytics-stat strong{font-size:31px}
+    .data-matrix{display:grid;grid-template-columns:1fr 146px;gap:24px;align-items:center;margin-top:24px}.matrix-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:9px;align-items:end;height:144px;padding:16px 14px;border:1px solid #eee7de;background:#fffdf9}.matrix-col{display:grid;gap:4px;align-content:end;height:112px}.matrix-col i{display:block;background:#c49221}.matrix-col i:nth-child(2){background:#ffd84b}.matrix-col i:nth-child(3){background:#ff8d20}.matrix-col i:nth-child(4){background:#b3bbfa}.matrix-col:nth-child(2) i:nth-child(1),.matrix-col:nth-child(4) i:nth-child(2),.matrix-col:nth-child(6) i:nth-child(3){opacity:.45}
+    .matrix-orb{position:relative;height:144px;border:1px solid #eee7de;background:radial-gradient(circle at 50% 42%,rgba(197,220,137,.7) 0 24%,rgba(253,226,167,.66) 25% 42%,rgba(179,187,250,.45) 43% 59%,transparent 60%),#fffdf9;overflow:hidden}.matrix-orb::before{content:"Knowledge\\A health";position:absolute;right:9px;bottom:10px;white-space:pre;color:#432d1d;font-size:10px;line-height:1.25;font-weight:500}.matrix-orb::after{content:"✦";position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:#eef7d8;color:#4f7832;font-size:22px;box-shadow:0 0 0 12px rgba(238,247,216,.55)}
+
+    /* Footer follows the original LynAI 4-column black-grid composition, with SupportPilot copy only. */
+    .site-footer{background:#050505;color:#fff}.site-footer .shell{max-width:1208px;border-left:1px solid rgba(255,255,255,.18);border-right:1px solid rgba(255,255,255,.18)}
+    .footer-main{grid-template-columns:1.28fr repeat(3,1fr);gap:0;padding:0;border-top:1px solid rgba(255,255,255,.19);border-bottom:1px solid rgba(255,255,255,.19)}
+    .footer-brand,.footer-col{min-height:420px;padding:77px 48px 54px;border-right:1px solid rgba(255,255,255,.18)}.footer-col:last-child{border-right:0}
+    .footer-brand .brand{font-family:"IBM Plex Sans",Inter,sans-serif;font-size:33px;font-weight:500;letter-spacing:-.065em}.footer-brand .brand-mark{width:36px;height:36px;border-radius:0;background:transparent}.footer-brand .brand-mark svg{stroke:#fff;fill:none;stroke-width:2.2}.footer-brand p{max-width:260px;margin-top:30px;color:#f1efec;font-size:15px;line-height:1.75}.footer-social{gap:9px;margin-top:47px}.footer-social a{width:38px;height:38px;border:0;border-radius:50%;background:#fff;color:#060606;font-size:14px;font-weight:600}
+    .footer-col h3{margin:3px 0 29px;color:#8f8f8f;font-family:Inter,Arial,sans-serif;font-size:12px;font-weight:500;letter-spacing:0;text-transform:none}.footer-col a{margin-bottom:21px;color:#fff;font-size:14px}.footer-col a:hover{color:#ff9a26}
+    .footer-bottom{justify-content:center;min-height:110px;padding:0;border-top:0;color:#a7a39f;font-size:13px}.footer-bottom .status-pill{display:none}.footer-bottom a{color:#ff971d}
+    .footer-marquee{height:126px;border-top:1px solid rgba(255,255,255,.16);overflow:hidden}.footer-marquee-inner{width:100%;height:100%;overflow:hidden}.footer-marquee-track{display:flex;width:200%;height:100%;animation:footerRail 18s linear infinite}.footer-stripe-panel{flex:0 0 50%;height:100%;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.34) 0 1px,transparent 1px 9px)}@keyframes footerRail{to{transform:translateX(-50%)}}
+
+    @media (max-width:760px){
+      .integration-lead{height:72px}.integration-intro{padding:55px 18px 45px}.integration-intro h2{font-size:40px}.integration-cell{flex-basis:94px;height:100px}.tool-mark{transform:scale(.72)}.integration-cta{padding:26px 18px;font-size:12px}
+      .support-flow{padding-bottom:78px}.support-flow-tabs{overflow-x:auto;grid-template-columns:repeat(5,145px);justify-content:start}.support-flow-tabs button{height:58px;font-size:10px}.support-flow-surface{padding:47px 14px 24px}.flow-board{min-height:0;padding:20px 15px 0;border-radius:7px 7px 0 0}.flow-board-top{align-items:flex-start}.flow-board-title{font-size:13px}.flow-range{padding:7px 8px;font-size:8px}.flow-range b{font-size:9px}.flow-graphic{height:208px;margin-top:17px}.flow-graphic .axis-num{font-size:16px}.flow-graphic text{font-size:9px}.flow-graphic .axis-label{font-size:8px}.flow-board-foot{grid-template-columns:repeat(2,1fr)}.flow-metric{padding:13px 11px}.flow-metric:nth-child(2){border-right:0}.flow-metric:nth-child(-n+2){border-bottom:1px solid #eee8df}.flow-metric strong{font-size:21px}.flow-caption{padding:0 9px;margin-top:24px;font-size:10px}
+      .analytics{padding:78px 0}.analytics-copy{padding:0 20px;text-align:left}.analytics-copy h2{font-size:39px;margin:0}.analytics-copy p{margin-left:0}.analytics-board{margin-top:34px}.data-matrix{grid-template-columns:1fr;gap:10px}.matrix-orb{height:110px}.analytics-graph{padding:20px 17px}.matrix-bars{height:120px}.footer-brand,.footer-col{min-height:0;padding:43px 25px 36px}.footer-main{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1;border-bottom:1px solid rgba(255,255,255,.18)}.footer-brand .brand{font-size:29px}.footer-brand p{margin-top:20px;font-size:13px}.footer-social{margin-top:28px}.footer-col{padding:34px 25px}.footer-col:nth-child(3){border-right:0}.footer-col:nth-child(4){grid-column:1/-1;border-top:1px solid rgba(255,255,255,.18)}.footer-col h3{margin-bottom:18px}.footer-col a{margin-bottom:15px;font-size:12px}.footer-bottom{min-height:88px;padding:0 22px;text-align:center;font-size:10px}.footer-marquee{height:82px}
+    }
+
+
+
+    /* Stage 6 — high-fidelity graphic pass: richer hero, product stories, and conversion panel. */
+    .hero-stage{background:linear-gradient(105deg,#c08d2d 0%,#ff8a1e 27%,#fb9347 47%,#b5bef9 76%,#c8e3fb 100%)}
+    .hero-stage::before{background:radial-gradient(circle at 17% 86%,rgba(255,217,101,.72),transparent 28%),radial-gradient(circle at 84% 30%,rgba(255,255,255,.65),transparent 28%),linear-gradient(105deg,#bd8b2e 0%,#fb851e 31%,#fc9142 47%,#b3bcf8 76%,#c9e4fb 100%)}
+    .hero-stage::after{background:linear-gradient(90deg,rgba(255,255,255,.15),rgba(255,255,255,.42),rgba(255,255,255,.08)),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 10px);mix-blend-mode:screen}
+    .hero-stage > *{position:relative;z-index:2}.hero-halo{position:absolute;z-index:1;width:420px;height:240px;border-radius:50%;right:7%;top:31%;background:radial-gradient(circle,rgba(255,255,255,.64),rgba(255,255,255,0) 70%);filter:blur(7px)}
+    .hero-grid{position:absolute;inset:25px 17px 17px;z-index:0;opacity:.35;background-image:linear-gradient(rgba(255,255,255,.7) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.7) 1px,transparent 1px);background-size:58px 58px;mask-image:linear-gradient(to bottom,transparent,black 35%,black)}
+    .support-console{position:relative;border-color:rgba(33,13,2,.17);box-shadow:0 28px 50px rgba(80,38,3,.17)}
+    .support-console::before{content:"Live support workspace";position:absolute;z-index:3;left:210px;top:13px;padding:4px 7px;border:1px solid #e7dfd6;background:rgba(255,255,255,.91);color:#6e6358;font-size:7px;letter-spacing:.06em;text-transform:uppercase}
+    .console-sidebar{background:linear-gradient(180deg,#fffdfa,#fffaf4)}
+    .conversation{padding-top:41px;background:linear-gradient(180deg,#fff,#fffefa)}
+    .answer-panel{background:linear-gradient(180deg,#fffefb,#fbf7f2)}
+    .answer-panel::after{content:"Evidence ready";display:block;margin-top:15px;padding:7px 8px;border:1px solid #e9dfe4;background:linear-gradient(90deg,#f6f0ff,#fff8e9);color:#6b55ab;font-size:8px;text-align:center}
+    .approval-float{overflow:hidden;box-shadow:0 18px 34px rgba(100,52,4,.16)}
+    .approval-float::after{content:"Sensitive request";position:absolute;right:-20px;top:7px;padding:3px 20px;background:#f5c860;color:#66410e;font-size:6px;transform:rotate(32deg)}
+    .hero-insight-float{position:absolute;z-index:4;left:-42px;bottom:46px;width:151px;padding:11px 12px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.88);box-shadow:0 14px 32px rgba(76,40,8,.16);text-align:left;backdrop-filter:blur(9px)}
+    .hero-insight-float > span{display:block;color:#82766b;font-size:7px}.hero-insight-float b{display:block;margin-top:3px;font-family:"IBM Plex Sans";font-size:20px;letter-spacing:-.07em}.hero-insight-float .tiny-bars{display:flex;gap:3px;align-items:end;height:26px;margin-top:8px}.hero-insight-float .tiny-bars i{display:block;flex:1;background:linear-gradient(180deg,#b3bbfa,#7c70cc)}.hero-insight-float .tiny-bars i:nth-child(1){height:9px}.hero-insight-float .tiny-bars i:nth-child(2){height:17px}.hero-insight-float .tiny-bars i:nth-child(3){height:13px}.hero-insight-float .tiny-bars i:nth-child(4){height:23px}.hero-insight-float .tiny-bars i:nth-child(5){height:19px}.hero-insight-float .tiny-bars i:nth-child(6){height:26px}
+    .hero-citation-float{position:absolute;z-index:4;right:44px;top:69px;display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.9);box-shadow:0 13px 27px rgba(59,32,0,.12);font-size:8px}.hero-citation-float i{width:16px;height:16px;border-radius:4px;display:grid;place-items:center;background:#eef8eb;color:#408152;font-style:normal}.hero-citation-float b{display:block;font-size:8px}.hero-citation-float span{display:block;margin-top:2px;color:#7e736a;font-size:7px}
+
+    .story-visual{isolation:isolate}.story-visual::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.75;background-image:repeating-linear-gradient(90deg,transparent 0 9px,rgba(130,107,68,.08) 9px 10px)}
+    .visual-cited{display:grid;place-items:center;padding:26px 40px;background:radial-gradient(circle at 79% 18%,rgba(185,191,250,.68),transparent 27%),radial-gradient(circle at 15% 87%,rgba(255,207,106,.48),transparent 26%),linear-gradient(135deg,#fffefa 0%,#f9f7f0 100%)}
+    .visual-cited .doc-window{position:relative;z-index:2;width:88%;max-width:410px;margin:0;transform:translateX(-20px);box-shadow:0 18px 34px rgba(54,29,4,.11)}
+    .source-health-card{position:absolute;right:26px;bottom:26px;z-index:3;width:146px;padding:12px;border:1px solid rgba(33,13,2,.11);background:rgba(255,255,255,.94);box-shadow:0 14px 25px rgba(48,29,5,.11)}
+    .source-health-card > span{font-size:7px;color:#7e7267}.source-health-card b{display:block;margin-top:4px;font-size:13px;letter-spacing:-.05em}.source-health-card p{display:flex;align-items:center;gap:5px;margin-top:9px;color:#4d874f;font-size:7px}.source-health-card p::before{content:"";width:6px;height:6px;border-radius:50%;background:#62a769;box-shadow:0 0 0 3px rgba(98,167,105,.14)}
+    .source-connector{position:absolute;right:156px;bottom:72px;width:96px;height:44px;border-top:1px dashed #cbbca8;border-right:1px dashed #cbbca8;transform:skewY(-24deg)}
+    .visual-approval{display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 17% 20%,rgba(255,178,82,.38),transparent 28%),radial-gradient(circle at 81% 78%,rgba(179,187,250,.44),transparent 31%),linear-gradient(130deg,#fff8ec,#fff 58%,#f7f4ff)}
+    .visual-approval .queue{position:relative;left:auto;right:auto;top:auto;z-index:2;width:min(390px,84%);padding:16px;box-shadow:0 19px 35px rgba(49,26,4,.1)}
+    .approval-detail-card{position:absolute;z-index:3;right:27px;bottom:24px;width:165px;padding:12px;border:1px solid #efd4a9;background:#fffaf1;box-shadow:0 14px 24px rgba(103,58,13,.11)}
+    .approval-detail-card span{display:block;font-size:7px;color:#90745a}.approval-detail-card b{display:block;margin-top:4px;font-size:10px;line-height:1.35}.approval-detail-card .detail-actions{display:flex;gap:5px;margin-top:10px}.detail-actions i{display:block;padding:5px 7px;border-radius:99px;border:1px solid #ead4b4;background:#fff;font-style:normal;font-size:7px}.detail-actions i:first-child{background:#3a2516;color:#fff;border-color:#3a2516}
+    .approval-arc{position:absolute;z-index:1;left:52px;top:52px;width:206px;height:206px;border:1px solid rgba(186,142,62,.28);border-radius:50%;box-shadow:0 0 0 20px rgba(255,227,178,.16),0 0 0 42px rgba(179,187,250,.08)}
+    .visual-insights{display:grid;place-items:center;padding:26px;background:radial-gradient(circle at 77% 20%,rgba(179,187,250,.6),transparent 32%),radial-gradient(circle at 12% 78%,rgba(255,190,91,.35),transparent 27%),linear-gradient(135deg,#f6f3ff,#fff 54%,#fff8e6)}
+    .visual-insights .insight-card{position:relative;width:min(440px,90%);margin:0;box-shadow:0 19px 34px rgba(40,28,74,.1)}
+    .insight-card::after{content:"Knowledge health\A improving";white-space:pre;position:absolute;right:-55px;bottom:20px;width:104px;height:104px;display:grid;place-items:center;text-align:center;border-radius:50%;background:radial-gradient(circle at 50% 30%,#e1f1bf 0 22%,#fbd79c 24% 41%,#c5c6fc 43% 56%,#fff 58%);box-shadow:0 12px 28px rgba(38,19,77,.12);font-size:9px;line-height:1.3;color:#473128;font-weight:500}
+    .mini-chart{border-left:1px solid #eee8df;border-right:1px solid #eee8df}.insight-stamp{position:absolute;left:20px;bottom:62px;padding:5px 8px;border:1px solid #e7dcd0;border-radius:99px;background:#fff;color:#6a5e55;font-size:7px}
+
+    .conversion{background:radial-gradient(circle at 80% 55%,rgba(255,255,255,.59),transparent 30%),radial-gradient(circle at 12% 15%,rgba(255,221,114,.42),transparent 31%),linear-gradient(105deg,#ba8029 0%,#fb8520 28%,#fb9544 48%,#b4bcf8 77%,#c9e4fb 100%)}
+    .conversion::after{content:"";position:absolute;inset:0;opacity:.29;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.4) 0 1px,transparent 1px 10px);pointer-events:none}
+    .conversion .shell{z-index:2}.conversion-copy{position:relative}.conversion-copy::after{content:"";position:absolute;right:-120px;top:-100px;width:210px;height:210px;border:1px solid rgba(255,255,255,.32);border-radius:50%;box-shadow:0 0 0 34px rgba(255,255,255,.08),0 0 0 68px rgba(255,255,255,.05)}
+    .widget-demo{transform:rotate(-1deg);border-radius:5px}.widget-demo::before{content:"Branded live widget";position:absolute;z-index:2;left:14px;top:-17px;padding:5px 8px;background:#fff;color:#6b4b26;border:1px solid rgba(94,49,0,.1);font-size:7px;letter-spacing:.06em;text-transform:uppercase}.widget-frame{position:relative;overflow:hidden}.widget-frame::after{content:"";position:absolute;right:-30px;top:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(179,187,250,.48),rgba(179,187,250,0) 72%)}.widget-citation{position:relative;z-index:1}.widget-floating{border:5px solid rgba(255,255,255,.45)}
+
+    @media (max-width:760px){
+      .hero-grid,.hero-halo,.hero-citation-float{display:none}.hero-insight-float{left:6px;bottom:12px;transform:scale(.78);transform-origin:bottom left}.support-console::before{left:110px;top:9px;font-size:6px}.visual-cited .doc-window{transform:none}.source-health-card{right:13px;bottom:13px;transform:scale(.82);transform-origin:bottom right}.source-connector{display:none}.visual-approval .queue{width:91%}.approval-detail-card{right:10px;bottom:12px;transform:scale(.76);transform-origin:bottom right}.approval-arc{left:-25px;top:36px}.insight-card::after{right:-23px;bottom:16px;transform:scale(.8);transform-origin:bottom right}.conversion-copy::after{display:none}.widget-demo{transform:none}
+    }
+
+
+
+    /* Stage 7 — refinement, motion safety, and interaction fidelity pass. */
+    html{scroll-behavior:smooth}
+    section[id],footer[id]{scroll-margin-top:96px}
+    a,button{outline-offset:4px}
+    a:focus-visible,button:focus-visible{outline:2px solid #9e6a19;outline-offset:4px}
+    .button,.integration-cta,.story-row,.use-case,.enterprise-card,.analytics-board,.flow-board{transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
+    .button:hover{transform:translateY(-2px)}
+    .story-row:hover{box-shadow:0 18px 38px rgba(66,38,14,.07);border-color:#dfd4c7}
+    .enterprise-card:hover{transform:translateY(-3px);border-color:rgba(255,216,75,.42);background:rgba(255,255,255,.07)}
+    .use-case:hover{background:#fffaf0}
+
+    /* The moving rails are softened at the edges, closer to the original LynAI treatment. */
+    .integration-rail-window{position:relative}
+    .integration-rail-window::before,.integration-rail-window::after{content:"";position:absolute;z-index:2;top:0;bottom:0;width:76px;pointer-events:none}
+    .integration-rail-window::before{left:0;background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,0) 100%)}
+    .integration-rail-window::after{right:0;background:linear-gradient(270deg,#fff 0%,rgba(255,255,255,0) 100%)}
+    .integration-cell{transition:background .25s ease,transform .25s ease}
+    .integration-cell:hover{background:#fff9ef;transform:translateY(-3px)}
+    .footer-marquee{position:relative}
+    .footer-marquee::before,.footer-marquee::after{content:"";position:absolute;z-index:2;top:0;bottom:0;width:70px;pointer-events:none}
+    .footer-marquee::before{left:0;background:linear-gradient(90deg,#050505 0%,rgba(5,5,5,0) 100%)}
+    .footer-marquee::after{right:0;background:linear-gradient(270deg,#050505 0%,rgba(5,5,5,0) 100%)}
+
+    /* Make the yellow response-flow canvas feel alive without becoming distracting. */
+    .support-flow-surface::after{content:"";position:absolute;inset:-18%;background:radial-gradient(circle at 30% 55%,rgba(255,255,255,.24),transparent 24%),radial-gradient(circle at 78% 35%,rgba(181,191,255,.24),transparent 24%);animation:surfaceDrift 16s ease-in-out infinite alternate;pointer-events:none}
+    .flow-board{transition:background .35s ease,box-shadow .35s ease,border-color .35s ease}
+    .flow-title-row{display:flex;align-items:center;gap:10px}
+    .flow-mode-pill{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border:1px solid #ead8b6;border-radius:999px;background:#fff9ee;color:#855918;font-size:8px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .flow-board-sub{margin-top:5px;color:#776c61;font-size:10px;line-height:1.45;transition:opacity .2s ease}
+    .flow-board.mode-review{background:linear-gradient(145deg,#fffdf8,#fff9ef)}
+    .flow-board.mode-handoff{background:linear-gradient(145deg,#fdfdff,#f6f8ff)}
+    .flow-board.mode-knowledge{background:linear-gradient(145deg,#fffef9,#f6fbf0)}
+    .flow-board.mode-routing{background:linear-gradient(145deg,#fffdf9,#fbf6ff)}
+    .flow-board.mode-review .funnel-alpha{fill:#ff8f1f}.flow-board.mode-review .funnel-beta{fill:#d98024}.flow-board.mode-review .funnel-gamma{fill:#b9a1f4}
+    .flow-board.mode-handoff .funnel-alpha{fill:#b3bbfa}.flow-board.mode-handoff .funnel-beta{fill:#7b68ce}.flow-board.mode-handoff .funnel-gamma{fill:#72a8de}
+    .flow-board.mode-knowledge .funnel-alpha{fill:#9bbd63}.flow-board.mode-knowledge .funnel-beta{fill:#d2b149}.flow-board.mode-knowledge .funnel-gamma{fill:#b2c8f5}
+    .flow-board.mode-routing .funnel-alpha{fill:#b29126}.flow-board.mode-routing .funnel-beta{fill:#c98f5a}.flow-board.mode-routing .funnel-gamma{fill:#aa91dc}
+    .flow-board.mode-review .flow-mode-pill{background:#fff0dd;color:#ad6516}.flow-board.mode-handoff .flow-mode-pill{background:#edf0ff;color:#5b58ac}.flow-board.mode-knowledge .flow-mode-pill{background:#eff8e8;color:#557a38}.flow-board.mode-routing .flow-mode-pill{background:#f4ecff;color:#7556a4}
+    .flow-graphic .funnel-alpha,.flow-graphic .funnel-beta,.flow-graphic .funnel-gamma,.flow-graphic .funnel-soft,.flow-graphic .funnel-lilac{transition:fill .35s ease,opacity .35s ease}
+    .flow-graphic .label-pill{filter:drop-shadow(0 5px 7px rgba(33,13,2,.06))}
+    .flow-board.mode-review .flow-graphic,.flow-board.mode-handoff .flow-graphic,.flow-board.mode-knowledge .flow-graphic,.flow-board.mode-routing .flow-graphic{box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+    @keyframes surfaceDrift{from{transform:translate3d(-1%,0,0)}to{transform:translate3d(2%,-1%,0)}}
+
+    /* Add calibrated depth to the highest-value visual surfaces. */
+    .hero-stage::after{content:"";position:absolute;inset:15px 7% 0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,255,255,.26),transparent);mix-blend-mode:screen}
+    .analytics-board::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.42),transparent 24%)}
+    .analytics-board{position:relative}
+    .widget-demo:hover{transform:translateY(-4px);box-shadow:0 29px 54px rgba(91,55,15,.25)}
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+      .integration-rail,.footer-marquee-track{transform:none!important}
+    }
+    @media (max-width:760px){
+      .integration-rail-window::before,.integration-rail-window::after{width:28px}
+      .footer-marquee::before,.footer-marquee::after{width:24px}
+      .flow-title-row{align-items:flex-start;flex-direction:column;gap:6px}
+      .flow-mode-pill{font-size:7px}
+      .support-flow-surface::after{display:none}
+      .story-row:hover,.enterprise-card:hover,.widget-demo:hover{transform:none}
+    }
+
+
+    /* Stage 8 — visual QA, responsive hardening, and interaction completion. */
+    html{scroll-padding-top:96px}
+    .site-header{position:sticky;top:0;z-index:50;background:rgba(255,251,245,.86);backdrop-filter:blur(16px)}
+    .site-header .promo{position:relative;z-index:1}
+    .nav{background:transparent}
+    .nav-links a{position:relative}
+    .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:1px;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
+    .nav-links a:hover::after,.nav-links a:focus-visible::after{transform:scaleX(1)}
+    .menu-toggle{position:relative;z-index:22}
+    .mobile-links{transition:opacity .18s ease,transform .18s ease}
+    .mobile-links:not(.open){opacity:0;transform:translateY(-8px);pointer-events:none}
+    .mobile-links.open{opacity:1;transform:translateY(0);pointer-events:auto}
+
+    /* Prevent the original desktop navigation from ever colliding at tablet widths. */
+    @media (max-width:960px){
+      .nav{min-height:72px;grid-template-columns:minmax(0,1fr) max-content;gap:12px}
+      .nav-links,.nav-actions{display:none}
+      .menu-toggle{display:block}
+      .mobile-links{position:absolute;z-index:20;top:72px;left:0;right:0;padding:13px 24px 17px;border-bottom:1px solid var(--rule);background:rgba(255,251,245,.98);box-shadow:0 18px 32px rgba(33,13,2,.08)}
+      .mobile-links.open{display:grid;gap:3px}
+      .mobile-links a{padding:10px 0;border-bottom:1px solid var(--rule);font-size:14px}
+      .mobile-links a:last-child{border-bottom:0;color:#8f5e18;font-weight:600}
+    }
+
+    /* Section surfaces now receive the same restraint and density as the LynAI reference. */
+    .integration-intro{position:relative;isolation:isolate}
+    .integration-intro::before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 15% 70%,rgba(255,216,75,.12),transparent 26%),radial-gradient(circle at 83% 18%,rgba(179,187,250,.14),transparent 27%)}
+    .integration-kicker{box-shadow:0 5px 16px rgba(52,27,6,.035)}
+    .integration-rail-window:focus-within .integration-rail,.integration-rail-window:hover .integration-rail{animation-play-state:paused}
+    .integration-cta{position:relative;overflow:hidden}
+    .integration-cta::before{content:"";position:absolute;left:50%;top:50%;width:180px;height:180px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,211,93,.16),transparent 67%);pointer-events:none}
+    .integration-cta span,.integration-cta{isolation:isolate}
+
+    /* Give the analytics pieces a precise, intentionally-built finish rather than flat placeholders. */
+    .flow-board{overflow:hidden}
+    .flow-board::before{content:"";position:absolute;z-index:0;right:-100px;top:-92px;width:270px;height:270px;border:1px solid rgba(166,114,28,.12);border-radius:50%;box-shadow:0 0 0 30px rgba(166,114,28,.045),0 0 0 60px rgba(179,187,250,.045);pointer-events:none}
+    .flow-board > *{position:relative;z-index:1}
+    .flow-board-top{padding-bottom:1px}
+    .flow-range{background:rgba(255,255,255,.72)}
+    .flow-board-foot{background:#fff}
+    .analytics-board{background:#fff}
+    .analytics-board-top{background:linear-gradient(90deg,#fff,#fffdf8)}
+    .analytics-board-top::after{content:"Demo workspace";margin-left:auto;margin-right:10px;padding:4px 7px;border:1px solid #ece3d5;border-radius:99px;color:#8a7463;font-size:8px}
+    .data-matrix > *{transition:transform .24s ease,box-shadow .24s ease}
+    .data-matrix > *:hover{transform:translateY(-3px);box-shadow:0 13px 24px rgba(52,31,8,.075)}
+
+    /* Pricing and proof regions benefit from the same fine-line depth used in the reference artwork. */
+    .pricing{position:relative;overflow:hidden}
+    .pricing::before{content:"";position:absolute;left:50%;top:0;width:min(1208px,calc(100% - (var(--gutter) * 2)));height:56px;transform:translateX(-50%);border-inline:1px solid var(--rule);background-image:repeating-linear-gradient(90deg,rgba(64,40,18,.065) 0 1px,transparent 1px 10px);pointer-events:none}
+    .pricing .shell{position:relative;padding-top:34px}
+    .pricing-grid{position:relative;overflow:hidden}
+    .price-card{transition:transform .24s ease,box-shadow .24s ease,background .24s ease}
+    .price-card:hover{transform:translateY(-4px);box-shadow:0 16px 28px rgba(54,32,8,.08);z-index:2}
+    .price-card.featured::after{content:"Most popular";position:absolute;right:16px;top:15px;padding:4px 7px;border-radius:99px;background:#ece8ff;color:#6750a7;font-size:8px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+    .testimonial-panel{background:radial-gradient(circle at 72% 24%,rgba(179,187,250,.12),transparent 24%),linear-gradient(135deg,#fff,#fffbf3)}
+    .testimonial-panel.is-changing .quote,.testimonial-panel.is-changing .person-row{opacity:0;transform:translateY(5px)}
+    .quote,.person-row{transition:opacity .18s ease,transform .18s ease}
+    .testimonial-label .pager i{transition:all .22s ease}
+
+    /* Footer: retain the screenshot's black-grid structure, then make the SupportPilot mark original. */
+    .supportpilot-footer-mark{display:grid!important;place-items:center!important}
+    .supportpilot-footer-mark svg{width:39px!important;height:39px!important;stroke:#fff!important;fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+    .footer-brand .brand{gap:11px}
+    .footer-brand .brand:hover{color:#fff}
+    .footer-social a{transition:transform .22s ease,background .22s ease}
+    .footer-social a:hover,.footer-social a:focus-visible{background:#ffda4d;color:#17110c;transform:translateY(-3px);outline:0}
+    .footer-col a{transition:color .2s ease,transform .2s ease}
+    .footer-col a:hover,.footer-col a:focus-visible{transform:translateX(3px)}
+    .footer-marquee-track{will-change:transform}
+    .footer-marquee:hover .footer-marquee-track{animation-play-state:paused}
+
+    @media (prefers-reduced-motion:reduce){
+      .testimonial-panel.is-changing .quote,.testimonial-panel.is-changing .person-row{opacity:1;transform:none}
+    }
+    @media (max-width:960px){
+      .site-header{position:relative}
+    }
+    @media (max-width:760px){
+      html{scroll-padding-top:72px}
+      .pricing::before{height:34px}
+      .pricing .shell{padding-top:18px}
+      .price-card:hover,.data-matrix > *:hover{transform:none;box-shadow:none}
+      .analytics-board-top::after{display:none}
+      .footer-marquee:hover .footer-marquee-track{animation-play-state:running}
+    }
+
+
+
+    /* Stage 9 — composition polish, scroll intelligence, and original-LynAI surface refinement. */
+    ::selection{background:rgba(255,216,75,.72);color:#210d02}
+    .hero-stage,.flow-board,.analytics-board,.widget-demo{isolation:isolate}
+    .hero-stage{box-shadow:0 28px 70px rgba(96,57,13,.13)}
+    .hero-stage::after{inset:0;background:linear-gradient(105deg,rgba(255,255,255,.12),transparent 26%,rgba(255,255,255,.31) 54%,transparent 78%);mix-blend-mode:screen}
+    .support-console{position:relative}
+    .support-console::after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(255,255,255,.68);box-shadow:inset 0 1px 0 rgba(255,255,255,.76)}
+    .answer-panel .safe{box-shadow:0 8px 16px rgba(64,120,51,.06)}
+
+    /* Thin vertical-line bands echo the rhythm visible between the original LynAI modules. */
+    .story-section{position:relative;padding-bottom:0}
+    .story-section::after{content:"";display:block;height:74px;margin-top:66px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background-image:repeating-linear-gradient(90deg,rgba(64,40,18,.065) 0 1px,transparent 1px 10px);pointer-events:none}
+    .analytics{position:relative;padding-bottom:0}
+    .analytics::after{content:"";display:block;height:70px;margin-top:75px;border-top:1px solid var(--rule);background-image:repeating-linear-gradient(90deg,rgba(64,40,18,.06) 0 1px,transparent 1px 10px);pointer-events:none}
+    .proof{position:relative}
+    .proof::before{content:"";position:absolute;left:50%;top:0;width:min(var(--max),calc(100% - (var(--gutter) * 2)));height:1px;transform:translateX(-50%);background:var(--rule)}
+
+    /* Bring the chart work closer to the original: fine grid lines, a staged path reveal, and restrained data highlights. */
+    .support-graph{background:repeating-linear-gradient(to bottom,transparent 0,transparent 42px,#f1ede7 43px),repeating-linear-gradient(90deg,transparent 0,transparent 24.8%,rgba(65,42,20,.065) 25%,transparent 25.2%)}
+    .support-graph .main-line{stroke-dasharray:760;stroke-dashoffset:760;animation:drawSupportLine 1.65s cubic-bezier(.22,.75,.23,1) .15s forwards}
+    .support-graph .secondary-line{stroke-dasharray:4 4;animation:softPulse 2.8s ease-in-out infinite}
+    .support-graph .end-dot{opacity:0;animation:showEndDot .3s ease 1.55s forwards}
+    @keyframes drawSupportLine{to{stroke-dashoffset:0}}
+    @keyframes showEndDot{to{opacity:1}}
+    @keyframes softPulse{50%{opacity:.48}}
+    .matrix-bars{position:relative;overflow:hidden}
+    .matrix-bars::after{content:"Weekly coverage";position:absolute;left:12px;top:7px;color:#8b7a6c;font-size:7px;letter-spacing:.045em;text-transform:uppercase}
+    .matrix-col{transform-origin:bottom;animation:barRise .62s cubic-bezier(.22,.75,.23,1) both}
+    .matrix-col:nth-child(2){animation-delay:.06s}.matrix-col:nth-child(3){animation-delay:.12s}.matrix-col:nth-child(4){animation-delay:.18s}.matrix-col:nth-child(5){animation-delay:.24s}.matrix-col:nth-child(6){animation-delay:.3s}.matrix-col:nth-child(7){animation-delay:.36s}
+    @keyframes barRise{from{opacity:0;transform:translateY(12px) scaleY(.6)}to{opacity:1;transform:none}}
+
+    /* Buttons, plan cards, and story surfaces get consistent physical response without changing the LynAI token system. */
+    .button:active,.mini-btn:active,.integration-cta:active{transform:translateY(0) scale(.985)}
+    .story-row,.analytics-board,.flow-board,.price-card,.widget-demo{transform:translateZ(0)}
+    .story-visual::after{pointer-events:none}
+    .price-card.featured{box-shadow:0 18px 38px rgba(101,76,162,.10)}
+    .price-card.featured::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.45),transparent 34%)}
+    .conversion .button{position:relative;z-index:2;background:var(--yellow);color:var(--ink);border-color:rgba(255,255,255,.2)}
+    .widget-frame{box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+
+    /* Navigation now indicates the active story area during scroll, while retaining the existing hover treatment. */
+    .nav-links a.is-current,.mobile-links a.is-current{color:var(--ink);font-weight:600}
+    .nav-links a.is-current::after{transform:scaleX(1)}
+    .mobile-links a.is-current{color:#8f5e18}
+
+    /* Integration labels remain hidden by default, then appear as small editorial tooltips instead of adding persistent clutter. */
+    .integration-cell{position:relative}
+    .integration-cell::after{content:attr(data-name);position:absolute;left:50%;bottom:13px;transform:translate(-50%,4px);padding:4px 6px;border:1px solid #ede5da;border-radius:999px;background:rgba(255,255,255,.96);color:#6f6258;font-size:7px;line-height:1;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+    .integration-cell:hover::after,.integration-cell:focus-within::after{opacity:1;transform:translate(-50%,0)}
+
+    /* Motion arrives only after JavaScript has intentionally marked a surface ready to reveal. */
+    .js-reveal{opacity:0;transform:translateY(18px);transition:opacity .68s cubic-bezier(.22,.75,.23,1),transform .68s cubic-bezier(.22,.75,.23,1)}
+    .js-reveal.is-visible{opacity:1;transform:none}
+    .js-reveal[data-reveal-delay="1"]{transition-delay:.08s}.js-reveal[data-reveal-delay="2"]{transition-delay:.16s}
+
+    @media (prefers-reduced-motion:reduce){
+      .support-graph .main-line{stroke-dashoffset:0;animation:none}.support-graph .secondary-line,.matrix-col{animation:none}.support-graph .end-dot{opacity:1;animation:none}.js-reveal{opacity:1;transform:none;transition:none}.story-section::after,.analytics::after{background-image:none}
+    }
+    @media (max-width:760px){
+      .story-section::after{height:44px;margin-top:48px}.analytics::after{height:42px;margin-top:48px}.hero-stage{box-shadow:0 18px 45px rgba(96,57,13,.10)}.integration-cell::after{display:none}.support-graph .main-line{animation-duration:.9s}
+    }
+
+
+
+    /* ===== Stage 10: layout QA repair =====
+       Workflow and story cards now use separate queue scopes. This prevents the feature-row
+       queue's absolute positioning from leaking into the main workflow tab. */
+    .workflow-pane .approval-layout{
+      grid-template-columns:minmax(0,1.08fr) minmax(218px,.92fr);
+      align-items:stretch;
+    }
+    .workflow-pane .approval-screen,
+    .workflow-pane .confidence-screen,
+    .workflow-pane .handoff-screen{
+      display:block;
+      width:auto;
+      max-width:none;
+      margin:0;
+      min-width:0;
+    }
+    .workflow-pane .queue{
+      position:static;
+      inset:auto;
+      left:auto;
+      right:auto;
+      top:auto;
+      width:100%;
+      max-width:none;
+      height:100%;
+      min-height:0;
+      padding:0;
+      box-shadow:none;
+      overflow:hidden;
+    }
+    .workflow-pane .queue-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:13px 14px;
+      border-bottom:1px solid #eee9e1;
+      font-size:10px;
+      font-weight:500;
+    }
+    .workflow-pane .queue-head span{color:#6e55ba}
+    .workflow-pane .queue-item{
+      display:grid;
+      grid-template-columns:8px minmax(0,1fr) auto;
+      gap:10px;
+      align-items:center;
+      padding:12px 14px;
+      border-bottom:1px solid #eee9e1;
+      font-size:10px;
+    }
+    .workflow-pane .queue-item:last-child{border-bottom:0}
+    .workflow-pane .queue-item i{display:block;width:8px;height:8px;border-radius:50%;background:#ff7d3a}
+    .workflow-pane .queue-item.med i{background:#f0bf59}
+    .workflow-pane .queue-item.low i{background:#7da46f}
+    .workflow-pane .queue-item b{font-weight:500;line-height:1.4}
+    .workflow-pane .queue-item em{font-style:normal;font-size:8px;color:#aa6e18;background:transparent;padding:0}
+    .workflow-pane .approval-detail{
+      display:flex;
+      min-height:100%;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .workflow-pane .action-row{margin-top:18px;flex-wrap:wrap}
+
+    /* The earlier full-width stripe pseudo-elements created disconnected blank bands.
+       Keep the original-LynAI line rhythm only where it has a dedicated composition. */
+    .story-section{padding-bottom:var(--section)}
+    .story-section::after{content:none!important;display:none!important}
+    .analytics{padding-bottom:var(--section)}
+    .analytics::after{content:none!important;display:none!important}
+
+    /* Make focused tab state deliberate, rather than leaving the generic 4px outline outside the rail. */
+    .workflow-tabs button:focus-visible,
+    .support-flow-tabs button:focus-visible{
+      position:relative;
+      z-index:3;
+      outline:2px solid #a86b17;
+      outline-offset:-3px;
+    }
+
+    @media (max-width:760px){
+      .workflow-pane .approval-layout{grid-template-columns:1fr}
+      .workflow-pane .approval-detail{min-height:auto}
+    }
+
+
+
+    /* Stage 11 — hero composition repair. Keep overlay elements out of the flex flow. */
+    .hero-stage{display:block;padding:40px 17px 17px;overflow:visible}
+    .hero-stage > .hero-grid{position:absolute;inset:25px 17px 17px;z-index:0}
+    .hero-stage > .hero-halo{position:absolute;z-index:1}
+    .hero-stage > .product-tabs{position:absolute;z-index:3;left:0;right:0;top:0;width:auto}
+    .hero-stage > .support-console{position:absolute;z-index:2;left:17px;right:17px;bottom:17px;width:auto;height:455px}
+    .hero-stage > .hero-insight-float{position:absolute;z-index:5}
+    .hero-stage > .hero-citation-float{position:absolute;z-index:5}
+    .hero-stage > *{box-sizing:border-box}
+    .support-console::before{left:calc(50% - 54px)}
+
+    /* Remove the accidental global line-band gaps from Stage 9; keep only intentional line treatments. */
+    .story-section{padding-bottom:128px}
+    .analytics{padding-bottom:124px}
+    .story-section::after,.analytics::after{display:none}
+
+    @media (max-width:760px){
+      .hero-stage{display:block;padding:34px 8px 8px}
+      .hero-stage > .product-tabs{top:0;left:0;right:0}
+      .hero-stage > .support-console{left:8px;right:8px;bottom:8px;width:auto}
+    }
+</style>
+<style id="stage-14-direct-rebuild">
+/* ===== Stage 14: direct visual rebuilds (not incremental micro-overrides) ===== */
+.hero-stage{
+  display:block!important;
+  width:min(1120px,100%)!important;
+  height:620px!important;
+  margin:74px auto 0!important;
+  padding:0!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+  border:1px solid rgba(76,47,20,.15)!important;
+  background:
+    radial-gradient(ellipse at 12% 88%,rgba(255,222,110,.92),transparent 29%),
+    radial-gradient(ellipse at 50% 38%,rgba(255,255,255,.19),transparent 29%),
+    radial-gradient(ellipse at 90% 15%,rgba(198,211,255,.9),transparent 28%),
+    linear-gradient(102deg,#a96f1e 0%,#ef7e18 25%,#ff9b54 48%,#d7bdc4 66%,#a9bef7 86%,#cfe9ff 100%)!important;
+  box-shadow:0 28px 66px rgba(106,56,8,.17)!important;
+}
+.hero-stage::before,.hero-stage::after{content:none!important}
+.hero-pattern{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;opacity:.62!important;background-image:url("https://cdn.prod.website-files.com/6966ee1d23d3b73459938427/696f90ec4c7d82d0573e57da_line-image-2.svg"),repeating-linear-gradient(90deg,rgba(255,255,255,.30) 0 1px,transparent 1px 62px);background-size:cover,100% 100%;background-position:center;background-repeat:no-repeat!important;mix-blend-mode:screen!important}
+.hero-grid{display:none!important}
+.hero-halo{display:block!important;z-index:1!important;right:5%!important;top:23%!important;width:390px!important;height:230px!important;opacity:.72!important}
+.product-tabs{position:absolute!important;z-index:8!important;top:0!important;left:0!important;width:100%!important;height:48px!important;border-color:rgba(76,47,20,.15)!important}
+.product-tabs span{background:rgba(255,253,249,.94)!important}
+.support-console{position:absolute!important;z-index:4!important;left:22px!important;right:22px!important;bottom:22px!important;width:auto!important;height:calc(100% - 72px)!important;margin:0!important;box-shadow:0 25px 50px rgba(69,36,4,.2)!important}
+.support-console::before{left:50%!important;top:15px!important;transform:translateX(-50%)!important}
+.hero-insight-float{z-index:10!important;left:-54px!important;bottom:42px!important}
+.hero-citation-float{z-index:10!important;right:58px!important;top:80px!important}
+.approval-float{z-index:10!important;right:-46px!important;left:auto!important;bottom:42px!important;top:auto!important}
+
+.enterprise{background:
+  radial-gradient(ellipse at 94% 2%,rgba(244,142,35,.38),transparent 40%),
+  radial-gradient(ellipse at 6% 104%,rgba(123,124,242,.34),transparent 45%),
+  linear-gradient(112deg,#030304 0%,#0a0909 48%,#140b05 100%)!important}
+.enterprise::before,.enterprise::after{display:none!important}
+.enterprise-aurora{position:absolute;pointer-events:none;filter:blur(24px);opacity:.85}
+.enterprise-aurora-gold{width:520px;height:410px;right:-170px;top:-150px;background:radial-gradient(circle,rgba(255,168,48,.36),rgba(255,111,25,.14) 38%,transparent 70%)}
+.enterprise-aurora-violet{width:470px;height:360px;left:-185px;bottom:-185px;background:radial-gradient(circle,rgba(127,135,255,.34),rgba(179,187,250,.10) 42%,transparent 72%)}
+.enterprise .shell{position:relative;z-index:2!important}
+.enterprise-cards{position:relative!important}
+.enterprise-cards::after{content:"";position:absolute;right:-18px;top:-14px;width:250px;height:150px;background:radial-gradient(circle,rgba(255,180,67,.15),transparent 68%);pointer-events:none}
+.enterprise-card{background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018))!important}
+
+.analytics-board{background:linear-gradient(180deg,#fff 0%,#fffdf9 100%)!important}
+.analytics-side{background:linear-gradient(135deg,#fff1cf 0%,#fffaf0 42%,#f4efff 100%)!important}
+.analytics-graph:first-of-type{position:relative!important;background:linear-gradient(180deg,#fff 0%,#fffdfa 100%)!important}
+.analytics-graph:first-of-type::before{content:"Weekly coverage"!important;position:absolute!important;left:28px!important;top:25px!important;z-index:4!important;color:#ae9d90!important;font-size:9px!important;font-family:Inter,Arial,sans-serif!important;letter-spacing:.11em!important;text-transform:uppercase!important}
+.data-matrix{margin-top:34px!important}
+.matrix-bars{display:block!important;height:176px!important;padding:0!important;overflow:hidden!important;position:relative!important;background:#fffaf3!important}
+.matrix-bars > .matrix-col{display:none!important}
+.coverage-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:2!important;display:block!important}
+.matrix-orb{background:radial-gradient(circle at 50% 43%,rgba(195,220,135,.72) 0 18%,rgba(255,226,164,.82) 19% 39%,rgba(179,187,250,.72) 40% 61%,rgba(255,253,249,.95) 62%)!important}
+.matrix-orb::after{width:56px!important;height:56px!important;box-shadow:0 0 0 16px rgba(238,247,216,.58)!important}
+.matrix-orb::before{content:"Knowledge\A health"!important;white-space:pre!important;right:13px!important;bottom:13px!important;font-size:10px!important}
+
+.testimonial-panel{min-height:450px!important;isolation:isolate!important;background:linear-gradient(125deg,#fff 0%,#fff8ec 42%,#f1efff 100%)!important}
+.testimonial-glow{position:absolute;z-index:-1;right:6%;top:14%;width:280px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(196,194,255,.34),rgba(255,206,129,.15) 38%,transparent 72%);filter:blur(9px)}
+.quote-controls button:focus,.quote-controls button:active{outline:none!important;box-shadow:none!important}
+.quote-controls button:focus-visible{outline:none!important;box-shadow:inset 0 0 0 2px #a77520!important}
+
+.conversion{background:linear-gradient(103deg,#c6802e 0%,#f5912f 26%,#f8b07b 48%,#d7c9e7 72%,#c4daf9 100%)!important}
+.conversion::before{content:""!important;inset:0!important;background-image:url("https://cdn.prod.website-files.com/6966ee1d23d3b73459938427/696f90ec4c7d82d0573e57da_line-image-2.svg"),repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 1px,transparent 1px 10px)!important;background-size:cover,100% 100%!important;background-position:center!important;opacity:.32!important;mix-blend-mode:screen!important}
+.conversion::after{content:none!important}
+.conversion-copy::after,.widget-frame::after{content:none!important;display:none!important}
+
+.signal-marquee{height:128px;background:#fffdf8;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);overflow:hidden}
+.signal-marquee-frame{height:100%;border-left:1px solid var(--rule);border-right:1px solid var(--rule);overflow:hidden}
+.signal-marquee-viewport{height:100%;overflow:hidden}
+.signal-marquee-track{display:flex;width:200%;height:100%;animation:signalStripeMove 18s linear infinite;will-change:transform}
+.signal-marquee-panel{flex:0 0 50%;height:100%;background-image:repeating-linear-gradient(90deg,rgba(65,42,20,.13) 0 1px,transparent 1px 10px)}
+@keyframes signalStripeMove{to{transform:translateX(-50%)}}
+
+@media (max-width:760px){
+ .hero-stage{height:470px!important;margin-top:61px!important}
+ .product-tabs{height:38px!important}
+ .support-console{left:8px!important;right:8px!important;bottom:8px!important;height:calc(100% - 54px)!important}
+ .hero-insight-float{left:6px!important;bottom:12px!important}
+ .hero-citation-float{display:none!important}
+ .approval-float{right:-8px!important;bottom:15px!important;width:170px!important}
+ .enterprise-aurora{display:none}
+ .signal-marquee{height:84px}
+}
+@media (prefers-reduced-motion:reduce){.signal-marquee-track{animation:none!important}}
+'''
+</style>
+
+<style id="codex-handoff-cleanup">
+  /* HERO CLEANUP: the product dashboard is the only hero focal point.
+     Decorative overlay popups must never cover tabs, dashboard content, or confidence details. */
+  .hero-insight-float, .hero-citation-float, .approval-float { display: none !important; }
+  .hero-stage { overflow: hidden !important; }
+  .hero-stage .product-tabs { z-index: 8 !important; }
+  .hero-stage .support-console { z-index: 4 !important; }
+  @media (max-width: 760px) {
+    .hero-stage { overflow: hidden !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="page" id="top">
+    <header class="site-header">
+      <div class="promo"><b>New</b><span>Now live: cited AI answers with approval rules.</span><a href="#workflow">Learn more <span class="promo-arrow">→</span></a></div>
+      <nav class="nav shell" aria-label="Primary navigation">
+        <a class="brand" href="#top" aria-label="SupportPilot home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 17.5h8a4 4 0 1 0 0-8h-1V8a3 3 0 0 0-6 0v1.5h-1a4 4 0 0 0 0 8Z"/><path d="M9 13h.01M14 13h.01"/></svg></span>
+          <span>SupportPilot</span>
+        </a>
+        <div class="nav-links">
+          <a href="#product">Product <span class="chevron">⌄</span></a>
+          <a href="#solutions">Solutions <span class="chevron">⌄</span></a>
+          <a href="#integrations">Integrations</a>
+          <a href="#security">Security</a>
+          <a href="#docs">Docs</a>
+        </div>
+        <div class="nav-actions"><a class="login" href="#docs">Log in</a><a class="button button-primary" href="#demo">Book a demo <span class="arrow">↗</span></a></div>
+        <button class="menu-toggle" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <div class="mobile-links" id="mobile-menu" aria-label="Mobile navigation" aria-hidden="true"><a href="#product">Product</a><a href="#solutions">Solutions</a><a href="#integrations">Integrations</a><a href="#security">Security</a><a href="#docs">Docs</a><a href="#demo">Book a demo ↗</a></div>
+      </nav>
+    </header>
+
+    <main class="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="shell">
+          <div class="hero-content">
+            <span class="eyebrow">Governed AI support</span>
+            <h1 id="hero-title">AI support with <em>evidence,</em><br> approvals, and a human fallback.</h1>
+            <p class="hero-copy">Turn your trusted docs and support workflows into a branded AI agent that cites its answers, flags risk, and brings in your team at the right moment.</p>
+            <div class="hero-actions"><a class="button button-primary" href="#demo">Book a demo <span class="arrow">↗</span></a><a class="button button-outline" href="#workflow">See how it works <span class="arrow">↗</span></a></div>
+          </div>
+          <div class="hero-stage" aria-label="SupportPilot product interface preview"><div class="hero-pattern" aria-hidden="true"></div><div class="hero-grid" aria-hidden="true"></div><div class="hero-halo" aria-hidden="true"></div>
+            <div class="product-tabs"><span class="active">Support agent</span><span>Knowledge</span><span>Approvals</span><span>Analytics</span><span>Widget</span></div>
+            <div class="support-console">
+              <aside class="console-sidebar">
+                <div class="console-head"><span class="mini-mark">✦</span><span>SupportPilot</span></div>
+                <div class="side-nav">
+                  <a href="#product"><span class="side-icon">⌂</span>Overview</a>
+                  <a class="active" href="#product"><span class="side-icon">◌</span>Conversations</a>
+                  <a href="#workflow"><span class="side-icon">☷</span>Knowledge</a>
+                  <a href="#workflow"><span class="side-icon">✓</span>Approvals</a>
+                  <a href="#solutions"><span class="side-icon">⌁</span>Analytics</a>
+                  <a href="#integrations"><span class="side-icon">✣</span>Integrations</a>
+                </div>
+                <div class="account-card"><span class="avatar"></span><span><b>Acme Co.</b><span>Workspace</span></span></div>
+              </aside>
+              <section class="conversation" aria-label="Cited answer conversation">
+                <div class="conversation-top"><span><b class="ticket-no">#8421</b><span class="ticket-status">Open</span></span><span class="conversation-actions">···</span></div>
+                <div class="chat-flow">
+                  <div class="message"><span class="person"></span><div class="bubble">Can I get a refund for my annual plan?</div></div>
+                  <div class="message support"><span class="person bot">✦</span><div class="bubble"><div class="bot-name">SupportPilot <span class="ai-label">AI answer</span></div>Yes, annual plans are eligible for a refund within 30 days of purchase, as long as the account has not exceeded 10k API calls.<div class="sources"><div class="source"><i></i><span><b>Refund Policy</b><br>help.acme.co/policies/refund</span><span>›</span></div><div class="source"><i></i><span><b>Subscription Terms</b><br>help.acme.co/policies/subscription</span><span>›</span></div><div class="source"><i></i><span><b>API Usage Limits</b><br>help.acme.co/usage/limits</span><span>›</span></div></div></div></div>
+                </div>
+                <div class="composer"><span>Reply to customer…</span><span class="send">⌁ ▷</span></div>
+              </section>
+              <aside class="answer-panel" aria-label="Answer confidence details">
+                <div class="panel-tabs"><b>Details</b><span>Customer</span></div>
+                <div class="panel-label">Answer quality</div><div class="confidence"><strong>92%</strong><span>High confidence</span></div><div class="meter"><i></i></div>
+                <div class="details"><div class="detail"><b>Risk level</b><span>● &nbsp;Low</span></div><div class="detail"><b>Classification</b><span>Billing / Refund</span></div><div class="detail"><b>Next step</b><span>Send reply</span></div></div>
+                <div class="safe"><b>✓ No approval required</b>Answer is safe to send.</div>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div class="trust-strip" aria-label="SupportPilot product benefits"><span class="trust-item"><i>◌</i>24/7 first response</span><span class="trust-item"><i>▣</i>Cited answers</span><span class="trust-item"><i>✓</i>Approval rules</span><span class="trust-item"><i>⌁</i>Human handoff</span><span class="trust-item"><i>✦</i>White-label widget</span></div>
+      </section>
+
+      <section class="story-section" id="product" aria-labelledby="story-title">
+        <div class="shell">
+          <div class="section-heading"><span class="eyebrow">One agent. More control.</span><h2 id="story-title">Support that stays useful,<br>even when the question gets complex.</h2><p>SupportPilot combines trusted retrieval, sensible safeguards, and practical team visibility in a single support workflow.</p></div>
+          <div class="story-list">
+            <article class="story-row">
+              <div class="story-copy"><span class="story-number">1</span><h3>Answers backed by evidence.</h3><p>Every response is grounded in your approved sources, with citations, freshness checks, and clear signals when knowledge is missing.</p><a class="story-link" href="#workflow">Explore cited answers <span class="arrow">→</span></a></div>
+              <div class="story-visual visual-cited"><span class="source-connector" aria-hidden="true"></span><div class="doc-window"><div class="doc-head"><span>Used 3 sources</span><span class="verified">Verified</span></div><div class="doc-list"><div class="doc-line"><i></i><span><b>Refund Policy</b><br>Updated 2d ago</span><span>›</span></div><div class="doc-line"><i></i><span><b>Subscription Terms</b><br>Updated 5d ago</span><span>›</span></div><div class="doc-line"><i></i><span><b>API Usage Limits</b><br>Updated 1d ago</span><span>›</span></div></div><div class="doc-footer"><i></i>All sources are up to date</div></div><div class="source-health-card"><span>Source freshness</span><b>100% current</b><p>Ready for customer use</p></div></div>
+            </article>
+            <article class="story-row reverse">
+              <div class="story-copy"><span class="story-number">2</span><h3>Automation with an approval layer.</h3><p>High-risk or sensitive requests are routed for human review with the full context, policy references, and confidence score already attached.</p><a class="story-link" href="#workflow">See the approval queue <span class="arrow">→</span></a></div>
+              <div class="story-visual visual-approval"><span class="approval-arc" aria-hidden="true"></span><div class="queue"><div class="queue-head"><span>Approval queue</span><span>⌁</span></div><div class="queue-item"><i></i><b>Refund exception<br>$1,200.00</b><em>High risk</em></div><div class="queue-item med"><i></i><b>Permission change</b><em>Medium risk</em></div><div class="queue-item low"><i></i><b>Custom contract</b><em>Low risk</em></div></div><div class="approval-detail-card"><span>Selected request</span><b>Requires manager review before the answer can be sent.</b><div class="detail-actions"><i>Approve</i><i>Edit</i></div></div></div>
+            </article>
+            <article class="story-row">
+              <div class="story-copy"><span class="story-number">3</span><h3>Insights that improve support over time.</h3><p>Track accepted answers, escalations, and missing-knowledge patterns, then use the signal to keep your support experience improving.</p><a class="story-link" href="#solutions">Explore support insights <span class="arrow">→</span></a></div>
+              <div class="story-visual visual-insights"><div class="insight-card"><div class="insight-top"><span>AI performance (demo)</span><span>30d</span></div><div class="mini-chart"><svg viewBox="0 0 300 100" preserveAspectRatio="none"><path d="M0 82 L22 70 L43 74 L65 58 L87 61 L109 49 L132 55 L155 34 L177 39 L201 24 L224 31 L248 14 L272 20 L300 7"/><path d="M0 90 L22 87 L43 80 L65 82 L87 73 L109 77 L132 63 L155 68 L177 55 L201 61 L224 42 L248 47 L272 35 L300 29"/></svg><span class="insight-stamp">+18% resolved this month</span></div><div class="metric-triplet"><div><strong class="good">62%</strong><span>Deflection</span></div><div><strong class="violet">81%</strong><span>Acceptance</span></div><div><strong class="warm">14%</strong><span>Escalation</span></div></div></div></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="integrations" id="integrations" aria-labelledby="integration-title">
+        <div class="shell integration-frame">
+          <div class="integration-lead" aria-hidden="true"></div>
+          <div class="integration-intro">
+            <span class="integration-kicker"><i></i> Integrations</span>
+            <h2 id="integration-title">Connect the tools your support team already uses.</h2>
+            <p>Bring together your helpdesk, knowledge base, CRM, team channels, and billing tools without breaking the support workflow.</p>
+          </div>
+          <div class="integration-rail-window" aria-label="SupportPilot integrations">
+            <div class="integration-rail">
+              <div class="integration-cell" title="Notion"><i class="tool-mark tool-notion"></i></div><div class="integration-cell" title="Google Docs"><i class="tool-mark tool-gdocs"></i></div><div class="integration-cell" title="Confluence"><i class="tool-mark tool-confluence"></i></div><div class="integration-cell" title="Slack"><i class="tool-mark tool-slack"></i></div><div class="integration-cell" title="Zendesk"><i class="tool-mark tool-zendesk"></i></div><div class="integration-cell" title="Intercom"><i class="tool-mark tool-intercom"></i></div><div class="integration-cell" title="HubSpot"><i class="tool-mark tool-hubspot"></i></div><div class="integration-cell" title="Stripe"><i class="tool-mark tool-stripe"></i></div><div class="integration-cell" title="Salesforce"><i class="tool-mark tool-salesforce"></i></div><div class="integration-cell" title="Linear"><i class="tool-mark tool-linear"></i></div>
+              <div class="integration-cell" title="Notion"><i class="tool-mark tool-notion"></i></div><div class="integration-cell" title="Google Docs"><i class="tool-mark tool-gdocs"></i></div><div class="integration-cell" title="Confluence"><i class="tool-mark tool-confluence"></i></div><div class="integration-cell" title="Slack"><i class="tool-mark tool-slack"></i></div><div class="integration-cell" title="Zendesk"><i class="tool-mark tool-zendesk"></i></div><div class="integration-cell" title="Intercom"><i class="tool-mark tool-intercom"></i></div><div class="integration-cell" title="HubSpot"><i class="tool-mark tool-hubspot"></i></div><div class="integration-cell" title="Stripe"><i class="tool-mark tool-stripe"></i></div><div class="integration-cell" title="Salesforce"><i class="tool-mark tool-salesforce"></i></div><div class="integration-cell" title="Linear"><i class="tool-mark tool-linear"></i></div>
+            </div>
+          </div>
+          <a class="integration-cta" href="#demo">See all integrations <span>→</span></a>
+        </div>
+      </section>
+
+
+      <section class="support-flow" id="support-flow" aria-labelledby="flow-title">
+        <div class="shell">
+          <div class="support-flow-tabs" role="tablist" aria-label="SupportPilot operating modes">
+            <button class="active" type="button" role="tab" aria-selected="true" aria-controls="support-flow-panel" data-flow="assist">Smart Assist</button><button type="button" role="tab" aria-selected="false" aria-controls="support-flow-panel" data-flow="review">Review Queue</button><button type="button" role="tab" aria-selected="false" aria-controls="support-flow-panel" data-flow="handoff">Human Handoff</button><button type="button" role="tab" aria-selected="false" aria-controls="support-flow-panel" data-flow="knowledge">Knowledge Health</button><button type="button" role="tab" aria-selected="false" aria-controls="support-flow-panel" data-flow="routing">Policy Routing</button>
+          </div>
+          <div class="support-flow-surface">
+            <div class="flow-board mode-assist" id="support-flow-panel" role="tabpanel" aria-label="Support resolution workflow demo">
+              <div class="flow-board-top"><div><div class="flow-title-row"><div class="flow-board-title" id="flow-title" data-flow-title>Support resolution flow</div><span class="flow-mode-pill" data-flow-mode>Smart Assist</span></div><div class="flow-board-sub" data-flow-subtitle aria-live="polite">How customer questions move from cited answers to the right next step.</div></div><span class="flow-range"><i></i><b data-flow-range>Last 30 days</b>⌄</span></div>
+              <div class="flow-graphic">
+                <svg viewBox="0 0 960 292" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="funnel-soft" d="M0 48 C118 46 153 45 246 79 C329 109 381 115 482 106 C588 96 634 136 724 142 C799 147 861 145 960 147 L960 168 C857 169 796 171 719 165 C625 158 573 129 476 132 C381 135 330 131 239 103 C151 76 116 75 0 77Z"/>
+                  <path class="funnel-lilac" d="M612 132 C720 133 780 137 960 146 L960 168 C785 163 725 167 612 164Z"/>
+                  <path class="funnel-alpha" d="M0 55 C110 51 150 58 235 91 C316 122 365 131 480 120 L480 172 C364 180 314 170 235 142 C150 110 108 106 0 107Z"/>
+                  <path class="funnel-beta" d="M480 120 C550 116 597 128 673 143 C720 152 757 152 807 152 L807 163 C754 163 716 166 665 157 C593 145 545 163 480 172Z"/>
+                  <path class="funnel-gamma" d="M807 152 C864 151 910 155 960 157 L960 168 C910 168 863 166 807 163Z"/>
+                  <rect class="label-pill label-stroke" x="122" y="115" width="82" height="31" rx="15.5"/><text x="163" y="136" text-anchor="middle">100%</text>
+                  <rect class="label-pill label-stroke" x="531" y="130" width="79" height="31" rx="15.5"/><text x="570" y="151" text-anchor="middle">62%</text>
+                  <rect class="label-pill label-stroke" x="828" y="143" width="75" height="31" rx="15.5"/><text x="865" y="164" text-anchor="middle">14%</text>
+                  <text class="axis-label" x="25" y="253">Customer questions</text><text class="axis-num" x="25" y="278">7.2K</text>
+                  <text class="axis-label" x="340" y="253">Cited answers</text><text class="axis-num" x="340" y="278">4.5K</text>
+                  <text class="axis-label" x="638" y="253">Human reviewed</text><text class="axis-num" x="638" y="278">580</text>
+                  <text class="axis-label" x="837" y="253">Escalated</text><text class="axis-num" x="837" y="278">138</text>
+                </svg>
+              </div>
+              <div class="flow-board-foot"><div class="flow-metric"><span data-flow-metric-label>Questions received</span><strong data-flow-metric-value>7.2K</strong><small data-flow-metric-note>Demo workspace</small></div><div class="flow-metric"><span data-flow-metric-label>AI resolved with citations</span><strong data-flow-metric-value>62%</strong><small data-flow-metric-note>↑ 8% vs. prior 30d</small></div><div class="flow-metric"><span data-flow-metric-label>Approved by humans</span><strong data-flow-metric-value>81%</strong><small data-flow-metric-note>↑ 6% vs. prior 30d</small></div><div class="flow-metric"><span data-flow-metric-label>Escalated for help</span><strong data-flow-metric-value>14%</strong><small data-flow-metric-note>↓ 3% vs. prior 30d</small></div></div>
+            </div>
+            <p class="flow-caption"><b>Every answer stays traceable from source retrieval to final outcome.</b><span class="flow-person">SP</span>SupportPilot lets your team see where automation helps, where people intervene, and where knowledge needs work.</p>
+          </div>
+        </div>
+      </section>
+<section class="workflow" id="workflow" aria-labelledby="workflow-title"><div class="shell"><div class="workflow-layout"><div class="workflow-copy"><span class="eyebrow">One workflow. Full control.</span><h2 id="workflow-title">A support agent that works the way your team works.</h2><p>From retrieving an answer to escalating a complex case, SupportPilot keeps each decision clear, reviewable, and connected to your existing operations.</p><div class="workflow-points"><div class="workflow-point">Semantic source retrieval</div><div class="workflow-point">Confidence and risk checks</div><div class="workflow-point">Approval-ready requests</div><div class="workflow-point">Context-rich human handoff</div></div><a class="workflow-link" href="#security">Explore governance controls <span class="arrow">→</span></a></div><div class="workflow-ui"><div class="workflow-tabs" role="tablist" aria-label="SupportPilot workflow stages"><button class="active" role="tab" aria-selected="true" data-tab="retrieve"><span class="tab-dot">1</span>Retrieve</button><button role="tab" aria-selected="false" data-tab="confidence"><span class="tab-dot">2</span>Confidence</button><button role="tab" aria-selected="false" data-tab="approval"><span class="tab-dot">3</span>Approvals</button><button role="tab" aria-selected="false" data-tab="handoff"><span class="tab-dot">4</span>Handoff</button></div><div class="workflow-pane" data-pane="retrieve"><h3 class="pane-title">Retrieve answers from your knowledge base with citations.</h3><p class="pane-sub">SupportPilot looks for the right evidence before it drafts a reply.</p><div class="pane-grid"><div class="pane-main"><div class="search-box">⌕ &nbsp; Search knowledge…</div><div class="answer-preview"><p>Yes, annual plans are eligible for a refund within 30 days of purchase as long as usage remains within your policy limit.</p><div class="source-chipbar"><span class="source-chip">Verified policies</span><span class="source-chip">3 matched sources</span><span class="source-chip">Fresh this week</span></div><div class="answer-sources"><div><i></i><span>Refund Policy</span><span>92%</span></div><div><i></i><span>Subscription Terms</span><span>86%</span></div><div><i></i><span>API Usage Limits</span><span>78%</span></div></div></div></div><aside class="pane-side"><span class="side-label"><i></i>Evidence map</span><h4 class="side-title">The draft answer is assembled from trusted support sources.</h4><p class="side-note">Each answer keeps the retrieval path visible so your team can review it fast.</p><div class="evidence-stack"><div class="evidence-card one"><b>Refund Policy</b><span>Plan eligibility · account status · 30-day window</span></div><div class="evidence-card small two"><b>Subscription Terms</b><span>Annual billing terms and exceptions</span></div><div class="evidence-card small three"><b>Usage Limits</b><span>10k API cap for refund qualification</span></div><div class="score-pill"><b>3 sources</b> verified</div><span class="connector-line"></span><span class="connector-line two"></span><span class="node a">＋</span><span class="node b">◌</span></div></aside></div></div><div class="workflow-pane" data-pane="confidence" hidden><h3 class="pane-title">Score the answer before it reaches the customer.</h3><p class="pane-sub">A quick, readable confidence layer keeps the agent inside your team’s comfort zone.</p><div class="confidence-layout"><div class="confidence-screen"><div class="confidence-row"><b>Source freshness</b><span><i style="width:92%"></i></span></div><div class="confidence-row"><b>Answer match</b><span><i style="width:88%"></i></span></div><div class="confidence-row"><b>Policy certainty</b><span><i style="width:83%"></i></span></div></div><div class="review-card"><h4>Pre-send review</h4><p>SupportPilot combines retrieval quality, policy sensitivity, and intent match into a simple send / review decision.</p><span class="review-chip">92% confidence · safe to send</span></div></div></div><div class="workflow-pane" data-pane="approval" hidden><h3 class="pane-title">Route sensitive cases to the right owner.</h3><p class="pane-sub">Approvers see the draft answer, evidence, risk context, and next action in one place.</p><div class="approval-layout"><div class="approval-screen"><div class="queue"><div class="queue-head"><span>Approval queue</span><span>⌁</span></div><div class="queue-item"><i></i><b>Refund exception<br>$1,200.00</b><em>High risk</em></div><div class="queue-item med"><i></i><b>Permission change</b><em>Medium risk</em></div><div class="queue-item low"><i></i><b>Custom contract</b><em>Low risk</em></div></div></div><div class="review-card approval-detail"><h4>Selected request</h4><div class="detail-list"><div class="detail-row"><span>Classification</span><b>Billing / Refund</b></div><div class="detail-row"><span>Policy hit</span><b>Amount exceeds limit</b></div><div class="detail-row"><span>Recommended next step</span><b>Manager approval</b></div></div><div class="action-row"><span class="mini-btn primary">Approve</span><span class="mini-btn">Edit</span><span class="mini-btn">Escalate</span></div></div></div></div><div class="workflow-pane" data-pane="handoff" hidden><h3 class="pane-title">Hand off the full context, not just the conversation.</h3><p class="pane-sub">Escalations arrive with the customer message, prior reply, sources, and reason for review.</p><div class="handoff-layout"><div class="handoff-screen"><div class="handoff-row"><i>SL</i><b>Send to Slack<br><span>#support-escalations</span></b><span>Ready</span></div><div class="handoff-row"><i>ZD</i><b>Create Zendesk ticket<br><span>Billing / Refund</span></b><span>Ready</span></div><div class="handoff-row"><i>✉</i><b>Notify account owner<br><span>High-priority customer</span></b><span>Ready</span></div></div><div class="review-card packet-card"><h4>Handoff packet</h4><div class="packet-list"><div class="packet-item"><span>Customer message</span><b>Included</b></div><div class="packet-item"><span>Draft answer</span><b>Included</b></div><div class="packet-item"><span>Citations</span><b>3 attached</b></div><div class="packet-item"><span>Reason for review</span><b>Policy exception</b></div></div></div></div></div></div></div></div></section>
+
+      <section class="enterprise" id="security" aria-labelledby="security-title"><div class="enterprise-aurora enterprise-aurora-gold" aria-hidden="true"></div><div class="enterprise-aurora enterprise-aurora-violet" aria-hidden="true"></div><div class="shell"><div class="enterprise-grid"><div class="enterprise-copy"><span class="eyebrow">Built for enterprise support</span><h2 id="security-title">Controls for teams that <em>cannot afford guesswork.</em></h2><p>Security, privacy, and governance are built into the support workflow so automation does not become an unmanaged risk.</p><a class="enterprise-link" href="#docs">View security overview <span class="arrow">→</span></a></div><div class="enterprise-cards"><article class="enterprise-card"><div class="enterprise-icon">◈</div><h3>Role-based access</h3><p>Granular permissions for agents, managers, and administrators.</p><span>SSO / SCIM ready</span></article><article class="enterprise-card"><div class="enterprise-icon">◎</div><h3>Domain allowlists</h3><p>Restrict data access to the trusted domains that your team approves.</p><span>Data stays in control</span></article><article class="enterprise-card"><div class="enterprise-icon">▣</div><h3>Audit logs</h3><p>Full visibility into every answer, action, and approval.</p><span>Immutable & exportable</span></article><article class="enterprise-card"><div class="enterprise-icon">⌁</div><h3>PII-aware routing</h3><p>Detect and route sensitive data to the right workflow.</p><span>Privacy by design</span></article><article class="enterprise-card"><div class="enterprise-icon">⊚</div><h3>Enterprise roadmap</h3><p>Formal controls and audit work are planned around your deployment needs.</p><span>Controls underway</span></article><article class="enterprise-card"><div class="enterprise-icon">◉</div><h3>Data residency path</h3><p>Plan how and where your customer support data is processed.</p><span>Deployment choices</span></article><div class="enterprise-note"><i>✓</i><span>Keep your support data inside the governance model your team defines. <a href="#docs">Explore the Security Center.</a></span></div></div></div></div></section>
+
+
+
+      <section class="analytics" id="analytics" aria-labelledby="analytics-title">
+        <div class="shell">
+          <div class="analytics-layout">
+            <div class="analytics-copy"><span class="eyebrow">Actionable support intelligence</span><h2 id="analytics-title">Know what AI resolved, what humans <em>changed,</em> and what customers still ask.</h2><p>See the signals behind every outcome: knowledge gaps, accepted answers, escalations, and the support work your team is still doing manually.</p><a class="analytics-link" href="#docs">Explore support analytics <span class="arrow">→</span></a></div>
+            <div class="analytics-board" aria-label="Support intelligence dashboard demo">
+              <div class="analytics-board-top"><b>Support intelligence</b><span class="analytics-range"><i></i> Demo workspace · Last 30 days</span></div>
+              <div class="analytics-main">
+                <div class="analytics-graph"><div class="graph-title"><b>Knowledge coverage & accepted answers</b><span>Signals across your support workflow</span></div><div class="data-matrix"><div class="matrix-bars"><svg class="coverage-svg" viewBox="0 0 640 190" preserveAspectRatio="none" aria-hidden="true">
+<defs><linearGradient id="barGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e2b34a"/><stop offset="1" stop-color="#b9861e"/></linearGradient><linearGradient id="barOrange" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffb33e"/><stop offset="1" stop-color="#fb7f21"/></linearGradient><linearGradient id="barLilac" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c8cdff"/><stop offset="1" stop-color="#8d96ed"/></linearGradient></defs>
+<g opacity=".32" stroke="#8b7458" stroke-width="1"><path d="M0 42H640M0 84H640M0 126H640M0 168H640"/><path d="M91 0V190M182 0V190M273 0V190M364 0V190M455 0V190M546 0V190"/></g>
+<g>
+<rect x="42" y="93" width="42" height="75" rx="2" fill="url(#barGold)"/><rect x="42" y="62" width="42" height="27" rx="2" fill="#ffd84b"/><rect x="42" y="37" width="42" height="21" rx="2" fill="url(#barOrange)"/>
+<rect x="126" y="77" width="42" height="91" rx="2" fill="url(#barGold)"/><rect x="126" y="51" width="42" height="22" rx="2" fill="#ffd84b"/><rect x="126" y="27" width="42" height="20" rx="2" fill="url(#barOrange)"/>
+<rect x="210" y="61" width="42" height="107" rx="2" fill="url(#barGold)"/><rect x="210" y="44" width="42" height="13" rx="2" fill="#ffd84b"/><rect x="210" y="23" width="42" height="17" rx="2" fill="url(#barOrange)"/><rect x="210" y="12" width="42" height="7" rx="2" fill="url(#barLilac)"/>
+<rect x="294" y="82" width="42" height="86" rx="2" fill="url(#barGold)"/><rect x="294" y="56" width="42" height="22" rx="2" fill="#ffd84b"/><rect x="294" y="34" width="42" height="18" rx="2" fill="url(#barOrange)"/>
+<rect x="378" y="44" width="42" height="124" rx="2" fill="url(#barGold)"/><rect x="378" y="31" width="42" height="9" rx="2" fill="#ffd84b"/><rect x="378" y="15" width="42" height="12" rx="2" fill="url(#barOrange)"/><rect x="378" y="6" width="42" height="5" rx="2" fill="url(#barLilac)"/>
+<rect x="462" y="70" width="42" height="98" rx="2" fill="url(#barGold)"/><rect x="462" y="47" width="42" height="19" rx="2" fill="#ffd84b"/><rect x="462" y="26" width="42" height="17" rx="2" fill="url(#barOrange)"/>
+<rect x="546" y="35" width="42" height="133" rx="2" fill="url(#barGold)"/><rect x="546" y="21" width="42" height="10" rx="2" fill="#ffd84b"/><rect x="546" y="7" width="42" height="10" rx="2" fill="url(#barOrange)"/><rect x="546" y="1" width="42" height="3" rx="2" fill="url(#barLilac)"/>
+</g></svg><div class="matrix-col"><i style="height:34%"></i><i style="height:29%"></i><i style="height:18%"></i><i style="height:14%"></i></div><div class="matrix-col"><i style="height:44%"></i><i style="height:21%"></i><i style="height:22%"></i><i style="height:9%"></i></div><div class="matrix-col"><i style="height:62%"></i><i style="height:19%"></i><i style="height:14%"></i><i style="height:8%"></i></div><div class="matrix-col"><i style="height:51%"></i><i style="height:26%"></i><i style="height:19%"></i><i style="height:11%"></i></div><div class="matrix-col"><i style="height:72%"></i><i style="height:18%"></i><i style="height:16%"></i><i style="height:10%"></i></div><div class="matrix-col"><i style="height:63%"></i><i style="height:29%"></i><i style="height:12%"></i><i style="height:13%"></i></div><div class="matrix-col"><i style="height:83%"></i><i style="height:23%"></i><i style="height:17%"></i><i style="height:8%"></i></div></div><div class="matrix-orb"></div></div></div>
+                <aside class="analytics-side"><div class="side-title">Top missing topics</div><div class="topic-list"><div class="topic"><i>⌁</i><b>Refund exceptions</b><span>124 searches</span></div><div class="topic"><i>▣</i><b>API rate limits</b><span>98 searches</span></div><div class="topic"><i>◌</i><b>SSO set-up</b><span>76 searches</span></div><div class="topic"><i>↗</i><b>Contract changes</b><span>51 searches</span></div></div><a href="#docs">View all insights <span class="arrow">→</span></a></aside>
+              </div>
+              <div class="analytics-stats"><div class="analytics-stat"><span>AI deflection</span><strong>62%</strong><small>↑ 8% vs. last month</small></div><div class="analytics-stat"><span>Human acceptance</span><strong>81%</strong><small>↑ 6% vs. last month</small></div><div class="analytics-stat"><span>Escalation rate</span><strong>14%</strong><small>↓ 3% vs. last month</small></div><div class="analytics-stat"><span>Time returned</span><strong>40h</strong><small>Support work saved</small></div></div>
+              <div class="analytics-graph" style="border-top:1px solid var(--rule);border-right:0"><div class="graph-title"><b>Accepted AI answers</b><span>vs. escalations</span></div><div class="graph-key"><span><i></i> Accepted replies</span><span><i></i> Escalations</span></div><div class="support-graph"><svg viewBox="0 0 500 180" preserveAspectRatio="none" aria-hidden="true"><path class="area" d="M0,154 L35,143 L70,147 L105,130 L140,136 L175,112 L210,119 L245,96 L280,102 L315,75 L350,83 L385,56 L420,66 L455,33 L500,42 L500,180 L0,180 Z" /><path class="secondary-line" d="M0,160 L35,153 L70,156 L105,146 L140,150 L175,138 L210,143 L245,132 L280,136 L315,122 L350,127 L385,116 L420,119 L455,106 L500,111" /><path class="main-line" d="M0,154 L35,143 L70,147 L105,130 L140,136 L175,112 L210,119 L245,96 L280,102 L315,75 L350,83 L385,56 L420,66 L455,33 L500,42" /><circle class="end-dot" cx="500" cy="42" r="4.7" /></svg></div><div class="graph-dates"><span>May 1</span><span>May 10</span><span>May 20</span><span>May 30</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="signal-marquee" aria-label="Decorative moving line pattern"><div class="shell signal-marquee-frame"><div class="signal-marquee-viewport"><div class="signal-marquee-track"><div class="signal-marquee-panel"></div><div class="signal-marquee-panel"></div></div></div></div></section>
+
+      <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+        <div class="shell">
+          <div class="pricing-top">
+            <div class="section-heading">
+              <span class="eyebrow">Simple, transparent pricing</span>
+              <h2 id="pricing-title">Start with support you can <em>trust.</em></h2>
+              <p>Choose the right level of control for your support workflow. Upgrade when your agent needs more approvals, integrations, and governance.</p>
+            </div>
+            <div class="billing-toggle" aria-label="Pricing frequency">
+              <span>Monthly</span><button class="switch annual" type="button" aria-pressed="true" aria-label="Toggle annual billing"></button><b>Annual</b><span class="billing-save">Save 20%</span>
+            </div>
+          </div>
+          <div class="pricing-grid">
+            <article class="price-card">
+              <span class="plan-tag">For your first agent</span>
+              <h3 class="plan-name">Launch</h3>
+              <p class="plan-summary">A focused, cited support agent for teams ready to automate the common questions.</p>
+              <div class="price"><strong data-monthly="49" data-annual="39">$39</strong><span>/ month</span></div>
+              <div class="plan-note">Billed annually · 14-day free trial</div>
+              <a class="button button-primary" href="#demo">Start free trial <span class="arrow">↗</span></a>
+              <ul class="plan-features">
+                <li>1 branded support widget</li><li>1,000 AI replies / month</li><li>Approved knowledge sources</li><li>Basic citations and reporting</li><li class="muted">No approval routing</li>
+              </ul>
+              <div class="plan-footer"><i></i> Best for small support teams</div>
+            </article>
+            <article class="price-card featured">
+              <span class="plan-tag">Most popular</span>
+              <h3 class="plan-name">Pro</h3>
+              <p class="plan-summary">For growing support teams that need approvals, integrations, and deeper performance insight.</p>
+              <div class="price"><strong data-monthly="149" data-annual="119">$119</strong><span>/ month</span></div>
+              <div class="plan-note">Billed annually · 14-day free trial</div>
+              <a class="button" href="#demo">Start free trial <span class="arrow">↗</span></a>
+              <ul class="plan-features">
+                <li>Unlimited support widgets</li><li>Approval rules and queues</li><li>Slack, Zendesk, and HubSpot integrations</li><li>Advanced analytics and missing-topic alerts</li><li>Priority support</li>
+              </ul>
+              <div class="plan-footer"><i></i> Built for growing support ops</div>
+            </article>
+            <article class="price-card">
+              <span class="plan-tag">For complex workflows</span>
+              <h3 class="plan-name">Enterprise</h3>
+              <p class="plan-summary">Custom governance and deployment options for teams managing high-stakes support journeys.</p>
+              <div class="price"><strong class="custom">Custom</strong></div>
+              <div class="plan-note">Talk to us about your support environment</div>
+              <a class="button button-outline" href="#demo">Contact sales <span class="arrow">↗</span></a>
+              <ul class="plan-features">
+                <li>SSO and role-based access</li><li>Data residency planning</li><li>Custom approval workflows</li><li>Audit logs and security reviews</li><li>Dedicated success partner</li>
+              </ul>
+              <div class="plan-footer"><i></i> Designed around your policy needs</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof" id="solutions" aria-labelledby="proof-title">
+        <div class="shell">
+          <div class="proof-grid">
+            <div class="use-case-panel">
+              <span class="eyebrow">Designed for support operators</span>
+              <h2 id="proof-title">Built for the work behind great answers.</h2>
+              <p>SupportPilot adapts to the customer and internal workflows that create the most pressure on your team.</p>
+              <div class="use-case-list">
+                <a class="use-case" href="#demo"><span><i>↗</i><b>SaaS support deflection</b></span><em>→</em></a>
+                <a class="use-case" href="#demo"><span><i>$</i><b>Billing and refund triage</b></span><em>→</em></a>
+                <a class="use-case" href="#demo"><span><i>✦</i><b>Agency white-label support</b></span><em>→</em></a>
+                <a class="use-case" href="#demo"><span><i>⌁</i><b>Internal support copilot</b></span><em>→</em></a>
+              </div>
+            </div>
+            <div class="testimonial-panel" aria-label="Customer testimonial carousel"><span class="testimonial-glow" aria-hidden="true"></span>
+              <div class="testimonial-label"><span>Loved by support teams</span><span class="pager" aria-label="Testimonial position"><i class="active"></i><i></i><i></i></span></div>
+              <blockquote class="quote" data-testimonial-quote aria-live="polite">“SupportPilot turned our support workflow into something our team can <em>actually trust</em> — faster answers for customers, clear oversight for operators.”</blockquote>
+              <div class="person-row"><span class="avatar" data-testimonial-avatar aria-hidden="true"></span><div><b data-testimonial-name>Daniel Cruz</b><span data-testimonial-role>Customer experience lead, Acme Co.</span></div></div>
+              <div class="quote-controls"><button type="button" data-testimonial-prev aria-label="Previous testimonial">←</button><button type="button" data-testimonial-next aria-label="Next testimonial">→</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq" id="docs" aria-labelledby="faq-title">
+        <div class="shell">
+          <div class="faq-top"><span class="eyebrow">Frequently asked questions</span><h2 id="faq-title">Questions enterprise teams ask before turning on AI support.</h2><p>Everything needed to understand the trust model, rollout path, and day-to-day operating controls.</p></div>
+          <div class="faq-grid">
+            <article class="faq-item open"><button class="faq-question" type="button" aria-expanded="true"><span>How does SupportPilot avoid hallucinations?</span><span>+</span></button><div class="faq-answer"><div><p>SupportPilot grounds every draft in approved knowledge sources, shows citations alongside the answer, and can route low-confidence or sensitive cases into a human review workflow.</p></div></div></article>
+            <article class="faq-item"><button class="faq-question" type="button" aria-expanded="false"><span>Can the widget match our brand?</span><span>+</span></button><div class="faq-answer"><div><p>Yes. The customer-facing widget can use your logo, colors, welcome copy, and support tone so it feels like a natural part of your existing product experience.</p></div></div></article>
+            <article class="faq-item"><button class="faq-question" type="button" aria-expanded="false"><span>Where is our support data stored?</span><span>+</span></button><div class="faq-answer"><div><p>SupportPilot can be configured around your preferred deployment and data-handling requirements. Enterprise teams can discuss regional processing and security controls during onboarding.</p></div></div></article>
+            <article class="faq-item"><button class="faq-question" type="button" aria-expanded="false"><span>Can we integrate with our existing tools?</span><span>+</span></button><div class="faq-answer"><div><p>Yes. SupportPilot is designed to work alongside your current knowledge base, helpdesk, communication tools, and customer systems through ready-made integrations and tailored workflows.</p></div></div></article>
+            <article class="faq-item"><button class="faq-question" type="button" aria-expanded="false"><span>Do we need developers to get started?</span><span>+</span></button><div class="faq-answer"><div><p>No engineering team is required for the first setup. Your team can connect approved sources, choose safety rules, tailor the widget, and begin reviewing responses with guided configuration.</p></div></div></article>
+            <article class="faq-item"><button class="faq-question" type="button" aria-expanded="false"><span>What happens when AI is not confident?</span><span>+</span></button><div class="faq-answer"><div><p>You choose the fallback. SupportPilot can ask a clarifying question, create a ticket, notify an owner in Slack, or route the complete conversation and evidence bundle to a human agent.</p></div></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="conversion" id="demo" aria-labelledby="conversion-title">
+        <div class="shell">
+          <div class="conversion-layout">
+            <div class="conversion-copy"><span class="eyebrow">Ready to get started?</span><h2 id="conversion-title">Put a governed AI support agent on your site.</h2><p>Launch a branded support experience that gives customers instant answers while keeping your team in control of every important decision.</p><a href="mailto:hello@supportpilot.example" class="button">Book a demo <span class="arrow">↗</span></a></div>
+            <div class="widget-demo" aria-label="Branded SupportPilot live widget preview"><div class="widget-frame"><div class="widget-top"><span class="widget-brand"><i>✦</i> Acme Support</span><span class="widget-status">Usually replies instantly</span></div><div class="widget-body"><div class="widget-question">Can I change the billing contact for our workspace?</div><div class="widget-answer"><i>✦</i><p>Yes. Workspace owners can update the billing contact from <b>Settings → Billing</b>. Your account manager can help with ownership transfers.</p></div><span class="widget-citation">✓ Cited from Billing & workspace settings</span></div><div class="widget-input">Ask anything about Acme… <b>↗</b></div></div><div class="widget-floating">✦</div></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    <footer class="site-footer">
+      <div class="shell">
+        <div class="footer-main">
+          <div class="footer-brand"><a class="brand" href="#top"><span class="brand-mark supportpilot-footer-mark" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M4.5 23.5 12 8.5h4.2L8.7 23.5Z"/><path d="M12 23.5 19.5 8.5h4.1l-7.4 15Z"/><path d="M19.4 23.5 24.8 12.7h2.2l-5.4 10.8Z"/></svg></span><span>SupportPilot</span></a><p>SupportPilot helps teams give customers faster answers with citations, review controls, and a simple path to human help.</p><div class="footer-social"><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="X">𝕏</a><a href="#" aria-label="GitHub">⌘</a><a href="mailto:hello@supportpilot.example" aria-label="Email">✉</a></div></div>
+          <div class="footer-col"><h3>Info</h3><a href="#product">Product</a><a href="#solutions">Solutions</a><a href="#integrations">Integrations</a><a href="#pricing">Pricing</a></div>
+          <div class="footer-col"><h3>Resources</h3><a href="#docs">Docs & guides</a><a href="#security">Security Center</a><a href="#analytics">Support analytics</a><a href="#demo">Contact us</a></div>
+          <div class="footer-col"><h3>Company</h3><a href="#top">About SupportPilot</a><a href="#">Privacy policy</a><a href="#">Terms & conditions</a><a href="#docs">Changelog</a></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 SupportPilot. All rights reserved. Built for support teams that need control.</span></div>
+      </div>
+      <div class="footer-marquee" aria-hidden="true"><div class="shell footer-marquee-inner"><div class="footer-marquee-track"><div class="footer-stripe-panel"></div><div class="footer-stripe-panel"></div></div></div></div>
+    </footer>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll('.workflow-tabs button');
+    const panes = document.querySelectorAll('.workflow-pane');
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', String(t === tab)); });
+      panes.forEach(p => { p.hidden = p.dataset.pane !== target; });
+    }));
+
+    const faqButtons = document.querySelectorAll('.faq-question');
+    faqButtons.forEach(button => button.addEventListener('click', () => {
+      const item = button.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(other => {
+        other.classList.remove('open');
+        other.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        button.setAttribute('aria-expanded', 'true');
+      }
+    }));
+    const billingSwitch = document.querySelector('.switch');
+    billingSwitch?.addEventListener('click', () => {
+      const annual = billingSwitch.classList.toggle('annual');
+      billingSwitch.setAttribute('aria-pressed', String(annual));
+      document.querySelectorAll('[data-monthly]').forEach(price => {
+        price.textContent = `$${annual ? price.dataset.annual : price.dataset.monthly}`;
+      });
+      document.querySelectorAll('.plan-note').forEach(note => {
+        if (!note.textContent.includes('Talk to us')) note.textContent = annual ? 'Billed annually · 14-day free trial' : 'Billed monthly · Cancel anytime';
+      });
+    });
+
+
+    const flowTabs = document.querySelectorAll('.support-flow-tabs button');
+    const flowBoard = document.querySelector('.flow-board');
+    const flowTitle = document.querySelector('[data-flow-title]');
+    const flowMode = document.querySelector('[data-flow-mode]');
+    const flowRange = document.querySelector('[data-flow-range]');
+    const flowSubtitle = document.querySelector('[data-flow-subtitle]');
+    const flowMetricLabels = document.querySelectorAll('[data-flow-metric-label]');
+    const flowMetricValues = document.querySelectorAll('[data-flow-metric-value]');
+    const flowMetricNotes = document.querySelectorAll('[data-flow-metric-note]');
+    const flowViews = {
+      assist: {
+        title:'Support resolution flow', mode:'Smart Assist', range:'Last 30 days',
+        subtitle:'How customer questions move from cited answers to the right next step.',
+        metrics:[['Questions received','7.2K','Demo workspace'],['AI resolved with citations','62%','↑ 8% vs. prior 30d'],['Approved by humans','81%','↑ 6% vs. prior 30d'],['Escalated for help','14%','↓ 3% vs. prior 30d']]
+      },
+      review: {
+        title:'Approval decisions at a glance', mode:'Review Queue', range:'This week',
+        subtitle:'How high-risk drafts become clear, reviewable approval decisions.',
+        metrics:[['Requests waiting','38','12 need attention'],['Approved without edits','81%','↑ 6% this week'],['Avg. review time','2m 16s','↓ 24s vs. prior week'],['Escalated to owner','9%','Low-risk items auto-cleared']]
+      },
+      handoff: {
+        title:'Human handoff coverage', mode:'Human Handoff', range:'Last 14 days',
+        subtitle:'How the conversation, evidence, and reason for review reach the right human.',
+        metrics:[['Context packets sent','214','Slack, Zendesk, email'],['Resolved after handoff','73%','↑ 11% after source context'],['Median first reply','4m 08s','↓ 37s vs. prior period'],['Reopened cases','6%','Down from 9%']]
+      },
+      knowledge: {
+        title:'Knowledge coverage health', mode:'Knowledge Health', range:'Last 30 days',
+        subtitle:'How missing topics reveal what your help center needs next.',
+        metrics:[['Coverage score','84%','↑ 5 points this month'],['Fresh source pages','126','9 need review'],['Missing topics','18','Highest: refund exceptions'],['Suggested updates','11','Ready for content owners']]
+      },
+      routing: {
+        title:'Policy-aware routing', mode:'Policy Routing', range:'Last 30 days',
+        subtitle:'How policy rules keep sensitive requests on the right path.',
+        metrics:[['Rules evaluated','4.9K','Billing, access, privacy'],['Correct route selected','96%','Demo workspace'],['Approval-required','14%','Policy thresholds applied'],['Manual overrides','3%','Reviewed by operators']]
+      }
+    };
+    function setFlowView(key){
+      const view = flowViews[key] || flowViews.assist;
+      flowTabs.forEach(item => {
+        const active = item.dataset.flow === key;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      if (flowBoard) flowBoard.className = `flow-board mode-${key}`;
+      if (flowTitle) flowTitle.textContent = view.title;
+      if (flowMode) flowMode.textContent = view.mode;
+      if (flowRange) flowRange.textContent = view.range;
+      if (flowSubtitle) flowSubtitle.textContent = view.subtitle;
+      view.metrics.forEach((metric,index) => {
+        if (flowMetricLabels[index]) flowMetricLabels[index].textContent = metric[0];
+        if (flowMetricValues[index]) flowMetricValues[index].textContent = metric[1];
+        if (flowMetricNotes[index]) flowMetricNotes[index].textContent = metric[2];
+      });
+    }
+    flowTabs.forEach(tab => tab.addEventListener('click', () => setFlowView(tab.dataset.flow)));
+
+
+    // Stage 8 interaction completion: keyboard tabs, mobile-menu escape, and a working testimonial control.
+    function installArrowTabs(tabListSelector, panelSelector){
+      const tabList = document.querySelector(tabListSelector);
+      if (!tabList) return;
+      const tabButtons = [...tabList.querySelectorAll('[role="tab"]')];
+      const panel = document.querySelector(panelSelector);
+      if (panel) {
+        panel.setAttribute('tabindex', '0');
+        tabButtons.forEach((tab, index) => {
+          const tabId = `${tabListSelector.replace(/[^a-z0-9]+/gi, '')}-tab-${index + 1}`;
+          tab.id = tabId;
+          tab.setAttribute('aria-controls', panel.id || 'support-flow-panel');
+        });
+      }
+      tabButtons.forEach((tab, index) => {
+        tab.addEventListener('keydown', event => {
+          const key = event.key;
+          if (!['ArrowLeft','ArrowRight','Home','End'].includes(key)) return;
+          event.preventDefault();
+          let next = index;
+          if (key === 'ArrowRight') next = (index + 1) % tabButtons.length;
+          if (key === 'ArrowLeft') next = (index - 1 + tabButtons.length) % tabButtons.length;
+          if (key === 'Home') next = 0;
+          if (key === 'End') next = tabButtons.length - 1;
+          tabButtons[next].focus();
+          tabButtons[next].click();
+        });
+      });
+    }
+    installArrowTabs('.workflow-tabs', '.workflow-pane:not([hidden])');
+    document.querySelectorAll('.workflow-tabs button').forEach((tab, index) => {
+      const pane = document.querySelector(`.workflow-pane[data-pane="${tab.dataset.tab}"]`);
+      if (!pane) return;
+      const paneId = `workflow-pane-${index + 1}`;
+      pane.id = paneId;
+      pane.setAttribute('role', 'tabpanel');
+      pane.setAttribute('aria-labelledby', tab.id);
+      tab.setAttribute('aria-controls', paneId);
+    });
+    installArrowTabs('.support-flow-tabs', '#support-flow-panel');
+
+    const menuButton = document.querySelector('.menu-toggle');
+    const mobileMenu = document.querySelector('#mobile-menu');
+    function setMenuState(open){
+      if (!mobileMenu || !menuButton) return;
+      mobileMenu.classList.toggle('open', open);
+      mobileMenu.setAttribute('aria-hidden', String(!open));
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+    menuButton?.addEventListener('click', () => setMenuState(!mobileMenu.classList.contains('open')));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+        setMenuState(false);
+        menuButton?.focus();
+      }
+    });
+    mobileMenu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenuState(false)));
+
+    const testimonialPanel = document.querySelector('.testimonial-panel');
+    const testimonialQuote = document.querySelector('[data-testimonial-quote]');
+    const testimonialName = document.querySelector('[data-testimonial-name]');
+    const testimonialRole = document.querySelector('[data-testimonial-role]');
+    const testimonialAvatar = document.querySelector('[data-testimonial-avatar]');
+    const testimonialDots = [...document.querySelectorAll('.testimonial-label .pager i')];
+    const testimonials = [
+      {quote:'“SupportPilot turned our support workflow into something our team can <em>actually trust</em> — faster answers for customers, clear oversight for operators.”', name:'Daniel Cruz', role:'Customer experience lead, Acme Co.', avatar:'linear-gradient(145deg,#d4b194,#65432f)'},
+      {quote:'“Citations changed the conversation internally. Our team can see <em>why an answer was given</em>, not just what the model wrote.”', name:'Leila Morgan', role:'Head of support operations, Northstar', avatar:'linear-gradient(145deg,#bfd4f2,#647ca6)'},
+      {quote:'“We launched a white-label support experience without losing the approval rules our enterprise customers expect.”', name:'Omar Shah', role:'Director of client success, ModernLayer', avatar:'linear-gradient(145deg,#f0c575,#9b5b3f)'}
+    ];
+    let testimonialIndex = 0;
+    function renderTestimonial(nextIndex){
+      if (!testimonialQuote || !testimonialName || !testimonialRole || !testimonialPanel) return;
+      testimonialIndex = (nextIndex + testimonials.length) % testimonials.length;
+      const item = testimonials[testimonialIndex];
+      testimonialPanel.classList.add('is-changing');
+      window.setTimeout(() => {
+        testimonialQuote.innerHTML = item.quote;
+        testimonialName.textContent = item.name;
+        testimonialRole.textContent = item.role;
+        if (testimonialAvatar) testimonialAvatar.style.background = item.avatar;
+        testimonialDots.forEach((dot, index) => dot.classList.toggle('active', index === testimonialIndex));
+        testimonialPanel.classList.remove('is-changing');
+      }, 160);
+    }
+    document.querySelector('[data-testimonial-prev]')?.addEventListener('click', () => renderTestimonial(testimonialIndex - 1));
+    document.querySelector('[data-testimonial-next]')?.addEventListener('click', () => renderTestimonial(testimonialIndex + 1));
+
+
+    // Stage 9: lightweight visual QA helpers — scroll-aware navigation, reveal timing, and clear integration labels.
+    const namedIntegrationCells = document.querySelectorAll('.integration-cell[title]');
+    namedIntegrationCells.forEach(cell => {
+      cell.dataset.name = cell.getAttribute('title') || 'Integration';
+      cell.setAttribute('aria-label', cell.dataset.name);
+    });
+
+    const flowPanel = document.querySelector('#support-flow-panel');
+    if (flowPanel) flowPanel.setAttribute('aria-live', 'polite');
+
+    const navigationLinks = [...document.querySelectorAll('.nav-links a[href^="#"], .mobile-links a[href^="#"]')];
+    const scrollTargets = [...new Set(navigationLinks.map(link => link.getAttribute('href')).filter(href => href && href.length > 1))]
+      .map(href => document.querySelector(href)).filter(Boolean);
+    const navTargetLinks = new Map(scrollTargets.map(target => [target.id, navigationLinks.filter(link => link.getAttribute('href') === `#${target.id}`)]));
+    function setCurrentNav(id){
+      navigationLinks.forEach(link => {
+        const current = link.getAttribute('href') === `#${id}`;
+        link.classList.toggle('is-current', current);
+        if (current) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
+      });
+    }
+    if ('IntersectionObserver' in window && scrollTargets.length){
+      const navObserver = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target?.id) setCurrentNav(visible.target.id);
+      }, {rootMargin:'-35% 0px -54% 0px', threshold:[0,.12,.35,.6]});
+      scrollTargets.forEach(target => navObserver.observe(target));
+    }
+
+    const revealTargets = [
+      '.hero-content','.hero-stage','.story-row','.integration-intro','.integration-rail-window',
+      '.flow-board','.analytics-board','.price-card','.proof-grid','.faq-grid','.conversion-layout','.footer-main'
+    ].flatMap(selector => [...document.querySelectorAll(selector)]);
+    if ('IntersectionObserver' in window){
+      revealTargets.forEach((target, index) => {
+        target.classList.add('js-reveal');
+        if (index % 3) target.dataset.revealDelay = String(index % 3);
+      });
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        });
+      }, {rootMargin:'0px 0px -7% 0px', threshold:.08});
+      revealTargets.forEach(target => revealObserver.observe(target));
+    }
+
+  </script>
+</body>
+</html>
