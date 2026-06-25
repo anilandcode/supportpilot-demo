@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffbf5" />
+  <title>SupportPilot — Enterprise Support Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* SupportPilot design tokens */
+      --canvas: #fffbf5;
+      --surface: #ffffff;
+      --surface-subtle: #fffdf9;
+      --ink: #210d02;
+      --muted: #4f4d49;
+      --rule: rgba(25, 21, 22, 0.10);
+      --rule-strong: rgba(25, 21, 22, 0.16);
+      --yellow: #ffd84b;
+      --orange: #fa8f1f;
+      --orange-warm: #fa7b31;
+      --gold: #aa8322;
+      --powder: #c6dffa;
+      --periwinkle: #b3bbfa;
+      --lavender: #efeaff;
+      --success: #2d9a4e;
+      --footer: #070706;
+      --shadow: 0 22px 50px rgba(77, 48, 22, 0.08), 0 2px 8px rgba(77, 48, 22, 0.04);
+      --max: 1208px;
+      --gutter: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Left Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      background: var(--surface-subtle);
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      padding-left: 8px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(140deg, var(--orange), var(--yellow) 62%, var(--periwinkle));
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1px rgba(33, 13, 2, 0.08);
+    }
+
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--ink);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.06em;
+    }
+
+    .brand-sub {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-top: -2px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-item a:hover {
+      background: rgba(25, 21, 22, 0.04);
+      color: var(--ink);
+    }
+
+    .nav-item.active a {
+      background: #f4ecdd;
+      color: var(--ink);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d4b194, #65432f);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+    }
+
+    .dashboard-container::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 72px auto 0 50%;
+      width: min(calc(var(--max) - (var(--gutter) * 2)), calc(100% - (var(--gutter) * 2)));
+      transform: translateX(-50%);
+      border-inline: 1px solid var(--rule);
+      pointer-events: none;
+    }
+
+    /* Header Bar */
+    .dashboard-header {
+      position: relative;
+      z-index: 1;
+      height: 72px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(255, 251, 245, 0.85);
+      backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+      padding: 0 var(--gutter);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: #eff7ef;
+      border: 1px solid rgba(45, 154, 78, 0.2);
+      border-radius: 999px;
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0 16px 0 36px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--rule-strong);
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--muted);
+      fill: none;
+      pointer-events: none;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .icon-button:hover {
+      background: var(--surface-subtle);
+    }
+
+    .icon-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 6px;
+      height: 6px;
+      background: var(--orange-warm);
+      border-radius: 50%;
+    }
+
+    .btn-portal {
+      height: 38px;
+      padding: 0 16px;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-portal:hover {
+      background: var(--surface-subtle);
+    }
+
+    /* Page Content */
+    .dashboard-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 40px var(--gutter);
+      overflow-y: auto;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: clamp(32px, 3.2vw, 44px);
+      font-weight: 500;
+      letter-spacing: -0.05em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Metric Summary Blocks */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-subtle);
+      border: 1px solid var(--rule);
+      flex-shrink: 0;
+    }
+
+    .summary-icon-box svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .summary-icon-box.alert {
+      color: var(--orange-warm);
+      background: rgba(250, 123, 49, 0.05);
+      border-color: rgba(250, 123, 49, 0.2);
+    }
+
+    .summary-icon-box.success {
+      color: var(--success);
+      background: rgba(45, 154, 78, 0.05);
+      border-color: rgba(45, 154, 78, 0.2);
+    }
+
+    .summary-icon-box.purple {
+      color: #7b5d2e;
+      background: rgba(170, 131, 34, 0.05);
+      border-color: rgba(170, 131, 34, 0.2);
+    }
+
+    .summary-info {
+      min-width: 0;
+    }
+
+    .summary-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    .summary-value {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 2px;
+    }
+
+    /* Checklist Block */
+    .checklist-section {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(33, 13, 2, 0.02);
+    }
+
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-title-box h3 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+    }
+
+    .section-title-box p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .section-badge {
+      padding: 4px 10px;
+      background: var(--lavender);
+      color: #7058b8;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .checklist-item {
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      background: var(--surface-subtle);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .checklist-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(33, 13, 2, 0.03);
+      border-color: var(--rule-strong);
+    }
+
+    .checkbox-trigger {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--rule-strong);
+      display: grid;
+      place-items: center;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .checklist-item.checked .checkbox-trigger {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .checkbox-trigger svg {
+      width: 12px;
+      height: 12px;
+      stroke: #fff;
+      stroke-width: 2.5;
+      fill: none;
+      display: none;
+    }
+
+    .checklist-item.checked .checkbox-trigger svg {
+      display: block;
+    }
+
+    .checklist-text {
+      min-width: 0;
+    }
+
+    .checklist-text b {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .checklist-text span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Key Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 24px;
+      height: 24px;
+      opacity: 0.15;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    .metric-card.tickets::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23210d02' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z' /%3E%3C/svg%3E");
+    }
+
+    .metric-card.resolved::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232d9a4e' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z' /%3E%3C/svg%3E");
+    }
+
+    .metric-card.escalated::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fa7b31' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z' /%3E%3C/svg%3E");
+    }
+
+    .metric-card.acceptance::after {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aa8322' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' /%3E%3C/svg%3E");
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 36px;
+      font-weight: 500;
+      letter-spacing: -0.06em;
+      color: var(--ink);
+      margin-top: 8px;
+      line-height: 1;
+    }
+
+    .metric-caption {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .metric-trend {
+      font-size: 11px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .trend-up {
+      color: var(--success);
+    }
+
+    .trend-down {
+      color: var(--orange-warm);
+    }
+
+    /* Analytics detail row */
+    .details-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-container-card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .legend-color {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .chart-body {
+      height: 180px;
+      position: relative;
+      border-bottom: 1px solid var(--rule);
+      margin-top: 10px;
+    }
+
+    .chart-body svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .chart-dates-row {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topics-panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .topic-item {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .topic-item:last-child {
+      border-bottom: 0;
+    }
+
+    .topic-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: rgba(250, 143, 31, 0.08);
+      color: var(--orange);
+      font-weight: 600;
+      font-size: 11px;
+      display: grid;
+      place-items: center;
+    }
+
+    .topic-info b {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .topic-info span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .topic-actions {
+      font-size: 12px;
+    }
+
+    .topic-actions a {
+      color: var(--orange);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .topic-actions a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-all-topics {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      align-self: flex-start;
+    }
+
+    .btn-all-topics:hover {
+      text-decoration: underline;
+    }
+
+    /* Layout responsive behaviors */
+    @media (max-width: 1080px) {
+      .summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .details-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --gutter: 16px;
+      }
+      .dashboard-container::before {
+        inset: 64px auto 0 50%;
+      }
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+        padding: 16px;
+      }
+      .brand-section {
+        margin-bottom: 16px;
+      }
+      .sidebar-footer {
+        display: none;
+      }
+      .dashboard-header {
+        height: 64px;
+      }
+      .header-inner {
+        padding: 0 16px;
+      }
+      .search-bar {
+        display: none;
+      }
+      .dashboard-content {
+        padding: 24px 16px;
+      }
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .checklist-grid {
+        grid-template-columns: 1fr;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-section">
+      <div class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2L2 22h20L12 2zm0 3.8L18.5 19H5.5L12 5.8z" />
+          <path d="M12 11h.01M12 15h.01" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">SupportPilot</h1>
+        <span class="brand-sub">Enterprise portal</span>
+      </div>
+    </div>
+
+    <nav>
+      <ul class="nav-list">
+        <li class="nav-item active">
+          <a href="dashboard-overview.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+            Overview
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-conversations.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025 10.186 10.186 0 01-2.165-5.9c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+            Tickets
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-knowledge.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25M3 9.043h.008v.008H3V9.043zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008zM21 9.043h.008v.008H21V9.043zm0 3h.008v.008H21v-.008zm0 3h.008v.008H21v-.008z" /></svg>
+            Knowledge
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-approvals.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.959 11.959 0 0112 2.714z" /></svg>
+            Approvals
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-analytics.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+            Analytics
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-settings.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.59 4.59A2 2 0 1111 8H2.25m9.59-3.41a2 2 0 114 0V21.75m0 0a2 2 0 11-4 0v-4.32m4 4.32a2 2 0 11-4 0m5.32-8.82A2.25 2.25 0 1116.5 6h2.25m-3.96 11.23A2.25 2.25 0 1112 15h2.25" /></svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name">admin</div>
+        <div class="user-email">admin@acmedesk.example</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Portal -->
+  <main class="dashboard-container">
+    <header class="dashboard-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <span class="header-title">Acme Support</span>
+          <span class="status-pill">Domain verified</span>
+        </div>
+
+        <div class="header-right">
+          <div class="search-bar">
+            <input type="text" placeholder="Search tickets, sources, policies..." />
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+          </div>
+
+          <button class="icon-button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a3 3 0 11-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+            <span class="icon-badge"></span>
+          </button>
+
+          <a href="customer-portal.html" class="btn-portal">
+            Customer portal
+            <svg viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="page-header">
+        <h2 class="page-title">Enterprise support dashboard</h2>
+        <p class="page-subtitle">Ticket triage, agent-assist AI, escalation workflow, and audit-backed analytics.</p>
+      </div>
+
+      <!-- Checklist steps summary row -->
+      <section class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-icon-box alert">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-label">Launch</span>
+            <div class="summary-value" id="summary-launch-text">Setup</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon-box success">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-label">Checklist</span>
+            <div class="summary-value" id="summary-checklist-val">5/8</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon-box success">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-1.5c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v1.5zM3.75 12h16.5M3.75 17.625h16.5" /></svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-label">Sources</span>
+            <div class="summary-value">10</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon-box success">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 12-9m0 18c-4.756 0-8.873-3.307-9.882-7.875M21 12a8.961 8.961 0 00-3-6.875M3 12a8.961 8.961 0 013-6.875M21 12c-1.01 4.568-5.127 7.875-9.882 7.875" /></svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-label">Domains</span>
+            <div class="summary-value">3</div>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon-box purple">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.959 11.959 0 0112 2.714z" /></svg>
+          </div>
+          <div class="summary-info">
+            <span class="summary-label">Approvals</span>
+            <div class="summary-value">4</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Launch checklist panel -->
+      <section class="checklist-section">
+        <div class="section-title-bar">
+          <div class="section-title-box">
+            <h3>Launch checklist</h3>
+            <p>Pinned until the workspace is safe to go live.</p>
+          </div>
+          <span class="section-badge" id="checklist-remaining-badge">3 left</span>
+        </div>
+
+        <div class="checklist-grid">
+          <div class="checklist-item checked" data-id="1">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Add knowledge source</b>
+              <span>Upload or paste the first approved FAQ, policy, or support article.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item checked" data-id="2">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Generate source chunks</b>
+              <span>Confirm approved sources have searchable chunks and embedding metadata.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item" data-id="3">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Pass five golden questions</b>
+              <span>Validate citations and safe refusal behavior before launch.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item checked" data-id="4">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Configure brand and disclosure</b>
+              <span>Set the assistant name, colors, welcome copy, and AI disclosure.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item checked" data-id="5">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Set escalation owner</b>
+              <span>Add the manager or inbox that receives risky conversations.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item checked" data-id="6">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Verify widget domain</b>
+              <span>Restrict the widget to approved customer origins.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item" data-id="7">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Install widget</b>
+              <span>Place the script or iframe on the customer site.</span>
+            </div>
+          </div>
+
+          <div class="checklist-item" data-id="8">
+            <div class="checkbox-trigger">
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </div>
+            <div class="checklist-text">
+              <b>Enable monitoring</b>
+              <span>Turn on Sentry and product events for launch visibility.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Key Metrics Blocks -->
+      <section class="metrics-grid">
+        <div class="metric-card tickets">
+          <span class="metric-label">Total tickets</span>
+          <div class="metric-value">20</div>
+          <span class="metric-caption">Across seeded enterprise inbox</span>
+        </div>
+
+        <div class="metric-card resolved">
+          <span class="metric-label">Resolved</span>
+          <div class="metric-value">5</div>
+          <span class="metric-caption">Closed through human-approved replies</span>
+        </div>
+
+        <div class="metric-card escalated">
+          <span class="metric-label">Escalated</span>
+          <div class="metric-value">5</div>
+          <span class="metric-caption">25% escalation rate</span>
+          <span class="metric-trend trend-down">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            -4% vs last week
+          </span>
+        </div>
+
+        <div class="metric-card acceptance">
+          <span class="metric-label">AI acceptance</span>
+          <div class="metric-value">33%</div>
+          <span class="metric-caption">$0.0145/accepted reply</span>
+          <span class="metric-trend trend-up">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
+            +12% vs last week
+          </span>
+        </div>
+      </section>
+
+      <!-- Analytics and Topics Row -->
+      <div class="details-row">
+        <!-- Ticket Volume Chart Card -->
+        <div class="chart-container-card">
+          <div class="chart-header">
+            <h4 class="chart-title">Ticket triage trends</h4>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="legend-color" style="background: var(--orange);"></span>
+                AI Handled
+              </span>
+              <span class="legend-item">
+                <span class="legend-color" style="background: var(--periwinkle);"></span>
+                Escalated
+              </span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <svg viewBox="0 0 500 180">
+              <!-- Grid lines -->
+              <line x1="0" y1="30" x2="500" y2="30" stroke="rgba(25, 21, 22, 0.05)" stroke-width="1" />
+              <line x1="0" y1="75" x2="500" y2="75" stroke="rgba(25, 21, 22, 0.05)" stroke-width="1" />
+              <line x1="0" y1="120" x2="500" y2="120" stroke="rgba(25, 21, 22, 0.05)" stroke-width="1" />
+              <line x1="0" y1="165" x2="500" y2="165" stroke="rgba(25, 21, 22, 0.1)" stroke-width="1.5" />
+              
+              <!-- AI Handled Area and Line -->
+              <path d="M 0 130 C 50 110, 100 120, 150 90 C 200 60, 250 85, 300 45 C 350 40, 400 35, 450 25 C 475 20, 500 15, 500 15 L 500 165 L 0 165 Z" fill="rgba(250, 143, 31, 0.08)" />
+              <path d="M 0 130 C 50 110, 100 120, 150 90 C 200 60, 250 85, 300 45 C 350 40, 400 35, 450 25 C 475 20, 500 15, 500 15" fill="none" stroke="var(--orange)" stroke-width="2.5" />
+              
+              <!-- Escalated Line -->
+              <path d="M 0 160 C 50 150, 100 140, 150 145 C 200 115, 250 130, 300 95 C 350 100, 400 90, 450 85 C 475 90, 500 80, 500 80" fill="none" stroke="var(--periwinkle)" stroke-dasharray="4 4" stroke-width="2" />
+              
+              <!-- End Dot for AI Handled -->
+              <circle cx="500" cy="15" r="4.5" fill="var(--orange)" stroke="#ffffff" stroke-width="2" />
+            </svg>
+          </div>
+          <div class="chart-dates-row">
+            <span>Jun 19</span>
+            <span>Jun 21</span>
+            <span>Jun 23</span>
+            <span>Jun 25 (Today)</span>
+          </div>
+        </div>
+
+        <!-- Missing Knowledge Panel -->
+        <div class="topics-panel">
+          <div class="chart-header">
+            <h4 class="chart-title">Missing knowledge topics</h4>
+          </div>
+          <div class="topic-list">
+            <div class="topic-item">
+              <span class="topic-badge">1</span>
+              <div class="topic-info">
+                <b>Refund timeline details</b>
+                <span>6 tickets · High business impact</span>
+              </div>
+              <div class="topic-actions">
+                <a href="#add-src">Add source</a>
+              </div>
+            </div>
+
+            <div class="topic-item">
+              <span class="topic-badge">2</span>
+              <div class="topic-info">
+                <b>API usage tracking limits</b>
+                <span>4 tickets · Technical classification</span>
+              </div>
+              <div class="topic-actions">
+                <a href="#add-src">Add source</a>
+              </div>
+            </div>
+
+            <div class="topic-item">
+              <span class="topic-badge">3</span>
+              <div class="topic-info">
+                <b>SCIM configuration guide</b>
+                <span>3 tickets · Enterprise compliance</span>
+              </div>
+              <div class="topic-actions">
+                <a href="#add-src">Add source</a>
+              </div>
+            </div>
+          </div>
+          
+          <a href="#topics" class="btn-all-topics">
+            View all detected gaps
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Make checklist items interactive
+    const checklistItems = document.querySelectorAll('.checklist-item');
+    const remainingBadge = document.getElementById('checklist-remaining-badge');
+    const summaryChecklistVal = document.getElementById('summary-checklist-val');
+    const summaryLaunchText = document.getElementById('summary-launch-text');
+    const summaryLaunchIconBox = document.querySelector('.summary-icon-box.alert');
+
+    function updateChecklistUI() {
+      const total = checklistItems.length;
+      const checkedCount = document.querySelectorAll('.checklist-item.checked').length;
+      const remaining = total - checkedCount;
+
+      // Update badge
+      if (remaining === 0) {
+        remainingBadge.textContent = 'All clear!';
+        remainingBadge.style.background = '#eff7ef';
+        remainingBadge.style.color = 'var(--success)';
+        
+        // Launch summary update
+        summaryLaunchText.textContent = 'Ready';
+        if (summaryLaunchIconBox) {
+          summaryLaunchIconBox.className = 'summary-icon-box success';
+          summaryLaunchIconBox.innerHTML = `
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          `;
+        }
+      } else {
+        remainingBadge.textContent = `${remaining} left`;
+        remainingBadge.style.background = 'var(--lavender)';
+        remainingBadge.style.color = '#7058b8';
+
+        summaryLaunchText.textContent = 'Setup';
+        if (summaryLaunchIconBox) {
+          summaryLaunchIconBox.className = 'summary-icon-box alert';
+          summaryLaunchIconBox.innerHTML = `
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+          `;
+        }
+      }
+
+      // Update numeric status card
+      summaryChecklistVal.textContent = `${checkedCount}/${total}`;
+    }
+
+    checklistItems.forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('checked');
+        updateChecklistUI();
+      });
+    });
+
+    // Run initial count check
+    updateChecklistUI();
+  </script>
+</body>
+</html>

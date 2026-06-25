@@ -64,14 +64,19 @@ export async function draftTicketReply(ticketId: string, userId: string | null):
   let response = localDraft(ticket.subject, chunks);
   const readiness = getModelReadiness();
   if (readiness.ready) {
-    const result = await generateText({
-      model: getLanguageModel(),
-      system: "You draft support replies for human review. Answer only from supplied sources. Include citation labels inline.",
-      prompt,
-      temperature: 0.25,
-      maxOutputTokens: 700,
-    });
-    response = result.text;
+    try {
+      const result = await generateText({
+        model: getLanguageModel(),
+        system: "You draft support replies for human review. Answer only from supplied sources. Include citation labels inline.",
+        prompt,
+        temperature: 0.25,
+        maxOutputTokens: 700,
+      });
+      response = result.text;
+    } catch (err) {
+      const reason = err instanceof Error ? err.name || err.message : "UnknownError";
+      console.warn(`[draftTicketReply] Provider generation failed; using local fallback (${reason}).`);
+    }
   }
   response = sanitizeAssistantText(response);
 

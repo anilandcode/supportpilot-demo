@@ -1,0 +1,1243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffbf5" />
+  <title>SupportPilot — Knowledge Base Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* SupportPilot design tokens */
+      --canvas: #fffbf5;
+      --surface: #ffffff;
+      --surface-subtle: #fffdf9;
+      --ink: #210d02;
+      --muted: #4f4d49;
+      --rule: rgba(25, 21, 22, 0.10);
+      --rule-strong: rgba(25, 21, 22, 0.16);
+      --yellow: #ffd84b;
+      --orange: #fa8f1f;
+      --orange-warm: #fa7b31;
+      --gold: #aa8322;
+      --powder: #c6dffa;
+      --periwinkle: #b3bbfa;
+      --lavender: #efeaff;
+      --success: #2d9a4e;
+      --footer: #070706;
+      --shadow: 0 22px 50px rgba(77, 48, 22, 0.08), 0 2px 8px rgba(77, 48, 22, 0.04);
+      --max: 1208px;
+      --gutter: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Left Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      background: var(--surface-subtle);
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      padding-left: 8px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(140deg, var(--orange), var(--yellow) 62%, var(--periwinkle));
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1px rgba(33, 13, 2, 0.08);
+    }
+
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--ink);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.06em;
+    }
+
+    .brand-sub {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-top: -2px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-item a:hover {
+      background: rgba(25, 21, 22, 0.04);
+      color: var(--ink);
+    }
+
+    .nav-item.active a {
+      background: #f4ecdd;
+      color: var(--ink);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d4b194, #65432f);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+    }
+
+    .dashboard-container::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 72px auto 0 50%;
+      width: min(calc(var(--max) - (var(--gutter) * 2)), calc(100% - (var(--gutter) * 2)));
+      transform: translateX(-50%);
+      border-inline: 1px solid var(--rule);
+      pointer-events: none;
+    }
+
+    /* Header Bar */
+    .dashboard-header {
+      position: relative;
+      z-index: 1;
+      height: 72px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(255, 251, 245, 0.85);
+      backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+      padding: 0 var(--gutter);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: #eff7ef;
+      border: 1px solid rgba(45, 154, 78, 0.2);
+      border-radius: 999px;
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0 16px 0 36px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--rule-strong);
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--muted);
+      fill: none;
+      pointer-events: none;
+    }
+
+    .btn-portal {
+      height: 38px;
+      padding: 0 16px;
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-portal:hover {
+      background: var(--surface-subtle);
+    }
+
+    /* Page Content */
+    .dashboard-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 40px var(--gutter);
+      overflow-y: auto;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: clamp(32px, 3.2vw, 44px);
+      font-weight: 500;
+      letter-spacing: -0.05em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .btn-action {
+      height: 40px;
+      padding: 0 18px;
+      background: var(--yellow);
+      color: var(--ink);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 4px rgba(33, 13, 2, 0.05);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(33, 13, 2, 0.1);
+    }
+
+    /* Knowledge Layout */
+    .knowledge-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .sources-panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(33, 13, 2, 0.02);
+    }
+
+    .section-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .source-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .source-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--rule);
+      font-weight: 600;
+    }
+
+    .source-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: middle;
+    }
+
+    .source-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .source-table tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .source-table tr:hover {
+      background: var(--surface-subtle);
+    }
+
+    .source-table tr.active {
+      background: rgba(179, 187, 250, 0.08);
+      border-left: 3px solid var(--periwinkle);
+    }
+
+    .source-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .source-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: rgba(25, 21, 22, 0.04);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .source-name {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .source-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-status.indexed {
+      background: rgba(45, 154, 78, 0.08);
+      color: var(--success);
+      border: 1px solid rgba(45, 154, 78, 0.15);
+    }
+
+    .badge-status.pending {
+      background: rgba(250, 143, 31, 0.08);
+      color: var(--orange-warm);
+      border: 1px solid rgba(250, 143, 31, 0.15);
+    }
+
+    .badge-status.error {
+      background: rgba(215, 110, 29, 0.08);
+      color: var(--orange);
+      border: 1px solid rgba(215, 110, 29, 0.15);
+    }
+
+    /* Detail / Chunk Inspector Panel */
+    .inspector-panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(33, 13, 2, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .inspector-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .inspector-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .inspector-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chunk-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .chunk-card {
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 12px;
+      background: var(--surface-subtle);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .chunk-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(25, 21, 22, 0.05);
+      padding-bottom: 6px;
+    }
+
+    .chunk-text {
+      color: var(--ink);
+    }
+
+    .chunk-text mark {
+      background: rgba(255, 216, 75, 0.3);
+      color: inherit;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* Modal Simulation overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(33, 13, 2, 0.4);
+      z-index: 100;
+      display: none;
+      place-items: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--rule-strong);
+      border-radius: 8px;
+      width: min(520px, 90vw);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 12px;
+    }
+
+    .modal-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0 12px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      background: var(--canvas);
+    }
+
+    .form-group textarea {
+      height: 80px;
+      padding: 8px 12px;
+      resize: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .upload-dragzone {
+      border: 2px dashed var(--rule-strong);
+      border-radius: 8px;
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--surface-subtle);
+      transition: background 0.2s;
+    }
+
+    .upload-dragzone:hover {
+      background: rgba(179, 187, 250, 0.05);
+    }
+
+    .upload-dragzone svg {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 12px;
+      stroke: var(--muted);
+      fill: none;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+    }
+
+    .btn-cancel {
+      height: 38px;
+      padding: 0 16px;
+      background: transparent;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-cancel:hover {
+      background: var(--surface-subtle);
+    }
+
+    /* Parsing progress timeline */
+    .timeline-container {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--surface-subtle);
+      margin-top: 16px;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .step-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--rule-strong);
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+      font-weight: 600;
+      background: #fff;
+    }
+
+    .timeline-step.active .step-indicator {
+      border-color: var(--orange-warm);
+      color: var(--orange-warm);
+      animation: pulse 1.5s infinite;
+    }
+
+    .timeline-step.completed .step-indicator {
+      border-color: var(--success);
+      background: var(--success);
+      color: #fff;
+    }
+
+    .step-text {
+      font-weight: 500;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(250, 123, 49, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(250, 123, 49, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(250, 123, 49, 0); }
+    }
+
+    @media (max-width: 1080px) {
+      .knowledge-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --gutter: 16px;
+      }
+      .dashboard-container::before {
+        inset: 64px auto 0 50%;
+      }
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+        padding: 16px;
+      }
+      .brand-section {
+        margin-bottom: 16px;
+      }
+      .sidebar-footer {
+        display: none;
+      }
+      .dashboard-header {
+        height: 64px;
+      }
+      .header-inner {
+        padding: 0 16px;
+      }
+      .search-bar {
+        display: none;
+      }
+      .dashboard-content {
+        padding: 24px 16px;
+      }
+      .page-header {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .btn-action {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-section">
+      <div class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2L2 22h20L12 2zm0 3.8L18.5 19H5.5L12 5.8z" />
+          <path d="M12 11h.01M12 15h.01" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">SupportPilot</h1>
+        <span class="brand-sub">Enterprise portal</span>
+      </div>
+    </div>
+
+    <nav>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="dashboard-overview.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+            Overview
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-conversations.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025 10.186 10.186 0 01-2.165-5.9c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+            Tickets
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="dashboard-knowledge.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25M3 9.043h.008v.008H3V9.043zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008zM21 9.043h.008v.008H21V9.043zm0 3h.008v.008H21v-.008zm0 3h.008v.008H21v-.008z" /></svg>
+            Knowledge
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-approvals.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.959 11.959 0 0112 2.714z" /></svg>
+            Approvals
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-analytics.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+            Analytics
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-settings.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.59 4.59A2 2 0 1111 8H2.25m9.59-3.41a2 2 0 114 0V21.75m0 0a2 2 0 11-4 0v-4.32m4 4.32a2 2 0 11-4 0m5.32-8.82A2.25 2.25 0 1116.5 6h2.25m-3.96 11.23A2.25 2.25 0 1112 15h2.25" /></svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name">admin</div>
+        <div class="user-email">admin@acmedesk.example</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Portal -->
+  <main class="dashboard-container">
+    <header class="dashboard-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <span class="header-title">Acme Support</span>
+          <span class="status-pill">Domain verified</span>
+        </div>
+
+        <div class="header-right">
+          <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search tickets, sources, policies..." />
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+          </div>
+
+          <a href="customer-portal.html" class="btn-portal">
+            Customer portal
+            <svg viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Knowledge Base</h2>
+          <p class="page-subtitle">Verify, ingest, and manage document sources and FAQs grounding the AI agent.</p>
+        </div>
+        <button class="btn-action" id="btn-add-source">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          Add knowledge source
+        </button>
+      </div>
+
+      <div class="knowledge-grid">
+        <!-- Sources List -->
+        <section class="sources-panel">
+          <h3 class="section-title">Ingested Sources</h3>
+          <table class="source-table">
+            <thead>
+              <tr>
+                <th>Source Name</th>
+                <th>Status</th>
+                <th>Chunks</th>
+                <th>Domain Guard</th>
+              </tr>
+            </thead>
+            <tbody id="source-list-body">
+              <!-- Refund Policy -->
+              <tr class="active" data-source="refund">
+                <td>
+                  <div class="source-name-cell">
+                    <div class="source-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    </div>
+                    <div>
+                      <div class="source-name">Refund Policy (PDF)</div>
+                      <div class="source-meta">help.acme.co/policies/refund · Updated 2 days ago</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge-status indexed">Indexed</span></td>
+                <td><b>10</b></td>
+                <td><code>acme.co</code></td>
+              </tr>
+              <!-- Subscription Terms -->
+              <tr data-source="subscription">
+                <td>
+                  <div class="source-name-cell">
+                    <div class="source-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 12-9m0 18c-4.756 0-8.873-3.307-9.882-7.875M21 12a8.961 8.961 0 00-3-6.875M3 12a8.961 8.961 0 013-6.875M21 12c-1.01 4.568-5.127 7.875-9.882 7.875" /></svg>
+                    </div>
+                    <div>
+                      <div class="source-name">Subscription Terms (URL)</div>
+                      <div class="source-meta">help.acme.co/policies/subscription · Updated 4 days ago</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge-status indexed">Indexed</span></td>
+                <td><b>24</b></td>
+                <td><code>acme.co</code></td>
+              </tr>
+              <!-- API Usage Limits -->
+              <tr data-source="api-limits">
+                <td>
+                  <div class="source-name-cell">
+                    <div class="source-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.97-8.97M18 10.5a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    </div>
+                    <div>
+                      <div class="source-name">API Usage Limits (Markdown)</div>
+                      <div class="source-meta">help.acme.co/usage/limits · Updated 6 days ago</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge-status indexed">Indexed</span></td>
+                <td><b>4</b></td>
+                <td><code>acme.co</code></td>
+              </tr>
+              <!-- SCIM Integration -->
+              <tr data-source="scim" id="scim-row">
+                <td>
+                  <div class="source-name-cell">
+                    <div class="source-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                    </div>
+                    <div>
+                      <div class="source-name">SCIM Setup Guide (PDF)</div>
+                      <div class="source-meta">In-queue draft · Ingestion pending</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge-status pending" id="scim-badge">Pending</span></td>
+                <td><b id="scim-chunks">—</b></td>
+                <td><code>—</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Chunk Inspector Panel -->
+        <section class="inspector-panel">
+          <div class="inspector-header">
+            <h3 class="inspector-title" id="inspector-source-title">Refund Policy (PDF)</h3>
+            <span class="inspector-sub" id="inspector-source-meta">10 active vector chunks · Grounded on acme.co</span>
+          </div>
+
+          <div class="chunk-list" id="chunk-list-container">
+            <!-- Chunk 1 -->
+            <div class="chunk-card">
+              <div class="chunk-meta">
+                <span>CHUNK #01 · VECTOR ID: ref-3891</span>
+                <span style="color: var(--success);">MATCH WEIGHT: 0.95</span>
+              </div>
+              <div class="chunk-text">
+                Annual plans are eligible for a <mark>refund within 30 days</mark> of purchase, as long as the account has not exceeded 10k API calls.
+              </div>
+            </div>
+            <!-- Chunk 2 -->
+            <div class="chunk-card">
+              <div class="chunk-meta">
+                <span>CHUNK #02 · VECTOR ID: ref-3892</span>
+                <span>MATCH WEIGHT: 0.88</span>
+              </div>
+              <div class="chunk-text">
+                Monthly subscriptions are eligible for a refund only if cancelled within 48 hours of initial activation. Refund requests submitted after 48 hours will be rejected.
+              </div>
+            </div>
+            <!-- Chunk 3 -->
+            <div class="chunk-card">
+              <div class="chunk-meta">
+                <span>CHUNK #03 · VECTOR ID: ref-3893</span>
+                <span>MATCH WEIGHT: 0.82</span>
+              </div>
+              <div class="chunk-text">
+                Refunds are processed to the original payment method. Please allow 5-10 business days for the transaction to clear in bank records.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal overlay for adding sources -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-title-bar">
+        <h3 class="modal-title">Add knowledge source</h3>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Source Type</label>
+        <select id="input-source-type">
+          <option value="pdf">PDF Document Upload</option>
+          <option value="url">Web URL Scraper</option>
+          <option value="markdown">Raw Markdown / Text</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="group-title">
+        <label>Source Title</label>
+        <input type="text" id="input-title" placeholder="e.g. SCIM Provisioning Protocol" />
+      </div>
+
+      <div class="form-group" id="group-dragzone">
+        <label>Upload File</label>
+        <div class="upload-dragzone" id="dragzone">
+          <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+          <p><b>Drag and drop your file here</b>, or click to browse</p>
+          <span style="font-size: 11px; color: var(--muted);">Supports PDF, DOCX, Markdown up to 10MB</span>
+        </div>
+      </div>
+
+      <!-- Ingestion timeline -->
+      <div class="timeline-container" id="timeline">
+        <div class="timeline-step" id="step-upload">
+          <div class="step-indicator">1</div>
+          <span class="step-text">Uploading document...</span>
+        </div>
+        <div class="timeline-step" id="step-parse">
+          <div class="step-indicator">2</div>
+          <span class="step-text">Parsing with GROBID...</span>
+        </div>
+        <div class="timeline-step" id="step-embed">
+          <div class="step-indicator">3</div>
+          <span class="step-text">Embedding vector chunks...</span>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="btn-cancel-modal">Cancel</button>
+        <button class="btn-action" id="btn-submit-modal" style="width: auto;">Begin Ingestion</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab active link highlights
+    const listItems = document.querySelectorAll('.source-table tbody tr');
+    const insTitle = document.getElementById('inspector-source-title');
+    const insMeta = document.getElementById('inspector-source-meta');
+    const chunkContainer = document.getElementById('chunk-list-container');
+
+    const sourceChunks = {
+      refund: {
+        title: "Refund Policy (PDF)",
+        meta: "10 active vector chunks · Grounded on acme.co",
+        chunks: [
+          { id: "01", vec: "ref-3891", weight: "0.95", text: "Annual plans are eligible for a <mark>refund within 30 days</mark> of purchase, as long as the account has not exceeded 10k API calls." },
+          { id: "02", vec: "ref-3892", weight: "0.88", text: "Monthly subscriptions are eligible for a refund only if cancelled within 48 hours of initial activation. Refund requests submitted after 48 hours will be rejected." },
+          { id: "03", vec: "ref-3893", weight: "0.82", text: "Refunds are processed to the original payment method. Please allow 5-10 business days for the transaction to clear in bank records." }
+        ]
+      },
+      subscription: {
+        title: "Subscription Terms (URL)",
+        meta: "24 active vector chunks · Grounded on acme.co",
+        chunks: [
+          { id: "01", vec: "sub-1002", weight: "0.92", text: "Subscriptions are billed in advance on a recurring monthly or annual basis, depending on the billing cycle selected at purchase." },
+          { id: "02", vec: "sub-1003", weight: "0.87", text: "If client cancels subscription, service will continue until the end of the current paid billing cycle, and no further billing will occur." },
+          { id: "03", vec: "sub-1004", weight: "0.79", text: "Client agrees to pay all applicable taxes and fees associated with their choice of plan, which may be modified with 30 days notice." }
+        ]
+      },
+      "api-limits": {
+        title: "API Usage Limits (Markdown)",
+        meta: "4 active vector chunks · Grounded on acme.co",
+        chunks: [
+          { id: "01", vec: "api-401", weight: "0.96", text: "Accounts are limited to <mark>10k API calls per month</mark> on standard tiers. Exceeding this limit will result in temporary throttling." },
+          { id: "02", vec: "api-402", weight: "0.89", text: "Throttled accounts are restored at the beginning of the next calendar month or immediately upon upgrading to the Enterprise tier." }
+        ]
+      },
+      scim: {
+        title: "SCIM Setup Guide (PDF)",
+        meta: "12 active vector chunks · Grounded on acme.co",
+        chunks: [
+          { id: "01", vec: "scim-901", weight: "0.94", text: "SCIM integration allows automatic user provisioning and deprovisioning via Okta or Microsoft Entra ID." },
+          { id: "02", vec: "scim-902", weight: "0.91", text: "Setup requires generating an API Token from the settings dashboard and whitelisting IP endpoints on client firewalls." }
+        ]
+      }
+    };
+
+    listItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const sourceKey = item.getAttribute('data-source');
+        if (!sourceKey || !sourceChunks[sourceKey]) return;
+
+        listItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const data = sourceChunks[sourceKey];
+        insTitle.textContent = data.title;
+        insMeta.textContent = data.meta;
+
+        // Render chunks
+        chunkContainer.innerHTML = '';
+        data.chunks.forEach(chunk => {
+          const card = document.createElement('div');
+          card.className = 'chunk-card';
+          card.innerHTML = `
+            <div class="chunk-meta">
+              <span>CHUNK #${chunk.id} · VECTOR ID: ${chunk.vec}</span>
+              <span ${sourceKey==='scim' || chunk.id==='01' ? 'style="color: var(--success);"' : ''}>MATCH WEIGHT: ${chunk.weight}</span>
+            </div>
+            <div class="chunk-text">${chunk.text}</div>
+          `;
+          chunkContainer.appendChild(card);
+        });
+      });
+    });
+
+    // Modal controllers
+    const btnAdd = document.getElementById('btn-add-source');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const btnClose = document.getElementById('btn-close-modal');
+    const btnCancel = document.getElementById('btn-cancel-modal');
+    const btnSubmit = document.getElementById('btn-submit-modal');
+    const dragzone = document.getElementById('dragzone');
+    const timeline = document.getElementById('timeline');
+    const inputTitle = document.getElementById('input-title');
+
+    btnAdd.addEventListener('click', () => {
+      modalOverlay.style.display = 'grid';
+      timeline.style.display = 'none';
+      btnSubmit.style.display = 'block';
+      dragzone.style.display = 'block';
+      inputTitle.value = '';
+    });
+
+    [btnClose, btnCancel].forEach(btn => {
+      btn.addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+      });
+    });
+
+    btnSubmit.addEventListener('click', () => {
+      const titleText = inputTitle.value.trim() || "SCIM Setup Guide";
+      btnSubmit.style.display = 'none';
+      dragzone.style.display = 'none';
+      timeline.style.display = 'flex';
+
+      const stepUpload = document.getElementById('step-upload');
+      const stepParse = document.getElementById('step-parse');
+      const stepEmbed = document.getElementById('step-embed');
+
+      stepUpload.className = "timeline-step active";
+      stepParse.className = "timeline-step";
+      stepEmbed.className = "timeline-step";
+
+      // 1. Simulate Upload
+      setTimeout(() => {
+        stepUpload.className = "timeline-step completed";
+        stepParse.className = "timeline-step active";
+        
+        // 2. Simulate Parse
+        setTimeout(() => {
+          stepParse.className = "timeline-step completed";
+          stepEmbed.className = "timeline-step active";
+
+          // 3. Simulate Embed
+          setTimeout(() => {
+            stepEmbed.className = "timeline-step completed";
+            
+            setTimeout(() => {
+              modalOverlay.style.display = 'none';
+              
+              // Dynamic row activation
+              const scimRow = document.getElementById('scim-row');
+              const scimBadge = document.getElementById('scim-badge');
+              const scimChunks = document.getElementById('scim-chunks');
+              
+              scimRow.setAttribute('data-source', 'scim');
+              scimBadge.textContent = "Indexed";
+              scimBadge.className = "badge-status indexed";
+              scimChunks.textContent = "12";
+              scimRow.querySelector('.source-meta').textContent = "help.acme.co/enterprise/scim · Updated just now";
+              
+              // Automatically select the new row
+              scimRow.click();
+            }, 500);
+          }, 1200);
+        }, 1200);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

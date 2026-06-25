@@ -139,6 +139,19 @@ function tenantIdForWorkspace(workspaceId?: string | null) {
   return workspace?.tenantId ?? DEMO_TENANT_ID;
 }
 
+async function resolveCustomerId(workspaceId: string) {
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data } = await supabase.from("customers").select("id").eq("workspace_id", workspaceId).limit(1).maybeSingle();
+    if (data?.id) return data.id;
+  }
+
+  const localCustomer = localState.customers.find((customer) => customer.workspaceId === workspaceId);
+  if (localCustomer) return localCustomer.id;
+
+  return localState.customers[0]?.id ?? crypto.randomUUID();
+}
+
 function normalizeDomain(domain: string) {
   return domain.replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
 }
@@ -336,6 +349,148 @@ export async function addWorkspaceDomain(input: { workspaceId?: string; domain: 
   });
 
   return domain;
+}
+
+export async function createPortalTicket(input: {
+  workspaceId?: string;
+  subject: string;
+  category?: string;
+  description: string;
+}): Promise<TicketWithRelations> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const now = new Date().toISOString();
+  const category = (input.category || "general").toLowerCase();
+  const priority: TicketPriority = /billing|refund|security|legal|scim|sso/.test(category) ? "high" : "medium";
+  const riskLevel: RiskLevel = /refund|security|legal|scim|sso/.test(category) ? "medium" : "low";
+  const customerId = await resolveCustomerId(workspace.id);
+  const ticket: Ticket = {
+    id: publicId("tkt"),
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    subject: input.subject,
+    status: "new",
+    priority,
+    riskLevel,
+    customerId,
+    assignedAgentId: null,
+    escalationReason: null,
+    sentiment: "neutral",
+    tags: ["portal", category.replace(/[^a-z0-9_-]/g, "_")],
+    createdAt: now,
+    updatedAt: now,
+  };
+  const message: TicketMessage = {
+    id: publicId("msg"),
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: ticket.id,
+    sender: "customer",
+    authorId: null,
+    body: input.description,
+    createdAt: now,
+  };
+
+  localState.tickets.unshift(ticket);
+  localState.messages.push(message);
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    await supabase.from("tickets").insert(toTicketRow(ticket));
+    await supabase.from("ticket_messages").insert(toTicketMessageRow(message));
+  }
+
+  await appendAuditLog({
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: ticket.id,
+    userId: null,
+    action: "ticket.portal.created",
+    details: { category, subject: input.subject },
+  });
+
+  return hydrateTicket(ticket);
+}
+
+export async function appendTicketMessage(input: {
+  ticketId: string;
+  sender: TicketMessage["sender"];
+  body: string;
+  authorId?: string | null;
+}): Promise<TicketMessage | null> {
+  const ticket = localState.tickets.find((item) => item.id === input.ticketId);
+  const supabase = createSupabaseAdminClient();
+  let resolvedTicket = ticket;
+
+  if (!resolvedTicket && supabase) {
+    const { data } = await supabase.from("tickets").select("*").eq("id", input.ticketId).maybeSingle();
+    if (data) resolvedTicket = mapTicket(data);
+  }
+
+  if (!resolvedTicket) return null;
+
+  const now = new Date().toISOString();
+  const message: TicketMessage = {
+    id: publicId("msg"),
+    tenantId: resolvedTicket.tenantId,
+    workspaceId: resolvedTicket.workspaceId,
+    ticketId: resolvedTicket.id,
+    sender: input.sender,
+    authorId: input.authorId ?? null,
+    body: input.body,
+    createdAt: now,
+  };
+
+  localState.messages.push(message);
+  if (ticket) {
+    ticket.updatedAt = now;
+    if (input.sender === "agent" && ticket.status === "new") ticket.status = "in_progress";
+  }
+
+  if (supabase) {
+    await supabase.from("ticket_messages").insert(toTicketMessageRow(message));
+    await supabase.from("tickets").update({
+      updated_at: now,
+      status: input.sender === "agent" && resolvedTicket.status === "new" ? "in_progress" : resolvedTicket.status,
+    }).eq("id", resolvedTicket.id);
+  }
+
+  await appendAuditLog({
+    tenantId: resolvedTicket.tenantId,
+    workspaceId: resolvedTicket.workspaceId,
+    ticketId: resolvedTicket.id,
+    userId: input.authorId ?? null,
+    action: "ticket.message.appended",
+    details: { sender: input.sender },
+  });
+
+  return message;
+}
+
+export async function regenerateWorkspaceWidgetKey(workspaceId = DEMO_WORKSPACE_ID): Promise<Workspace> {
+  const workspace = await getWorkspace(workspaceId);
+  const nextKey = `wk_${workspace.slug.replace(/[^a-z0-9]/gi, "_")}_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
+  const now = new Date().toISOString();
+  const localWorkspace = localState.workspaces.find((item) => item.id === workspace.id);
+  if (localWorkspace) {
+    localWorkspace.widgetKey = nextKey;
+    localWorkspace.updatedAt = now;
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    await supabase.from("workspaces").update({ widget_key: nextKey, updated_at: now }).eq("id", workspace.id);
+  }
+
+  await appendAuditLog({
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: null,
+    userId: null,
+    action: "workspace.widget_key.regenerated",
+    details: { widgetKeyPreview: `${nextKey.slice(0, 10)}...` },
+  });
+
+  return getWorkspace(workspace.id);
 }
 
 export async function isOriginAllowed(workspaceId: string, origin: string | null): Promise<boolean> {
@@ -1343,6 +1498,38 @@ function toWorkspaceDomainRow(domain: WorkspaceDomain) {
     domain: domain.domain,
     status: domain.status,
     created_at: domain.createdAt,
+  };
+}
+
+function toTicketRow(ticket: Ticket) {
+  return {
+    id: maybeUuid(ticket.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(ticket.tenantId),
+    workspace_id: maybeUuid(ticket.workspaceId),
+    subject: ticket.subject,
+    status: ticket.status,
+    priority: ticket.priority,
+    risk_level: ticket.riskLevel,
+    customer_id: maybeUuid(ticket.customerId),
+    assigned_agent_id: maybeUuid(ticket.assignedAgentId),
+    escalation_reason: ticket.escalationReason,
+    sentiment: ticket.sentiment,
+    tags: ticket.tags,
+    created_at: ticket.createdAt,
+    updated_at: ticket.updatedAt,
+  };
+}
+
+function toTicketMessageRow(message: TicketMessage) {
+  return {
+    id: maybeUuid(message.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(message.tenantId),
+    workspace_id: maybeUuid(message.workspaceId),
+    ticket_id: maybeUuid(message.ticketId),
+    sender: message.sender,
+    author_id: maybeUuid(message.authorId),
+    body: message.body,
+    created_at: message.createdAt,
   };
 }
 

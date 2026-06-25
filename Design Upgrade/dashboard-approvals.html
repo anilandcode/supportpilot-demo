@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffbf5" />
+  <title>SupportPilot — Approvals Queue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* SupportPilot design tokens */
+      --canvas: #fffbf5;
+      --surface: #ffffff;
+      --surface-subtle: #fffdf9;
+      --ink: #210d02;
+      --muted: #4f4d49;
+      --rule: rgba(25, 21, 22, 0.10);
+      --rule-strong: rgba(25, 21, 22, 0.16);
+      --yellow: #ffd84b;
+      --orange: #fa8f1f;
+      --orange-warm: #fa7b31;
+      --gold: #aa8322;
+      --powder: #c6dffa;
+      --periwinkle: #b3bbfa;
+      --lavender: #efeaff;
+      --success: #2d9a4e;
+      --footer: #070706;
+      --shadow: 0 22px 50px rgba(77, 48, 22, 0.08), 0 2px 8px rgba(77, 48, 22, 0.04);
+      --max: 1208px;
+      --gutter: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Left Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      background: var(--surface-subtle);
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      padding-left: 8px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(140deg, var(--orange), var(--yellow) 62%, var(--periwinkle));
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1px rgba(33, 13, 2, 0.08);
+    }
+
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--ink);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.06em;
+    }
+
+    .brand-sub {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-top: -2px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-item a:hover {
+      background: rgba(25, 21, 22, 0.04);
+      color: var(--ink);
+    }
+
+    .nav-item.active a {
+      background: #f4ecdd;
+      color: var(--ink);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d4b194, #65432f);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+    }
+
+    .dashboard-container::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 72px auto 0 50%;
+      width: min(calc(var(--max) - (var(--gutter) * 2)), calc(100% - (var(--gutter) * 2)));
+      transform: translateX(-50%);
+      border-inline: 1px solid var(--rule);
+      pointer-events: none;
+    }
+
+    /* Header Bar */
+    .dashboard-header {
+      position: relative;
+      z-index: 1;
+      height: 72px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(255, 251, 245, 0.85);
+      backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+      padding: 0 var(--gutter);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: #eff7ef;
+      border: 1px solid rgba(45, 154, 78, 0.2);
+      border-radius: 999px;
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0 16px 0 36px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--rule-strong);
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--muted);
+      fill: none;
+      pointer-events: none;
+    }
+
+    .btn-portal {
+      height: 38px;
+      padding: 0 16px;
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-portal:hover {
+      background: var(--surface-subtle);
+    }
+
+    /* Page Content */
+    .dashboard-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 40px var(--gutter);
+      overflow-y: auto;
+      max-width: var(--max);
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: clamp(32px, 3.2vw, 44px);
+      font-weight: 500;
+      letter-spacing: -0.05em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Approvals Layout */
+    .approvals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .queue-panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(33, 13, 2, 0.02);
+    }
+
+    .section-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .queue-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--lavender);
+      color: #7058b8;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .queue-card {
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--surface-subtle);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .queue-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(33, 13, 2, 0.04);
+      border-color: var(--rule-strong);
+    }
+
+    .queue-card.active {
+      background: #ffffff;
+      border-color: #7058b8;
+      box-shadow: 0 8px 24px rgba(112, 88, 184, 0.08);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .ticket-id {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .badge-status {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .badge-status.high {
+      background: rgba(250, 123, 49, 0.08);
+      color: var(--orange-warm);
+    }
+
+    .badge-status.normal {
+      background: rgba(179, 187, 250, 0.15);
+      color: #4a5dc5;
+    }
+
+    .card-query {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Review Panel */
+    .review-panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(33, 13, 2, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .review-header {
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 16px;
+    }
+
+    .review-title-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .review-title {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .query-display {
+      background: var(--canvas);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .query-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .query-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .suggested-reply-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .btn-edit-toggle {
+      background: transparent;
+      border: 0;
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-edit-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .reply-textarea {
+      width: 100%;
+      height: 140px;
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink);
+      resize: none;
+      outline: none;
+      background: #fffdf9;
+    }
+
+    .reply-textarea:read-only {
+      background: #ffffff;
+      border-color: var(--rule);
+      color: #555;
+    }
+
+    /* Verification drilldown */
+    .drilldown-box {
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 16px;
+      background: var(--surface-subtle);
+    }
+
+    .drilldown-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .drilldown-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .drilldown-stat b {
+      display: block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .drilldown-stat span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .citations-review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .citation-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #ffffff;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .citation-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .citation-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--periwinkle);
+    }
+
+    .citation-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .citation-weight {
+      font-size: 10px;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .review-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+
+    .btn-reject {
+      height: 42px;
+      padding: 0 20px;
+      background: transparent;
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-reject:hover {
+      background: var(--canvas);
+    }
+
+    .btn-approve {
+      height: 42px;
+      padding: 0 24px;
+      background: var(--success);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(45, 154, 78, 0.1);
+    }
+
+    .btn-approve:hover {
+      box-shadow: 0 4px 12px rgba(45, 154, 78, 0.2);
+    }
+
+    @media (max-width: 1024px) {
+      .approvals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --gutter: 16px;
+      }
+      .dashboard-container::before {
+        inset: 64px auto 0 50%;
+      }
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+        padding: 16px;
+      }
+      .brand-section {
+        margin-bottom: 16px;
+      }
+      .sidebar-footer {
+        display: none;
+      }
+      .dashboard-header {
+        height: 64px;
+      }
+      .header-inner {
+        padding: 0 16px;
+      }
+      .search-bar {
+        display: none;
+      }
+      .dashboard-content {
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-section">
+      <div class="brand-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 2L2 22h20L12 2zm0 3.8L18.5 19H5.5L12 5.8z" />
+          <path d="M12 11h.01M12 15h.01" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">SupportPilot</h1>
+        <span class="brand-sub">Enterprise portal</span>
+      </div>
+    </div>
+
+    <nav>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="dashboard-overview.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+            Overview
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-conversations.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025 10.186 10.186 0 01-2.165-5.9c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+            Tickets
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-knowledge.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25M3 9.043h.008v.008H3V9.043zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008zM21 9.043h.008v.008H21V9.043zm0 3h.008v.008H21v-.008zm0 3h.008v.008H21v-.008z" /></svg>
+            Knowledge
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="dashboard-approvals.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.959 11.959 0 0112 2.714z" /></svg>
+            Approvals
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-analytics.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+            Analytics
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="dashboard-settings.html">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.59 4.59A2 2 0 1111 8H2.25m9.59-3.41a2 2 0 114 0V21.75m0 0a2 2 0 11-4 0v-4.32m4 4.32a2 2 0 11-4 0m5.32-8.82A2.25 2.25 0 1116.5 6h2.25m-3.96 11.23A2.25 2.25 0 1112 15h2.25" /></svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name">admin</div>
+        <div class="user-email">admin@acmedesk.example</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Portal -->
+  <main class="dashboard-container">
+    <header class="dashboard-header">
+      <div class="header-inner">
+        <div class="header-left">
+          <span class="header-title">Acme Support</span>
+          <span class="status-pill">Domain verified</span>
+        </div>
+
+        <div class="header-right">
+          <div class="search-bar">
+            <input type="text" placeholder="Search tickets, sources, policies..." />
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+          </div>
+
+          <a href="customer-portal.html" class="btn-portal">
+            Customer portal
+            <svg viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="page-header">
+        <h2 class="page-title">Approvals Queue</h2>
+        <p class="page-subtitle">Verify, edit, and approve suggested AI answers that require compliance check.</p>
+      </div>
+
+      <div class="approvals-grid">
+        <!-- Queue Side panel -->
+        <section class="queue-panel">
+          <div class="section-title">
+            <span>Pending Review</span>
+            <span class="queue-badge" id="queue-count">4</span>
+          </div>
+
+          <div class="queue-list" id="queue-container">
+            <!-- Ticket 1 -->
+            <div class="queue-card active" data-ticket="8425">
+              <div class="card-top">
+                <span class="ticket-id">#8425</span>
+                <span class="badge-status high">High Risk</span>
+              </div>
+              <div class="card-query">How do I whitelist SCIM provisioning domains?</div>
+              <div class="card-meta">Compliance check required · 5m ago</div>
+            </div>
+            <!-- Ticket 2 -->
+            <div class="queue-card" data-ticket="8422">
+              <div class="card-top">
+                <span class="ticket-id">#8422</span>
+                <span class="badge-status normal">Normal</span>
+              </div>
+              <div class="card-query">Do you offer discounts for non-profit entities?</div>
+              <div class="card-meta">Pricing confirmation · 12m ago</div>
+            </div>
+            <!-- Ticket 3 -->
+            <div class="queue-card" data-ticket="8419">
+              <div class="card-top">
+                <span class="ticket-id">#8419</span>
+                <span class="badge-status high">High Risk</span>
+              </div>
+              <div class="card-query">I need to access historical billing logs from 2024</div>
+              <div class="card-meta">Data security verification · 18m ago</div>
+            </div>
+            <!-- Ticket 4 -->
+            <div class="queue-card" data-ticket="8415">
+              <div class="card-top">
+                <span class="ticket-id">#8415</span>
+                <span class="badge-status normal">Normal</span>
+              </div>
+              <div class="card-query">What is the API rate limit per second?</div>
+              <div class="card-meta">Technical check · 45m ago</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Review editor panel -->
+        <section class="review-panel" id="review-panel-container">
+          <div class="review-header">
+            <div class="review-title-box">
+              <h3 class="review-title" id="review-ticket-id">Review Suggested Reply #8425</h3>
+              <span class="badge-status high" id="review-ticket-risk">High Risk</span>
+            </div>
+            
+            <div class="query-display">
+              <span class="query-label">Customer Query</span>
+              <p class="query-text" id="review-query-text">How do I whitelist SCIM provisioning domains?</p>
+            </div>
+          </div>
+
+          <div class="suggested-reply-box">
+            <div class="editor-header">
+              <span class="editor-label">Suggested AI Answer</span>
+              <button class="btn-edit-toggle" id="btn-edit-toggle">Edit Answer</button>
+            </div>
+            <textarea class="reply-textarea" id="reply-editor" readonly>To whitelist SCIM provisioning domains, you must access the Admin Dashboard under Settings > Integrations > SCIM, input your custom provider domains, and generate a new secure connection token.</textarea>
+          </div>
+
+          <!-- Grounding Drilldown -->
+          <div class="drilldown-box">
+            <span class="drilldown-title">Citation Verification & Quality</span>
+            <div class="drilldown-metrics">
+              <div class="drilldown-stat">
+                <b id="review-confidence">96%</b>
+                <span>Confidence Score</span>
+              </div>
+              <div class="drilldown-stat">
+                <b style="color: var(--success);" id="review-sources-count">2 Sources</b>
+                <span>Grounded References</span>
+              </div>
+              <div class="drilldown-stat">
+                <b style="color: var(--orange-warm);">Triggered</b>
+                <span>SCIM Policy</span>
+              </div>
+            </div>
+
+            <div class="citations-review-list" id="review-citations-container">
+              <div class="citation-item">
+                <div class="citation-left">
+                  <span class="citation-dot"></span>
+                  <span class="citation-name">SCIM Setup Guide</span>
+                </div>
+                <span class="citation-weight">0.96 weight</span>
+              </div>
+              <div class="citation-item">
+                <div class="citation-left">
+                  <span class="citation-dot"></span>
+                  <span class="citation-name">API Security Whitelists</span>
+                </div>
+                <span class="citation-weight">0.89 weight</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-actions">
+            <button class="btn-reject" id="btn-reject-reply">Reject Draft</button>
+            <button class="btn-approve" id="btn-approve-send">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+              Approve & Send
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Mock review tickets data
+    const reviewData = {
+      "8425": {
+        id: "8425",
+        risk: "High Risk",
+        riskClass: "badge-status high",
+        query: "How do I whitelist SCIM provisioning domains?",
+        reply: "To whitelist SCIM provisioning domains, you must access the Admin Dashboard under Settings > Integrations > SCIM, input your custom provider domains, and generate a new secure connection token.",
+        confidence: "96%",
+        sources: [
+          { name: "SCIM Setup Guide", weight: "0.96 weight" },
+          { name: "API Security Whitelists", weight: "0.89 weight" }
+        ]
+      },
+      "8422": {
+        id: "8422",
+        risk: "Normal",
+        riskClass: "badge-status normal",
+        query: "Do you offer discounts for non-profit entities?",
+        reply: "Yes, SupportPilot provides a 20% discount for registered non-profit organizations. To apply this discount, please email your 501(c)(3) documentation to billing@supportpilot.com.",
+        confidence: "94%",
+        sources: [
+          { name: "Non-Profit Discounts", weight: "0.94 weight" },
+          { name: "Billing & Plans FAQ", weight: "0.85 weight" }
+        ]
+      },
+      "8419": {
+        id: "8419",
+        risk: "High Risk",
+        riskClass: "badge-status high",
+        query: "I need to access historical billing logs from 2024",
+        reply: "Historical billing logs are stored in secure archives. To retrieve logs from 2024, please verify your account owner credentials under Settings > Security and confirm your billing address.",
+        confidence: "89%",
+        sources: [
+          { name: "Data Security Policies", weight: "0.91 weight" },
+          { name: "Billing History Archives", weight: "0.83 weight" }
+        ]
+      },
+      "8415": {
+        id: "8415",
+        risk: "Normal",
+        riskClass: "badge-status normal",
+        query: "What is the API rate limit per second?",
+        reply: "The standard API rate limit is 100 requests per second per IP address. If your workload requires higher throughput, you can request an enterprise rate limit expansion.",
+        confidence: "98%",
+        sources: [
+          { name: "API Usage Limits", weight: "0.98 weight" }
+        ]
+      }
+    };
+
+    const cards = document.querySelectorAll('.queue-card');
+    const reviewContainer = document.getElementById('review-panel-container');
+    const txtId = document.getElementById('review-ticket-id');
+    const txtRisk = document.getElementById('review-ticket-risk');
+    const txtQuery = document.getElementById('review-query-text');
+    const txtEditor = document.getElementById('reply-editor');
+    const txtConfidence = document.getElementById('review-confidence');
+    const txtSourcesCount = document.getElementById('review-sources-count');
+    const citationsList = document.getElementById('review-citations-container');
+    const btnEdit = document.getElementById('btn-edit-toggle');
+    const btnApprove = document.getElementById('btn-approve-send');
+    const btnReject = document.getElementById('btn-reject-reply');
+    const queueCountBadge = document.getElementById('queue-count');
+
+    // Card click events
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const ticketId = card.getAttribute('data-ticket');
+        if (!ticketId || !reviewData[ticketId]) return;
+
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        // Populate review panel
+        const data = reviewData[ticketId];
+        txtId.textContent = `Review Suggested Reply #${data.id}`;
+        txtRisk.textContent = data.risk;
+        txtRisk.className = data.riskClass;
+        txtQuery.textContent = data.query;
+        txtEditor.value = data.reply;
+        txtEditor.readOnly = true;
+        btnEdit.textContent = "Edit Answer";
+        txtConfidence.textContent = data.confidence;
+        txtSourcesCount.textContent = `${data.sources.length} ${data.sources.length === 1 ? 'Source' : 'Sources'}`;
+
+        // Render Citations
+        citationsList.innerHTML = '';
+        data.sources.forEach(source => {
+          const item = document.createElement('div');
+          item.className = 'citation-item';
+          item.innerHTML = `
+            <div class="citation-left">
+              <span class="citation-dot"></span>
+              <span class="citation-name">${source.name}</span>
+            </div>
+            <span class="citation-weight">${source.weight}</span>
+          `;
+          citationsList.appendChild(item);
+        });
+      });
+    });
+
+    // Edit Toggle
+    btnEdit.addEventListener('click', () => {
+      if (txtEditor.readOnly) {
+        txtEditor.readOnly = false;
+        txtEditor.focus();
+        btnEdit.textContent = "Lock Text";
+      } else {
+        txtEditor.readOnly = true;
+        btnEdit.textContent = "Edit Answer";
+      }
+    });
+
+    // Approve / Reject actions
+    function removeActiveTicket() {
+      const activeCard = document.querySelector('.queue-card.active');
+      if (!activeCard) return;
+
+      const currentId = activeCard.getAttribute('data-ticket');
+      activeCard.remove();
+      delete reviewData[currentId];
+
+      const remainingCards = document.querySelectorAll('.queue-card');
+      queueCountBadge.textContent = remainingCards.length;
+
+      if (remainingCards.length > 0) {
+        remainingCards[0].click();
+      } else {
+        // Empty state
+        queueCountBadge.textContent = '0';
+        reviewContainer.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 48px; color: var(--muted);">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+            <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 500; color: var(--ink); margin-bottom: 8px;">Approvals queue clear</h3>
+            <p style="font-size: 13px;">No tickets currently require compliance clearance. The system is operating in automated deflection mode.</p>
+          </div>
+        `;
+      }
+    }
+
+    btnApprove.addEventListener('click', () => {
+      // Simulate sending notification
+      alert("AI Suggested Answer approved and sent to client.");
+      removeActiveTicket();
+    });
+
+    btnReject.addEventListener('click', () => {
+      if (confirm("Are you sure you want to reject this draft? It will be sent back to AI model for regeneration with secondary retrieval paths.")) {
+        removeActiveTicket();
+      }
+    });
+  </script>
+</body>
+</html>

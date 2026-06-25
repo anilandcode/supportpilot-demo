@@ -2,8 +2,8 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
+  generateText,
   isTextUIPart,
-  streamText,
   type UIMessage,
 } from "ai";
 import { captureProductEvent } from "@/lib/analytics/events";
@@ -174,6 +174,11 @@ function localAnswer(question: string, chunks: Chunk[], citations: Citation[]): 
     .join(" ");
 
   return `${sentences} [Source: ${best.source}]\n\nI can go deeper if you want the exact setup, billing, or security details.`;
+}
+
+function logProviderFallback(route: string, err: unknown) {
+  const reason = err instanceof Error ? err.name || err.message : "UnknownError";
+  console.warn(`[${route}] Provider generation failed; using local fallback (${reason}).`);
 }
 
 export async function POST(req: Request) {
@@ -355,51 +360,36 @@ export async function POST(req: Request) {
       escalated: !usefulContext,
     } satisfies ChatMetadata;
 
+    const startedAt = Date.now();
     const readiness = getModelReadiness();
-    if (!readiness.ready) {
-      const response = sanitizeAssistantText(localAnswer(question, chunks, citations));
-      await logChatRun({
-        tenantId: workspace.tenantId,
-        workspaceId: workspace.id,
-        question,
-        response,
-        answered: usefulContext,
-        escalated: !usefulContext,
-        rateLimited: false,
-        citations: usefulContext ? citations : [],
-      });
-      return assistantResponse(response, metadata);
+    let response = sanitizeAssistantText(localAnswer(question, chunks, citations));
+    if (readiness.ready) {
+      try {
+        const result = await generateText({
+          model: getLanguageModel(),
+          system: buildSystemPrompt(chunks),
+          messages: await convertToModelMessages(messages),
+          maxOutputTokens: 900,
+          temperature: 0.35,
+        });
+        response = sanitizeAssistantText(result.text);
+      } catch (err) {
+        logProviderFallback("/api/chat", err);
+      }
     }
 
-    const startedAt = Date.now();
-    const result = streamText({
-      model: getLanguageModel(),
-      system: buildSystemPrompt(chunks),
-      messages: await convertToModelMessages(messages),
-      maxOutputTokens: 900,
-      temperature: 0.35,
-      onFinish: async ({ text }) => {
-        await logChatRun({
-          tenantId: workspace.tenantId,
-          workspaceId: workspace.id,
-          question,
-          response: text,
-          answered: usefulContext,
-          escalated: !usefulContext,
-          rateLimited: false,
-          citations: usefulContext ? citations : [],
-          latencyMs: Date.now() - startedAt,
-        });
-      },
+    await logChatRun({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      question,
+      response,
+      answered: usefulContext,
+      escalated: !usefulContext,
+      rateLimited: false,
+      citations: usefulContext ? citations : [],
+      latencyMs: Date.now() - startedAt,
     });
-
-    return result.toUIMessageStreamResponse<SupportUIMessage>({
-      sendSources: true,
-      messageMetadata: ({ part }) => {
-        if (part.type === "start" || part.type === "finish") return metadata;
-        return undefined;
-      },
-    });
+    return assistantResponse(response, metadata);
   } catch (err) {
     console.error("[/api/chat]", err);
     return assistantResponse(
