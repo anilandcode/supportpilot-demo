@@ -66,7 +66,21 @@ const handoffCompatibilityCss = `
   min-height: 100vh;
 }
 
+.supportpilot-handoff:not(.supportpilot-handoff-portal) {
+  background: var(--canvas);
+  color: var(--ink);
+  display: flex;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  width: 100%;
+}
+
 @media (max-width: 760px) {
+  .supportpilot-handoff:not(.supportpilot-handoff-portal) {
+    flex-direction: column;
+  }
+
   .supportpilot-handoff-portal {
     max-width: 100vw;
     overflow-x: hidden;
