@@ -11,7 +11,7 @@ import { estimateTokenCount, selectModelRoute } from "@/lib/ai/model-router";
 import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
 import { appendAuditLog, appendSecurityEvent, createAiRun, createModelRouteLog, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, retryAfterSeconds } from "@/lib/rate-limit";
 import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
 import { previewRedactedText } from "@/lib/security/redaction";
 import { sanitizeAssistantText } from "@/lib/security/markdown";
@@ -287,15 +287,13 @@ export async function POST(req: Request) {
       return assistantResponse(text, metadata);
     }
 
-    await recordUsageEvent({
+    const rate = await checkRateLimit({
+      scope: "chat",
       workspaceId: workspace.id,
-      eventType: "chat.message",
-      metadata: { origin: req.headers.get("origin") },
+      key: `${getClientKey(req)}:${req.headers.get("origin") ?? "no-origin"}`,
     });
-
-    const rate = checkRateLimit(getClientKey(req));
     if (!rate.allowed) {
-      const retrySeconds = Math.max(Math.ceil((rate.resetAt - Date.now()) / 1000), 1);
+      const retrySeconds = retryAfterSeconds(rate);
       const text = `You have hit the demo rate limit. Try again in about ${retrySeconds} seconds, or ${theme.escalation.label.toLowerCase()} for help.`;
       const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;
       await logChatRun({
@@ -315,10 +313,16 @@ export async function POST(req: Request) {
         severity: "medium",
         origin: req.headers.get("origin"),
         ipHash: ipHash(req),
-        details: { resetAt: rate.resetAt },
+        details: { resetAt: rate.resetAt, scope: rate.scope, store: rate.store, keyHash: rate.keyHash, limit: rate.limit },
       });
       return assistantResponse(text, metadata);
     }
+
+    await recordUsageEvent({
+      workspaceId: workspace.id,
+      eventType: "chat.message",
+      metadata: { origin: req.headers.get("origin"), rateLimitStore: rate.store, rateLimitRemaining: rate.remaining },
+    });
 
     if (containsSensitiveData(question)) {
       const text =

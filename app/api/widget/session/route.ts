@@ -1,4 +1,5 @@
 import { appendSecurityEvent, createWidgetSession, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
+import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 import { createSignedWidgetSession, getWidgetSessionSecret } from "@/lib/security/widget-session";
 
 export const runtime = "nodejs";
@@ -21,6 +22,27 @@ export async function POST(req: Request) {
       details: { route: "/api/widget/session" },
     });
     return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
+  }
+
+  const rate = await checkRateLimit({
+    scope: "widget_session",
+    workspaceId: workspace.id,
+    key: `${clientKey(req)}:${origin || "no-origin"}`,
+  });
+  if (!rate.allowed) {
+    await appendSecurityEvent({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      eventType: "rate_limited",
+      severity: "medium",
+      origin,
+      ipHash: rate.keyHash,
+      details: { route: "/api/widget/session", scope: rate.scope, store: rate.store, resetAt: rate.resetAt, limit: rate.limit },
+    });
+    return Response.json(
+      { error: "widget session rate limit exceeded", retryAfter: retryAfterSeconds(rate) },
+      { status: 429, headers: rateLimitHeaders(rate) },
+    );
   }
 
   const signed = createSignedWidgetSession({ workspaceId: workspace.id, origin });
@@ -59,4 +81,9 @@ export async function POST(req: Request) {
   });
 
   return Response.json({ required: true, token: signed.token, expiresAt: signed.expiresAt });
+}
+
+function clientKey(req: Request) {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || req.headers.get("x-real-ip") || "local-demo";
 }

@@ -9,7 +9,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Vercel AI SDK v6 with Google, OpenAI, or Anthropic providers
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
 - Workspace settings, verified widget domains, usage events, and approval policies
-- Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, and missing-knowledge tasks
+- Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, missing-knowledge tasks, and optional Redis-backed public API rate limits
 - Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
@@ -95,6 +95,12 @@ RESEND_API_KEY=...
 ESCALATION_FROM_EMAIL=...
 NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=...
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+SUPPORTPILOT_RATE_LIMIT_CHAT_PER_MINUTE=10
+SUPPORTPILOT_RATE_LIMIT_WIDGET_CONFIG_PER_MINUTE=120
+SUPPORTPILOT_RATE_LIMIT_WIDGET_SESSIONS_PER_5_MINUTES=30
+SUPPORTPILOT_RATE_LIMIT_UPLOADS_PER_HOUR=20
 STRIPE_SECRET_KEY=...
 STRIPE_WEBHOOK_SECRET=...
 STRIPE_LAUNCH_MONTHLY_PRICE_ID=...
@@ -107,6 +113,8 @@ STRIPE_BILLING_PORTAL_RETURN_URL=...
 ```
 
 `/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
+
+Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Without those variables, SupportPilot uses the local in-memory limiter for demos and tests. Chat, widget config, widget session creation, and knowledge upload boundaries all log `rate_limited` security events when blocked.
 
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 
@@ -131,6 +139,7 @@ SupportPilot2026!
 ```bash
 npm run typecheck
 npm run test:billing
+npm run test:rate-limit
 npm run test:rls
 npm run test:enterprise
 npm run test:production

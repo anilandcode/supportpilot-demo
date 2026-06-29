@@ -1,8 +1,9 @@
 import { PDFParse } from "pdf-parse";
 import { requireWorkspaceRole } from "@/lib/auth/api";
-import { createKnowledgeDocument } from "@/lib/db/support";
+import { appendSecurityEvent, createKnowledgeDocument } from "@/lib/db/support";
 import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import { chunkDocument } from "@/lib/rag/chunking";
+import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,27 @@ export async function POST(req: Request) {
   const auth = await requireWorkspaceRole(workspaceId || DEMO_WORKSPACE_ID, ["owner", "admin", "manager", "agent"]);
   if (!auth.ok) {
     return Response.json({ error: auth.error }, { status: auth.status });
+  }
+
+  const rate = await checkRateLimit({
+    scope: "knowledge_upload",
+    workspaceId: auth.workspaceId,
+    key: auth.userId || clientKey(req),
+  });
+  if (!rate.allowed) {
+    await appendSecurityEvent({
+      tenantId: auth.tenantId,
+      workspaceId: auth.workspaceId,
+      eventType: "rate_limited",
+      severity: "medium",
+      origin: req.headers.get("origin"),
+      ipHash: rate.keyHash,
+      details: { route: "/api/knowledge/upload", scope: rate.scope, store: rate.store, resetAt: rate.resetAt, limit: rate.limit },
+    });
+    return Response.json(
+      { error: "knowledge upload rate limit exceeded", retryAfter: retryAfterSeconds(rate) },
+      { status: 429, headers: rateLimitHeaders(rate) },
+    );
   }
 
   const title = String(formData.get("title") || (file instanceof File ? file.name.replace(/\.[^.]+$/, "") : "Pasted knowledge"));
@@ -58,4 +80,9 @@ async function extractText(file: File): Promise<string> {
   }
 
   return file.text();
+}
+
+function clientKey(req: Request) {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || req.headers.get("x-real-ip") || "local-demo";
 }

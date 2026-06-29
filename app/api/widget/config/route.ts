@@ -1,4 +1,5 @@
 import { appendSecurityEvent, getWidgetConfig, getWorkspace, isOriginAllowed } from "@/lib/db/support";
+import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,28 @@ export async function GET(req: Request) {
       details: { route: "/api/widget/config" },
     });
     return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
+  }
+
+  const origin = req.headers.get("origin");
+  const rate = await checkRateLimit({
+    scope: "widget_config",
+    workspaceId: workspace.id,
+    key: `${clientKey(req)}:${origin ?? "no-origin"}`,
+  });
+  if (!rate.allowed) {
+    await appendSecurityEvent({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      eventType: "rate_limited",
+      severity: "medium",
+      origin,
+      ipHash: rate.keyHash,
+      details: { route: "/api/widget/config", scope: rate.scope, store: rate.store, resetAt: rate.resetAt, limit: rate.limit },
+    });
+    return Response.json(
+      { error: "widget config rate limit exceeded", retryAfter: retryAfterSeconds(rate) },
+      { status: 429, headers: rateLimitHeaders(rate) },
+    );
   }
 
   const widgetConfig = await getWidgetConfig(workspace.id);
@@ -46,4 +69,9 @@ export async function GET(req: Request) {
       },
     },
   );
+}
+
+function clientKey(req: Request) {
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || req.headers.get("x-real-ip") || "local-demo";
 }
