@@ -1,4 +1,5 @@
 import {
+  canAccessAnyRole,
   canApproveDraft,
   canInviteRole,
   decideAdminRouteAccess,
@@ -7,6 +8,8 @@ import {
 } from "../lib/auth/permissions.ts";
 import { makeWidgetKey, slugifyWorkspaceName, ONBOARDING_CHECKLIST } from "../lib/auth/onboarding.ts";
 import { createInviteToken, hashInviteToken } from "../lib/auth/invitations.ts";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 
 const checks: Array<[string, boolean, string]> = [];
 
@@ -43,6 +46,8 @@ checks.push([
 checks.push(["owner can invite owner", canInviteRole("owner", "owner"), "owner"]);
 checks.push(["admin cannot invite owner", !canInviteRole("admin", "owner"), "admin"]);
 checks.push(["agent cannot invite agent", !canInviteRole("agent", "agent"), "agent"]);
+checks.push(["agent is accepted by staff gate", canAccessAnyRole("agent", ["owner", "admin", "manager", "agent"]), "agent"]);
+checks.push(["viewer is rejected by staff gate", !canAccessAnyRole("viewer", ["owner", "admin", "manager", "agent"]), "viewer"]);
 checks.push(["legacy admin maps to owner", profileRoleToMembershipRole("admin") === "owner", profileRoleToMembershipRole("admin")]);
 checks.push(["legacy manager maps to manager", profileRoleToMembershipRole("support_manager") === "manager", profileRoleToMembershipRole("support_manager")]);
 checks.push(["workspace slug normalizes names", slugifyWorkspaceName(" Acme Support, Inc. ") === "acme-support-inc", slugifyWorkspaceName(" Acme Support, Inc. ")]);
@@ -52,6 +57,13 @@ const token = createInviteToken();
 checks.push(["invite token is URL safe", /^[A-Za-z0-9_-]{32,}$/.test(token), token.slice(0, 8)]);
 checks.push(["invite token hashes deterministically", hashInviteToken(token) === hashInviteToken(token) && hashInviteToken(token).length === 64, hashInviteToken(token).slice(0, 8)]);
 checks.push(["widget key uses production prefix", makeWidgetKey().startsWith("wk_"), makeWidgetKey().slice(0, 3)]);
+
+const apiFiles = walk("app/api").filter((file) => file.endsWith("route.ts"));
+const legacyApiAuthFiles = apiFiles.filter((file) => {
+  const source = readFileSync(file, "utf8");
+  return source.includes("hasEnterpriseRole(") || source.includes("getDemoUser(");
+});
+checks.push(["API routes use workspace auth helpers", legacyApiAuthFiles.length === 0, legacyApiAuthFiles.join(",") || "none"]);
 
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
@@ -66,3 +78,10 @@ if (failed > 0) {
 }
 
 console.log("\nProduction-readiness checks passed\n");
+
+function walk(dir: string): string[] {
+  return readdirSync(dir).flatMap((entry) => {
+    const path = join(dir, entry);
+    return statSync(path).isDirectory() ? walk(path) : [path];
+  });
+}

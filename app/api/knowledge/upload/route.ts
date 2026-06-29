@@ -1,19 +1,20 @@
 import { PDFParse } from "pdf-parse";
-import { hasEnterpriseRole } from "@/lib/auth/roles";
+import { requireWorkspaceRole } from "@/lib/auth/api";
 import { createKnowledgeDocument } from "@/lib/db/support";
+import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import { chunkDocument } from "@/lib/rag/chunking";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  if (!(await hasEnterpriseRole(["support_agent", "support_manager", "admin"]))) {
-    return Response.json({ error: "forbidden" }, { status: 403 });
-  }
-
   const formData = await req.formData();
   const file = formData.get("file");
   const pastedContent = String(formData.get("content") || "");
   const workspaceId = String(formData.get("workspaceId") || "");
+  const auth = await requireWorkspaceRole(workspaceId || DEMO_WORKSPACE_ID, ["owner", "admin", "manager", "agent"]);
+  if (!auth.ok) {
+    return Response.json({ error: auth.error }, { status: auth.status });
+  }
 
   const title = String(formData.get("title") || (file instanceof File ? file.name.replace(/\.[^.]+$/, "") : "Pasted knowledge"));
   const sourceType = normalizeSourceType(String(formData.get("sourceType") || "upload"));
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
 
   const chunks = chunkDocument({ docId: "pending", title, content });
   const doc = await createKnowledgeDocument({
-    workspaceId: workspaceId || undefined,
+    workspaceId: auth.workspaceId,
     title,
     sourceType,
     content,

@@ -1,14 +1,15 @@
-import { hasEnterpriseRole } from "@/lib/auth/roles";
+import { requireWorkspaceRole } from "@/lib/auth/api";
 import { regenerateWorkspaceWidgetKey } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
 export async function POST(_req: Request, context: { params: Promise<{ workspaceId: string }> }) {
-  if (!(await hasEnterpriseRole(["support_manager", "admin"]))) {
-    return Response.json({ error: "forbidden" }, { status: 403 });
+  const { workspaceId } = await context.params;
+  const auth = await requireWorkspaceRole(workspaceId, ["owner", "admin"]);
+  if (!auth.ok) {
+    return Response.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { workspaceId } = await context.params;
   const workspace = await regenerateWorkspaceWidgetKey(workspaceId);
   return Response.json({ workspace });
 }

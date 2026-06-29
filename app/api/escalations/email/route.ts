@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { captureProductEvent } from "@/lib/analytics/events";
-import { hasEnterpriseRole } from "@/lib/auth/roles";
+import { requireWorkspaceRole } from "@/lib/auth/api";
 import { appendAuditLog, getTicket, getWorkspace, recordUsageEvent } from "@/lib/db/support";
 import { sendEscalationEmail } from "@/lib/integrations/resend";
 
@@ -15,10 +15,6 @@ const EscalationEmailSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  if (!(await hasEnterpriseRole(["support_agent", "support_manager", "admin"]))) {
-    return Response.json({ error: "forbidden" }, { status: 403 });
-  }
-
   const parsed = EscalationEmailSchema.safeParse(await req.json().catch(() => null));
 
   if (!parsed.success) {
@@ -27,6 +23,10 @@ export async function POST(req: Request) {
 
   const ticket = parsed.data.ticketId ? await getTicket(parsed.data.ticketId) : null;
   const workspace = await getWorkspace(parsed.data.workspaceId ?? ticket?.workspaceId);
+  const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin", "manager", "agent"]);
+  if (!auth.ok) {
+    return Response.json({ error: auth.error }, { status: auth.status });
+  }
   const to = parsed.data.to || workspace.escalationEmail;
   const subject = `[${workspace.name}] ${parsed.data.subject}`;
   const text = [ticket ? `Ticket: ${ticket.subject}` : null, parsed.data.body].filter(Boolean).join("\n\n");
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     tenantId: workspace.tenantId,
     workspaceId: workspace.id,
     ticketId: ticket?.id ?? null,
-    userId: null,
+    userId: auth.userId,
     action: "email.escalated",
     details: { to, subject, result },
   });

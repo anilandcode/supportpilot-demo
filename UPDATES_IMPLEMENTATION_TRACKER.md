@@ -42,7 +42,9 @@ Date: 2026-06-24
 - Added Supabase Auth pages for sign-up, magic link, forgot/reset password, portal login, and auth callback session exchange.
 - Added `/onboarding` first-run workspace creation UI and `POST /api/onboarding/workspace`.
 - Added invitation create/accept APIs plus `/invite/accept` UI with hashed, single-use invite-token flow.
-- Added `npm run test:production` for route permission, invitation, onboarding, slug, token, and widget-key checks.
+- Swept protected API routes to use workspace-membership helpers instead of legacy profile-role/demo-user checks.
+- Linked portal ticket creation to authenticated portal identities in Supabase mode while preserving demo fallback.
+- Added `npm run test:production` for route permission, invitation, onboarding, slug, token, widget-key, and API-auth regression checks.
 
 ## Deferred
 

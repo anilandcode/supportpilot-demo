@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { hasEnterpriseRole } from "@/lib/auth/roles";
-import { appendTicketMessage } from "@/lib/db/support";
-import { getDemoUser } from "@/lib/supabase/session";
+import { ensurePortalIdentity, requireTicketWorkspaceRole } from "@/lib/auth/api";
+import { appendTicketMessage, getTicket } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -17,15 +16,27 @@ export async function POST(req: Request, context: { params: Promise<{ ticketId: 
     return Response.json({ error: "message body is required", issues: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (parsed.data.sender !== "customer" && !(await hasEnterpriseRole(["support_agent", "support_manager", "admin"]))) {
-    return Response.json({ error: "forbidden" }, { status: 403 });
+  const ticket = await getTicket(ticketId);
+  if (!ticket) {
+    return Response.json({ error: "ticket not found" }, { status: 404 });
+  }
+
+  let authorId: string | null = null;
+  if (parsed.data.sender === "customer") {
+    const portal = await ensurePortalIdentity({ workspaceId: ticket.workspaceId, tenantId: ticket.tenantId, customerId: ticket.customerId });
+    if (!portal.ok) return Response.json({ error: portal.error }, { status: portal.status });
+    authorId = portal.userId;
+  } else {
+    const auth = await requireTicketWorkspaceRole(ticket, ["owner", "admin", "manager", "agent"]);
+    if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+    authorId = auth.userId;
   }
 
   const message = await appendTicketMessage({
     ticketId,
     sender: parsed.data.sender,
     body: parsed.data.body,
-    authorId: parsed.data.sender === "agent" ? getDemoUser("support_agent").id : null,
+    authorId,
   });
 
   if (!message) {

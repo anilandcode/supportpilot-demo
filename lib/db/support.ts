@@ -152,6 +152,50 @@ async function resolveCustomerId(workspaceId: string) {
   return localState.customers[0]?.id ?? crypto.randomUUID();
 }
 
+async function resolvePortalCustomer(input: { workspaceId: string; tenantId: string; email?: string | null }) {
+  const normalizedEmail = input.email?.toLowerCase().trim();
+  if (!normalizedEmail) return resolveCustomerId(input.workspaceId);
+
+  const localCustomer = localState.customers.find((customer) => customer.workspaceId === input.workspaceId && customer.email.toLowerCase() === normalizedEmail);
+  if (localCustomer) return localCustomer.id;
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data: existing } = await supabase.from("customers").select("id").eq("workspace_id", input.workspaceId).eq("email", normalizedEmail).maybeSingle();
+    if (existing?.id) return existing.id;
+  }
+
+  const nowCustomer: Customer = {
+    id: publicId("cus"),
+    tenantId: input.tenantId,
+    workspaceId: input.workspaceId,
+    name: normalizedEmail.split("@")[0] || "Customer",
+    email: normalizedEmail,
+    company: "Portal customer",
+    plan: "Free",
+    healthScore: 70,
+    metadata: { source: "portal" },
+  };
+
+  localState.customers.unshift(nowCustomer);
+
+  if (supabase) {
+    await supabase.from("customers").insert({
+      id: maybeUuid(nowCustomer.id),
+      tenant_id: maybeUuid(nowCustomer.tenantId),
+      workspace_id: maybeUuid(nowCustomer.workspaceId),
+      name: nowCustomer.name,
+      email: nowCustomer.email,
+      company: nowCustomer.company,
+      plan: nowCustomer.plan,
+      health_score: nowCustomer.healthScore,
+      metadata: nowCustomer.metadata,
+    });
+  }
+
+  return nowCustomer.id;
+}
+
 function normalizeDomain(domain: string) {
   return domain.replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
 }
@@ -356,13 +400,15 @@ export async function createPortalTicket(input: {
   subject: string;
   category?: string;
   description: string;
+  requesterEmail?: string | null;
+  requesterUserId?: string | null;
 }): Promise<TicketWithRelations> {
   const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
   const now = new Date().toISOString();
   const category = (input.category || "general").toLowerCase();
   const priority: TicketPriority = /billing|refund|security|legal|scim|sso/.test(category) ? "high" : "medium";
   const riskLevel: RiskLevel = /refund|security|legal|scim|sso/.test(category) ? "medium" : "low";
-  const customerId = await resolveCustomerId(workspace.id);
+  const customerId = await resolvePortalCustomer({ workspaceId: workspace.id, tenantId: workspace.tenantId, email: input.requesterEmail });
   const ticket: Ticket = {
     id: publicId("tkt"),
     tenantId: workspace.tenantId,
@@ -385,7 +431,7 @@ export async function createPortalTicket(input: {
     workspaceId: workspace.id,
     ticketId: ticket.id,
     sender: "customer",
-    authorId: null,
+    authorId: input.requesterUserId ?? null,
     body: input.description,
     createdAt: now,
   };
@@ -403,7 +449,7 @@ export async function createPortalTicket(input: {
     tenantId: workspace.tenantId,
     workspaceId: workspace.id,
     ticketId: ticket.id,
-    userId: null,
+    userId: input.requesterUserId ?? null,
     action: "ticket.portal.created",
     details: { category, subject: input.subject },
   });
@@ -606,6 +652,18 @@ export async function getTicket(ticketId: string): Promise<TicketWithRelations |
   });
 }
 
+export async function getAiRun(aiRunId: string): Promise<AIRun | null> {
+  const local = localState.aiRuns.find((item) => item.id === aiRunId);
+  if (local) return local;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase.from("ai_runs").select("*").eq("id", aiRunId).maybeSingle();
+  if (error || !data) return null;
+  return mapAiRun(data);
+}
+
 export async function listAgents(): Promise<EnterpriseUser[]> {
   const supabase = createSupabaseAdminClient();
   if (supabase) {
@@ -739,7 +797,7 @@ export async function updateAiRunDecision(input: {
   decision: AIRun["approvalStatus"];
   finalResponse?: string;
 }): Promise<AIRun | null> {
-  const run = localState.aiRuns.find((item) => item.id === input.aiRunId);
+  const run = localState.aiRuns.find((item) => item.id === input.aiRunId) ?? (await getAiRun(input.aiRunId));
   if (!run) return null;
 
   run.approvalStatus = input.decision;

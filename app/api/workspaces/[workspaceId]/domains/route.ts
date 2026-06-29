@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { hasEnterpriseRole } from "@/lib/auth/roles";
+import { requireWorkspaceRole } from "@/lib/auth/api";
 import { addWorkspaceDomain } from "@/lib/db/support";
 
 export const runtime = "nodejs";
@@ -9,11 +9,12 @@ const domainSchema = z.object({
 });
 
 export async function POST(req: Request, { params }: { params: Promise<{ workspaceId: string }> }) {
-  if (!(await hasEnterpriseRole(["support_manager", "admin"]))) {
-    return Response.json({ error: "forbidden" }, { status: 403 });
+  const { workspaceId } = await params;
+  const auth = await requireWorkspaceRole(workspaceId, ["owner", "admin"]);
+  if (!auth.ok) {
+    return Response.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { workspaceId } = await params;
   const parsed = domainSchema.safeParse(await req.json());
 
   if (!parsed.success) {

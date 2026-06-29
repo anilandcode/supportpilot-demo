@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { updateAiRunDecision } from "@/lib/db/support";
-import { getDemoUser } from "@/lib/supabase/session";
+import { requireWorkspaceRole } from "@/lib/auth/api";
+import { getAiRun, updateAiRunDecision } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -17,9 +17,19 @@ export async function PATCH(req: Request, context: { params: Promise<{ aiRunId: 
     return Response.json({ error: "decision must be approved, edited, rejected, or escalated" }, { status: 400 });
   }
 
+  const existingRun = await getAiRun(aiRunId);
+  if (!existingRun) {
+    return Response.json({ error: "ai run not found" }, { status: 404 });
+  }
+
+  const auth = await requireWorkspaceRole(existingRun.workspaceId, ["owner", "admin", "manager"]);
+  if (!auth.ok) {
+    return Response.json({ error: auth.error }, { status: auth.status });
+  }
+
   const run = await updateAiRunDecision({
     aiRunId,
-    userId: getDemoUser("support_manager").id,
+    userId: auth.userId,
     decision: parsed.data.decision,
     finalResponse: parsed.data.finalResponse,
   });
