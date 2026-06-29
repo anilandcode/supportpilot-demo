@@ -45,6 +45,7 @@ Date: 2026-06-24
 - Swept protected API routes to use workspace-membership helpers instead of legacy profile-role/demo-user checks.
 - Linked portal ticket creation to authenticated portal identities in Supabase mode while preserving demo fallback.
 - Added `npm run test:production` for route permission, invitation, onboarding, slug, token, widget-key, and API-auth regression checks.
+- Added `npm run test:rls`, `lib/auth/rls-matrix.ts`, and `RLS_VERIFICATION.md` to turn the RLS policy matrix into a repeatable local gate plus clean-project rehearsal checklist.
 
 ## Deferred
 
@@ -58,6 +59,7 @@ Date: 2026-06-24
 
 ```bash
 npm run typecheck
+npm run test:rls
 npm run test:enterprise
 npm run test:production
 npm run build

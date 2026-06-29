@@ -63,7 +63,7 @@
       "source_file": "proxy.ts",
       "source_location": "L1",
       "id": "proxy_ts",
-      "community": 71,
+      "community": 88,
       "norm_label": "proxy.ts"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "proxy.ts",
       "source_location": "L5",
       "id": "chatbot_demo_proxy_proxy",
-      "community": 71,
+      "community": 88,
       "norm_label": "proxy()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "proxy.ts",
       "source_location": "L74",
       "id": "chatbot_demo_proxy_config",
-      "community": 71,
+      "community": 88,
       "norm_label": "config"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "app/login/page.tsx",
       "source_location": "L6",
       "id": "login_page_metadata",
-      "community": 81,
+      "community": 71,
       "norm_label": "metadata"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L1",
       "id": "app_admin_tickets_ticketid_page_tsx",
-      "community": 4,
+      "community": 94,
       "norm_label": "page.tsx"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L7",
       "id": "ticketid_page_metadata",
-      "community": 4,
+      "community": 94,
       "norm_label": "metadata"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L14",
       "id": "ticketid_page_ticketdetailpage",
-      "community": 4,
+      "community": 94,
       "norm_label": "ticketdetailpage()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L13",
       "id": "knowledge_page_knowledgepage",
-      "community": 76,
+      "community": 70,
       "norm_label": "knowledgepage()"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "app/admin/approvals/page.tsx",
       "source_location": "L13",
       "id": "approvals_page_approvalspage",
-      "community": 70,
+      "community": 94,
       "norm_label": "approvalspage()"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L1",
       "id": "app_admin_billing_page_tsx",
-      "community": 63,
+      "community": 100,
       "norm_label": "page.tsx"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L9",
       "id": "billing_page_metadata",
-      "community": 63,
+      "community": 100,
       "norm_label": "metadata"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L16",
       "id": "billing_page_billingsearchparams",
-      "community": 63,
+      "community": 100,
       "norm_label": "billingsearchparams"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L195",
       "id": "billing_page_notice",
-      "community": 63,
+      "community": 100,
       "norm_label": "notice()"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L209",
       "id": "billing_page_usagecard",
-      "community": 63,
+      "community": 100,
       "norm_label": "usagecard()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L237",
       "id": "billing_page_planlimit",
-      "community": 63,
+      "community": 100,
       "norm_label": "planlimit()"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L246",
       "id": "billing_page_th",
-      "community": 63,
+      "community": 100,
       "norm_label": "th()"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L250",
       "id": "billing_page_td",
-      "community": 63,
+      "community": 100,
       "norm_label": "td()"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L1",
       "id": "app_api_tickets_ticketid_draft_route_ts",
-      "community": 71,
+      "community": 89,
       "norm_label": "route.ts"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L7",
       "id": "draft_route_post",
-      "community": 71,
+      "community": 89,
       "norm_label": "post()"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L1",
       "id": "app_api_tickets_ticketid_messages_route_ts",
-      "community": 71,
+      "community": 89,
       "norm_label": "route.ts"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L7",
       "id": "messages_route_ticketmessageschema",
-      "community": 71,
+      "community": 89,
       "norm_label": "ticketmessageschema"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L12",
       "id": "messages_route_post",
-      "community": 71,
+      "community": 89,
       "norm_label": "post()"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "app/api/widget/session/route.ts",
       "source_location": "L1",
       "id": "app_api_widget_session_route_ts",
-      "community": 66,
+      "community": 80,
       "norm_label": "route.ts"
     },
     {
@@ -963,7 +963,7 @@
       "source_file": "app/api/widget/session/route.ts",
       "source_location": "L6",
       "id": "session_route_post",
-      "community": 66,
+      "community": 80,
       "norm_label": "post()"
     },
     {
@@ -1017,7 +1017,7 @@
       "source_file": "app/api/chat/route.ts",
       "source_location": "L44",
       "id": "chat_route_logchatrun",
-      "community": 83,
+      "community": 95,
       "norm_label": "logchatrun()"
     },
     {
@@ -1116,7 +1116,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L1",
       "id": "app_api_ai_runs_airunid_decision_route_ts",
-      "community": 71,
+      "community": 89,
       "norm_label": "route.ts"
     },
     {
@@ -1125,7 +1125,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L7",
       "id": "decision_route_decisionschema",
-      "community": 71,
+      "community": 89,
       "norm_label": "decisionschema"
     },
     {
@@ -1134,7 +1134,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L12",
       "id": "decision_route_patch",
-      "community": 71,
+      "community": 89,
       "norm_label": "patch()"
     },
     {
@@ -1143,7 +1143,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/settings/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_settings_route_ts",
-      "community": 71,
+      "community": 81,
       "norm_label": "route.ts"
     },
     {
@@ -1152,7 +1152,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/settings/route.ts",
       "source_location": "L7",
       "id": "settings_route_settingsschema",
-      "community": 71,
+      "community": 81,
       "norm_label": "settingsschema"
     },
     {
@@ -1161,7 +1161,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/settings/route.ts",
       "source_location": "L16",
       "id": "settings_route_patch",
-      "community": 71,
+      "community": 81,
       "norm_label": "patch()"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_domains_route_ts",
-      "community": 71,
+      "community": 81,
       "norm_label": "route.ts"
     },
     {
@@ -1179,7 +1179,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L7",
       "id": "domains_route_domainschema",
-      "community": 71,
+      "community": 81,
       "norm_label": "domainschema"
     },
     {
@@ -1188,7 +1188,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L11",
       "id": "domains_route_post",
-      "community": 71,
+      "community": 81,
       "norm_label": "post()"
     },
     {
@@ -1197,7 +1197,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_widget_key_regenerate_route_ts",
-      "community": 71,
+      "community": 81,
       "norm_label": "route.ts"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L6",
       "id": "regenerate_route_post",
-      "community": 71,
+      "community": 81,
       "norm_label": "post()"
     },
     {
@@ -1215,7 +1215,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_invitations_route_ts",
-      "community": 71,
+      "community": 97,
       "norm_label": "route.ts"
     },
     {
@@ -1224,7 +1224,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L11",
       "id": "invitations_route_inviteschema",
-      "community": 71,
+      "community": 97,
       "norm_label": "inviteschema"
     },
     {
@@ -1233,7 +1233,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L16",
       "id": "invitations_route_post",
-      "community": 71,
+      "community": 97,
       "norm_label": "post()"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L1",
       "id": "app_api_knowledge_missing_route_ts",
-      "community": 70,
+      "community": 75,
       "norm_label": "route.ts"
     },
     {
@@ -1269,7 +1269,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L6",
       "id": "missing_route_missingknowledgeschema",
-      "community": 70,
+      "community": 75,
       "norm_label": "missingknowledgeschema"
     },
     {
@@ -1278,7 +1278,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L13",
       "id": "missing_route_get",
-      "community": 70,
+      "community": 75,
       "norm_label": "get()"
     },
     {
@@ -1287,7 +1287,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L19",
       "id": "missing_route_post",
-      "community": 70,
+      "community": 75,
       "norm_label": "post()"
     },
     {
@@ -1296,7 +1296,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L1",
       "id": "app_api_knowledge_upload_route_ts",
-      "community": 71,
+      "community": 96,
       "norm_label": "route.ts"
     },
     {
@@ -1305,7 +1305,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L9",
       "id": "upload_route_post",
-      "community": 71,
+      "community": 96,
       "norm_label": "post()"
     },
     {
@@ -1314,7 +1314,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L42",
       "id": "upload_route_normalizesourcetype",
-      "community": 71,
+      "community": 96,
       "norm_label": "normalizesourcetype()"
     },
     {
@@ -1323,7 +1323,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L49",
       "id": "upload_route_extracttext",
-      "community": 71,
+      "community": 96,
       "norm_label": "extracttext()"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "app/api/onboarding/workspace/route.ts",
       "source_location": "L1",
       "id": "app_api_onboarding_workspace_route_ts",
-      "community": 71,
+      "community": 90,
       "norm_label": "route.ts"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "app/api/onboarding/workspace/route.ts",
       "source_location": "L7",
       "id": "workspace_route_post",
-      "community": 71,
+      "community": 90,
       "norm_label": "post()"
     },
     {
@@ -1539,7 +1539,7 @@
       "source_file": "app/login/page.tsx",
       "source_location": "L1",
       "id": "app_login_page_tsx",
-      "community": 81,
+      "community": 71,
       "norm_label": "page.tsx"
     },
     {
@@ -1548,7 +1548,7 @@
       "source_file": "app/login/page.tsx",
       "source_location": "L11",
       "id": "login_page_loginpage",
-      "community": 81,
+      "community": 71,
       "norm_label": "loginpage()"
     },
     {
@@ -1629,7 +1629,7 @@
       "source_file": "components/ui/copy-button.tsx",
       "source_location": "L1",
       "id": "components_ui_copy_button_tsx",
-      "community": 39,
+      "community": 105,
       "norm_label": "copy-button.tsx"
     },
     {
@@ -1638,7 +1638,7 @@
       "source_file": "components/ui/copy-button.tsx",
       "source_location": "L6",
       "id": "ui_copy_button_copybuttonprops",
-      "community": 39,
+      "community": 105,
       "norm_label": "copybuttonprops"
     },
     {
@@ -1647,7 +1647,7 @@
       "source_file": "components/ui/copy-button.tsx",
       "source_location": "L11",
       "id": "ui_copy_button_copybutton",
-      "community": 39,
+      "community": 105,
       "norm_label": "copybutton()"
     },
     {
@@ -1656,7 +1656,7 @@
       "source_file": "components/ui/scroll-area.tsx",
       "source_location": "L1",
       "id": "components_ui_scroll_area_tsx",
-      "community": 69,
+      "community": 0,
       "norm_label": "scroll-area.tsx"
     },
     {
@@ -1665,7 +1665,7 @@
       "source_file": "components/ui/scroll-area.tsx",
       "source_location": "L6",
       "id": "ui_scroll_area_scrollareaprops",
-      "community": 69,
+      "community": 0,
       "norm_label": "scrollareaprops"
     },
     {
@@ -1674,7 +1674,7 @@
       "source_file": "components/ui/scroll-area.tsx",
       "source_location": "L10",
       "id": "ui_scroll_area_scrollarea",
-      "community": 69,
+      "community": 0,
       "norm_label": "scrollarea()"
     },
     {
@@ -1746,7 +1746,7 @@
       "source_file": "components/ui/widget-demo.tsx",
       "source_location": "L1",
       "id": "components_ui_widget_demo_tsx",
-      "community": 74,
+      "community": 106,
       "norm_label": "widget-demo.tsx"
     },
     {
@@ -1755,7 +1755,7 @@
       "source_file": "components/ui/widget-demo.tsx",
       "source_location": "L8",
       "id": "ui_widget_demo_widgetbubble",
-      "community": 74,
+      "community": 106,
       "norm_label": "widgetbubble()"
     },
     {
@@ -1809,7 +1809,7 @@
       "source_file": "components/ui/button.tsx",
       "source_location": "L1",
       "id": "components_ui_button_tsx",
-      "community": 35,
+      "community": 99,
       "norm_label": "button.tsx"
     },
     {
@@ -1818,7 +1818,7 @@
       "source_file": "components/ui/button.tsx",
       "source_location": "L3",
       "id": "ui_button_buttonprops",
-      "community": 35,
+      "community": 99,
       "norm_label": "buttonprops"
     },
     {
@@ -1827,7 +1827,7 @@
       "source_file": "components/ui/button.tsx",
       "source_location": "L9",
       "id": "ui_button_button",
-      "community": 35,
+      "community": 99,
       "norm_label": "button()"
     },
     {
@@ -1881,7 +1881,7 @@
       "source_file": "components/chat/escalation-button.tsx",
       "source_location": "L1",
       "id": "components_chat_escalation_button_tsx",
-      "community": 74,
+      "community": 99,
       "norm_label": "escalation-button.tsx"
     },
     {
@@ -1890,7 +1890,7 @@
       "source_file": "components/chat/escalation-button.tsx",
       "source_location": "L4",
       "id": "chat_escalation_button_escalationbuttonprops",
-      "community": 74,
+      "community": 99,
       "norm_label": "escalationbuttonprops"
     },
     {
@@ -1899,7 +1899,7 @@
       "source_file": "components/chat/escalation-button.tsx",
       "source_location": "L9",
       "id": "chat_escalation_button_escalationbutton",
-      "community": 74,
+      "community": 99,
       "norm_label": "escalationbutton()"
     },
     {
@@ -1908,7 +1908,7 @@
       "source_file": "components/chat/welcome-card.tsx",
       "source_location": "L1",
       "id": "components_chat_welcome_card_tsx",
-      "community": 74,
+      "community": 68,
       "norm_label": "welcome-card.tsx"
     },
     {
@@ -1917,7 +1917,7 @@
       "source_file": "components/chat/welcome-card.tsx",
       "source_location": "L7",
       "id": "chat_welcome_card_welcomecardprops",
-      "community": 74,
+      "community": 68,
       "norm_label": "welcomecardprops"
     },
     {
@@ -1926,7 +1926,7 @@
       "source_file": "components/chat/welcome-card.tsx",
       "source_location": "L11",
       "id": "chat_welcome_card_welcomecard",
-      "community": 74,
+      "community": 68,
       "norm_label": "welcomecard()"
     },
     {
@@ -1980,7 +1980,7 @@
       "source_file": "components/chat/typing-indicator.tsx",
       "source_location": "L1",
       "id": "components_chat_typing_indicator_tsx",
-      "community": 69,
+      "community": 68,
       "norm_label": "typing-indicator.tsx"
     },
     {
@@ -1998,7 +1998,7 @@
       "source_file": "components/chat/citations.tsx",
       "source_location": "L1",
       "id": "components_chat_citations_tsx",
-      "community": 0,
+      "community": 69,
       "norm_label": "citations.tsx"
     },
     {
@@ -2007,7 +2007,7 @@
       "source_file": "components/chat/citations.tsx",
       "source_location": "L4",
       "id": "chat_citations_citationsprops",
-      "community": 0,
+      "community": 69,
       "norm_label": "citationsprops"
     },
     {
@@ -2016,7 +2016,7 @@
       "source_file": "components/chat/citations.tsx",
       "source_location": "L8",
       "id": "chat_citations_citations",
-      "community": 0,
+      "community": 69,
       "norm_label": "citations()"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "components/chat/brand-avatar.tsx",
       "source_location": "L1",
       "id": "components_chat_brand_avatar_tsx",
-      "community": 0,
+      "community": 68,
       "norm_label": "brand-avatar.tsx"
     },
     {
@@ -2034,7 +2034,7 @@
       "source_file": "components/chat/brand-avatar.tsx",
       "source_location": "L4",
       "id": "chat_brand_avatar_brandavatarprops",
-      "community": 0,
+      "community": 68,
       "norm_label": "brandavatarprops"
     },
     {
@@ -2043,7 +2043,7 @@
       "source_file": "components/chat/brand-avatar.tsx",
       "source_location": "L8",
       "id": "chat_brand_avatar_brandavatar",
-      "community": 0,
+      "community": 68,
       "norm_label": "brandavatar()"
     },
     {
@@ -2052,7 +2052,7 @@
       "source_file": "components/chat/markdown-message.tsx",
       "source_location": "L1",
       "id": "components_chat_markdown_message_tsx",
-      "community": 88,
+      "community": 69,
       "norm_label": "markdown-message.tsx"
     },
     {
@@ -2061,7 +2061,7 @@
       "source_file": "components/chat/markdown-message.tsx",
       "source_location": "L3",
       "id": "chat_markdown_message_renderinline",
-      "community": 88,
+      "community": 69,
       "norm_label": "renderinline()"
     },
     {
@@ -2070,7 +2070,7 @@
       "source_file": "components/chat/markdown-message.tsx",
       "source_location": "L32",
       "id": "chat_markdown_message_markdownmessageprops",
-      "community": 88,
+      "community": 69,
       "norm_label": "markdownmessageprops"
     },
     {
@@ -2079,7 +2079,7 @@
       "source_file": "components/chat/markdown-message.tsx",
       "source_location": "L36",
       "id": "chat_markdown_message_markdownmessage",
-      "community": 88,
+      "community": 69,
       "norm_label": "markdownmessage()"
     },
     {
@@ -2151,7 +2151,7 @@
       "source_file": "components/chat/message.tsx",
       "source_location": "L1",
       "id": "components_chat_message_tsx",
-      "community": 0,
+      "community": 69,
       "norm_label": "message.tsx"
     },
     {
@@ -2160,7 +2160,7 @@
       "source_file": "components/chat/message.tsx",
       "source_location": "L13",
       "id": "chat_message_parsecitations",
-      "community": 0,
+      "community": 69,
       "norm_label": "parsecitations()"
     },
     {
@@ -2169,7 +2169,7 @@
       "source_file": "components/chat/message.tsx",
       "source_location": "L24",
       "id": "chat_message_messageprops",
-      "community": 0,
+      "community": 69,
       "norm_label": "messageprops"
     },
     {
@@ -2178,7 +2178,7 @@
       "source_file": "components/chat/message.tsx",
       "source_location": "L31",
       "id": "chat_message_message",
-      "community": 0,
+      "community": 69,
       "norm_label": "message()"
     },
     {
@@ -2286,7 +2286,7 @@
       "source_file": "components/enterprise/knowledge-uploader.tsx",
       "source_location": "L1",
       "id": "components_enterprise_knowledge_uploader_tsx",
-      "community": 35,
+      "community": 76,
       "norm_label": "knowledge-uploader.tsx"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "components/enterprise/knowledge-uploader.tsx",
       "source_location": "L7",
       "id": "enterprise_knowledge_uploader_knowledgeuploader",
-      "community": 35,
+      "community": 76,
       "norm_label": "knowledgeuploader()"
     },
     {
@@ -2304,7 +2304,7 @@
       "source_file": "components/enterprise/workspace-settings-form.tsx",
       "source_location": "L1",
       "id": "components_enterprise_workspace_settings_form_tsx",
-      "community": 35,
+      "community": 99,
       "norm_label": "workspace-settings-form.tsx"
     },
     {
@@ -2313,7 +2313,7 @@
       "source_file": "components/enterprise/workspace-settings-form.tsx",
       "source_location": "L9",
       "id": "enterprise_workspace_settings_form_workspacesettingsform",
-      "community": 35,
+      "community": 99,
       "norm_label": "workspacesettingsform()"
     },
     {
@@ -2322,7 +2322,7 @@
       "source_file": "components/enterprise/workspace-settings-form.tsx",
       "source_location": "L74",
       "id": "enterprise_workspace_settings_form_field",
-      "community": 35,
+      "community": 99,
       "norm_label": "field()"
     },
     {
@@ -2538,7 +2538,7 @@
       "source_file": "components/enterprise/ticket-ai-panel.tsx",
       "source_location": "L15",
       "id": "enterprise_ticket_ai_panel_ticketaipanel",
-      "community": 4,
+      "community": 94,
       "norm_label": "ticketaipanel()"
     },
     {
@@ -2547,7 +2547,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L1",
       "id": "components_enterprise_ticket_list_tsx",
-      "community": 5,
+      "community": 61,
       "norm_label": "ticket-list.tsx"
     },
     {
@@ -2556,7 +2556,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L6",
       "id": "enterprise_ticket_list_ticketlistprops",
-      "community": 5,
+      "community": 61,
       "norm_label": "ticketlistprops"
     },
     {
@@ -2565,7 +2565,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L10",
       "id": "enterprise_ticket_list_ticketlist",
-      "community": 5,
+      "community": 61,
       "norm_label": "ticketlist()"
     },
     {
@@ -2574,7 +2574,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L82",
       "id": "enterprise_ticket_list_th",
-      "community": 5,
+      "community": 61,
       "norm_label": "th()"
     },
     {
@@ -2583,7 +2583,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L86",
       "id": "enterprise_ticket_list_td",
-      "community": 5,
+      "community": 61,
       "norm_label": "td()"
     },
     {
@@ -2592,7 +2592,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L90",
       "id": "enterprise_ticket_list_formatdate",
-      "community": 5,
+      "community": 61,
       "norm_label": "formatdate()"
     },
     {
@@ -2601,7 +2601,7 @@
       "source_file": "components/enterprise/login-form.tsx",
       "source_location": "L1",
       "id": "components_enterprise_login_form_tsx",
-      "community": 81,
+      "community": 71,
       "norm_label": "login-form.tsx"
     },
     {
@@ -2610,7 +2610,7 @@
       "source_file": "components/enterprise/login-form.tsx",
       "source_location": "L7",
       "id": "enterprise_login_form_loginform",
-      "community": 81,
+      "community": 71,
       "norm_label": "loginform()"
     },
     {
@@ -2691,7 +2691,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L1",
       "id": "components_enterprise_admin_shell_tsx",
-      "community": 76,
+      "community": 61,
       "norm_label": "admin-shell.tsx"
     },
     {
@@ -2700,7 +2700,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L7",
       "id": "enterprise_admin_shell_nav_items",
-      "community": 76,
+      "community": 61,
       "norm_label": "nav_items"
     },
     {
@@ -2709,7 +2709,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L17",
       "id": "enterprise_admin_shell_adminshellprops",
-      "community": 76,
+      "community": 61,
       "norm_label": "adminshellprops"
     },
     {
@@ -2718,7 +2718,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L24",
       "id": "enterprise_admin_shell_adminshell",
-      "community": 76,
+      "community": 61,
       "norm_label": "adminshell()"
     },
     {
@@ -2727,7 +2727,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L1",
       "id": "components_enterprise_approval_audit_timeline_tsx",
-      "community": 4,
+      "community": 94,
       "norm_label": "approval-audit-timeline.tsx"
     },
     {
@@ -2736,7 +2736,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L4",
       "id": "enterprise_approval_audit_timeline_approvalaudittimelineprops",
-      "community": 4,
+      "community": 94,
       "norm_label": "approvalaudittimelineprops"
     },
     {
@@ -2745,7 +2745,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L8",
       "id": "enterprise_approval_audit_timeline_approvalaudittimeline",
-      "community": 4,
+      "community": 94,
       "norm_label": "approvalaudittimeline()"
     },
     {
@@ -3141,7 +3141,7 @@
       "source_file": "components/layout/nav.tsx",
       "source_location": "L1",
       "id": "components_layout_nav_tsx",
-      "community": 39,
+      "community": 104,
       "norm_label": "nav.tsx"
     },
     {
@@ -3150,7 +3150,7 @@
       "source_file": "components/layout/nav.tsx",
       "source_location": "L7",
       "id": "layout_nav_links",
-      "community": 39,
+      "community": 104,
       "norm_label": "links"
     },
     {
@@ -3159,7 +3159,7 @@
       "source_file": "components/layout/nav.tsx",
       "source_location": "L17",
       "id": "layout_nav_product_links",
-      "community": 39,
+      "community": 104,
       "norm_label": "product_links"
     },
     {
@@ -3168,7 +3168,7 @@
       "source_file": "components/layout/nav.tsx",
       "source_location": "L23",
       "id": "layout_nav_nav",
-      "community": 39,
+      "community": 104,
       "norm_label": "nav()"
     },
     {
@@ -3177,7 +3177,7 @@
       "source_file": "components/layout/footer.tsx",
       "source_location": "L1",
       "id": "components_layout_footer_tsx",
-      "community": 39,
+      "community": 103,
       "norm_label": "footer.tsx"
     },
     {
@@ -3186,7 +3186,7 @@
       "source_file": "components/layout/footer.tsx",
       "source_location": "L4",
       "id": "layout_footer_footer_columns",
-      "community": 39,
+      "community": 103,
       "norm_label": "footer_columns"
     },
     {
@@ -3195,7 +3195,7 @@
       "source_file": "components/layout/footer.tsx",
       "source_location": "L51",
       "id": "layout_footer_marqueeitems",
-      "community": 39,
+      "community": 103,
       "norm_label": "marqueeitems"
     },
     {
@@ -3204,7 +3204,7 @@
       "source_file": "components/layout/footer.tsx",
       "source_location": "L53",
       "id": "layout_footer_footer",
-      "community": 39,
+      "community": 103,
       "norm_label": "footer()"
     },
     {
@@ -3406,12 +3406,66 @@
       "norm_label": "setstyles()"
     },
     {
+      "label": "test-rls-production.ts",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L1",
+      "id": "scripts_test_rls_production_ts",
+      "community": 92,
+      "norm_label": "test-rls-production.ts"
+    },
+    {
+      "label": "migrationFiles",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L6",
+      "id": "scripts_test_rls_production_migrationfiles",
+      "community": 92,
+      "norm_label": "migrationfiles"
+    },
+    {
+      "label": "sql",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L11",
+      "id": "scripts_test_rls_production_sql",
+      "community": 92,
+      "norm_label": "sql"
+    },
+    {
+      "label": "checks",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L12",
+      "id": "scripts_test_rls_production_checks",
+      "community": 92,
+      "norm_label": "checks"
+    },
+    {
+      "label": "evidenceOk",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L26",
+      "id": "scripts_test_rls_production_evidenceok",
+      "community": 92,
+      "norm_label": "evidenceok"
+    },
+    {
+      "label": "hasRlsEnable()",
+      "file_type": "code",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L58",
+      "id": "scripts_test_rls_production_hasrlsenable",
+      "community": 92,
+      "norm_label": "hasrlsenable()"
+    },
+    {
       "label": "test-production-readiness.ts",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L1",
       "id": "scripts_test_production_readiness_ts",
-      "community": 71,
+      "community": 90,
       "norm_label": "test-production-readiness.ts"
     },
     {
@@ -3420,7 +3474,7 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L14",
       "id": "scripts_test_production_readiness_checks",
-      "community": 71,
+      "community": 90,
       "norm_label": "checks"
     },
     {
@@ -3429,7 +3483,7 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L56",
       "id": "scripts_test_production_readiness_token",
-      "community": 71,
+      "community": 90,
       "norm_label": "token"
     },
     {
@@ -3438,7 +3492,7 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L61",
       "id": "scripts_test_production_readiness_apifiles",
-      "community": 71,
+      "community": 90,
       "norm_label": "apifiles"
     },
     {
@@ -3447,7 +3501,7 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L62",
       "id": "scripts_test_production_readiness_legacyapiauthfiles",
-      "community": 71,
+      "community": 90,
       "norm_label": "legacyapiauthfiles"
     },
     {
@@ -3456,7 +3510,7 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L82",
       "id": "scripts_test_production_readiness_walk",
-      "community": 71,
+      "community": 90,
       "norm_label": "walk()"
     },
     {
@@ -3663,7 +3717,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L1",
       "id": "lib_analytics_ts",
-      "community": 75,
+      "community": 102,
       "norm_label": "analytics.ts"
     },
     {
@@ -3672,7 +3726,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L3",
       "id": "lib_analytics_conversationlog",
-      "community": 75,
+      "community": 102,
       "norm_label": "conversationlog"
     },
     {
@@ -3681,7 +3735,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L13",
       "id": "lib_analytics_feedbacklog",
-      "community": 75,
+      "community": 102,
       "norm_label": "feedbacklog"
     },
     {
@@ -3690,7 +3744,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L19",
       "id": "lib_analytics_analyticsstore",
-      "community": 75,
+      "community": 102,
       "norm_label": "analyticsstore"
     },
     {
@@ -3699,7 +3753,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L24",
       "id": "lib_analytics_globalforanalytics",
-      "community": 75,
+      "community": 102,
       "norm_label": "globalforanalytics"
     },
     {
@@ -3753,7 +3807,7 @@
       "source_file": "lib/system-prompt.ts",
       "source_location": "L1",
       "id": "lib_system_prompt_ts",
-      "community": 49,
+      "community": 7,
       "norm_label": "system-prompt.ts"
     },
     {
@@ -3762,7 +3816,7 @@
       "source_file": "lib/system-prompt.ts",
       "source_location": "L5",
       "id": "lib_system_prompt_buildsystemprompt",
-      "community": 49,
+      "community": 7,
       "norm_label": "buildsystemprompt()"
     },
     {
@@ -3789,7 +3843,7 @@
       "source_file": "lib/types.ts",
       "source_location": "L8",
       "id": "lib_types_citation",
-      "community": 75,
+      "community": 69,
       "norm_label": "citation"
     },
     {
@@ -3825,7 +3879,7 @@
       "source_file": "lib/retriever.ts",
       "source_location": "L9",
       "id": "lib_retriever_chunk",
-      "community": 49,
+      "community": 7,
       "norm_label": "chunk"
     },
     {
@@ -3960,7 +4014,7 @@
       "source_file": "lib/retriever.ts",
       "source_location": "L183",
       "id": "lib_retriever_formatcontext",
-      "community": 49,
+      "community": 7,
       "norm_label": "formatcontext()"
     },
     {
@@ -4005,7 +4059,7 @@
       "source_file": "lib/theme.ts",
       "source_location": "L91",
       "id": "lib_theme_getinitials",
-      "community": 0,
+      "community": 68,
       "norm_label": "getinitials()"
     },
     {
@@ -4014,7 +4068,7 @@
       "source_file": "lib/generation.ts",
       "source_location": "L1",
       "id": "lib_generation_ts",
-      "community": 49,
+      "community": 83,
       "norm_label": "generation.ts"
     },
     {
@@ -4023,7 +4077,7 @@
       "source_file": "lib/generation.ts",
       "source_location": "L6",
       "id": "lib_generation_providername",
-      "community": 49,
+      "community": 83,
       "norm_label": "providername"
     },
     {
@@ -4032,7 +4086,7 @@
       "source_file": "lib/generation.ts",
       "source_location": "L8",
       "id": "lib_generation_getprovidername",
-      "community": 49,
+      "community": 83,
       "norm_label": "getprovidername()"
     },
     {
@@ -4041,7 +4095,7 @@
       "source_file": "lib/generation.ts",
       "source_location": "L14",
       "id": "lib_generation_getmodelreadiness",
-      "community": 49,
+      "community": 83,
       "norm_label": "getmodelreadiness()"
     },
     {
@@ -4050,7 +4104,7 @@
       "source_file": "lib/generation.ts",
       "source_location": "L35",
       "id": "lib_generation_getlanguagemodel",
-      "community": 49,
+      "community": 83,
       "norm_label": "getlanguagemodel()"
     },
     {
@@ -4095,7 +4149,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L1",
       "id": "lib_enterprise_demo_data_ts",
-      "community": 27,
+      "community": 24,
       "norm_label": "demo-data.ts"
     },
     {
@@ -4104,7 +4158,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L33",
       "id": "enterprise_demo_data_now",
-      "community": 27,
+      "community": 24,
       "norm_label": "now"
     },
     {
@@ -4113,7 +4167,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L35",
       "id": "enterprise_demo_data_iso",
-      "community": 27,
+      "community": 24,
       "norm_label": "iso()"
     },
     {
@@ -4122,7 +4176,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L44",
       "id": "enterprise_demo_data_contenthash",
-      "community": 27,
+      "community": 24,
       "norm_label": "contenthash()"
     },
     {
@@ -4131,7 +4185,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L53",
       "id": "enterprise_demo_data_demoorganizations",
-      "community": 24,
+      "community": 23,
       "norm_label": "demoorganizations"
     },
     {
@@ -4149,7 +4203,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L82",
       "id": "enterprise_demo_data_demousers",
-      "community": 27,
+      "community": 24,
       "norm_label": "demousers"
     },
     {
@@ -4176,7 +4230,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L106",
       "id": "enterprise_demo_data_demowidgetconfigs",
-      "community": 27,
+      "community": 24,
       "norm_label": "demowidgetconfigs"
     },
     {
@@ -4194,7 +4248,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L128",
       "id": "enterprise_demo_data_ticketsubjects",
-      "community": 27,
+      "community": 24,
       "norm_label": "ticketsubjects"
     },
     {
@@ -4212,7 +4266,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L168",
       "id": "enterprise_demo_data_demomessages",
-      "community": 23,
+      "community": 24,
       "norm_label": "demomessages"
     },
     {
@@ -4221,7 +4275,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L191",
       "id": "enterprise_demo_data_docbodies",
-      "community": 27,
+      "community": 24,
       "norm_label": "docbodies"
     },
     {
@@ -4230,7 +4284,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L204",
       "id": "enterprise_demo_data_demoknowledgedocs",
-      "community": 27,
+      "community": 24,
       "norm_label": "demoknowledgedocs"
     },
     {
@@ -4257,7 +4311,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L240",
       "id": "enterprise_demo_data_demoapprovalpolicies",
-      "community": 23,
+      "community": 24,
       "norm_label": "demoapprovalpolicies"
     },
     {
@@ -4293,7 +4347,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L299",
       "id": "enterprise_demo_data_demousageevents",
-      "community": 27,
+      "community": 24,
       "norm_label": "demousageevents"
     },
     {
@@ -4302,7 +4356,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L309",
       "id": "enterprise_demo_data_checklist",
-      "community": 27,
+      "community": 24,
       "norm_label": "checklist"
     },
     {
@@ -4320,7 +4374,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L332",
       "id": "enterprise_demo_data_demogoldenquestions",
-      "community": 27,
+      "community": 24,
       "norm_label": "demogoldenquestions"
     },
     {
@@ -4338,7 +4392,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L372",
       "id": "enterprise_demo_data_demomodelroutelogs",
-      "community": 27,
+      "community": 24,
       "norm_label": "demomodelroutelogs"
     },
     {
@@ -4374,7 +4428,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L442",
       "id": "enterprise_demo_data_demotooldefinitions",
-      "community": 27,
+      "community": 24,
       "norm_label": "demotooldefinitions"
     },
     {
@@ -4383,7 +4437,7 @@
       "source_file": "lib/enterprise/demo-data.ts",
       "source_location": "L448",
       "id": "enterprise_demo_data_demotoolcalls",
-      "community": 27,
+      "community": 24,
       "norm_label": "demotoolcalls"
     },
     {
@@ -4428,7 +4482,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L1",
       "id": "enterprise_types_userrole",
-      "community": 71,
+      "community": 98,
       "norm_label": "userrole"
     },
     {
@@ -4437,7 +4491,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L2",
       "id": "enterprise_types_ticketstatus",
-      "community": 61,
+      "community": 27,
       "norm_label": "ticketstatus"
     },
     {
@@ -4446,7 +4500,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L3",
       "id": "enterprise_types_ticketpriority",
-      "community": 61,
+      "community": 27,
       "norm_label": "ticketpriority"
     },
     {
@@ -4482,7 +4536,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L7",
       "id": "enterprise_types_membershiprole",
-      "community": 71,
+      "community": 88,
       "norm_label": "membershiprole"
     },
     {
@@ -4554,7 +4608,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L49",
       "id": "enterprise_types_organization",
-      "community": 27,
+      "community": 24,
       "norm_label": "organization"
     },
     {
@@ -4572,7 +4626,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L74",
       "id": "enterprise_types_membership",
-      "community": 27,
+      "community": 24,
       "norm_label": "membership"
     },
     {
@@ -4608,7 +4662,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L121",
       "id": "enterprise_types_widgetconfig",
-      "community": 27,
+      "community": 24,
       "norm_label": "widgetconfig"
     },
     {
@@ -4653,7 +4707,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L180",
       "id": "enterprise_types_knowledgedoc",
-      "community": 27,
+      "community": 24,
       "norm_label": "knowledgedoc"
     },
     {
@@ -4662,7 +4716,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L193",
       "id": "enterprise_types_documentchunk",
-      "community": 27,
+      "community": 3,
       "norm_label": "documentchunk"
     },
     {
@@ -4680,7 +4734,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L240",
       "id": "enterprise_types_aifeedback",
-      "community": 27,
+      "community": 24,
       "norm_label": "aifeedback"
     },
     {
@@ -4707,7 +4761,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L274",
       "id": "enterprise_types_goldenquestion",
-      "community": 27,
+      "community": 23,
       "norm_label": "goldenquestion"
     },
     {
@@ -4716,7 +4770,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L285",
       "id": "enterprise_types_missingknowledgetask",
-      "community": 23,
+      "community": 24,
       "norm_label": "missingknowledgetask"
     },
     {
@@ -4725,7 +4779,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L296",
       "id": "enterprise_types_modelroutelog",
-      "community": 27,
+      "community": 24,
       "norm_label": "modelroutelog"
     },
     {
@@ -4896,7 +4950,7 @@
       "source_file": "lib/security/markdown.ts",
       "source_location": "L1",
       "id": "lib_security_markdown_ts",
-      "community": 83,
+      "community": 49,
       "norm_label": "markdown.ts"
     },
     {
@@ -4905,7 +4959,7 @@
       "source_file": "lib/security/markdown.ts",
       "source_location": "L1",
       "id": "security_markdown_sanitizeassistanttext",
-      "community": 83,
+      "community": 49,
       "norm_label": "sanitizeassistanttext()"
     },
     {
@@ -5031,7 +5085,7 @@
       "source_file": "lib/security/redaction.ts",
       "source_location": "L44",
       "id": "security_redaction_previewredactedtext",
-      "community": 83,
+      "community": 66,
       "norm_label": "previewredactedtext()"
     },
     {
@@ -5049,7 +5103,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L1",
       "id": "lib_auth_invitations_ts",
-      "community": 71,
+      "community": 97,
       "norm_label": "invitations.ts"
     },
     {
@@ -5058,7 +5112,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L3",
       "id": "auth_invitations_createinvitetoken",
-      "community": 71,
+      "community": 97,
       "norm_label": "createinvitetoken()"
     },
     {
@@ -5067,7 +5121,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L7",
       "id": "auth_invitations_hashinvitetoken",
-      "community": 71,
+      "community": 97,
       "norm_label": "hashinvitetoken()"
     },
     {
@@ -5076,7 +5130,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L11",
       "id": "auth_invitations_inviteurlfromrequest",
-      "community": 71,
+      "community": 97,
       "norm_label": "inviteurlfromrequest()"
     },
     {
@@ -5085,7 +5139,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L1",
       "id": "lib_auth_permissions_ts",
-      "community": 71,
+      "community": 88,
       "norm_label": "permissions.ts"
     },
     {
@@ -5094,7 +5148,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L3",
       "id": "auth_permissions_authpersona",
-      "community": 71,
+      "community": 88,
       "norm_label": "authpersona"
     },
     {
@@ -5103,7 +5157,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L5",
       "id": "auth_permissions_role_rank",
-      "community": 71,
+      "community": 88,
       "norm_label": "role_rank"
     },
     {
@@ -5112,7 +5166,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L14",
       "id": "auth_permissions_admin_roles",
-      "community": 71,
+      "community": 88,
       "norm_label": "admin_roles"
     },
     {
@@ -5121,7 +5175,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L15",
       "id": "auth_permissions_staff_roles",
-      "community": 71,
+      "community": 88,
       "norm_label": "staff_roles"
     },
     {
@@ -5130,7 +5184,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L16",
       "id": "auth_permissions_approval_roles",
-      "community": 71,
+      "community": 88,
       "norm_label": "approval_roles"
     },
     {
@@ -5139,7 +5193,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L17",
       "id": "auth_permissions_owner_roles",
-      "community": 71,
+      "community": 88,
       "norm_label": "owner_roles"
     },
     {
@@ -5148,7 +5202,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L19",
       "id": "auth_permissions_routeaccessdecision",
-      "community": 71,
+      "community": 88,
       "norm_label": "routeaccessdecision"
     },
     {
@@ -5157,7 +5211,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L25",
       "id": "auth_permissions_canperformmembershipaction",
-      "community": 71,
+      "community": 98,
       "norm_label": "canperformmembershipaction()"
     },
     {
@@ -5166,7 +5220,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L29",
       "id": "auth_permissions_canaccessanyrole",
-      "community": 71,
+      "community": 81,
       "norm_label": "canaccessanyrole()"
     },
     {
@@ -5175,7 +5229,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L33",
       "id": "auth_permissions_getrequiredadminroles",
-      "community": 71,
+      "community": 88,
       "norm_label": "getrequiredadminroles()"
     },
     {
@@ -5184,7 +5238,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L41",
       "id": "auth_permissions_decideadminrouteaccess",
-      "community": 71,
+      "community": 88,
       "norm_label": "decideadminrouteaccess()"
     },
     {
@@ -5193,7 +5247,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L59",
       "id": "auth_permissions_profileroletomembershiprole",
-      "community": 71,
+      "community": 90,
       "norm_label": "profileroletomembershiprole()"
     },
     {
@@ -5202,7 +5256,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L66",
       "id": "auth_permissions_caninviterole",
-      "community": 71,
+      "community": 97,
       "norm_label": "caninviterole()"
     },
     {
@@ -5211,7 +5265,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L72",
       "id": "auth_permissions_canapprovedraft",
-      "community": 71,
+      "community": 98,
       "norm_label": "canapprovedraft()"
     },
     {
@@ -5220,7 +5274,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L77",
       "id": "auth_permissions_canaccessportal",
-      "community": 71,
+      "community": 88,
       "norm_label": "canaccessportal()"
     },
     {
@@ -5229,7 +5283,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L1",
       "id": "lib_auth_api_ts",
-      "community": 71,
+      "community": 81,
       "norm_label": "api.ts"
     },
     {
@@ -5238,7 +5292,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L8",
       "id": "auth_api_apiauthresult",
-      "community": 71,
+      "community": 81,
       "norm_label": "apiauthresult"
     },
     {
@@ -5247,7 +5301,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L12",
       "id": "auth_api_requireworkspacerole",
-      "community": 71,
+      "community": 81,
       "norm_label": "requireworkspacerole()"
     },
     {
@@ -5256,7 +5310,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L33",
       "id": "auth_api_requireticketworkspacerole",
-      "community": 71,
+      "community": 89,
       "norm_label": "requireticketworkspacerole()"
     },
     {
@@ -5265,7 +5319,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L37",
       "id": "auth_api_getauthenticateduser",
-      "community": 71,
+      "community": 81,
       "norm_label": "getauthenticateduser()"
     },
     {
@@ -5274,8 +5328,80 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L47",
       "id": "auth_api_ensureportalidentity",
-      "community": 71,
+      "community": 81,
       "norm_label": "ensureportalidentity()"
+    },
+    {
+      "label": "rls-matrix.ts",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L1",
+      "id": "lib_auth_rls_matrix_ts",
+      "community": 92,
+      "norm_label": "rls-matrix.ts"
+    },
+    {
+      "label": "RlsActor",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L1",
+      "id": "auth_rls_matrix_rlsactor",
+      "community": 92,
+      "norm_label": "rlsactor"
+    },
+    {
+      "label": "RlsOperation",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L2",
+      "id": "auth_rls_matrix_rlsoperation",
+      "community": 92,
+      "norm_label": "rlsoperation"
+    },
+    {
+      "label": "RlsExpectation",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L4",
+      "id": "auth_rls_matrix_rlsexpectation",
+      "community": 92,
+      "norm_label": "rlsexpectation"
+    },
+    {
+      "label": "REQUIRED_RLS_TABLES",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L13",
+      "id": "auth_rls_matrix_required_rls_tables",
+      "community": 92,
+      "norm_label": "required_rls_tables"
+    },
+    {
+      "label": "REQUIRED_RLS_HELPERS",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L48",
+      "id": "auth_rls_matrix_required_rls_helpers",
+      "community": 92,
+      "norm_label": "required_rls_helpers"
+    },
+    {
+      "label": "RLS_EXPECTATIONS",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L58",
+      "id": "auth_rls_matrix_rls_expectations",
+      "community": 92,
+      "norm_label": "rls_expectations"
+    },
+    {
+      "label": "describeRlsMatrix()",
+      "file_type": "code",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L133",
+      "id": "auth_rls_matrix_describerlsmatrix",
+      "community": 92,
+      "norm_label": "describerlsmatrix()"
     },
     {
       "label": "onboarding.ts",
@@ -5283,7 +5409,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L1",
       "id": "lib_auth_onboarding_ts",
-      "community": 71,
+      "community": 90,
       "norm_label": "onboarding.ts"
     },
     {
@@ -5292,7 +5418,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L3",
       "id": "auth_onboarding_onboarding_checklist",
-      "community": 71,
+      "community": 90,
       "norm_label": "onboarding_checklist"
     },
     {
@@ -5301,7 +5427,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L46",
       "id": "auth_onboarding_slugifyworkspacename",
-      "community": 71,
+      "community": 90,
       "norm_label": "slugifyworkspacename()"
     },
     {
@@ -5310,7 +5436,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L55",
       "id": "auth_onboarding_makeuniqueslug",
-      "community": 71,
+      "community": 90,
       "norm_label": "makeuniqueslug()"
     },
     {
@@ -5319,7 +5445,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L59",
       "id": "auth_onboarding_makewidgetkey",
-      "community": 71,
+      "community": 90,
       "norm_label": "makewidgetkey()"
     },
     {
@@ -5328,7 +5454,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L1",
       "id": "lib_auth_roles_ts",
-      "community": 71,
+      "community": 98,
       "norm_label": "roles.ts"
     },
     {
@@ -5337,7 +5463,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L9",
       "id": "auth_roles_getcurrententerpriseuser",
-      "community": 76,
+      "community": 81,
       "norm_label": "getcurrententerpriseuser"
     },
     {
@@ -5346,7 +5472,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L42",
       "id": "auth_roles_hasenterpriserole",
-      "community": 71,
+      "community": 81,
       "norm_label": "hasenterpriserole()"
     },
     {
@@ -5355,7 +5481,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L49",
       "id": "auth_roles_currentworkspacemembership",
-      "community": 71,
+      "community": 98,
       "norm_label": "currentworkspacemembership"
     },
     {
@@ -5364,7 +5490,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L57",
       "id": "auth_roles_getcurrentworkspacemembership",
-      "community": 71,
+      "community": 97,
       "norm_label": "getcurrentworkspacemembership"
     },
     {
@@ -5373,7 +5499,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L96",
       "id": "auth_roles_hasworkspacepermission",
-      "community": 71,
+      "community": 98,
       "norm_label": "hasworkspacepermission()"
     },
     {
@@ -5589,7 +5715,7 @@
       "source_file": "lib/rag/retrieval.ts",
       "source_location": "L9",
       "id": "rag_retrieval_retrieveenterprisechunks",
-      "community": 3,
+      "community": 83,
       "norm_label": "retrieveenterprisechunks()"
     },
     {
@@ -5634,7 +5760,7 @@
       "source_file": "lib/rag/chunking.ts",
       "source_location": "L1",
       "id": "lib_rag_chunking_ts",
-      "community": 71,
+      "community": 96,
       "norm_label": "chunking.ts"
     },
     {
@@ -5643,7 +5769,7 @@
       "source_file": "lib/rag/chunking.ts",
       "source_location": "L4",
       "id": "rag_chunking_pendingdocumentchunk",
-      "community": 71,
+      "community": 96,
       "norm_label": "pendingdocumentchunk"
     },
     {
@@ -5652,7 +5778,7 @@
       "source_file": "lib/rag/chunking.ts",
       "source_location": "L9",
       "id": "rag_chunking_chunkdocument",
-      "community": 71,
+      "community": 96,
       "norm_label": "chunkdocument()"
     },
     {
@@ -5661,7 +5787,7 @@
       "source_file": "lib/rag/chunking.ts",
       "source_location": "L36",
       "id": "rag_chunking_splitsections",
-      "community": 71,
+      "community": 96,
       "norm_label": "splitsections()"
     },
     {
@@ -5670,7 +5796,7 @@
       "source_file": "lib/rag/chunking.ts",
       "source_location": "L62",
       "id": "rag_chunking_makechunk",
-      "community": 71,
+      "community": 96,
       "norm_label": "makechunk()"
     },
     {
@@ -5688,7 +5814,7 @@
       "source_file": "lib/supabase/admin.ts",
       "source_location": "L4",
       "id": "supabase_admin_createsupabaseadminclient",
-      "community": 86,
+      "community": 70,
       "norm_label": "createsupabaseadminclient()"
     },
     {
@@ -5715,7 +5841,7 @@
       "source_file": "lib/supabase/session.ts",
       "source_location": "L1",
       "id": "lib_supabase_session_ts",
-      "community": 71,
+      "community": 89,
       "norm_label": "session.ts"
     },
     {
@@ -5724,7 +5850,7 @@
       "source_file": "lib/supabase/session.ts",
       "source_location": "L4",
       "id": "supabase_session_getdemouser",
-      "community": 71,
+      "community": 89,
       "norm_label": "getdemouser()"
     },
     {
@@ -5742,7 +5868,7 @@
       "source_file": "lib/supabase/config.ts",
       "source_location": "L1",
       "id": "supabase_config_hassupabaseenv",
-      "community": 71,
+      "community": 81,
       "norm_label": "hassupabaseenv()"
     },
     {
@@ -5904,7 +6030,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L117",
       "id": "db_support_publicid",
-      "community": 86,
+      "community": 95,
       "norm_label": "publicid()"
     },
     {
@@ -5940,7 +6066,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L136",
       "id": "db_support_tenantidforworkspace",
-      "community": 71,
+      "community": 70,
       "norm_label": "tenantidforworkspace()"
     },
     {
@@ -5985,7 +6111,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L212",
       "id": "db_support_getworkspace",
-      "community": 86,
+      "community": 80,
       "norm_label": "getworkspace()"
     },
     {
@@ -6012,7 +6138,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L257",
       "id": "db_support_completeonboardingstep",
-      "community": 86,
+      "community": 95,
       "norm_label": "completeonboardingstep()"
     },
     {
@@ -6039,7 +6165,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L311",
       "id": "db_support_updateworkspacesettings",
-      "community": 71,
+      "community": 70,
       "norm_label": "updateworkspacesettings()"
     },
     {
@@ -6048,7 +6174,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L358",
       "id": "db_support_listworkspacedomains",
-      "community": 86,
+      "community": 70,
       "norm_label": "listworkspacedomains()"
     },
     {
@@ -6057,7 +6183,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L369",
       "id": "db_support_addworkspacedomain",
-      "community": 86,
+      "community": 80,
       "norm_label": "addworkspacedomain()"
     },
     {
@@ -6075,7 +6201,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L460",
       "id": "db_support_appendticketmessage",
-      "community": 86,
+      "community": 95,
       "norm_label": "appendticketmessage()"
     },
     {
@@ -6084,7 +6210,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L515",
       "id": "db_support_regenerateworkspacewidgetkey",
-      "community": 86,
+      "community": 80,
       "norm_label": "regenerateworkspacewidgetkey()"
     },
     {
@@ -6111,7 +6237,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L565",
       "id": "db_support_recordusageevent",
-      "community": 83,
+      "community": 95,
       "norm_label": "recordusageevent()"
     },
     {
@@ -6120,7 +6246,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L588",
       "id": "db_support_listapprovalpolicies",
-      "community": 86,
+      "community": 70,
       "norm_label": "listapprovalpolicies()"
     },
     {
@@ -6129,7 +6255,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L599",
       "id": "db_support_listtickets",
-      "community": 62,
+      "community": 94,
       "norm_label": "listtickets()"
     },
     {
@@ -6138,7 +6264,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L630",
       "id": "db_support_getticket",
-      "community": 71,
+      "community": 89,
       "norm_label": "getticket()"
     },
     {
@@ -6147,7 +6273,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L655",
       "id": "db_support_getairun",
-      "community": 71,
+      "community": 89,
       "norm_label": "getairun()"
     },
     {
@@ -6165,7 +6291,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L680",
       "id": "db_support_listknowledgedocs",
-      "community": 76,
+      "community": 70,
       "norm_label": "listknowledgedocs()"
     },
     {
@@ -6174,7 +6300,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L690",
       "id": "db_support_listdocumentchunks",
-      "community": 3,
+      "community": 70,
       "norm_label": "listdocumentchunks()"
     },
     {
@@ -6183,7 +6309,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L700",
       "id": "db_support_createknowledgedocument",
-      "community": 86,
+      "community": 95,
       "norm_label": "createknowledgedocument()"
     },
     {
@@ -6192,7 +6318,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L760",
       "id": "db_support_createairun",
-      "community": 83,
+      "community": 95,
       "norm_label": "createairun()"
     },
     {
@@ -6201,7 +6327,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L794",
       "id": "db_support_updateairundecision",
-      "community": 86,
+      "community": 95,
       "norm_label": "updateairundecision()"
     },
     {
@@ -6228,7 +6354,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L900",
       "id": "db_support_createmissingknowledgetask",
-      "community": 86,
+      "community": 75,
       "norm_label": "createmissingknowledgetask()"
     },
     {
@@ -6237,7 +6363,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L933",
       "id": "db_support_createmodelroutelog",
-      "community": 83,
+      "community": 95,
       "norm_label": "createmodelroutelog()"
     },
     {
@@ -6273,7 +6399,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L997",
       "id": "db_support_createwidgetsession",
-      "community": 66,
+      "community": 80,
       "norm_label": "createwidgetsession()"
     },
     {
@@ -6282,7 +6408,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1022",
       "id": "db_support_appendgroundingcheck",
-      "community": 86,
+      "community": 83,
       "norm_label": "appendgroundingcheck()"
     },
     {
@@ -6291,7 +6417,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1039",
       "id": "db_support_appendpolicyevaluation",
-      "community": 86,
+      "community": 83,
       "norm_label": "appendpolicyevaluation()"
     },
     {
@@ -6300,7 +6426,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1056",
       "id": "db_support_appendagentrun",
-      "community": 86,
+      "community": 83,
       "norm_label": "appendagentrun()"
     },
     {
@@ -6309,7 +6435,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1073",
       "id": "db_support_appendtoolcall",
-      "community": 86,
+      "community": 83,
       "norm_label": "appendtoolcall()"
     },
     {
@@ -6327,7 +6453,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1100",
       "id": "db_support_listauditlogs",
-      "community": 4,
+      "community": 94,
       "norm_label": "listauditlogs()"
     },
     {
@@ -6336,7 +6462,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1114",
       "id": "db_support_appendauditlog",
-      "community": 86,
+      "community": 95,
       "norm_label": "appendauditlog()"
     },
     {
@@ -6462,7 +6588,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1354",
       "id": "db_support_mapretentionsetting",
-      "community": 70,
+      "community": 23,
       "norm_label": "mapretentionsetting()"
     },
     {
@@ -6561,7 +6687,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1518",
       "id": "db_support_mapairun",
-      "community": 71,
+      "community": 89,
       "norm_label": "mapairun()"
     },
     {
@@ -6570,7 +6696,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1551",
       "id": "db_support_toworkspacedomainrow",
-      "community": 86,
+      "community": 80,
       "norm_label": "toworkspacedomainrow()"
     },
     {
@@ -6651,7 +6777,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1698",
       "id": "db_support_tomissingknowledgetaskrow",
-      "community": 86,
+      "community": 75,
       "norm_label": "tomissingknowledgetaskrow()"
     },
     {
@@ -6669,7 +6795,7 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1731",
       "id": "db_support_tosecurityeventrow",
-      "community": 80,
+      "community": 86,
       "norm_label": "tosecurityeventrow()"
     },
     {
@@ -7027,7 +7153,7 @@
       "label": "Deferred",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L49",
+      "source_location": "L50",
       "id": "chatbot_demo_updates_implementation_tracker_deferred",
       "community": 48,
       "norm_label": "deferred"
@@ -7036,7 +7162,7 @@
       "label": "Verification Commands",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L57",
+      "source_location": "L58",
       "id": "chatbot_demo_updates_implementation_tracker_verification_commands",
       "community": 48,
       "norm_label": "verification commands"
@@ -7045,7 +7171,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L59",
+      "source_location": "L60",
       "id": "chatbot_demo_updates_implementation_tracker_codeblock_1",
       "community": 48,
       "norm_label": "code:bash (npm run typecheck)"
@@ -7121,6 +7247,69 @@
       "id": "chatbot_demo_architecture_observability",
       "community": 45,
       "norm_label": "observability"
+    },
+    {
+      "label": "RLS_VERIFICATION.md",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L1",
+      "id": "rls_verification_md",
+      "community": 101,
+      "norm_label": "rls_verification.md"
+    },
+    {
+      "label": "RLS Verification",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L1",
+      "id": "chatbot_demo_rls_verification_rls_verification",
+      "community": 101,
+      "norm_label": "rls verification"
+    },
+    {
+      "label": "Local Static Gate",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L8",
+      "id": "chatbot_demo_rls_verification_local_static_gate",
+      "community": 101,
+      "norm_label": "local static gate"
+    },
+    {
+      "label": "code:bash (npm run test:rls)",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L12",
+      "id": "chatbot_demo_rls_verification_codeblock_1",
+      "community": 101,
+      "norm_label": "code:bash (npm run test:rls)"
+    },
+    {
+      "label": "Clean Supabase Rehearsal",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L26",
+      "id": "chatbot_demo_rls_verification_clean_supabase_rehearsal",
+      "community": 101,
+      "norm_label": "clean supabase rehearsal"
+    },
+    {
+      "label": "code:bash (supabase db push)",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L32",
+      "id": "chatbot_demo_rls_verification_codeblock_2",
+      "community": 101,
+      "norm_label": "code:bash (supabase db push)"
+    },
+    {
+      "label": "Production Gate",
+      "file_type": "document",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L75",
+      "id": "chatbot_demo_rls_verification_production_gate",
+      "community": 101,
+      "norm_label": "production gate"
     },
     {
       "label": "README.md",
@@ -7252,7 +7441,7 @@
       "label": "Docs",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L130",
+      "source_location": "L132",
       "id": "chatbot_demo_readme_docs",
       "community": 8,
       "norm_label": "docs"
@@ -13724,7 +13913,7 @@
       "file_type": "code",
       "source_file": "proxy.ts",
       "source_location": "L4",
-      "community": 71,
+      "community": 88,
       "norm_label": "staff_roles",
       "id": "chatbot_demo_proxy_staff_roles"
     },
@@ -13733,7 +13922,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L45",
-      "community": 71,
+      "community": 98,
       "norm_label": "role_rank",
       "id": "auth_roles_role_rank"
     },
@@ -13742,7 +13931,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L54",
-      "community": 71,
+      "community": 98,
       "norm_label": "profileroletomembershiprole()",
       "id": "auth_roles_profileroletomembershiprole"
     },
@@ -13751,7 +13940,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L61",
-      "community": 71,
+      "community": 98,
       "norm_label": "canperformmembershipaction()",
       "id": "auth_roles_canperformmembershipaction"
     },
@@ -13778,7 +13967,7 @@
       "file_type": "code",
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L66",
-      "community": 4,
+      "community": 94,
       "norm_label": "info()",
       "id": "ticketid_page_info"
     },
@@ -17796,9 +17985,9 @@
       "source_file": "app/api/escalations/email/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_escalations_email_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -17807,9 +17996,9 @@
       "source_file": "app/api/escalations/email/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_escalations_email_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -18025,9 +18214,9 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_draft_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -18036,9 +18225,9 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_draft_route_ts",
-      "target": "auth_api_requireticketworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireticketworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -18047,9 +18236,9 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_draft_route_ts",
-      "target": "lib_db_support_ts",
-      "confidence_score": 1.0
+      "target": "lib_db_support_ts"
     },
     {
       "relation": "imports",
@@ -18058,9 +18247,9 @@
       "source_file": "app/api/tickets/[ticketId]/draft/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_draft_route_ts",
-      "target": "db_support_getticket",
-      "confidence_score": 1.0
+      "target": "db_support_getticket"
     },
     {
       "relation": "imports_from",
@@ -18167,9 +18356,9 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_messages_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -18178,9 +18367,9 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_messages_route_ts",
-      "target": "auth_api_ensureportalidentity",
-      "confidence_score": 1.0
+      "target": "auth_api_ensureportalidentity"
     },
     {
       "relation": "imports",
@@ -18189,9 +18378,9 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_messages_route_ts",
-      "target": "auth_api_requireticketworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireticketworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -18222,9 +18411,9 @@
       "source_file": "app/api/tickets/[ticketId]/messages/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_tickets_ticketid_messages_route_ts",
-      "target": "db_support_getticket",
-      "confidence_score": 1.0
+      "target": "db_support_getticket"
     },
     {
       "relation": "contains",
@@ -18363,9 +18552,9 @@
       "source_file": "app/api/portal/tickets/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_portal_tickets_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -18374,9 +18563,9 @@
       "source_file": "app/api/portal/tickets/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_portal_tickets_route_ts",
-      "target": "auth_api_ensureportalidentity",
-      "confidence_score": 1.0
+      "target": "auth_api_ensureportalidentity"
     },
     {
       "relation": "imports_from",
@@ -18407,9 +18596,9 @@
       "source_file": "app/api/portal/tickets/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_portal_tickets_route_ts",
-      "target": "db_support_getworkspace",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspace"
     },
     {
       "relation": "contains",
@@ -19798,9 +19987,9 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_ai_runs_airunid_decision_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -19809,9 +19998,9 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_ai_runs_airunid_decision_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -19831,9 +20020,9 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_ai_runs_airunid_decision_route_ts",
-      "target": "db_support_getairun",
-      "confidence_score": 1.0
+      "target": "db_support_getairun"
     },
     {
       "relation": "imports",
@@ -19939,9 +20128,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/settings/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_settings_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -19950,9 +20139,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/settings/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_settings_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -20058,9 +20247,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -20069,9 +20258,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -20177,9 +20366,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_widget_key_regenerate_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -20188,9 +20377,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_widget_key_regenerate_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -20775,9 +20964,9 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_knowledge_upload_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -20786,9 +20975,9 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_knowledge_upload_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -20819,9 +21008,9 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_knowledge_upload_route_ts",
-      "target": "lib_enterprise_demo_data_ts",
-      "confidence_score": 1.0
+      "target": "lib_enterprise_demo_data_ts"
     },
     {
       "relation": "imports_from",
@@ -25708,6 +25897,111 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "lib_auth_rls_matrix_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "auth_rls_matrix_required_rls_helpers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "auth_rls_matrix_required_rls_tables",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "auth_rls_matrix_rls_expectations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "auth_rls_matrix_describerlsmatrix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "scripts_test_rls_production_migrationfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "scripts_test_rls_production_sql",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "scripts_test_rls_production_checks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "scripts_test_rls_production_evidenceok",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-rls-production.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "scripts_test_rls_production_ts",
+      "target": "scripts_test_rls_production_hasrlsenable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -25722,9 +26016,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "auth_permissions_canaccessanyrole",
-      "confidence_score": 1.0
+      "target": "auth_permissions_canaccessanyrole"
     },
     {
       "relation": "imports",
@@ -25884,9 +26178,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "scripts_test_production_readiness_apifiles",
-      "confidence_score": 1.0
+      "target": "scripts_test_production_readiness_apifiles"
     },
     {
       "relation": "contains",
@@ -25894,9 +26188,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "scripts_test_production_readiness_legacyapiauthfiles",
-      "confidence_score": 1.0
+      "target": "scripts_test_production_readiness_legacyapiauthfiles"
     },
     {
       "relation": "contains",
@@ -25904,9 +26198,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L82",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "scripts_test_production_readiness_walk",
-      "confidence_score": 1.0
+      "target": "scripts_test_production_readiness_walk"
     },
     {
       "relation": "imports_from",
@@ -28893,9 +29187,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_enterprise_types_ts",
-      "confidence_score": 1.0
+      "target": "lib_enterprise_types_ts"
     },
     {
       "relation": "imports_from",
@@ -29190,9 +29484,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "enterprise_types_membershiprole",
-      "confidence_score": 1.0
+      "target": "enterprise_types_membershiprole"
     },
     {
       "relation": "imports",
@@ -29751,9 +30045,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "enterprise_types_ticketwithrelations",
-      "confidence_score": 1.0
+      "target": "enterprise_types_ticketwithrelations"
     },
     {
       "relation": "imports",
@@ -30379,9 +30673,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_auth_permissions_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_permissions_ts"
     },
     {
       "relation": "imports_from",
@@ -30445,9 +30739,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_permissions_canaccessanyrole",
-      "confidence_score": 1.0
+      "target": "auth_permissions_canaccessanyrole"
     },
     {
       "relation": "calls",
@@ -30489,9 +30783,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_auth_roles_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_roles_ts"
     },
     {
       "relation": "imports",
@@ -30500,9 +30794,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_roles_getcurrententerpriseuser",
-      "confidence_score": 1.0
+      "target": "auth_roles_getcurrententerpriseuser"
     },
     {
       "relation": "imports",
@@ -30511,9 +30805,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_roles_getcurrentworkspacemembership",
-      "confidence_score": 1.0
+      "target": "auth_roles_getcurrentworkspacemembership"
     },
     {
       "relation": "imports_from",
@@ -30522,9 +30816,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_supabase_admin_ts",
-      "confidence_score": 1.0
+      "target": "lib_supabase_admin_ts"
     },
     {
       "relation": "imports",
@@ -30533,9 +30827,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "supabase_admin_createsupabaseadminclient",
-      "confidence_score": 1.0
+      "target": "supabase_admin_createsupabaseadminclient"
     },
     {
       "relation": "imports_from",
@@ -30544,9 +30838,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_supabase_config_ts",
-      "confidence_score": 1.0
+      "target": "lib_supabase_config_ts"
     },
     {
       "relation": "imports",
@@ -30555,9 +30849,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "supabase_config_hassupabaseadminenv",
-      "confidence_score": 1.0
+      "target": "supabase_config_hassupabaseadminenv"
     },
     {
       "relation": "imports",
@@ -30566,9 +30860,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "supabase_config_hassupabaseenv",
-      "confidence_score": 1.0
+      "target": "supabase_config_hassupabaseenv"
     },
     {
       "relation": "imports_from",
@@ -30577,9 +30871,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "lib_supabase_server_ts",
-      "confidence_score": 1.0
+      "target": "lib_supabase_server_ts"
     },
     {
       "relation": "imports",
@@ -30588,9 +30882,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "supabase_server_createsupabaseserverclient",
-      "confidence_score": 1.0
+      "target": "supabase_server_createsupabaseserverclient"
     },
     {
       "relation": "contains",
@@ -30598,9 +30892,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_api_apiauthresult",
-      "confidence_score": 1.0
+      "target": "auth_api_apiauthresult"
     },
     {
       "relation": "contains",
@@ -30608,9 +30902,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "contains",
@@ -30618,9 +30912,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_api_requireticketworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireticketworkspacerole"
     },
     {
       "relation": "contains",
@@ -30628,9 +30922,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_api_getauthenticateduser",
-      "confidence_score": 1.0
+      "target": "auth_api_getauthenticateduser"
     },
     {
       "relation": "contains",
@@ -30638,9 +30932,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_auth_api_ts",
-      "target": "auth_api_ensureportalidentity",
-      "confidence_score": 1.0
+      "target": "auth_api_ensureportalidentity"
     },
     {
       "relation": "calls",
@@ -30649,9 +30943,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "auth_api_requireticketworkspacerole",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "calls",
@@ -30693,9 +30987,9 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "auth_api_ensureportalidentity",
-      "target": "auth_api_getauthenticateduser",
-      "confidence_score": 1.0
+      "target": "auth_api_getauthenticateduser"
     },
     {
       "relation": "calls",
@@ -30762,6 +31056,76 @@
       "weight": 1.0,
       "source": "auth_api_ensureportalidentity",
       "target": "supabase_admin_createsupabaseadminclient"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_rlsactor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_rlsoperation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_rlsexpectation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_required_rls_tables",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_required_rls_helpers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_rls_expectations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/auth/rls-matrix.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "lib_auth_rls_matrix_ts",
+      "target": "auth_rls_matrix_describerlsmatrix",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -32877,9 +33241,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_resolveportalcustomer",
-      "confidence_score": 1.0
+      "target": "db_support_resolveportalcustomer"
     },
     {
       "relation": "contains",
@@ -33087,9 +33451,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L655",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_getairun",
-      "confidence_score": 1.0
+      "target": "db_support_getairun"
     },
     {
       "relation": "contains",
@@ -33739,9 +34103,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L169",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_resolveportalcustomer",
-      "target": "db_support_publicid",
-      "confidence_score": 1.0
+      "target": "db_support_publicid"
     },
     {
       "relation": "calls",
@@ -33937,9 +34301,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_resolveportalcustomer",
-      "target": "db_support_maybeuuid",
-      "confidence_score": 1.0
+      "target": "db_support_maybeuuid"
     },
     {
       "relation": "calls",
@@ -34355,9 +34719,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_resolveportalcustomer",
-      "target": "db_support_resolvecustomerid",
-      "confidence_score": 1.0
+      "target": "db_support_resolvecustomerid"
     },
     {
       "relation": "calls",
@@ -34377,9 +34741,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L411",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_createportalticket",
-      "target": "db_support_resolveportalcustomer",
-      "confidence_score": 1.0
+      "target": "db_support_resolveportalcustomer"
     },
     {
       "relation": "calls",
@@ -35092,9 +35456,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L664",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getairun",
-      "target": "db_support_mapairun",
-      "confidence_score": 1.0
+      "target": "db_support_mapairun"
     },
     {
       "relation": "calls",
@@ -35103,9 +35467,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L800",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_updateairundecision",
-      "target": "db_support_getairun",
-      "confidence_score": 1.0
+      "target": "db_support_getairun"
     },
     {
       "relation": "imports",
@@ -35990,6 +36354,66 @@
       "confidence_score": 1.0,
       "source": "chatbot_demo_architecture_architecture",
       "target": "chatbot_demo_architecture_observability"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "rls_verification_md",
+      "target": "chatbot_demo_rls_verification_rls_verification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "chatbot_demo_rls_verification_rls_verification",
+      "target": "chatbot_demo_rls_verification_local_static_gate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "chatbot_demo_rls_verification_rls_verification",
+      "target": "chatbot_demo_rls_verification_clean_supabase_rehearsal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "chatbot_demo_rls_verification_rls_verification",
+      "target": "chatbot_demo_rls_verification_production_gate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "chatbot_demo_rls_verification_local_static_gate",
+      "target": "chatbot_demo_rls_verification_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "RLS_VERIFICATION.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "chatbot_demo_rls_verification_clean_supabase_rehearsal",
+      "target": "chatbot_demo_rls_verification_codeblock_2",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -43133,5 +43557,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8c78a0cd60010d94fae8e18c1fa19d91273ef7c8"
+  "built_at_commit": "a879dd18264ab62d471377fb15edd2cd398bbc34"
 }

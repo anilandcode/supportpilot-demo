@@ -120,7 +120,9 @@ SupportPilot2026!
 
 ```bash
 npm run typecheck
+npm run test:rls
 npm run test:enterprise
+npm run test:production
 npm run build
 git diff --check
 ```
@@ -133,6 +135,7 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `DESIGN.md` - product UX and design system decisions
 - `ARCHITECTURE.md` - Supabase, RAG, workflow, auth, observability
 - `SECURITY.md` - RLS, roles, secrets, AI safety boundaries
+- `RLS_VERIFICATION.md` - static RLS gate and clean Supabase project rehearsal checklist
 - `EVALS.md` - automated and manual evaluation plan
 - `ROLE_ALIGNMENT.md` - portfolio role mapping
 - `ROADMAP.md` - production hardening and integrations
