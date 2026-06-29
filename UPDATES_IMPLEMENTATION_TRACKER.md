@@ -33,6 +33,17 @@ Date: 2026-06-24
 - Read-only tool registry scaffolding for `search_knowledge`, `get_ticket_history`, and `get_workspace_policy`.
 - Billing page, optional Stripe customer portal handoff, current-period usage meters, model route cost grouping, and enforced Launch/Pro chat limits.
 
+## Production Readiness Phase 1 Started
+
+- Update docs `19` through `24` added and indexed in `README.md`.
+- Added additive production auth migration `004_production_auth_onboarding.sql` for membership status, invitations, portal identities, onboarding sessions, role helper functions, and customer-owned RLS policies.
+- Added shared permission rules for owner/admin/manager/agent route access, invite authorization, approval authorization, and legacy profile-role mapping.
+- Updated `proxy.ts` to protect `/admin` with active workspace membership roles while keeping `/onboarding` available to authenticated first-run users.
+- Added Supabase Auth pages for sign-up, magic link, forgot/reset password, portal login, and auth callback session exchange.
+- Added `/onboarding` first-run workspace creation UI and `POST /api/onboarding/workspace`.
+- Added invitation create/accept APIs plus `/invite/accept` UI with hashed, single-use invite-token flow.
+- Added `npm run test:production` for route permission, invitation, onboarding, slug, token, and widget-key checks.
+
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
@@ -46,6 +57,7 @@ Date: 2026-06-24
 ```bash
 npm run typecheck
 npm run test:enterprise
+npm run test:production
 npm run build
 git diff --check
 graphify update .

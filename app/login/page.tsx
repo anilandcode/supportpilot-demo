@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LoginForm } from "@/components/enterprise/login-form";
 import { theme } from "@/lib/theme";
 
@@ -19,6 +20,17 @@ export default function LoginPage() {
           </p>
         </div>
         <LoginForm />
+        <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm text-foreground-2">
+          <Link href="/sign-up" className="font-semibold text-accent">
+            Create workspace
+          </Link>
+          <Link href="/magic-link" className="font-semibold text-accent">
+            Use magic link
+          </Link>
+          <Link href="/forgot-password" className="font-semibold text-accent">
+            Forgot password?
+          </Link>
+        </div>
       </div>
     </main>
   );

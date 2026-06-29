@@ -1,5 +1,7 @@
 import { cache } from "react";
 import type { EnterpriseUser, MembershipRole, UserRole } from "@/lib/enterprise/types";
+import { DEMO_WORKSPACE_ID, demoMemberships } from "@/lib/enterprise/demo-data";
+import { canPerformMembershipAction, profileRoleToMembershipRole } from "@/lib/auth/permissions";
 import { getDemoUser } from "@/lib/supabase/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/config";
@@ -42,28 +44,57 @@ export async function hasEnterpriseRole(allowedRoles: UserRole[]) {
   return Boolean(user && allowedRoles.includes(user.role));
 }
 
-const ROLE_RANK: Record<MembershipRole, number> = {
-  viewer: 10,
-  analyst: 20,
-  agent: 30,
-  manager: 40,
-  admin: 50,
-  owner: 60,
+export { canPerformMembershipAction, profileRoleToMembershipRole };
+
+export type CurrentWorkspaceMembership = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  role: MembershipRole;
+  status: "active" | "invited" | "disabled";
 };
 
-export function profileRoleToMembershipRole(role: UserRole): MembershipRole {
-  if (role === "admin") return "owner";
-  if (role === "support_manager") return "manager";
-  if (role === "support_agent") return "agent";
-  return "viewer";
-}
+export const getCurrentWorkspaceMembership = cache(async (workspaceId = DEMO_WORKSPACE_ID): Promise<CurrentWorkspaceMembership | null> => {
+  const user = await getCurrentEnterpriseUser();
+  if (!user) return null;
 
-export function canPerformMembershipAction(role: MembershipRole, minimumRole: MembershipRole) {
-  return ROLE_RANK[role] >= ROLE_RANK[minimumRole];
-}
+  if (!hasSupabaseEnv()) {
+    const demoMembership =
+      demoMemberships.find((membership) => membership.userId === user.id && membership.workspaceId === workspaceId) ??
+      demoMemberships.find((membership) => membership.userId === user.id);
+    if (!demoMembership) return null;
+    return {
+      id: demoMembership.id,
+      tenantId: demoMembership.tenantId,
+      workspaceId: demoMembership.workspaceId,
+      role: demoMembership.role,
+      status: demoMembership.status ?? "active",
+    };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  let query = supabase
+    .from("memberships")
+    .select("id,tenant_id,workspace_id,role,status")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: true });
+
+  if (workspaceId) query = query.eq("workspace_id", workspaceId);
+
+  const { data } = await query.limit(1).maybeSingle();
+  if (!data) return null;
+  return {
+    id: data.id,
+    tenantId: data.tenant_id,
+    workspaceId: data.workspace_id,
+    role: data.role,
+    status: data.status ?? "active",
+  };
+});
 
 export async function hasWorkspacePermission(minimumRole: MembershipRole) {
-  const user = await getCurrentEnterpriseUser();
-  if (!user) return false;
-  return canPerformMembershipAction(profileRoleToMembershipRole(user.role), minimumRole);
+  const membership = await getCurrentWorkspaceMembership();
+  if (!membership) return false;
+  return canPerformMembershipAction(membership.role, minimumRole);
 }

@@ -1,7 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-const STAFF_ROLES = new Set(["support_agent", "support_manager", "admin"]);
+import { decideAdminRouteAccess } from "@/lib/auth/permissions";
 
 export async function proxy(request: NextRequest) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -42,21 +41,36 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    const decision = decideAdminRouteAccess({ authenticated: false, role: null, pathname: request.nextUrl.pathname });
+    return NextResponse.redirect(new URL(decision.redirectTo ?? "/login", request.url));
   }
 
-  const { data: profile } = await supabase.from("users").select("role").eq("id", user.id).maybeSingle();
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("role")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
-  if (!profile || !STAFF_ROLES.has(profile.role)) {
-    return NextResponse.redirect(new URL("/portal", request.url));
+  if (request.nextUrl.pathname.startsWith("/onboarding")) {
+    return response;
+  }
+
+  const decision = decideAdminRouteAccess({
+    authenticated: true,
+    role: membership?.role ?? null,
+    pathname: request.nextUrl.pathname,
+  });
+
+  if (!decision.allowed) {
+    return NextResponse.redirect(new URL(decision.redirectTo ?? "/portal", request.url));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: "/admin/:path*",
+  matcher: ["/admin/:path*", "/onboarding/:path*"],
 };

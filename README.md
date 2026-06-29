@@ -146,4 +146,10 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `Updates/16_GoogleStitch_Dashboard_Prompts.md` - admin, ticket, approval, knowledge, analytics, settings, security, billing, and widget screen prompts
 - `Updates/17_Feature_Set_Matrix.md` - Launch, Pro, and Enterprise feature/tier matrix
 - `Updates/18_Redesign_Action_Plan.md` - phased redesign and launch-readiness action plan
+- `Updates/19_Production_Readiness_Gap_Analysis.md` - production gap matrix and priority stack
+- `Updates/20_Auth_and_Onboarding_Plan.md` - Supabase Auth, RBAC, invite, portal identity, and onboarding plan
+- `Updates/21_Billing_Stripe_Lifecycle_Plan.md` - Stripe checkout, webhook, subscription, entitlement, and dunning plan
+- `Updates/22_Integrations_and_Infra_Hardening_Plan.md` - integrations, RLS proof, embeddings, rate limits, domains, retention, and local runtime plan
+- `Updates/23_Testing_and_QA_Strategy.md` - production test pyramid, RLS matrix, Playwright journeys, evals, and CI gates
+- `Updates/24_Production_Execution_Roadmap.md` - phased production-completion roadmap and go-live runbook
 - `Design Upgrade/` - LynAI-style SupportPilot marketing handoff, clean HTML prototype, and related design artifacts

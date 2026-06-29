@@ -92,3 +92,18 @@ This audit maps the requested enterprise upgrade requirements to the current imp
 | Accessible interactions for mobile menu, tabs, FAQ, carousel, and reduced motion | PASS | `components/layout/nav.tsx` adds `aria-expanded`, hidden state, and Escape close; `landing-page.tsx` adds tab keyboard support, FAQ buttons, testimonial controls, and CSS reduced-motion fallbacks. |
 | Stable marketing anchors and existing product links | PASS | `#product`, `#integrations`, `#support-flow`, `#security`, `#analytics`, `#pricing`, `#solutions`, `#docs`, and `#demo` are present; links to `/admin`, `/portal`, `/embed`, knowledge, analytics, and demo URL are preserved. |
 | Update docs for design direction and repo index | PASS | `DESIGN.md` records the warm editorial marketing system and admin boundary; `README.md` indexes `Design Upgrade/`. |
+
+## Production Readiness Updates 19-24 Audit
+
+| Requirement | Status | Evidence |
+| --- | --- | --- |
+| Add production readiness docs 19-24 as research artifacts | PASS | `Updates/19_Production_Readiness_Gap_Analysis.md` through `Updates/24_Production_Execution_Roadmap.md` are present and indexed in `README.md`. |
+| Start with identity, tenancy, RLS proof, and onboarding before more UI polish | PASS | This pass adds `supabase/migrations/004_production_auth_onboarding.sql`, membership-aware route protection, `/onboarding`, auth screens, invitation APIs, and production-readiness tests. |
+| Add invitation and membership lifecycle foundations | PARTIAL | `invitations`, membership `status`/`accepted_at`, invite create/accept APIs, token hashing, and role gating are implemented; email delivery and member-management UI are still future work. |
+| Add customer portal identity foundation | PARTIAL | `portal_identities` table, RLS helper, portal login route, and customer-owned RLS policies are implemented; full portal account dashboard remains future work. |
+| Add live-in-24h onboarding flow | PARTIAL | `/onboarding` creates first workspace state and shows launch checklist using existing onboarding services; full multi-step wizard screens for docs, brand, domains, widget, and golden-question execution remain follow-up work. |
+| Enforce membership roles in route protection | PARTIAL | `proxy.ts` now resolves active `memberships.role` and uses `lib/auth/permissions.ts` for admin route gating; API routes still need a full sweep from legacy profile-role checks to workspace-role checks. |
+| Add production-readiness automated checks | PASS | `npm run test:production` covers route role matrix, invite permissions, token hashing, onboarding checklist shape, slugging, and widget key generation. |
+| Clean Supabase RLS proof on live project | PARTIAL | Migration `004` adds helper functions and policies for invitations, portal identities, onboarding sessions, and customer-owned tickets/messages; live clean-project execution still requires Supabase credentials. |
+| Stripe lifecycle production implementation | FAIL | Still planned in `Updates/21`; current app retains the previous optional portal handoff and usage-limit demo path. |
+| Integrations, production embeddings, persistent limits, background ingestion, retention, and local runtime | FAIL | Still planned in `Updates/22`; no implementation in this pass beyond preserving existing optional Resend/widget/session foundations. |

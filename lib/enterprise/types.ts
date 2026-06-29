@@ -77,6 +77,36 @@ export type Membership = {
   workspaceId: string;
   userId: string;
   role: MembershipRole;
+  status?: "active" | "invited" | "disabled";
+  acceptedAt?: string | null;
+};
+
+export type WorkspaceInvitation = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  email: string;
+  role: MembershipRole;
+  tokenHash: string;
+  invitedBy: string | null;
+  status: "pending" | "accepted" | "revoked" | "expired";
+  expiresAt: string;
+  acceptedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+};
+
+export type PortalIdentity = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  userId: string;
+  customerId: string | null;
+  externalCustomerId: string | null;
+  email: string;
+  status: "active" | "disabled";
+  verifiedAt: string | null;
+  createdAt: string;
 };
 
 export type WorkspaceDomain = {
