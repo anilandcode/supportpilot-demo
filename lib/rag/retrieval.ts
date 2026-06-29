@@ -1,7 +1,7 @@
 import { listDocumentChunks } from "@/lib/db/support";
 import { DEMO_TENANT_ID, DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import type { DocumentChunk } from "@/lib/enterprise/types";
-import { createDeterministicEmbedding } from "@/lib/rag/embeddings";
+import { createTextEmbedding } from "@/lib/rag/embeddings";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const STOP_WORDS = new Set(["the", "and", "for", "with", "that", "this", "from", "your", "you", "are", "can", "does"]);
@@ -9,10 +9,12 @@ const STOP_WORDS = new Set(["the", "and", "for", "with", "that", "this", "from",
 export async function retrieveEnterpriseChunks(query: string, k = 5, workspaceId = DEMO_WORKSPACE_ID): Promise<DocumentChunk[]> {
   const supabase = createSupabaseAdminClient();
   if (supabase) {
+    const queryEmbedding = await createTextEmbedding(query);
     const { data, error } = await supabase.rpc("match_document_chunks", {
-      query_embedding: createDeterministicEmbedding(query),
+      query_embedding: queryEmbedding.embedding,
       match_count: k,
       match_threshold: 0.1,
+      target_workspace_id: workspaceId,
     });
 
     if (!error && data?.length) {
@@ -28,6 +30,10 @@ export async function retrieveEnterpriseChunks(query: string, k = 5, workspaceId
         approved: true,
         embeddingModel: row.embedding_model ?? "deterministic-hash",
         embeddingVersion: row.embedding_version ?? "v1",
+        embeddingProvider: row.embedding_provider ?? "deterministic",
+        embeddingDimensions: Number(row.embedding_dimensions ?? 768),
+        embeddedAt: row.embedded_at ?? null,
+        sourceVersionId: row.source_version_id ?? null,
         contentHash: row.content_hash ?? row.id,
         score: row.similarity,
       }));

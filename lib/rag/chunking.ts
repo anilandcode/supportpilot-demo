@@ -3,7 +3,19 @@ import type { DocumentChunk } from "@/lib/enterprise/types";
 const MAX_CHARS = 900;
 export type PendingDocumentChunk = Omit<
   DocumentChunk,
-  "id" | "tenantId" | "workspaceId" | "docId" | "approved" | "embeddingModel" | "embeddingVersion" | "contentHash"
+  | "id"
+  | "tenantId"
+  | "workspaceId"
+  | "docId"
+  | "approved"
+  | "embeddingModel"
+  | "embeddingVersion"
+  | "embeddingProvider"
+  | "embeddingDimensions"
+  | "embeddedAt"
+  | "sourceVersionId"
+  | "contentHash"
+  | "embedding"
 >;
 
 export function chunkDocument(input: {

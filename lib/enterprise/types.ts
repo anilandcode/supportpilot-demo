@@ -214,8 +214,31 @@ export type DocumentChunk = {
   approved: boolean;
   embeddingModel: string;
   embeddingVersion: string;
+  embeddingProvider: string;
+  embeddingDimensions: number;
+  embeddedAt: string | null;
+  sourceVersionId: string | null;
   contentHash: string;
+  embedding?: number[];
   score?: number;
+};
+
+export type KnowledgeEmbeddingJob = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  docId: string | null;
+  status: "queued" | "running" | "succeeded" | "failed";
+  embeddingProvider: string;
+  embeddingModel: string;
+  embeddingVersion: string;
+  chunksTotal: number;
+  chunksEmbedded: number;
+  error: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type AIRun = {

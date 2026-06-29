@@ -40,6 +40,8 @@ export const DEMO_TENANT_ID = "70000000-0000-4000-8000-000000000001";
 export const DEMO_WORKSPACE_ID = "70000000-0000-4000-8000-000000000002";
 const DEFAULT_EMBEDDING_MODEL = "deterministic-hash";
 const DEFAULT_EMBEDDING_VERSION = "v1";
+const DEFAULT_EMBEDDING_PROVIDER = "deterministic";
+const DEFAULT_EMBEDDING_DIMENSIONS = 768;
 
 function contentHash(content: string) {
   let hash = 0;
@@ -226,6 +228,10 @@ export const demoDocumentChunks: DocumentChunk[] = demoKnowledgeDocs.map((doc, i
   approved: doc.approved,
   embeddingModel: DEFAULT_EMBEDDING_MODEL,
   embeddingVersion: DEFAULT_EMBEDDING_VERSION,
+  embeddingProvider: DEFAULT_EMBEDDING_PROVIDER,
+  embeddingDimensions: DEFAULT_EMBEDDING_DIMENSIONS,
+  embeddedAt: iso(6900),
+  sourceVersionId: `${doc.id}:v${doc.sourceVersion}`,
   contentHash: contentHash(doc.content),
 }));
 

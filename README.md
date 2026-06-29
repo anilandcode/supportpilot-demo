@@ -11,6 +11,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Workspace settings, verified widget domains, usage events, and approval policies
 - Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, missing-knowledge tasks, and optional Redis-backed public API rate limits
 - Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
+- Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, and re-embedding job scaffolding
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -56,6 +57,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET /api/billing/subscription` - owner-only internal billing lifecycle state for the active workspace
 - `GET|POST /api/billing/portal` - create a Stripe customer portal session from tenant customer mapping or legacy env customer when Stripe env vars exist, otherwise return to the demo billing page
 - `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
+- `GET|POST /api/knowledge/reembed` - manager/admin/owner re-embedding job endpoint for approved knowledge chunks
 - `POST /api/feedback` - answer feedback logging
 - `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
 - `POST /api/tickets/[ticketId]/draft` - create AI draft reply with citations, confidence, rationale, risk flags, and `ai_run`
@@ -88,6 +90,13 @@ SENTRY_AUTH_TOKEN=...
 NEXT_PUBLIC_APP_URL=...
 SUPPORTPILOT_WIDGET_SESSION_SECRET=...
 MODEL_ROUTER_DEFAULT=light
+EMBEDDING_PROVIDER=deterministic # deterministic | local | openai | google
+EMBEDDING_MODEL=...
+EMBEDDING_VERSION=v1
+EMBEDDING_DIMENSIONS=768
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+GOOGLE_EMBEDDING_MODEL=text-embedding-004
+LOCAL_EMBEDDING_MODEL=...
 LOCAL_MODEL_ENDPOINT=...
 LOCAL_EMBEDDING_ENDPOINT=...
 LOCAL_RERANKER_ENDPOINT=...
@@ -116,11 +125,13 @@ STRIPE_BILLING_PORTAL_RETURN_URL=...
 
 Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Without those variables, SupportPilot uses the local in-memory limiter for demos and tests. Chat, widget config, widget session creation, and knowledge upload boundaries all log `rate_limited` security events when blocked.
 
+Knowledge ingestion uses `EMBEDDING_PROVIDER` when configured and falls back to deterministic 768-dimension embeddings for local demos. `document_chunks` store provider, model, version, dimensions, source version ID, content hash, and embedded timestamp so future provider migrations can be audited and re-run through `/api/knowledge/reembed`.
+
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 
 ## Supabase
 
-Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, and Stripe billing lifecycle tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, and embedding versioning/re-embedding job tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -140,6 +151,7 @@ SupportPilot2026!
 npm run typecheck
 npm run test:billing
 npm run test:rate-limit
+npm run test:embeddings
 npm run test:rls
 npm run test:enterprise
 npm run test:production

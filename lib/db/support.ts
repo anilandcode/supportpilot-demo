@@ -67,7 +67,7 @@ import type {
   WorkspaceDomain,
   WorkspaceLaunchState,
 } from "@/lib/enterprise/types";
-import { createDeterministicEmbedding } from "@/lib/rag/embeddings";
+import { createTextEmbedding, embeddingContentHash } from "@/lib/rag/embeddings";
 import type { PendingDocumentChunk } from "@/lib/rag/chunking";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -111,8 +111,10 @@ const localState = {
   groundingChecks: [...demoGroundingChecks],
 };
 
+const DEFAULT_EMBEDDING_PROVIDER = "deterministic";
 const DEFAULT_EMBEDDING_MODEL = "deterministic-hash";
 const DEFAULT_EMBEDDING_VERSION = "v1";
+const DEFAULT_EMBEDDING_DIMENSIONS = 768;
 
 function publicId(prefix: string) {
   void prefix;
@@ -201,12 +203,7 @@ function normalizeDomain(domain: string) {
 }
 
 function contentHash(content: string) {
-  let hash = 0;
-  for (let index = 0; index < content.length; index++) {
-    hash = (hash << 5) - hash + content.charCodeAt(index);
-    hash |= 0;
-  }
-  return `hash_${Math.abs(hash).toString(36)}`;
+  return embeddingContentHash(content);
 }
 
 export async function getWorkspace(workspaceId = DEMO_WORKSPACE_ID): Promise<Workspace> {
@@ -719,18 +716,28 @@ export async function createKnowledgeDocument(input: {
     createdAt: new Date().toISOString(),
   };
 
-  const chunks = input.chunks.map<DocumentChunk>((chunk, index) => ({
-    ...chunk,
-    id: publicId("chunk"),
-    tenantId: workspace.tenantId,
-    workspaceId: workspace.id,
-    docId: doc.id,
-    chunkIndex: index,
-    approved: true,
-    embeddingModel: DEFAULT_EMBEDDING_MODEL,
-    embeddingVersion: DEFAULT_EMBEDDING_VERSION,
-    contentHash: contentHash(chunk.content),
-  }));
+  const chunks = await Promise.all(
+    input.chunks.map(async (chunk, index): Promise<DocumentChunk> => {
+      const embedding = await createTextEmbedding(chunk.content);
+      return {
+        ...chunk,
+        id: publicId("chunk"),
+        tenantId: workspace.tenantId,
+        workspaceId: workspace.id,
+        docId: doc.id,
+        chunkIndex: index,
+        approved: true,
+        embeddingModel: embedding.model,
+        embeddingVersion: embedding.version,
+        embeddingProvider: embedding.provider,
+        embeddingDimensions: embedding.dimensions,
+        embeddedAt: embedding.embeddedAt,
+        sourceVersionId: `${doc.id}:v${doc.sourceVersion}`,
+        contentHash: contentHash(chunk.content),
+        embedding: embedding.embedding,
+      };
+    }),
+  );
 
   const supabase = createSupabaseAdminClient();
   if (supabase) {
@@ -743,7 +750,14 @@ export async function createKnowledgeDocument(input: {
   await recordUsageEvent({
     workspaceId: workspace.id,
     eventType: "knowledge.uploaded",
-    metadata: { docId: doc.id, title: doc.title, chunks: chunks.length },
+    metadata: {
+      docId: doc.id,
+      title: doc.title,
+      chunks: chunks.length,
+      embeddingProvider: chunks[0]?.embeddingProvider,
+      embeddingModel: chunks[0]?.embeddingModel,
+      embeddingVersion: chunks[0]?.embeddingVersion,
+    },
   });
   await appendAuditLog({
     tenantId: workspace.tenantId,
@@ -751,7 +765,7 @@ export async function createKnowledgeDocument(input: {
     ticketId: null,
     userId: null,
     action: "knowledge.uploaded",
-    details: { title: doc.title, chunks: chunks.length },
+    details: { title: doc.title, chunks: chunks.length, embeddingProvider: chunks[0]?.embeddingProvider, embeddingModel: chunks[0]?.embeddingModel },
   });
 
   return doc;
@@ -1497,6 +1511,10 @@ function mapDocumentChunk(row: any): DocumentChunk {
     approved: row.approved,
     embeddingModel: row.embedding_model ?? DEFAULT_EMBEDDING_MODEL,
     embeddingVersion: row.embedding_version ?? DEFAULT_EMBEDDING_VERSION,
+    embeddingProvider: row.embedding_provider ?? DEFAULT_EMBEDDING_PROVIDER,
+    embeddingDimensions: Number(row.embedding_dimensions ?? DEFAULT_EMBEDDING_DIMENSIONS),
+    embeddedAt: row.embedded_at ?? null,
+    sourceVersionId: row.source_version_id ?? null,
     contentHash: row.content_hash ?? contentHash(row.content ?? ""),
     score: row.score ?? row.similarity,
   };
@@ -1631,8 +1649,12 @@ function toDocumentChunkRow(chunk: DocumentChunk) {
     approved: chunk.approved,
     embedding_model: chunk.embeddingModel,
     embedding_version: chunk.embeddingVersion,
+    embedding_provider: chunk.embeddingProvider,
+    embedding_dimensions: chunk.embeddingDimensions,
+    embedded_at: chunk.embeddedAt,
+    source_version_id: chunk.sourceVersionId,
     content_hash: chunk.contentHash,
-    embedding: createDeterministicEmbedding(chunk.content),
+    embedding: chunk.embedding,
   };
 }
 

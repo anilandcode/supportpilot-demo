@@ -58,12 +58,17 @@ Date: 2026-06-24
 - Replaced the demo-only chat limiter with scoped rate limiting that uses Upstash Redis REST when configured and falls back to local memory for demos/tests.
 - Enforced scoped limits on chat generation, widget config fetches, widget session creation, and knowledge uploads with 429 responses, rate-limit headers, and `rate_limited` security events.
 - Added `npm run test:rate-limit` for local-window behavior, reset behavior, redacted key hashing, headers, and Redis pipeline selection.
+- Added embedding versioning migration `006_embedding_versioning_jobs.sql` for provider/model/version/dimension metadata, source version IDs, embedded timestamps, workspace-scoped vector matching, and `knowledge_embedding_jobs`.
+- Added provider-aware embedding generation for deterministic, local endpoint, OpenAI, and Google embeddings with deterministic fallback for demos and failed provider calls.
+- Added manager/admin/owner `/api/knowledge/reembed` endpoint and `lib/db/embeddings.ts` for bounded synchronous re-embedding jobs over approved chunks.
+- Added `npm run test:embeddings` for fallback behavior, local endpoint behavior, vector normalization, and re-embedding metadata updates.
 
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
 - Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, add nightly reconciliation, and complete live-mode activation checks.
 - Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run public widget abuse/load tests, and tune per-tenant thresholds from traffic.
+- Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -74,6 +79,7 @@ Date: 2026-06-24
 npm run typecheck
 npm run test:billing
 npm run test:rate-limit
+npm run test:embeddings
 npm run test:rls
 npm run test:enterprise
 npm run test:production

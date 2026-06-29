@@ -105,7 +105,15 @@ const allTenantScoped = tenantOwnedRows.every((row) => Boolean(row.tenantId && r
 console.log(`${allTenantScoped ? "PASS" : "FAIL"} tenant-scoped demo rows: ${tenantOwnedRows.length}`);
 if (!allTenantScoped) failed++;
 
-const chunkMetadataComplete = demoDocumentChunks.every((chunk) => chunk.embeddingModel && chunk.embeddingVersion && chunk.contentHash);
+const chunkMetadataComplete = demoDocumentChunks.every((chunk) =>
+  chunk.embeddingModel &&
+  chunk.embeddingVersion &&
+  chunk.embeddingProvider &&
+  chunk.embeddingDimensions === 768 &&
+  chunk.embeddedAt &&
+  chunk.sourceVersionId &&
+  chunk.contentHash
+);
 console.log(`${chunkMetadataComplete ? "PASS" : "FAIL"} chunk embedding metadata: ${demoDocumentChunks.length}`);
 if (!chunkMetadataComplete) failed++;
 
