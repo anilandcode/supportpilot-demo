@@ -1,57 +1,30 @@
+import { requireWorkspaceRole } from "@/lib/auth/api";
+import { createStripePortalSession } from "@/lib/billing/stripe";
+import { getStripeCustomerForTenant } from "@/lib/db/billing";
+import { getWorkspace } from "@/lib/db/support";
+import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
+
 export const runtime = "nodejs";
 
-type PortalResult =
-  | { mode: "stripe"; url: string }
-  | { mode: "demo"; url: string; reason: "demo" | "stripe_error" };
+async function createPortalResult(req: Request) {
+  const url = new URL(req.url);
+  const workspace = await getWorkspace(url.searchParams.get("workspaceId") || DEMO_WORKSPACE_ID);
+  const auth = await requireWorkspaceRole(workspace.id, ["owner"]);
+  if (!auth.ok) return { error: auth.error, status: auth.status } as const;
 
-function dashboardUrl(req: Request, reason?: "demo" | "stripe_error") {
-  const url = new URL("/admin/billing", req.url);
-  if (reason) url.searchParams.set("portal", reason);
-  return url;
-}
-
-function returnUrl(req: Request) {
-  return process.env.STRIPE_BILLING_PORTAL_RETURN_URL || process.env.NEXT_PUBLIC_APP_URL
-    ? new URL("/admin/billing", process.env.STRIPE_BILLING_PORTAL_RETURN_URL || process.env.NEXT_PUBLIC_APP_URL).toString()
-    : new URL("/admin/billing", req.url).toString();
-}
-
-async function createPortalResult(req: Request): Promise<PortalResult> {
-  const secretKey = process.env.STRIPE_SECRET_KEY;
-  const customer = process.env.STRIPE_CUSTOMER_ID || process.env.SUPPORTPILOT_STRIPE_CUSTOMER_ID;
-  if (!secretKey || !customer) {
-    return { mode: "demo", url: dashboardUrl(req, "demo").toString(), reason: "demo" };
-  }
-
-  try {
-    const response = await fetch("https://api.stripe.com/v1/billing_portal/sessions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        customer,
-        return_url: returnUrl(req),
-      }),
-    });
-    if (!response.ok) {
-      return { mode: "demo", url: dashboardUrl(req, "stripe_error").toString(), reason: "stripe_error" };
-    }
-    const data = await response.json();
-    if (typeof data.url === "string") return { mode: "stripe", url: data.url };
-    return { mode: "demo", url: dashboardUrl(req, "stripe_error").toString(), reason: "stripe_error" };
-  } catch {
-    return { mode: "demo", url: dashboardUrl(req, "stripe_error").toString(), reason: "stripe_error" };
-  }
+  const mappedCustomer = await getStripeCustomerForTenant(workspace.tenantId);
+  const customerId = mappedCustomer?.stripeCustomerId || process.env.STRIPE_CUSTOMER_ID || process.env.SUPPORTPILOT_STRIPE_CUSTOMER_ID || null;
+  return createStripePortalSession({ customerId, requestUrl: req.url });
 }
 
 export async function GET(req: Request) {
   const result = await createPortalResult(req);
+  if ("error" in result) return Response.json({ error: result.error }, { status: result.status });
   return Response.redirect(result.url, 303);
 }
 
 export async function POST(req: Request) {
   const result = await createPortalResult(req);
+  if ("error" in result) return Response.json({ error: result.error }, { status: result.status });
   return Response.json(result, { status: result.mode === "stripe" || result.reason === "demo" ? 200 : 502 });
 }

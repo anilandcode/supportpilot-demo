@@ -4,6 +4,7 @@ import { AdminShell } from "@/components/enterprise/admin-shell";
 import { StatusBadge } from "@/components/enterprise/status-badge";
 import { Card } from "@/components/ui/card";
 import { getBillingPlans, getBillingSnapshot, type BillingUsageMetric } from "@/lib/billing/plans";
+import { getBillingLifecycleState } from "@/lib/db/billing";
 import { theme } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -15,11 +16,13 @@ export const dynamic = "force-dynamic";
 
 type BillingSearchParams = {
   portal?: "demo" | "stripe_error";
+  checkout?: "demo" | "stripe_error" | "processing" | "canceled";
 };
 
 export default async function BillingPage({ searchParams }: { searchParams: Promise<BillingSearchParams> }) {
   const params = await searchParams;
   const [billing, plans] = await Promise.all([getBillingSnapshot(), Promise.resolve(getBillingPlans())]);
+  const lifecycle = await getBillingLifecycleState(billing.workspace.id);
   const blockingMetrics = billing.orderedMetrics.filter((metric) => metric.exceeded);
   const nearLimitMetrics = billing.orderedMetrics.filter((metric) => metric.nearLimit);
   const periodStart = new Date(billing.period.start).toLocaleDateString("en", { month: "short", day: "numeric" });
@@ -37,6 +40,24 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <Notice
           title="Stripe portal could not be opened"
           detail="The configured Stripe keys did not return a portal session. The billing dashboard is still available with current workspace usage."
+        />
+      ) : null}
+      {params.checkout === "demo" ? (
+        <Notice
+          title="Checkout is in demo mode"
+          detail="Set Stripe price IDs and STRIPE_SECRET_KEY to send owners to hosted Checkout. The request was still recorded for billing lifecycle testing."
+        />
+      ) : null}
+      {params.checkout === "processing" ? (
+        <Notice
+          title="Checkout completed, waiting for webhook"
+          detail="SupportPilot will unlock paid entitlements only after Stripe sends a verified subscription webhook."
+        />
+      ) : null}
+      {params.checkout === "stripe_error" ? (
+        <Notice
+          title="Checkout could not be opened"
+          detail="The configured Stripe account did not return a Checkout session. Confirm price IDs, customer state, and test/live API keys."
         />
       ) : null}
 
@@ -60,7 +81,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               </div>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
-              <a href="/api/billing/portal" className="inline-flex h-10 items-center gap-2 rounded-full bg-accent px-4 text-sm font-semibold text-accent-fg">
+              <a href={`/api/billing/portal?workspaceId=${billing.workspace.id}`} className="inline-flex h-10 items-center gap-2 rounded-full bg-accent px-4 text-sm font-semibold text-accent-fg">
                 <CreditCard className="h-4 w-4" aria-hidden />
                 Open Stripe portal
               </a>
@@ -111,17 +132,16 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               <h2 className="font-semibold">Invoices</h2>
             </div>
             <div className="mt-4 divide-y divide-border rounded-xl border border-border">
-              {[
-                ["Jun 2026", billing.plan.price, "Open"],
-                ["May 2026", billing.plan.price, "Paid"],
-                ["Apr 2026", billing.plan.price, "Paid"],
-              ].map(([period, amount, status]) => (
-                <div key={period} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-3 text-sm">
-                  <span>{period}</span>
-                  <span className="text-foreground-2">{amount}</span>
-                  <StatusBadge value={status === "Paid" ? "approved" : "pending"} label={status} />
+              {(lifecycle.invoices.length > 0 ? lifecycle.invoices : []).map((invoice) => (
+                <div key={invoice.id} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-3 py-3 text-sm">
+                  <span>{new Date(invoice.createdAt).toLocaleDateString("en", { month: "short", year: "numeric" })}</span>
+                  <span className="text-foreground-2">{formatCurrency(invoice.amountPaid || invoice.amountDue, invoice.currency)}</span>
+                  <StatusBadge value={invoice.status === "paid" ? "approved" : invoice.status === "open" ? "pending" : "medium"} label={invoice.status} />
                 </div>
               ))}
+              {lifecycle.invoices.length === 0 ? (
+                <div className="px-3 py-4 text-sm text-foreground-2">No synced Stripe invoices yet. Invoices appear after verified webhook events.</div>
+              ) : null}
             </div>
           </Card>
         </div>
@@ -185,6 +205,24 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               <PlanLimit label="Members" value={plan.limits.members} />
               <PlanLimit label="Advanced routes" value={plan.limits.modelFallbacks} />
             </dl>
+            {plan.key === "enterprise" ? (
+              <a href={`mailto:${billing.workspace.escalationEmail}?subject=SupportPilot%20Enterprise%20quote`} className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-full border border-border text-sm font-semibold text-foreground-2 hover:bg-surface">
+                Contact sales
+              </a>
+            ) : plan.key === billing.plan.key ? (
+              <button disabled className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-full border border-border bg-surface text-sm font-semibold text-foreground-3">
+                Current plan
+              </button>
+            ) : (
+              <form action="/api/billing/checkout" method="post" className="mt-5">
+                <input type="hidden" name="workspaceId" value={billing.workspace.id} />
+                <input type="hidden" name="tier" value={plan.key} />
+                <input type="hidden" name="interval" value="monthly" />
+                <button type="submit" className="inline-flex h-10 w-full items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-fg">
+                  Start monthly checkout
+                </button>
+              </form>
+            )}
           </Card>
         ))}
       </div>
@@ -241,6 +279,10 @@ function PlanLimit({ label, value }: { label: string; value: number | null }) {
       <dd className="font-semibold">{value === null ? "Custom" : value.toLocaleString()}</dd>
     </div>
   );
+}
+
+function formatCurrency(cents: number, currency: string) {
+  return new Intl.NumberFormat("en", { style: "currency", currency: currency.toUpperCase() }).format(cents / 100);
 }
 
 function Th({ children }: { children: React.ReactNode }) {

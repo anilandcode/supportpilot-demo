@@ -1,0 +1,137 @@
+import {
+  deriveBillingEntitlementLimits,
+  getBillingCatalog,
+  intervalFromPriceId,
+  makeStripeTestSignature,
+  normalizeStripeBillingEvent,
+  tierFromPriceId,
+  verifyStripeWebhookSignature,
+} from "../lib/billing/stripe.ts";
+import {
+  getLocalBillingState,
+  hasProcessedStripeWebhookEvent,
+  processStripeBillingEvent,
+  recordStripeWebhookEvent,
+  upsertStripeCustomerMapping,
+} from "../lib/db/billing.ts";
+import { DEMO_TENANT_ID, DEMO_WORKSPACE_ID } from "../lib/enterprise/demo-data.ts";
+
+process.env.STRIPE_LAUNCH_MONTHLY_PRICE_ID = "price_launch_monthly";
+process.env.STRIPE_LAUNCH_ANNUAL_PRICE_ID = "price_launch_annual";
+process.env.STRIPE_PRO_MONTHLY_PRICE_ID = "price_pro_monthly";
+process.env.STRIPE_PRO_ANNUAL_PRICE_ID = "price_pro_annual";
+
+const checks: Array<[string, boolean, string]> = [];
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
+
+async function main() {
+const catalog = getBillingCatalog();
+checks.push(["Stripe catalog has Launch/Pro monthly and annual prices", catalog.length === 4 && catalog.every((item) => item.configured), String(catalog.length)]);
+checks.push(["price ID maps to tier", tierFromPriceId("price_pro_monthly") === "pro", tierFromPriceId("price_pro_monthly") ?? "null"]);
+checks.push(["price ID maps to interval", intervalFromPriceId("price_launch_annual") === "annual", intervalFromPriceId("price_launch_annual") ?? "null"]);
+
+const limits = deriveBillingEntitlementLimits("pro");
+checks.push(["Pro entitlements include higher conversations", limits.conversations === 10000 && limits.aiReplies === 8000, JSON.stringify(limits)]);
+
+const payload = JSON.stringify({ id: "evt_test_signature", type: "invoice.paid", data: { object: { id: "in_test" } } });
+const signature = makeStripeTestSignature(payload, "whsec_test", 1_800_000_000);
+checks.push([
+  "Stripe webhook signature accepts valid payload",
+  verifyStripeWebhookSignature({ payload, signatureHeader: signature, secret: "whsec_test", nowMs: 1_800_000_000_000 }),
+  signature.slice(0, 18),
+]);
+checks.push([
+  "Stripe webhook signature rejects tampered payload",
+  !verifyStripeWebhookSignature({ payload: payload.replace("invoice.paid", "invoice.failed"), signatureHeader: signature, secret: "whsec_test", nowMs: 1_800_000_000_000 }),
+  "tampered",
+]);
+
+await upsertStripeCustomerMapping({
+  tenantId: DEMO_TENANT_ID,
+  workspaceId: DEMO_WORKSPACE_ID,
+  stripeCustomerId: "cus_test_supportpilot",
+  email: "owner@example.com",
+  name: "Owner",
+});
+
+const subscriptionEvent = {
+  id: "evt_sub_created",
+  type: "customer.subscription.created",
+  livemode: false,
+  data: {
+    object: {
+      id: "sub_test_supportpilot",
+      customer: "cus_test_supportpilot",
+      status: "active",
+      current_period_start: 1_800_000_000,
+      current_period_end: 1_802_592_000,
+      cancel_at_period_end: false,
+      metadata: {
+        org_id: DEMO_TENANT_ID,
+        workspace_id: DEMO_WORKSPACE_ID,
+        tier: "pro",
+        interval: "monthly",
+      },
+      items: {
+        data: [{ price: { id: "price_pro_monthly", recurring: { interval: "month" } } }],
+      },
+    },
+  },
+};
+
+const normalized = normalizeStripeBillingEvent(subscriptionEvent);
+checks.push(["subscription event normalizes Pro tier", normalized.tier === "pro" && normalized.interval === "monthly", `${normalized.tier}/${normalized.interval}`]);
+
+await processStripeBillingEvent(subscriptionEvent);
+const state = getLocalBillingState();
+checks.push(["subscription event creates subscription", state.subscriptions.some((sub) => sub.stripeSubscriptionId === "sub_test_supportpilot" && sub.status === "active"), String(state.subscriptions.length)]);
+checks.push(["subscription event derives entitlements", state.entitlements.some((entitlement) => entitlement.tier === "pro" && entitlement.limits.aiReplies === 8000), String(state.entitlements.length)]);
+
+await processStripeBillingEvent({
+  id: "evt_invoice_failed",
+  type: "invoice.payment_failed",
+  livemode: false,
+  data: {
+    object: {
+      id: "in_failed",
+      customer: "cus_test_supportpilot",
+      subscription: "sub_test_supportpilot",
+      status: "open",
+      amount_due: 14900,
+      amount_paid: 0,
+      currency: "usd",
+      lines: { data: [{ period: { start: 1_800_000_000, end: 1_802_592_000 }, price: { id: "price_pro_monthly" } }] },
+    },
+  },
+});
+
+checks.push(["invoice payment failure records invoice", state.invoices.some((invoice) => invoice.stripeInvoiceId === "in_failed" && invoice.amountDue === 14900), String(state.invoices.length)]);
+checks.push(["invoice payment failure starts dunning", state.subscriptions.some((sub) => sub.stripeSubscriptionId === "sub_test_supportpilot" && sub.dunningState === "payment_failed"), state.subscriptions[0]?.dunningState ?? "none"]);
+
+await recordStripeWebhookEvent({
+  stripeEventId: "evt_duplicate",
+  type: "invoice.paid",
+  livemode: false,
+  status: "processed",
+  payload: { id: "evt_duplicate" },
+});
+checks.push(["processed webhook events are idempotent", await hasProcessedStripeWebhookEvent("evt_duplicate"), "evt_duplicate"]);
+
+let failed = 0;
+console.log("\nSupportPilot billing lifecycle checks");
+for (const [name, ok, detail] of checks) {
+  console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+  if (!ok) failed++;
+}
+
+if (failed > 0) {
+  console.error(`\n${failed} billing lifecycle checks failed`);
+  process.exit(1);
+}
+
+console.log("\nBilling lifecycle checks passed\n");
+}

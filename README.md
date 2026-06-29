@@ -10,7 +10,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
 - Workspace settings, verified widget domains, usage events, and approval policies
 - Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, and missing-knowledge tasks
-- Launch/Pro billing usage limits with optional Stripe billing portal handoff
+- Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -51,7 +51,10 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
 - `GET /api/security/events` - workspace security event feed
 - `GET /api/model-routes` - AI model route/cost/latency log feed
-- `GET|POST /api/billing/portal` - create a Stripe customer portal session when Stripe env vars exist, otherwise return to the demo billing page
+- `POST /api/billing/checkout` - owner-only Launch/Pro hosted Checkout session creation with demo fallback when Stripe is not configured
+- `POST /api/billing/webhook` - verified Stripe webhook receiver for checkout, subscription, invoice, entitlement, and dunning state sync
+- `GET /api/billing/subscription` - owner-only internal billing lifecycle state for the active workspace
+- `GET|POST /api/billing/portal` - create a Stripe customer portal session from tenant customer mapping or legacy env customer when Stripe env vars exist, otherwise return to the demo billing page
 - `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
 - `POST /api/feedback` - answer feedback logging
 - `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
@@ -93,6 +96,11 @@ ESCALATION_FROM_EMAIL=...
 NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=...
 STRIPE_SECRET_KEY=...
+STRIPE_WEBHOOK_SECRET=...
+STRIPE_LAUNCH_MONTHLY_PRICE_ID=...
+STRIPE_LAUNCH_ANNUAL_PRICE_ID=...
+STRIPE_PRO_MONTHLY_PRICE_ID=...
+STRIPE_PRO_ANNUAL_PRICE_ID=...
 STRIPE_CUSTOMER_ID=...
 SUPPORTPILOT_STRIPE_CUSTOMER_ID=...
 STRIPE_BILLING_PORTAL_RETURN_URL=...
@@ -100,9 +108,11 @@ STRIPE_BILLING_PORTAL_RETURN_URL=...
 
 `/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
 
+Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
+
 ## Supabase
 
-Apply `supabase/migrations/001_enterprise_supportpilot.sql`, `supabase/migrations/002_light_mvp_productization.sql`, and `supabase/migrations/003_updates_enterprise_readiness.sql`, then run `supabase/seed.sql`. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, and Stripe billing lifecycle tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -120,6 +130,7 @@ SupportPilot2026!
 
 ```bash
 npm run typecheck
+npm run test:billing
 npm run test:rls
 npm run test:enterprise
 npm run test:production

@@ -47,10 +47,19 @@ Date: 2026-06-24
 - Added `npm run test:production` for route permission, invitation, onboarding, slug, token, widget-key, and API-auth regression checks.
 - Added `npm run test:rls`, `lib/auth/rls-matrix.ts`, and `RLS_VERIFICATION.md` to turn the RLS policy matrix into a repeatable local gate plus clean-project rehearsal checklist.
 
+## Production Readiness Phase 2 Started
+
+- Added additive billing lifecycle migration `005_billing_stripe_lifecycle.sql` for billing products/prices, Stripe customers, checkout sessions, subscriptions, invoices, entitlements, and idempotent webhook events.
+- Added Stripe helper layer for Launch/Pro price env mapping, Checkout/Portal calls, webhook signature verification, event normalization, and entitlement derivation.
+- Added billing repository with Supabase plus demo fallback for customer mapping, checkout recording, subscription/invoice sync, dunning state, entitlement upserts, and webhook idempotency.
+- Added owner-only `/api/billing/checkout`, `/api/billing/subscription`, and signed `/api/billing/webhook` routes while preserving the existing portal fallback.
+- Billing page upgrade buttons now start Checkout through the API, synced invoices replace placeholders when present, and activation copy waits for verified webhooks.
+- Added `npm run test:billing` for catalog mapping, HMAC webhook verification, subscription entitlement sync, dunning state, and duplicate-event checks.
+
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
-- Full Stripe subscription lifecycle remains a follow-up: checkout, webhook reconciliation, invoice sync, and customer/price mapping beyond the optional portal session route.
+- Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, add nightly reconciliation, and complete live-mode activation checks.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -59,6 +68,7 @@ Date: 2026-06-24
 
 ```bash
 npm run typecheck
+npm run test:billing
 npm run test:rls
 npm run test:enterprise
 npm run test:production

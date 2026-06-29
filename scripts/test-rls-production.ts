@@ -11,8 +11,9 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["four migration files exist", migrationFiles.length >= 4, String(migrationFiles.length)]);
+checks.push(["five migration files exist", migrationFiles.length >= 5, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
+checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -32,6 +33,8 @@ checks.push(["customer message policies constrain sender", sql.includes("custome
 checks.push(["membership checks require active status", sql.includes("memberships.status = 'active'"), "memberships.status"]);
 checks.push(["invite policies are owner/admin gated", sql.includes("managers manage invitations") && sql.includes("array['owner','admin']"), "invitations"]);
 checks.push(["portal identities are workspace unique", sql.includes("unique (workspace_id, user_id)") && sql.includes("unique (workspace_id, email)"), "portal_identities"]);
+checks.push(["billing owner policies exist", sql.includes("owners manage checkout sessions") && sql.includes("owners read subscriptions") && sql.includes("owners read invoices"), "billing"]);
+checks.push(["Stripe webhooks are idempotent", sql.includes("stripe_event_id text not null unique") && sql.includes("stripe_webhook_events"), "stripe_webhook_events"]);
 
 let failed = 0;
 console.log("\nSupportPilot RLS production checks");

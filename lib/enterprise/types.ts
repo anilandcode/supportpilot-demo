@@ -6,6 +6,18 @@ export type MessageSender = "customer" | "agent" | "ai";
 export type ApprovalStatus = "draft" | "approved" | "edited" | "rejected" | "escalated";
 export type MembershipRole = "owner" | "admin" | "manager" | "agent" | "analyst" | "viewer";
 export type DomainStatus = "pending" | "verified" | "blocked";
+export type BillingTierKey = "launch" | "pro" | "enterprise";
+export type BillingInterval = "monthly" | "annual";
+export type BillingSubscriptionStatus =
+  | "incomplete"
+  | "incomplete_expired"
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled"
+  | "unpaid"
+  | "paused";
+export type BillingDunningState = "none" | "payment_failed" | "grace_day_3" | "grace_day_7" | "recovered";
 export type UsageEventType =
   | "chat.message"
   | "chat.answered"
@@ -436,6 +448,100 @@ export type UsageEvent = {
   quantity: number;
   metadata: Record<string, unknown>;
   createdAt: string;
+};
+
+export type StripeCustomerMapping = {
+  id: string;
+  tenantId: string;
+  workspaceId: string | null;
+  stripeCustomerId: string;
+  email: string | null;
+  name: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type BillingCheckoutSession = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  stripeCheckoutSessionId: string;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  priceId: string;
+  tier: BillingTierKey;
+  interval: BillingInterval;
+  status: "created" | "completed" | "expired";
+  url: string | null;
+  actorUserId: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+export type BillingSubscription = {
+  id: string;
+  tenantId: string;
+  workspaceId: string | null;
+  stripeSubscriptionId: string;
+  stripeCustomerId: string;
+  stripePriceId: string | null;
+  tier: BillingTierKey;
+  interval: BillingInterval | null;
+  status: BillingSubscriptionStatus;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  canceledAt: string | null;
+  dunningState: BillingDunningState;
+  metadata: Record<string, unknown>;
+  updatedAt: string;
+  createdAt: string;
+};
+
+export type BillingInvoice = {
+  id: string;
+  tenantId: string;
+  workspaceId: string | null;
+  stripeInvoiceId: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string | null;
+  status: string;
+  amountDue: number;
+  amountPaid: number;
+  currency: string;
+  hostedInvoiceUrl: string | null;
+  invoicePdf: string | null;
+  periodStart: string | null;
+  periodEnd: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type BillingEntitlement = {
+  id: string;
+  tenantId: string;
+  workspaceId: string | null;
+  tier: BillingTierKey;
+  status: BillingSubscriptionStatus | "demo";
+  limits: Record<string, number | null>;
+  source: "demo" | "stripe";
+  stripeSubscriptionId: string | null;
+  effectiveAt: string;
+  expiresAt: string | null;
+  updatedAt: string;
+};
+
+export type StripeWebhookEvent = {
+  id: string;
+  stripeEventId: string;
+  type: string;
+  livemode: boolean;
+  status: "processing" | "processed" | "failed" | "ignored";
+  error: string | null;
+  payload: Record<string, unknown>;
+  receivedAt: string;
+  processedAt: string | null;
 };
 
 export type TicketWithRelations = Ticket & {
