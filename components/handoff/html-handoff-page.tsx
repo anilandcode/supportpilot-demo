@@ -11,7 +11,7 @@ type HtmlHandoffPageProps = {
 
 export function HtmlHandoffPage({ fileName, pageKey, data }: HtmlHandoffPageProps) {
   const html = readFileSync(path.join(process.cwd(), "Design Upgrade", fileName), "utf8");
-  const css = extractAll(html, /<style[^>]*>([\s\S]*?)<\/style>/g).join("\n\n");
+  const css = scopeHandoffCss(extractAll(html, /<style[^>]*>([\s\S]*?)<\/style>/g).join("\n\n"), pageKey);
   const scripts = extractAll(html, /<script[^>]*>([\s\S]*?)<\/script>/g);
   const body = rewritePrototypeLinks(extractBody(html).replace(/<script[^>]*>[\s\S]*?<\/script>/g, ""), data.routes as Record<string, string> | undefined);
 
@@ -37,6 +37,22 @@ function extractBody(source: string) {
   const match = source.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   if (!match) throw new Error("Missing body in SupportPilot handoff HTML.");
   return match[1].trim();
+}
+
+function scopeHandoffCss(css: string, pageKey: HandoffPageKey) {
+  const scope = `.supportpilot-handoff-${pageKey}`;
+
+  return css.replace(/([^{}]+)\{/g, (match, selector: string) => {
+    if (selector.trim().startsWith("@")) return match;
+
+    const scopedSelector = selector
+      .replace(/(^|[,\s>+~]):root\b/g, `$1${scope}`)
+      .replace(/(^|[,\s>+~])html\b/g, `$1${scope}`)
+      .replace(/(^|[,\s>+~])body\b/g, `$1${scope}`)
+      .replace(/(^|[,\s>+~])\*(?=[\s:{.#\[]|$)/g, `$1${scope} *`);
+
+    return `${scopedSelector}{`;
+  });
 }
 
 function rewritePrototypeLinks(html: string, routes: Record<string, string> = {}) {
@@ -76,6 +92,35 @@ const handoffCompatibilityCss = `
   width: 100%;
 }
 
+.supportpilot-handoff:not(.supportpilot-handoff-portal) .dashboard-container::before {
+  content: none;
+  display: none;
+}
+
+.supportpilot-handoff-portal::before {
+  content: none;
+  display: none;
+}
+
+.supportpilot-handoff-portal {
+  align-items: center;
+}
+
+.supportpilot-handoff-portal > header,
+.supportpilot-handoff-portal > main,
+.supportpilot-handoff-portal > footer {
+  width: min(var(--max), calc(100% - (var(--gutter) * 2)));
+  margin-inline: auto;
+}
+
+.supportpilot-handoff-portal main {
+  padding-top: clamp(28px, 4vw, 40px);
+}
+
+.supportpilot-handoff-portal .portal-split-container {
+  margin-top: 0;
+}
+
 @media (max-width: 760px) {
   .supportpilot-handoff:not(.supportpilot-handoff-portal) {
     flex-direction: column;
@@ -91,14 +136,36 @@ const handoffCompatibilityCss = `
     min-width: 0;
   }
 
-  .supportpilot-handoff-portal .nav-actions {
+  .supportpilot-handoff-portal .nav {
+    align-items: flex-start;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    gap: 12px;
+    min-height: auto;
+    padding-block: 16px;
+  }
+
+  .supportpilot-handoff-portal .nav-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .supportpilot-handoff-portal .nav-actions a,
+  .supportpilot-handoff-portal .nav-actions button {
+    justify-content: center;
+    width: 100%;
   }
 
   .supportpilot-handoff-portal #btn-open-create-ticket {
     max-width: 100%;
     white-space: normal;
+  }
+
+  .supportpilot-handoff-portal main {
+    padding-top: 20px;
   }
 
   .supportpilot-handoff-portal .footer-main {
