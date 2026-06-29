@@ -62,6 +62,9 @@ Date: 2026-06-24
 - Added provider-aware embedding generation for deterministic, local endpoint, OpenAI, and Google embeddings with deterministic fallback for demos and failed provider calls.
 - Added manager/admin/owner `/api/knowledge/reembed` endpoint and `lib/db/embeddings.ts` for bounded synchronous re-embedding jobs over approved chunks.
 - Added `npm run test:embeddings` for fallback behavior, local endpoint behavior, vector normalization, and re-embedding metadata updates.
+- Added background ingestion migration `007_background_ingestion_jobs.sql` for workspace-scoped job status, retry metadata, errors, chunk counts, source hash dedupe, and RLS.
+- Added `lib/db/ingestion.ts`, `/api/knowledge/ingest/jobs`, `/api/knowledge/ingest/jobs/[jobId]/run`, and updated `/api/knowledge/upload` so small text runs inline while large/PDF uploads can queue through QStash when worker env vars exist.
+- Added `npm run test:ingestion` for synchronous ingestion, duplicate skipping, extraction review state, QStash worker-secret forwarding, and manual retry behavior.
 
 ## Deferred
 
@@ -69,6 +72,7 @@ Date: 2026-06-24
 - Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, add nightly reconciliation, and complete live-mode activation checks.
 - Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run public widget abuse/load tests, and tune per-tenant thresholds from traffic.
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
+- Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -80,6 +84,7 @@ npm run typecheck
 npm run test:billing
 npm run test:rate-limit
 npm run test:embeddings
+npm run test:ingestion
 npm run test:rls
 npm run test:enterprise
 npm run test:production

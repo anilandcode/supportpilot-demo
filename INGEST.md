@@ -18,13 +18,22 @@ Lite mode reads `/knowledge/*.md|*.txt`, chunks by heading, scores chunks agains
 
 The route:
 
-1. Extracts text.
-2. Chunks content with `lib/rag/chunking.ts`.
-3. Resolves the workspace from `workspaceId` or the seeded demo workspace.
-4. Creates a `knowledge_docs` row with `tenant_id`, `workspace_id`, and `source_version`.
-5. Creates approved `document_chunks` rows with `embedding_model`, `embedding_version`, and `content_hash`.
-6. Stores deterministic embeddings for pgvector search.
-7. Writes `knowledge.uploaded` audit and usage events.
+1. Creates a `knowledge_ingestion_jobs` row with job status, attempts, source hash, payload metadata, and chunk counters.
+2. Processes small pasted/text uploads inline.
+3. Queues large files and PDFs through QStash when `QSTASH_TOKEN`, `NEXT_PUBLIC_APP_URL`, and `SUPPORTPILOT_INGESTION_WORKER_SECRET` are configured.
+4. Falls back to synchronous local processing when the queue is not configured.
+5. Extracts text and moves empty extraction results to `needs_review`.
+6. Chunks content with `lib/rag/chunking.ts`.
+7. Resolves the workspace from `workspaceId` or the seeded demo workspace.
+8. Creates a `knowledge_docs` row with `tenant_id`, `workspace_id`, and `source_version`.
+9. Creates approved `document_chunks` rows with `embedding_model`, `embedding_version`, and `content_hash`.
+10. Stores deterministic embeddings for pgvector search.
+11. Writes `knowledge.ingestion.queued`, `knowledge.ingestion.succeeded`, `knowledge.uploaded`, and usage events.
+
+Job endpoints:
+
+- `GET /api/knowledge/ingest/jobs?workspaceId=...` returns recent ingestion jobs for owner/admin/manager/agent roles.
+- `POST /api/knowledge/ingest/jobs/[jobId]/run` runs or retries a job. Human users need workspace role access; QStash workers must send `x-supportpilot-worker-secret`.
 
 ## Query Path
 
@@ -47,6 +56,7 @@ Key tables:
 
 - `knowledge_docs`
 - `document_chunks`
+- `knowledge_ingestion_jobs`
 - `ai_runs`
 - `audit_logs`
 - `organizations`
@@ -74,7 +84,7 @@ public.match_document_chunks(query_embedding vector(768), match_count int, match
 ## Future Hardening
 
 - Store original uploaded files in Supabase Storage.
-- Add checksum-based deduplication.
-- Move large PDF ingestion to a background job.
+- Move original-file payloads to Supabase Storage object references instead of inline job payloads.
+- Provision QStash in production and load-test large PDF/import queues.
 - Replace deterministic demo embeddings with provider embeddings.
 - Add source-level approval workflow before chunks become retrievable.

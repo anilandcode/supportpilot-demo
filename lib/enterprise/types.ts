@@ -241,6 +241,31 @@ export type KnowledgeEmbeddingJob = {
   updatedAt: string;
 };
 
+export type KnowledgeIngestionJob = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  docId: string | null;
+  jobType: "extract_pdf" | "ingest_markdown" | "ingest_text" | "embed_chunks" | "reembed_source" | "run_golden_eval";
+  status: "queued" | "running" | "succeeded" | "failed" | "needs_review" | "skipped";
+  sourceType: KnowledgeDoc["sourceType"];
+  title: string;
+  contentType: string | null;
+  sourceContentHash: string;
+  storageUrl: string | null;
+  payload: Record<string, unknown>;
+  attempts: number;
+  maxAttempts: number;
+  chunksTotal: number;
+  chunksEmbedded: number;
+  error: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  nextRunAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AIRun = {
   id: string;
   tenantId: string;

@@ -11,10 +11,11 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["six migration files exist", migrationFiles.length >= 6, String(migrationFiles.length)]);
+checks.push(["seven migration files exist", migrationFiles.length >= 7, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
 checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 checks.push(["embedding versioning migration present", migrationFiles.some((file) => file.endsWith("006_embedding_versioning_jobs.sql")), migrationFiles.join(",")]);
+checks.push(["background ingestion migration present", migrationFiles.some((file) => file.endsWith("007_background_ingestion_jobs.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -38,6 +39,9 @@ checks.push(["billing owner policies exist", sql.includes("owners manage checkou
 checks.push(["Stripe webhooks are idempotent", sql.includes("stripe_event_id text not null unique") && sql.includes("stripe_webhook_events"), "stripe_webhook_events"]);
 checks.push(["embedding jobs are workspace gated", sql.includes("workspace managers manage embedding jobs") && sql.includes("knowledge_embedding_jobs"), "knowledge_embedding_jobs"]);
 checks.push(["document chunk match is workspace scoped", sql.includes("target_workspace_id") && sql.includes("dc.workspace_id = target_workspace_id"), "match_document_chunks"]);
+checks.push(["ingestion jobs are workspace gated", sql.includes("workspace managers manage ingestion jobs") && sql.includes("knowledge_ingestion_jobs"), "knowledge_ingestion_jobs"]);
+checks.push(["ingestion jobs track retry metadata", sql.includes("attempts integer not null default 0") && sql.includes("max_attempts integer not null default 3") && sql.includes("next_run_at"), "retry"]);
+checks.push(["ingestion jobs dedupe successful hashes", sql.includes("knowledge_ingestion_jobs_success_hash_idx") && sql.includes("source_content_hash"), "dedupe"]);
 
 let failed = 0;
 console.log("\nSupportPilot RLS production checks");

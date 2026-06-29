@@ -11,7 +11,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Workspace settings, verified widget domains, usage events, and approval policies
 - Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, missing-knowledge tasks, and optional Redis-backed public API rate limits
 - Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
-- Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, and re-embedding job scaffolding
+- Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, re-embedding job scaffolding, and background ingestion job scaffolding
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -58,8 +58,10 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET|POST /api/billing/portal` - create a Stripe customer portal session from tenant customer mapping or legacy env customer when Stripe env vars exist, otherwise return to the demo billing page
 - `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
 - `GET|POST /api/knowledge/reembed` - manager/admin/owner re-embedding job endpoint for approved knowledge chunks
+- `GET /api/knowledge/ingest/jobs` - manager/agent ingestion job history for uploads, PDFs, retries, and extraction failures
+- `POST /api/knowledge/ingest/jobs/[jobId]/run` - manually retry or worker-run a queued ingestion job
 - `POST /api/feedback` - answer feedback logging
-- `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`, then chunk and store approved sources
+- `POST /api/knowledge/upload` - upload or paste `.md`, `.txt`, or `.pdf`; small text runs inline, large/PDF jobs can queue for background extraction
 - `POST /api/tickets/[ticketId]/draft` - create AI draft reply with citations, confidence, rationale, risk flags, and `ai_run`
 - `PATCH /api/ai-runs/[aiRunId]/decision` - approve, edit, reject, or escalate drafts with audit logs
 - `PATCH /api/workspaces/[workspaceId]/settings` - update workspace identity, brand, welcome copy, and escalation routing
@@ -106,6 +108,8 @@ NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=...
 UPSTASH_REDIS_REST_URL=...
 UPSTASH_REDIS_REST_TOKEN=...
+QSTASH_TOKEN=...
+SUPPORTPILOT_INGESTION_WORKER_SECRET=...
 SUPPORTPILOT_RATE_LIMIT_CHAT_PER_MINUTE=10
 SUPPORTPILOT_RATE_LIMIT_WIDGET_CONFIG_PER_MINUTE=120
 SUPPORTPILOT_RATE_LIMIT_WIDGET_SESSIONS_PER_5_MINUTES=30
@@ -127,11 +131,13 @@ Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` 
 
 Knowledge ingestion uses `EMBEDDING_PROVIDER` when configured and falls back to deterministic 768-dimension embeddings for local demos. `document_chunks` store provider, model, version, dimensions, source version ID, content hash, and embedded timestamp so future provider migrations can be audited and re-run through `/api/knowledge/reembed`.
 
+Knowledge uploads now create `knowledge_ingestion_jobs` before extraction/chunking. Small text uploads process immediately; large files and PDFs attempt QStash background delivery when `QSTASH_TOKEN`, `NEXT_PUBLIC_APP_URL`, and `SUPPORTPILOT_INGESTION_WORKER_SECRET` are configured, otherwise they fall back to the local synchronous demo path. Jobs track status, attempts, retry timing, extraction errors, chunk counts, and content-hash dedupe.
+
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 
 ## Supabase
 
-Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, and embedding versioning/re-embedding job tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, and background knowledge ingestion jobs. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -152,6 +158,7 @@ npm run typecheck
 npm run test:billing
 npm run test:rate-limit
 npm run test:embeddings
+npm run test:ingestion
 npm run test:rls
 npm run test:enterprise
 npm run test:production

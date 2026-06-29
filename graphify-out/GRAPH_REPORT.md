@@ -1,16 +1,16 @@
 # Graph Report - chatbot-demo  (2026-06-29)
 
 ## Corpus Check
-- 210 files · ~162,603 words
+- 215 files · ~165,147 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1745 nodes · 3233 edges · 86 communities (76 shown, 10 thin omitted)
+- 1774 nodes · 3338 edges · 86 communities (76 shown, 10 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7e61cfa4`
+- Built from commit: `11264ffb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -80,14 +80,14 @@
 - [[_COMMUNITY_Community 66|Community 66]]
 - [[_COMMUNITY_Community 67|Community 67]]
 - [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
 - [[_COMMUNITY_Community 72|Community 72]]
 - [[_COMMUNITY_Community 73|Community 73]]
-- [[_COMMUNITY_Community 74|Community 74]]
 - [[_COMMUNITY_Community 76|Community 76]]
 - [[_COMMUNITY_Community 77|Community 77]]
 - [[_COMMUNITY_Community 78|Community 78]]
-- [[_COMMUNITY_Community 79|Community 79]]
 - [[_COMMUNITY_Community 80|Community 80]]
 - [[_COMMUNITY_Community 82|Community 82]]
 - [[_COMMUNITY_Community 84|Community 84]]
@@ -99,20 +99,18 @@
 - [[_COMMUNITY_Community 101|Community 101]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `createSupabaseAdminClient()` - 78 edges
-2. `getWorkspace()` - 54 edges
-3. `POST()` - 28 edges
-4. `requireWorkspaceRole()` - 27 edges
+1. `createSupabaseAdminClient()` - 83 edges
+2. `getWorkspace()` - 59 edges
+3. `requireWorkspaceRole()` - 31 edges
+4. `POST()` - 28 edges
 5. `cn()` - 26 edges
 6. `getWorkspaceLaunchState()` - 26 edges
-7. `draftTicketReply()` - 24 edges
-8. `recordUsageEvent()` - 22 edges
-9. `appendAuditLog()` - 22 edges
+7. `appendAuditLog()` - 25 edges
+8. `draftTicketReply()` - 24 edges
+9. `recordUsageEvent()` - 22 edges
 10. `maybeUuid()` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `POST()` --calls--> `getPlanLimitBlock()`  [INFERRED]
-  app/api/chat/route.ts → lib/billing/core.ts
 - `POST()` --calls--> `completeOnboardingStep()`  [EXTRACTED]
   app/api/onboarding/steps/[step]/complete/route.ts → lib/db/support.ts
 - `OnboardingPage()` --calls--> `getWorkspaceLaunchState()`  [EXTRACTED]
@@ -121,28 +119,30 @@
   proxy.ts → lib/auth/permissions.ts
 - `GET()` --calls--> `createSupabaseServerClient()`  [EXTRACTED]
   app/auth/callback/route.ts → lib/supabase/server.ts
+- `TicketsPage()` --calls--> `listTickets()`  [EXTRACTED]
+  app/admin/tickets/page.tsx → lib/db/support.ts
 
 ## Communities (86 total, 10 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.17
-Nodes (14): Feedback(), FeedbackProps, cn(), Avatar(), AvatarBadge(), AvatarFallback(), AvatarGroup(), AvatarGroupCount() (+6 more)
+Cohesion: 0.14
+Nodes (16): BILLING_PLANS, BillingPlanDefinition, BillingPlanKey, BillingRouteCost, BillingSnapshot, BillingSnapshotInput, BillingUsageMetric, buildBillingSnapshot() (+8 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.16
-Nodes (11): ConfidenceBreakdown, PolicyDecision, RiskLevel, TicketWithRelations, ToolDefinition, calculateConfidenceBreakdown(), clamp(), ConfidenceInput (+3 more)
+Cohesion: 0.14
+Nodes (13): ConfidenceBreakdown, PolicyDecision, RiskLevel, TicketWithRelations, ToolDefinition, calculateConfidenceBreakdown(), clamp(), ConfidenceInput (+5 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.06
 Nodes (32): Academic integrity controls, Architecture and evidence infrastructure, Building a Production-Ready MVP for Veritas AI, Citation extraction and metadata policy, code:mermaid (gantt), Cost estimates, Deployment plan, Executive summary (+24 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.14
-Nodes (15): Citations(), CitationsProps, MarkdownMessage(), MarkdownMessageProps, renderInline(), MessageList(), MessageListProps, Message() (+7 more)
+Cohesion: 0.05
+Nodes (46): BrandAvatar(), BrandAvatarProps, ChatWindow(), ChatWindowProps, transport, Citations(), CitationsProps, Composer() (+38 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.15
-Nodes (12): metadata, TABS, ApprovalAuditTimeline(), ApprovalAuditTimelineProps, ConfidenceMeter(), ConfidenceMeterProps, SourceDrawer(), SourceDrawerProps (+4 more)
+Cohesion: 0.12
+Nodes (17): metadata, TABS, ApprovalAuditTimeline(), ApprovalAuditTimelineProps, ConfidenceMeter(), ConfidenceMeterProps, SourceDrawer(), SourceDrawerProps (+9 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.15
@@ -189,8 +189,8 @@ Cohesion: 0.5
 Nodes (4): ask(), QUESTIONS, run(), UIMessagePart
 
 ### Community 23 - "Community 23"
-Cohesion: 0.09
-Nodes (27): contentHash(), createPortalTicket(), hydrateSupabaseTicket(), hydrateTicket(), localState, mapCustomer(), mapDocumentChunk(), mapTicket() (+19 more)
+Cohesion: 0.08
+Nodes (31): calculateMetrics(), contentHash(), createPortalTicket(), hydrateSupabaseTicket(), hydrateTicket(), localState, mapCustomer(), mapDocumentChunk() (+23 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.05
@@ -206,7 +206,7 @@ Nodes (46): 24 — SupportPilot Production Execution Roadmap, Billing and usage,
 
 ### Community 27 - "Community 27"
 Cohesion: 0.06
-Nodes (34): demoUsers, AgentRun, AIRun, AuditLog, Customer, DashboardMetrics, EnterpriseUser, GoldenQuestion (+26 more)
+Nodes (32): BodySchema, POST(), STEPS, demoUsers, AIFeedback, ApprovalPolicy, AuditLog, Customer (+24 more)
 
 ### Community 28 - "Community 28"
 Cohesion: 0.07
@@ -253,8 +253,8 @@ Cohesion: 0.12
 Nodes (16): 09 — SupportPilot Security and Enterprise Readiness, 10. SSO/SAML and enterprise auth, 11. SOC 2 Type II readiness checklist, 12. GDPR and EU AI Act considerations, 13. Security roadmap, 1. Security posture, 2. Multi-tenant isolation, 3. RBAC model (+8 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.06
-Nodes (25): extractBetween(), extractBlock(), faqs, features, integrationGroups, pageMarkup, pricing, stage14Css (+17 more)
+Cohesion: 0.07
+Nodes (19): extractBetween(), extractBlock(), faqs, features, integrationGroups, pageMarkup, pricing, stage14Css (+11 more)
 
 ### Community 40 - "Community 40"
 Cohesion: 0.13
@@ -294,7 +294,7 @@ Nodes (8): code:bash (npm run typecheck), Deferred, P0 Implemented, P1 Implement
 
 ### Community 49 - "Community 49"
 Cohesion: 0.05
-Nodes (100): AdminPage(), estimateTokenCount(), ModelRouteDecision, RouteInput, selectModelRoute(), AnalyticsPage(), ApprovalsPage(), assistantResponse() (+92 more)
+Nodes (101): AdminPage(), estimateTokenCount(), ModelRouteDecision, RouteInput, selectModelRoute(), AnalyticsPage(), ApprovalsPage(), currentBillingPeriod() (+93 more)
 
 ### Community 50 - "Community 50"
 Cohesion: 0.33
@@ -305,8 +305,8 @@ Cohesion: 0.33
 Nodes (5): Governance, Helpdesk Integrations, Multi-Tenant Support, Production Hardening, Roadmap
 
 ### Community 52 - "Community 52"
-Cohesion: 0.29
-Nodes (6): listAgents(), TicketPriority, TicketStatus, metadata, SearchParams, TicketsPage()
+Cohesion: 0.16
+Nodes (8): listAgents(), TicketList(), TicketListProps, TicketPriority, TicketStatus, metadata, SearchParams, TicketsPage()
 
 ### Community 54 - "Community 54"
 Cohesion: 0.04
@@ -329,8 +329,8 @@ Cohesion: 0.09
 Nodes (21): 10. Integrations, 11. Analytics / performance metrics, 12. Pricing, 13. Testimonials, 14. FAQ, 14 — SupportPilot Landing Page IA and Copy, 15. Final CTA, 16. Footer (+13 more)
 
 ### Community 61 - "Community 61"
-Cohesion: 0.15
-Nodes (8): STATUS_STYLES, StatusBadgeProps, TicketList(), TicketListProps, ApprovalStatus, DomainStatus, Badge(), BadgeProps
+Cohesion: 0.33
+Nodes (6): AIRun, GroundingCheck, GroundingStatus, GroundingInput, round(), verifyGrounding()
 
 ### Community 62 - "Community 62"
 Cohesion: 0.33
@@ -338,7 +338,7 @@ Nodes (8): HandoffPageKey, HandoffRuntime(), extractAll(), extractBody(), HtmlHa
 
 ### Community 63 - "Community 63"
 Cohesion: 0.07
-Nodes (50): BILLING_PLANS, BillingPlanDefinition, BillingPlanKey, BillingRouteCost, BillingSnapshot, BillingSnapshotInput, BillingUsageMetric, buildBillingSnapshot() (+42 more)
+Nodes (56): getChunksForReembedding(), localEmbeddingJobs, mapDocumentChunk(), maybeUuid(), publicId(), runReembeddingJob(), toEmbeddingJobRow(), updateChunkEmbedding() (+48 more)
 
 ### Community 64 - "Community 64"
 Cohesion: 0.18
@@ -353,12 +353,20 @@ Cohesion: 0.5
 Nodes (3): 15 — ChatGPT Landing Build Prompt, code:text (You are a senior front-end designer and engineer. Build a co), Source notes for the prompt
 
 ### Community 68 - "Community 68"
-Cohesion: 0.11
-Nodes (12): metadata, RootLayout(), BrandAvatar(), BrandAvatarProps, SuggestedQuestionsProps, WelcomeCardProps, SupportPilotTheme, LINKS (+4 more)
+Cohesion: 0.13
+Nodes (8): metadata, RootLayout(), SuggestedQuestionsProps, SupportPilotTheme, LINKS, getThemeCssVariables(), ThemeStyle, metadata
+
+### Community 69 - "Community 69"
+Cohesion: 0.5
+Nodes (3): Footer(), FOOTER_COLUMNS, marqueeItems
+
+### Community 70 - "Community 70"
+Cohesion: 0.5
+Nodes (3): LINKS, Nav(), PRODUCT_LINKS
 
 ### Community 71 - "Community 71"
 Cohesion: 0.05
-Nodes (81): acceptSchema, POST(), CaptureInput, captureProductEvent(), ApiAuthResult, ensurePortalIdentity(), getAuthenticatedUser(), requireTicketWorkspaceRole() (+73 more)
+Nodes (82): acceptSchema, POST(), CaptureInput, captureProductEvent(), ApiAuthResult, ensurePortalIdentity(), getAuthenticatedUser(), requireTicketWorkspaceRole() (+74 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.05
@@ -368,32 +376,20 @@ Nodes (41): 22 — SupportPilot Integrations, Infrastructure Hardening, and Loca
 Cohesion: 0.11
 Nodes (9): enterpriseCards, faqs, flowTabs, integrations, MarketingLandingPage(), pricing, storyRows, testimonials (+1 more)
 
-### Community 74 - "Community 74"
-Cohesion: 0.13
-Nodes (11): ChatWindow(), ChatWindowProps, transport, Composer(), ComposerProps, EscalationButton(), EscalationButtonProps, WelcomeCard() (+3 more)
-
-### Community 77 - "Community 77"
-Cohesion: 0.18
-Nodes (5): metadata, getCurrentEnterpriseUser, AdminShell(), AdminShellProps, NAV_ITEMS
-
 ### Community 78 - "Community 78"
 Cohesion: 0.08
 Nodes (25): 21 — SupportPilot Billing and Stripe Lifecycle Plan, Acceptance criteria, Billing flow, Checkout plan, code:mermaid (sequenceDiagram), code:txt (usage_events), Create checkout session, Customer portal (+17 more)
 
-### Community 79 - "Community 79"
-Cohesion: 0.4
-Nodes (4): BodySchema, POST(), STEPS, LaunchChecklistStep
-
 ### Community 80 - "Community 80"
-Cohesion: 0.07
-Nodes (51): clientKey(), GET(), createWidgetSession(), getWidgetConfig(), isOriginAllowed(), mapWidgetConfig(), normalizeDomain(), toWidgetSessionRow() (+43 more)
+Cohesion: 0.09
+Nodes (45): clientKey(), GET(), getWidgetConfig(), isOriginAllowed(), mapWidgetConfig(), normalizeDomain(), bucketKey(), checkMemoryRateLimit() (+37 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.09
 Nodes (22): 23 — SupportPilot Testing and QA Strategy, Before every production release, Before first paid launch, CI gates, code:mermaid (flowchart TD), code:mermaid (journey), Critical E2E tests, Done means (+14 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.13
+Cohesion: 0.15
 Nodes (8): AuthForm(), AuthFormMode, AuthFormProps, MODE_COPY, metadata, metadata, metadata, metadata
 
 ### Community 87 - "Community 87"
@@ -408,12 +404,16 @@ Nodes (5): OnboardingWizard(), OnboardingWizardProps, WorkspaceLaunchState, meta
 Cohesion: 0.19
 Nodes (11): describeRlsMatrix(), REQUIRED_RLS_HELPERS, REQUIRED_RLS_TABLES, RLS_EXPECTATIONS, RlsActor, RlsExpectation, RlsOperation, checks (+3 more)
 
+### Community 100 - "Community 100"
+Cohesion: 0.16
+Nodes (6): getCurrentEnterpriseUser, BillingSearchParams, metadata, AdminShell(), AdminShellProps, NAV_ITEMS
+
 ### Community 101 - "Community 101"
 Cohesion: 0.29
 Nodes (6): Clean Supabase Rehearsal, code:bash (npm run test:rls), code:bash (supabase db push), Local Static Gate, Production Gate, RLS Verification
 
 ## Knowledge Gaps
-- **736 isolated node(s):** `config`, `config`, `SupportPilotTheme`, `nextConfig`, `metadata` (+731 more)
+- **739 isolated node(s):** `config`, `config`, `SupportPilotTheme`, `nextConfig`, `metadata` (+734 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -421,16 +421,16 @@ Nodes (6): Clean Supabase Rehearsal, code:bash (npm run test:rls), code:bash (su
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `createSupabaseAdminClient()` connect `Community 49` to `Community 71`, `Community 80`, `Community 52`, `Community 23`, `Community 63`, `Community 31`?**
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Community 3` to `Community 35`, `Community 100`, `Community 5`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `cn()` connect `Community 0` to `Community 3`, `Community 35`, `Community 68`, `Community 5`, `Community 77`, `Community 61`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `getWorkspace()` connect `Community 49` to `Community 71`, `Community 80`, `Community 23`, `Community 63`, `Community 31`?**
-  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `getWorkspace()` connect `Community 49` to `Community 4`, `Community 71`, `Community 80`, `Community 23`, `Community 31`, `Community 63`?**
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **What connects `config`, `config`, `SupportPilotTheme` to the rest of the system?**
-  _736 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _739 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Community 0` be split into smaller, more focused modules?**
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.14 - nodes in this community are weakly interconnected._
-- **Should `Community 6` be split into smaller, more focused modules?**
-  _Cohesion score 0.07 - nodes in this community are weakly interconnected._

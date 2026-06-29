@@ -27,6 +27,7 @@ export const REQUIRED_RLS_TABLES = [
   "knowledge_docs",
   "document_chunks",
   "knowledge_embedding_jobs",
+  "knowledge_ingestion_jobs",
   "ai_runs",
   "ai_feedback",
   "audit_logs",

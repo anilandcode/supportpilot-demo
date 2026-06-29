@@ -1,8 +1,7 @@
-import { PDFParse } from "pdf-parse";
 import { requireWorkspaceRole } from "@/lib/auth/api";
-import { appendSecurityEvent, createKnowledgeDocument } from "@/lib/db/support";
+import { appendSecurityEvent } from "@/lib/db/support";
+import { createIngestionJob } from "@/lib/db/ingestion";
 import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
-import { chunkDocument } from "@/lib/rag/chunking";
 import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -12,6 +11,7 @@ export async function POST(req: Request) {
   const file = formData.get("file");
   const pastedContent = String(formData.get("content") || "");
   const workspaceId = String(formData.get("workspaceId") || "");
+  const asyncRequested = String(formData.get("async") || "").toLowerCase() === "true";
   const auth = await requireWorkspaceRole(workspaceId || DEMO_WORKSPACE_ID, ["owner", "admin", "manager", "agent"]);
   if (!auth.ok) {
     return Response.json({ error: auth.error }, { status: auth.status });
@@ -40,25 +40,33 @@ export async function POST(req: Request) {
 
   const title = String(formData.get("title") || (file instanceof File ? file.name.replace(/\.[^.]+$/, "") : "Pasted knowledge"));
   const sourceType = normalizeSourceType(String(formData.get("sourceType") || "upload"));
-  const content = file instanceof File ? await extractText(file) : pastedContent;
+  const fileBase64 = file instanceof File ? Buffer.from(await file.arrayBuffer()).toString("base64") : undefined;
+  const contentType = file instanceof File ? file.type || "text/plain" : "text/plain";
+  const shouldQueue = asyncRequested || (file instanceof File && (file.size > 750_000 || file.type === "application/pdf" || /\.pdf$/i.test(file.name)));
+  const content = file instanceof File ? undefined : pastedContent;
 
-  if (!content.trim()) {
+  if (!fileBase64 && !pastedContent.trim()) {
     return Response.json({ error: "document did not contain text" }, { status: 400 });
   }
 
-  const chunks = chunkDocument({ docId: "pending", title, content });
-  const doc = await createKnowledgeDocument({
+  const { job, queued } = await createIngestionJob({
     workspaceId: auth.workspaceId,
     title,
     sourceType,
     content,
-    chunks,
+    fileBase64,
+    contentType,
+    filename: file instanceof File ? file.name : null,
+    actorUserId: auth.userId,
+    asyncRequested: shouldQueue,
   });
 
   return Response.json({
-    doc,
-    chunks: chunks.length,
-  });
+    job,
+    queued,
+    doc: job.docId ? { id: job.docId } : null,
+    chunks: job.chunksEmbedded,
+  }, { status: queued || job.status === "queued" ? 202 : job.status === "failed" ? 500 : 200 });
 }
 
 function normalizeSourceType(value: string) {
@@ -66,20 +74,6 @@ function normalizeSourceType(value: string) {
     return value;
   }
   return "upload";
-}
-
-async function extractText(file: File): Promise<string> {
-  if (file.type === "application/pdf" || /\.pdf$/i.test(file.name)) {
-    const parser = new PDFParse({ data: new Uint8Array(await file.arrayBuffer()) });
-    try {
-      const result = await parser.getText();
-      return result.text;
-    } finally {
-      await parser.destroy();
-    }
-  }
-
-  return file.text();
 }
 
 function clientKey(req: Request) {
