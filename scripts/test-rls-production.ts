@@ -11,11 +11,12 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["seven migration files exist", migrationFiles.length >= 7, String(migrationFiles.length)]);
+checks.push(["eight migration files exist", migrationFiles.length >= 8, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
 checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 checks.push(["embedding versioning migration present", migrationFiles.some((file) => file.endsWith("006_embedding_versioning_jobs.sql")), migrationFiles.join(",")]);
 checks.push(["background ingestion migration present", migrationFiles.some((file) => file.endsWith("007_background_ingestion_jobs.sql")), migrationFiles.join(",")]);
+checks.push(["integration outbound migration present", migrationFiles.some((file) => file.endsWith("008_integration_outbound_events.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -42,6 +43,9 @@ checks.push(["document chunk match is workspace scoped", sql.includes("target_wo
 checks.push(["ingestion jobs are workspace gated", sql.includes("workspace managers manage ingestion jobs") && sql.includes("knowledge_ingestion_jobs"), "knowledge_ingestion_jobs"]);
 checks.push(["ingestion jobs track retry metadata", sql.includes("attempts integer not null default 0") && sql.includes("max_attempts integer not null default 3") && sql.includes("next_run_at"), "retry"]);
 checks.push(["ingestion jobs dedupe successful hashes", sql.includes("knowledge_ingestion_jobs_success_hash_idx") && sql.includes("source_content_hash"), "dedupe"]);
+checks.push(["integration accounts are owner/admin managed", sql.includes("workspace admins manage integration accounts") && sql.includes("array['owner','admin']"), "integration_accounts"]);
+checks.push(["outbound events are idempotent", sql.includes("idempotency_key text not null unique") && sql.includes("outbound_events"), "outbound_events"]);
+checks.push(["integration deliveries are workspace gated", sql.includes("workspace managers manage integration deliveries") && sql.includes("integration_deliveries"), "integration_deliveries"]);
 
 let failed = 0;
 console.log("\nSupportPilot RLS production checks");

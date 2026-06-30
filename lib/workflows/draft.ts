@@ -10,6 +10,7 @@ import {
   recordUsageEvent,
 } from "@/lib/db/support";
 import { estimateTokenCount, selectModelRoute } from "@/lib/ai/model-router";
+import { enqueueApprovalRequested } from "@/lib/db/integrations";
 import type { DraftResult } from "@/lib/enterprise/types";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
 import { retrieveEnterpriseChunks } from "@/lib/rag/retrieval";
@@ -169,6 +170,7 @@ export async function draftTicketReply(ticketId: string, userId: string | null):
       eventType: "approval_requested",
       metadata: { aiRunId: aiRun.id, ticketId: ticket.id, reasons: policyDecision.reasons },
     });
+    await enqueueApprovalRequested(aiRun);
   }
 
   return {

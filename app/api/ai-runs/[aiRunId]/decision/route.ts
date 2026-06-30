@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
+import { enqueueApprovalDecision } from "@/lib/db/integrations";
 import { getAiRun, updateAiRunDecision } from "@/lib/db/support";
 
 export const runtime = "nodejs";
@@ -38,5 +39,6 @@ export async function PATCH(req: Request, context: { params: Promise<{ aiRunId: 
     return Response.json({ error: "ai run not found" }, { status: 404 });
   }
 
-  return Response.json({ run });
+  const outboundEvents = await enqueueApprovalDecision(run);
+  return Response.json({ run, outboundEvents });
 }

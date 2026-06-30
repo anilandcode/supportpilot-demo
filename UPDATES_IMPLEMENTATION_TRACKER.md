@@ -66,6 +66,14 @@ Date: 2026-06-24
 - Added `lib/db/ingestion.ts`, `/api/knowledge/ingest/jobs`, `/api/knowledge/ingest/jobs/[jobId]/run`, and updated `/api/knowledge/upload` so small text runs inline while large/PDF uploads can queue through QStash when worker env vars exist.
 - Added `npm run test:ingestion` for synchronous ingestion, duplicate skipping, extraction review state, QStash worker-secret forwarding, and manual retry behavior.
 
+## Production Readiness Phase 3 Started
+
+- Added integration outbound migration `008_integration_outbound_events.sql` for Slack/generic webhook accounts, webhook endpoints, external mappings, idempotent outbound events, delivery attempts, retry metadata, and workspace RLS.
+- Added `lib/db/integrations.ts` with local/Supabase storage, approval-needed and approval-decision enqueue hooks, Slack payload delivery, signed generic webhook payloads, audit logging, and manual retry delivery.
+- Added `/api/integrations/accounts`, `/api/integrations/events`, and `/api/integrations/events/[eventId]/deliver` for redacted integration configuration, queue visibility, and manager/admin delivery execution.
+- Wired ticket draft approval requests and AI-run approval decisions to create durable outbound integration events without sending externally unless a channel is active and delivery is explicitly run or inline mode is enabled.
+- Added `npm run test:integrations` for idempotent enqueueing, Slack delivery, generic webhook signing, failed delivery retry metadata, and no-config fallback.
+
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
@@ -73,6 +81,7 @@ Date: 2026-06-24
 - Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run public widget abuse/load tests, and tune per-tenant thresholds from traffic.
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
+- Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -85,6 +94,7 @@ npm run test:billing
 npm run test:rate-limit
 npm run test:embeddings
 npm run test:ingestion
+npm run test:integrations
 npm run test:rls
 npm run test:enterprise
 npm run test:production

@@ -8,6 +8,11 @@ export type MembershipRole = "owner" | "admin" | "manager" | "agent" | "analyst"
 export type DomainStatus = "pending" | "verified" | "blocked";
 export type BillingTierKey = "launch" | "pro" | "enterprise";
 export type BillingInterval = "monthly" | "annual";
+export type IntegrationProvider = "slack" | "webhook" | "zendesk" | "intercom";
+export type IntegrationStatus = "active" | "disabled" | "error";
+export type OutboundEventType = "approval_needed" | "approval_decided" | "approved_reply" | "ticket_escalated";
+export type OutboundEventStatus = "queued" | "processing" | "delivered" | "failed" | "skipped";
+export type IntegrationDeliveryStatus = "processing" | "delivered" | "failed" | "skipped";
 export type BillingSubscriptionStatus =
   | "incomplete"
   | "incomplete_expired"
@@ -590,6 +595,82 @@ export type StripeWebhookEvent = {
   payload: Record<string, unknown>;
   receivedAt: string;
   processedAt: string | null;
+};
+
+export type IntegrationAccount = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  provider: IntegrationProvider;
+  name: string;
+  status: IntegrationStatus;
+  config: Record<string, unknown>;
+  secretRef: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type WebhookEndpoint = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  name: string;
+  url: string;
+  signingSecretRef: string | null;
+  status: IntegrationStatus;
+  events: OutboundEventType[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type IntegrationExternalMapping = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  provider: IntegrationProvider;
+  localType: "ticket" | "message" | "ai_run" | "approval";
+  localId: string;
+  externalType: string;
+  externalId: string;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type OutboundEvent = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  integrationAccountId: string | null;
+  webhookEndpointId: string | null;
+  eventType: OutboundEventType;
+  subjectType: "ticket" | "message" | "ai_run" | "approval";
+  subjectId: string;
+  idempotencyKey: string;
+  payload: Record<string, unknown>;
+  status: OutboundEventStatus;
+  attempts: number;
+  maxAttempts: number;
+  nextRunAt: string | null;
+  lastError: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type IntegrationDelivery = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  outboundEventId: string;
+  integrationAccountId: string | null;
+  webhookEndpointId: string | null;
+  provider: IntegrationProvider | "webhook_endpoint";
+  attempt: number;
+  status: IntegrationDeliveryStatus;
+  httpStatus: number | null;
+  responsePreview: string | null;
+  error: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
 };
 
 export type TicketWithRelations = Ticket & {
