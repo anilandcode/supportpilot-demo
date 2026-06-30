@@ -137,6 +137,11 @@ export type WorkspaceDomain = {
   workspaceId: string;
   domain: string;
   status: DomainStatus;
+  verificationToken: string | null;
+  verificationRecord: string | null;
+  verifiedAt: string | null;
+  lastCheckedAt: string | null;
+  verificationError: string | null;
   createdAt: string;
 };
 

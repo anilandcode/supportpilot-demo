@@ -8,7 +8,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Tailwind CSS v4
 - Vercel AI SDK v6 with Google, OpenAI, or Anthropic providers
 - Supabase Auth, Postgres, pgvector, Storage-ready knowledge uploads, and RLS
-- Workspace settings, verified widget domains, usage events, and approval policies
+- Workspace settings, DNS-verified widget domains, usage events, and approval policies
 - Onboarding checklist, workspace health, model route logs, security events, signed widget sessions, missing-knowledge tasks, and optional Redis-backed public API rate limits
 - Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
 - Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, re-embedding job scaffolding, and background ingestion job scaffolding
@@ -42,7 +42,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `/admin/approvals` - high-risk draft approval queue
 - `/admin/analytics` - resolution, acceptance, response, escalation, and missing-topic metrics
 - `/admin/billing` - Launch/Pro usage limits, model route cost, invoices, and optional Stripe portal
-- `/admin/settings` - workspace brand, escalation email, widget key, verified domains, approval policies
+- `/admin/settings` - workspace brand, escalation email, widget key, DNS-verified domains, approval policies
 
 ## API
 
@@ -74,7 +74,8 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/tickets/[ticketId]/draft` - create AI draft reply with citations, confidence, rationale, risk flags, and `ai_run`
 - `PATCH /api/ai-runs/[aiRunId]/decision` - approve, edit, reject, or escalate drafts with audit logs
 - `PATCH /api/workspaces/[workspaceId]/settings` - update workspace identity, brand, welcome copy, and escalation routing
-- `POST /api/workspaces/[workspaceId]/domains` - add a verified widget origin
+- `GET|POST /api/workspaces/[workspaceId]/domains` - list or add widget origins with DNS verification instructions
+- `POST /api/workspaces/[workspaceId]/domains/[domainId]/verify` - check TXT/CNAME records and activate a widget origin
 - `POST /api/escalations/email` - optional Resend-backed escalation email with audit and usage logging
 
 ## Enterprise Env
@@ -100,6 +101,7 @@ SENTRY_AUTH_TOKEN=...
 
 NEXT_PUBLIC_APP_URL=...
 SUPPORTPILOT_WIDGET_SESSION_SECRET=...
+SUPPORTPILOT_DOMAIN_CNAME_TARGET=verify.supportpilot.ai
 MODEL_ROUTER_DEFAULT=light
 EMBEDDING_PROVIDER=deterministic # deterministic | local | openai | google
 EMBEDDING_MODEL=...
@@ -149,11 +151,13 @@ Integration delivery is queued by default. Approval-needed drafts and approval d
 
 Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes, and audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
 
+Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds.
+
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 
 ## Supabase
 
-Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, outbound integration event tables, and retention/evidence job tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, outbound integration event tables, retention/evidence job tables, and domain verification metadata. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -177,6 +181,7 @@ npm run test:embeddings
 npm run test:ingestion
 npm run test:integrations
 npm run test:retention
+npm run test:domains
 npm run test:rls
 npm run test:enterprise
 npm run test:production

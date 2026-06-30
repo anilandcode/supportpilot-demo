@@ -80,6 +80,10 @@ Date: 2026-06-24
 - Added `lib/db/retention.ts` plus `/api/security/deletion-requests`, `/api/security/retention/jobs`, `/api/security/retention/jobs/[jobId]/run`, and `/api/security/audit-exports`.
 - Verified deletion requests now queue deletion jobs; retention settings schedule conversation and AI-log cleanup jobs; evidence exports produce tamper-evident hashes and SOC 2 readiness claim boundaries.
 - Added `npm run test:retention` for deletion request verification, queued deletion processing, proof hashes, settings-driven cleanup scheduling, and evidence export item counts.
+- Added domain verification migration `010_domain_verification_tokens.sql` for widget-origin verification tokens, DNS records, timestamps, and verification errors.
+- Added staff-readable and owner/admin-manageable workspace domain APIs, including TXT/CNAME verification through `/api/workspaces/[workspaceId]/domains/[domainId]/verify`.
+- Widget origin checks now remain blocked for newly added custom domains until DNS proof succeeds; successful and failed verification attempts write audit logs.
+- Added `npm run test:domains` for pending-domain blocking, failed TXT checks, successful TXT verification, CNAME verification, and widget-origin activation.
 
 ## Deferred
 
@@ -89,6 +93,7 @@ Date: 2026-06-24
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
+- Full custom-domain launch remains a follow-up: add scheduled DNS rechecks, domain health UI, expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -103,6 +108,7 @@ npm run test:embeddings
 npm run test:ingestion
 npm run test:integrations
 npm run test:retention
+npm run test:domains
 npm run test:rls
 npm run test:enterprise
 npm run test:production

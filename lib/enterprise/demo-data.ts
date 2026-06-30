@@ -100,9 +100,9 @@ export const demoMemberships: Membership[] = demoUsers
   }));
 
 export const demoDomains: WorkspaceDomain[] = [
-  { id: "dom_localhost", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "localhost", status: "verified", createdAt: iso(7100) },
-  { id: "dom_127", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "127.0.0.1", status: "verified", createdAt: iso(7100) },
-  { id: "dom_demo", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "supportpilot-demo.vercel.app", status: "verified", createdAt: iso(7000) },
+  { id: "dom_localhost", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "localhost", status: "verified", verificationToken: null, verificationRecord: null, verifiedAt: iso(7100), lastCheckedAt: iso(7100), verificationError: null, createdAt: iso(7100) },
+  { id: "dom_127", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "127.0.0.1", status: "verified", verificationToken: null, verificationRecord: null, verifiedAt: iso(7100), lastCheckedAt: iso(7100), verificationError: null, createdAt: iso(7100) },
+  { id: "dom_demo", tenantId: DEMO_TENANT_ID, workspaceId: DEMO_WORKSPACE_ID, domain: "supportpilot-demo.vercel.app", status: "verified", verificationToken: null, verificationRecord: null, verifiedAt: iso(7000), lastCheckedAt: iso(7000), verificationError: null, createdAt: iso(7000) },
 ];
 
 export const demoWidgetConfigs: WidgetConfig[] = [

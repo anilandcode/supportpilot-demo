@@ -31,6 +31,8 @@ import {
   demoWidgetConfigs,
   demoWorkspaces,
 } from "@/lib/enterprise/demo-data";
+import { randomBytes } from "node:crypto";
+import { resolveCname, resolveTxt } from "node:dns/promises";
 import type {
   AgentRun,
   AIRun,
@@ -202,6 +204,10 @@ function normalizeDomain(domain: string) {
   return domain.replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
 }
 
+function domainVerificationRecord(domain: string) {
+  return `_supportpilot.${normalizeDomain(domain)}`;
+}
+
 function contentHash(content: string) {
   return embeddingContentHash(content);
 }
@@ -367,12 +373,21 @@ export async function addWorkspaceDomain(input: { workspaceId?: string; domain: 
   const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
   const workspaceId = workspace.id;
   const tenantId = workspace.tenantId;
+  const normalizedDomain = normalizeDomain(input.domain);
+  const existing = localState.domains.find((item) => item.workspaceId === workspaceId && normalizeDomain(item.domain) === normalizedDomain);
+  if (existing) return existing;
+  const token = `sp_${randomBytes(18).toString("hex")}`;
   const domain: WorkspaceDomain = {
-    id: publicId("dom"),
+    id: crypto.randomUUID(),
     tenantId,
     workspaceId,
-    domain: normalizeDomain(input.domain),
-    status: "verified",
+    domain: normalizedDomain,
+    status: "pending",
+    verificationToken: token,
+    verificationRecord: domainVerificationRecord(normalizedDomain),
+    verifiedAt: null,
+    lastCheckedAt: null,
+    verificationError: null,
     createdAt: new Date().toISOString(),
   };
 
@@ -386,10 +401,68 @@ export async function addWorkspaceDomain(input: { workspaceId?: string; domain: 
     ticketId: null,
     userId: null,
     action: "workspace.domain.added",
-    details: { domain: domain.domain },
+    details: { domain: domain.domain, status: domain.status, verificationRecord: domain.verificationRecord },
   });
 
   return domain;
+}
+
+export async function verifyWorkspaceDomain(input: {
+  workspaceId?: string;
+  domainId: string;
+  resolver?: Pick<typeof import("node:dns/promises"), "resolveTxt" | "resolveCname">;
+}): Promise<{ domain: WorkspaceDomain; verified: boolean; expectedTxt: string; expectedCname: string; observed: string[] }> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const domain = localState.domains.find((item) => item.workspaceId === workspace.id && item.id === input.domainId) ?? (await getWorkspaceDomainFromSupabase(input.domainId));
+  if (!domain || domain.workspaceId !== workspace.id) throw new Error(`Workspace domain ${input.domainId} was not found`);
+
+  const expectedTxt = domain.verificationToken ? `supportpilot-verify=${domain.verificationToken}` : "";
+  const expectedCname = process.env.SUPPORTPILOT_DOMAIN_CNAME_TARGET || "verify.supportpilot.ai";
+  const resolver = input.resolver ?? { resolveTxt, resolveCname };
+  const record = domain.verificationRecord || domainVerificationRecord(domain.domain);
+  const observed: string[] = [];
+
+  const txtValues = await resolver.resolveTxt(record).catch(() => [] as string[][]);
+  observed.push(...txtValues.map((value) => value.join("")));
+  const cnameValues = await resolver.resolveCname(record).catch(() => [] as string[]);
+  observed.push(...cnameValues.map((value) => value.replace(/\.$/, "")));
+
+  const verified = Boolean(expectedTxt && observed.includes(expectedTxt)) || observed.some((value) => value.replace(/\.$/, "") === expectedCname);
+  domain.status = verified ? "verified" : "pending";
+  domain.verificationRecord = record;
+  domain.lastCheckedAt = new Date().toISOString();
+  domain.verifiedAt = verified ? domain.lastCheckedAt : domain.verifiedAt;
+  domain.verificationError = verified ? null : `Expected TXT ${expectedTxt} or CNAME ${expectedCname} at ${record}`;
+  await persistWorkspaceDomain(domain);
+
+  await appendAuditLog({
+    tenantId: domain.tenantId,
+    workspaceId: domain.workspaceId,
+    ticketId: null,
+    userId: null,
+    action: verified ? "workspace.domain.verified" : "workspace.domain.verification_failed",
+    details: { domain: domain.domain, record, expectedTxt, expectedCname, observed },
+  });
+
+  return { domain, verified, expectedTxt, expectedCname, observed };
+}
+
+async function getWorkspaceDomainFromSupabase(domainId: string) {
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+  const { data, error } = await supabase.from("workspace_domains").select("*").eq("id", maybeUuid(domainId)).maybeSingle();
+  if (error || !data) return null;
+  const domain = mapWorkspaceDomain(data);
+  localState.domains.unshift(domain);
+  return domain;
+}
+
+async function persistWorkspaceDomain(domain: WorkspaceDomain) {
+  const local = localState.domains.find((item) => item.id === domain.id);
+  if (local && local !== domain) Object.assign(local, domain);
+  if (!local) localState.domains.unshift(domain);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("workspace_domains").upsert(toWorkspaceDomainRow(domain), { onConflict: "id" });
 }
 
 export async function createPortalTicket(input: {
@@ -1306,6 +1379,11 @@ function mapWorkspaceDomain(row: any): WorkspaceDomain {
     workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
     domain: row.domain,
     status: row.status ?? "pending",
+    verificationToken: row.verification_token ?? null,
+    verificationRecord: row.verification_record ?? null,
+    verifiedAt: row.verified_at ?? null,
+    lastCheckedAt: row.last_checked_at ?? null,
+    verificationError: row.verification_error ?? null,
     createdAt: row.created_at,
   };
 }
@@ -1573,6 +1651,11 @@ function toWorkspaceDomainRow(domain: WorkspaceDomain) {
     workspace_id: maybeUuid(domain.workspaceId),
     domain: domain.domain,
     status: domain.status,
+    verification_token: domain.verificationToken,
+    verification_record: domain.verificationRecord,
+    verified_at: domain.verifiedAt,
+    last_checked_at: domain.lastCheckedAt,
+    verification_error: domain.verificationError,
     created_at: domain.createdAt,
   };
 }
