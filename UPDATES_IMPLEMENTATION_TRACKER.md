@@ -74,6 +74,13 @@ Date: 2026-06-24
 - Wired ticket draft approval requests and AI-run approval decisions to create durable outbound integration events without sending externally unless a channel is active and delivery is explicitly run or inline mode is enabled.
 - Added `npm run test:integrations` for idempotent enqueueing, Slack delivery, generic webhook signing, failed delivery retry metadata, and no-config fallback.
 
+## Production Readiness Phase 4 Started
+
+- Added retention/evidence migration `009_retention_evidence_jobs.sql` for data deletion requests, retention cleanup jobs, audit evidence exports, proof hashes, affected counts, retry metadata, and workspace RLS.
+- Added `lib/db/retention.ts` plus `/api/security/deletion-requests`, `/api/security/retention/jobs`, `/api/security/retention/jobs/[jobId]/run`, and `/api/security/audit-exports`.
+- Verified deletion requests now queue deletion jobs; retention settings schedule conversation and AI-log cleanup jobs; evidence exports produce tamper-evident hashes and SOC 2 readiness claim boundaries.
+- Added `npm run test:retention` for deletion request verification, queued deletion processing, proof hashes, settings-driven cleanup scheduling, and evidence export item counts.
+
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
@@ -83,7 +90,7 @@ Date: 2026-06-24
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
-- SSO/SAML/SCIM, retention deletion jobs, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
+- SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
 
 ## Verification Commands
@@ -95,6 +102,7 @@ npm run test:rate-limit
 npm run test:embeddings
 npm run test:ingestion
 npm run test:integrations
+npm run test:retention
 npm run test:rls
 npm run test:enterprise
 npm run test:production

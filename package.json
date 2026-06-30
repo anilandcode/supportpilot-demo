@@ -14,6 +14,7 @@
     "test:embeddings": "tsx scripts/test-embeddings.ts",
     "test:ingestion": "tsx scripts/test-ingestion.ts",
     "test:integrations": "tsx scripts/test-integrations.ts",
+    "test:retention": "tsx scripts/test-retention.ts",
     "test:production": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-production-readiness.ts",
     "test:rls": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-rls-production.ts"
   },

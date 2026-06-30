@@ -13,6 +13,11 @@ export type IntegrationStatus = "active" | "disabled" | "error";
 export type OutboundEventType = "approval_needed" | "approval_decided" | "approved_reply" | "ticket_escalated";
 export type OutboundEventStatus = "queued" | "processing" | "delivered" | "failed" | "skipped";
 export type IntegrationDeliveryStatus = "processing" | "delivered" | "failed" | "skipped";
+export type DeletionRequestStatus = "requested" | "verified" | "queued" | "processing" | "completed" | "rejected" | "failed";
+export type DeletionRequestScope = "customer" | "ticket" | "workspace" | "source_document";
+export type RetentionJobType = "conversation_cleanup" | "ai_log_cleanup" | "audit_export" | "deletion_request";
+export type RetentionJobStatus = "queued" | "running" | "succeeded" | "failed" | "needs_review";
+export type EvidenceExportStatus = "queued" | "running" | "succeeded" | "failed";
 export type BillingSubscriptionStatus =
   | "incomplete"
   | "incomplete_expired"
@@ -671,6 +676,65 @@ export type IntegrationDelivery = {
   error: string | null;
   deliveredAt: string | null;
   createdAt: string;
+};
+
+export type DataDeletionRequest = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  scope: DeletionRequestScope;
+  subjectId: string;
+  requesterEmail: string | null;
+  actorUserId: string | null;
+  status: DeletionRequestStatus;
+  reason: string | null;
+  verificationMethod: string | null;
+  verifiedAt: string | null;
+  queuedAt: string | null;
+  completedAt: string | null;
+  auditProofHash: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type RetentionJob = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  jobType: RetentionJobType;
+  status: RetentionJobStatus;
+  deletionRequestId: string | null;
+  retentionSettingId: string | null;
+  scope: DeletionRequestScope | "workspace_retention";
+  cutoffAt: string | null;
+  attempts: number;
+  maxAttempts: number;
+  affectedCounts: Record<string, number>;
+  error: string | null;
+  auditProofHash: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  nextRunAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AuditEvidenceExport = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  exportType: "monthly_soc2_readiness" | "audit_logs" | "security_events" | "deletion_proof";
+  status: EvidenceExportStatus;
+  periodStart: string;
+  periodEnd: string;
+  artifactUrl: string | null;
+  artifactHash: string | null;
+  itemCounts: Record<string, number>;
+  generatedBy: string | null;
+  error: string | null;
+  createdAt: string;
+  completedAt: string | null;
 };
 
 export type TicketWithRelations = Ticket & {

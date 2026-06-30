@@ -11,12 +11,13 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["eight migration files exist", migrationFiles.length >= 8, String(migrationFiles.length)]);
+checks.push(["nine migration files exist", migrationFiles.length >= 9, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
 checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 checks.push(["embedding versioning migration present", migrationFiles.some((file) => file.endsWith("006_embedding_versioning_jobs.sql")), migrationFiles.join(",")]);
 checks.push(["background ingestion migration present", migrationFiles.some((file) => file.endsWith("007_background_ingestion_jobs.sql")), migrationFiles.join(",")]);
 checks.push(["integration outbound migration present", migrationFiles.some((file) => file.endsWith("008_integration_outbound_events.sql")), migrationFiles.join(",")]);
+checks.push(["retention evidence migration present", migrationFiles.some((file) => file.endsWith("009_retention_evidence_jobs.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -46,6 +47,9 @@ checks.push(["ingestion jobs dedupe successful hashes", sql.includes("knowledge_
 checks.push(["integration accounts are owner/admin managed", sql.includes("workspace admins manage integration accounts") && sql.includes("array['owner','admin']"), "integration_accounts"]);
 checks.push(["outbound events are idempotent", sql.includes("idempotency_key text not null unique") && sql.includes("outbound_events"), "outbound_events"]);
 checks.push(["integration deliveries are workspace gated", sql.includes("workspace managers manage integration deliveries") && sql.includes("integration_deliveries"), "integration_deliveries"]);
+checks.push(["deletion requests are workspace gated", sql.includes("workspace managers manage deletion requests") && sql.includes("data_deletion_requests"), "data_deletion_requests"]);
+checks.push(["retention jobs track proof hashes", sql.includes("retention_jobs") && sql.includes("audit_proof_hash") && sql.includes("affected_counts"), "retention_jobs"]);
+checks.push(["evidence exports are tamper evident", sql.includes("audit_evidence_exports") && sql.includes("artifact_hash") && sql.includes("period_start"), "audit_evidence_exports"]);
 
 let failed = 0;
 console.log("\nSupportPilot RLS production checks");

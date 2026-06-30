@@ -13,6 +13,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Launch/Pro billing usage limits, Stripe checkout/webhook lifecycle foundation, entitlements, invoices, and portal handoff
 - Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, re-embedding job scaffolding, and background ingestion job scaffolding
 - Slack/generic webhook integration foundation with durable outbound events and delivery logs
+- Retention deletion request jobs and tamper-evident audit evidence exports
 - Optional Resend escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
@@ -52,6 +53,10 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET /api/onboarding/state` - workspace launch checklist, health, golden questions, missing knowledge, and retention settings
 - `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
 - `GET /api/security/events` - workspace security event feed
+- `GET|POST /api/security/deletion-requests` - manager/admin data deletion request intake with verification and queued jobs
+- `GET|POST /api/security/retention/jobs` - retention cleanup job list and scheduler driven by workspace settings
+- `POST /api/security/retention/jobs/[jobId]/run` - manually or worker-run a queued retention/deletion job
+- `GET|POST /api/security/audit-exports` - tamper-evident audit/security evidence export records
 - `GET /api/model-routes` - AI model route/cost/latency log feed
 - `POST /api/billing/checkout` - owner-only Launch/Pro hosted Checkout session creation with demo fallback when Stripe is not configured
 - `POST /api/billing/webhook` - verified Stripe webhook receiver for checkout, subscription, invoice, entitlement, and dunning state sync
@@ -116,6 +121,7 @@ QSTASH_TOKEN=...
 SUPPORTPILOT_INGESTION_WORKER_SECRET=...
 SUPPORTPILOT_INTEGRATION_WORKER_SECRET=...
 SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=queued # queued | inline
+SUPPORTPILOT_RETENTION_WORKER_SECRET=...
 SUPPORTPILOT_RATE_LIMIT_CHAT_PER_MINUTE=10
 SUPPORTPILOT_RATE_LIMIT_WIDGET_CONFIG_PER_MINUTE=120
 SUPPORTPILOT_RATE_LIMIT_WIDGET_SESSIONS_PER_5_MINUTES=30
@@ -141,11 +147,13 @@ Knowledge uploads now create `knowledge_ingestion_jobs` before extraction/chunki
 
 Integration delivery is queued by default. Approval-needed drafts and approval decisions create idempotent `outbound_events` for active Slack or generic webhook channels; delivery attempts write `integration_deliveries`. Set `SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=inline` only for controlled server-side demos where immediate external delivery is desired.
 
+Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes, and audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
+
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 
 ## Supabase
 
-Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, and outbound integration event tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, outbound integration event tables, and retention/evidence job tables. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 
@@ -168,6 +176,7 @@ npm run test:rate-limit
 npm run test:embeddings
 npm run test:ingestion
 npm run test:integrations
+npm run test:retention
 npm run test:rls
 npm run test:enterprise
 npm run test:production
