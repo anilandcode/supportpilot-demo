@@ -192,6 +192,8 @@ npm run build
 git diff --check
 ```
 
+GitHub Actions runs the same production gates on pull requests and pushes to `main` through `.github/workflows/ci.yml`, then runs `npm run build` after the test gate passes. The workflow uploads the static RLS report output as an artifact for release evidence.
+
 Run `npm run test:conversation` against a dev server or live app to exercise `/api/chat`.
 
 ## Docs

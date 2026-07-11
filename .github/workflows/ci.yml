@@ -1,0 +1,107 @@
+name: SupportPilot CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: supportpilot-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING: "1"
+
+jobs:
+  production-gates:
+    name: Production gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Billing lifecycle checks
+        run: npm run test:billing
+
+      - name: Rate-limit checks
+        run: npm run test:rate-limit
+
+      - name: Embedding checks
+        run: npm run test:embeddings
+
+      - name: Ingestion checks
+        run: npm run test:ingestion
+
+      - name: Integration checks
+        run: npm run test:integrations
+
+      - name: Retention checks
+        run: npm run test:retention
+
+      - name: Domain verification checks
+        run: npm run test:domains
+
+      - name: RLS checks
+        run: |
+          mkdir -p artifacts
+          npm run test:rls | tee artifacts/rls-report.txt
+
+      - name: Enterprise dataset checks
+        run: npm run test:enterprise
+
+      - name: Production-readiness checks
+        run: npm run test:production
+
+      - name: Diff whitespace check
+        run: git diff --check
+
+      - name: Upload RLS report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rls-report
+          path: artifacts/rls-report.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
+  build:
+    name: Next.js build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: production-gates
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build

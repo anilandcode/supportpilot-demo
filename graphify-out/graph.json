@@ -10015,7 +10015,7 @@
       "label": "Deferred",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L89",
+      "source_location": "L90",
       "id": "chatbot_demo_updates_implementation_tracker_deferred",
       "community": 48,
       "norm_label": "deferred"
@@ -10024,7 +10024,7 @@
       "label": "Verification Commands",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L102",
+      "source_location": "L104",
       "id": "chatbot_demo_updates_implementation_tracker_verification_commands",
       "community": 48,
       "norm_label": "verification commands"
@@ -10033,7 +10033,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L104",
+      "source_location": "L106",
       "id": "chatbot_demo_updates_implementation_tracker_codeblock_1",
       "community": 48,
       "norm_label": "code:bash (npm run typecheck)"
@@ -10303,7 +10303,7 @@
       "label": "Docs",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L197",
+      "source_location": "L199",
       "id": "chatbot_demo_readme_docs",
       "community": 8,
       "norm_label": "docs"
@@ -17957,9 +17957,9 @@
       "source_file": "app/global-error.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_global_error_tsx",
-      "target": "app_global_error_globalerror",
-      "confidence_score": 1.0
+      "target": "app_global_error_globalerror"
     },
     {
       "relation": "imports_from",
@@ -18893,9 +18893,9 @@
       "source_file": "app/admin/settings/page.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_admin_settings_page_tsx",
-      "target": "db_support_getworkspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspacedomainhealth"
     },
     {
       "relation": "imports",
@@ -24273,9 +24273,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_route_ts",
-      "target": "db_support_getdomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getdomainhealth"
     },
     {
       "relation": "imports",
@@ -24284,9 +24284,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_route_ts",
-      "target": "db_support_getworkspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspacedomainhealth"
     },
     {
       "relation": "contains",
@@ -24511,9 +24511,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_recheck_route_ts",
-      "target": "lib_auth_api_ts",
-      "confidence_score": 1.0
+      "target": "lib_auth_api_ts"
     },
     {
       "relation": "imports",
@@ -24522,9 +24522,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_recheck_route_ts",
-      "target": "auth_api_requireworkspacerole",
-      "confidence_score": 1.0
+      "target": "auth_api_requireworkspacerole"
     },
     {
       "relation": "imports_from",
@@ -24533,9 +24533,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_recheck_route_ts",
-      "target": "lib_db_support_ts",
-      "confidence_score": 1.0
+      "target": "lib_db_support_ts"
     },
     {
       "relation": "imports",
@@ -24544,9 +24544,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_recheck_route_ts",
-      "target": "db_support_recheckworkspacedomains",
-      "confidence_score": 1.0
+      "target": "db_support_recheckworkspacedomains"
     },
     {
       "relation": "contains",
@@ -24554,9 +24554,9 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_api_workspaces_workspaceid_domains_recheck_route_ts",
-      "target": "recheck_route_post",
-      "confidence_score": 1.0
+      "target": "recheck_route_post"
     },
     {
       "relation": "calls",
@@ -30879,9 +30879,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L494",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_handoff_handoff_runtime_tsx",
-      "target": "handoff_handoff_runtime_renderdomainhealthpanel",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_renderdomainhealthpanel"
     },
     {
       "relation": "contains",
@@ -30889,9 +30889,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L546",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_handoff_handoff_runtime_tsx",
-      "target": "handoff_handoff_runtime_domainhealthrow",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_domainhealthrow"
     },
     {
       "relation": "contains",
@@ -30899,9 +30899,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L570",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_handoff_handoff_runtime_tsx",
-      "target": "handoff_handoff_runtime_formatdatetime",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_formatdatetime"
     },
     {
       "relation": "contains",
@@ -31122,9 +31122,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L495",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "handoff_handoff_runtime_renderdomainhealthpanel",
-      "target": "handoff_handoff_runtime_q",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_q"
     },
     {
       "relation": "calls",
@@ -31254,9 +31254,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L535",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "handoff_handoff_runtime_renderdomainhealthpanel",
-      "target": "handoff_handoff_runtime_qa",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_qa"
     },
     {
       "relation": "calls",
@@ -31419,9 +31419,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L557",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "handoff_handoff_runtime_domainhealthrow",
-      "target": "handoff_handoff_runtime_escapehtml",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_escapehtml"
     },
     {
       "relation": "calls",
@@ -31540,9 +31540,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L456",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "handoff_handoff_runtime_hydratesettings",
-      "target": "handoff_handoff_runtime_renderdomainhealthpanel",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_renderdomainhealthpanel"
     },
     {
       "relation": "calls",
@@ -31551,9 +31551,9 @@
       "source_file": "components/handoff/handoff-runtime.tsx",
       "source_location": "L558",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "handoff_handoff_runtime_domainhealthrow",
-      "target": "handoff_handoff_runtime_formatdatetime",
-      "confidence_score": 1.0
+      "target": "handoff_handoff_runtime_formatdatetime"
     },
     {
       "relation": "calls",
@@ -32891,9 +32891,9 @@
       "source_file": "scripts/test-domains.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_domains_ts",
-      "target": "db_support_getdomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getdomainhealth"
     },
     {
       "relation": "imports",
@@ -32902,9 +32902,9 @@
       "source_file": "scripts/test-domains.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_domains_ts",
-      "target": "db_support_getworkspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspacedomainhealth"
     },
     {
       "relation": "imports",
@@ -32924,9 +32924,9 @@
       "source_file": "scripts/test-domains.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_domains_ts",
-      "target": "db_support_recheckworkspacedomains",
-      "confidence_score": 1.0
+      "target": "db_support_recheckworkspacedomains"
     },
     {
       "relation": "imports",
@@ -36523,9 +36523,9 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_enterprise_types_ts",
-      "target": "enterprise_types_domainhealthstatus",
-      "confidence_score": 1.0
+      "target": "enterprise_types_domainhealthstatus"
     },
     {
       "relation": "contains",
@@ -36793,9 +36793,9 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L149",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_enterprise_types_ts",
-      "target": "enterprise_types_workspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "enterprise_types_workspacedomainhealth"
     },
     {
       "relation": "contains",
@@ -37977,9 +37977,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L36",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "enterprise_types_workspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "enterprise_types_workspacedomainhealth"
     },
     {
       "relation": "imports",
@@ -45936,9 +45936,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L212",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_domainexpectedcname",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedcname"
     },
     {
       "relation": "contains",
@@ -45946,9 +45946,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L216",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_domainexpectedtxt",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedtxt"
     },
     {
       "relation": "contains",
@@ -45956,9 +45956,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L220",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_domainstalems",
-      "confidence_score": 1.0
+      "target": "db_support_domainstalems"
     },
     {
       "relation": "contains",
@@ -45966,9 +45966,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L225",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_getdomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getdomainhealth"
     },
     {
       "relation": "contains",
@@ -46066,9 +46066,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L411",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_getworkspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspacedomainhealth"
     },
     {
       "relation": "contains",
@@ -46096,9 +46096,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L494",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_support_ts",
-      "target": "db_support_recheckworkspacedomains",
-      "confidence_score": 1.0
+      "target": "db_support_recheckworkspacedomains"
     },
     {
       "relation": "contains",
@@ -47594,9 +47594,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L226",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getdomainhealth",
-      "target": "db_support_domainverificationrecord",
-      "confidence_score": 1.0
+      "target": "db_support_domainverificationrecord"
     },
     {
       "relation": "calls",
@@ -47627,9 +47627,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L228",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getdomainhealth",
-      "target": "db_support_domainexpectedcname",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedcname"
     },
     {
       "relation": "calls",
@@ -47638,9 +47638,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L464",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_verifyworkspacedomain",
-      "target": "db_support_domainexpectedcname",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedcname"
     },
     {
       "relation": "calls",
@@ -47649,9 +47649,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L227",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getdomainhealth",
-      "target": "db_support_domainexpectedtxt",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedtxt"
     },
     {
       "relation": "calls",
@@ -47660,9 +47660,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L463",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_verifyworkspacedomain",
-      "target": "db_support_domainexpectedtxt",
-      "confidence_score": 1.0
+      "target": "db_support_domainexpectedtxt"
     },
     {
       "relation": "calls",
@@ -47671,9 +47671,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L230",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getdomainhealth",
-      "target": "db_support_domainstalems",
-      "confidence_score": 1.0
+      "target": "db_support_domainstalems"
     },
     {
       "relation": "calls",
@@ -47682,9 +47682,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L491",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_verifyworkspacedomain",
-      "target": "db_support_getdomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getdomainhealth"
     },
     {
       "relation": "calls",
@@ -47693,9 +47693,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L523",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_getdomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getdomainhealth"
     },
     {
       "relation": "calls",
@@ -47792,9 +47792,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L499",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_getworkspace",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspace"
     },
     {
       "relation": "calls",
@@ -48199,9 +48199,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L412",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_getworkspacedomainhealth",
-      "target": "db_support_listworkspacedomains",
-      "confidence_score": 1.0
+      "target": "db_support_listworkspacedomains"
     },
     {
       "relation": "calls",
@@ -48210,9 +48210,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L500",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_listworkspacedomains",
-      "confidence_score": 1.0
+      "target": "db_support_listworkspacedomains"
     },
     {
       "relation": "calls",
@@ -48243,9 +48243,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L548",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_getworkspacedomainhealth",
-      "confidence_score": 1.0
+      "target": "db_support_getworkspacedomainhealth"
     },
     {
       "relation": "calls",
@@ -48309,9 +48309,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L528",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_verifyworkspacedomain",
-      "confidence_score": 1.0
+      "target": "db_support_verifyworkspacedomain"
     },
     {
       "relation": "calls",
@@ -48320,9 +48320,9 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L539",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_support_recheckworkspacedomains",
-      "target": "db_support_appendauditlog",
-      "confidence_score": 1.0
+      "target": "db_support_appendauditlog"
     },
     {
       "relation": "calls",
@@ -57710,5 +57710,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5af116c0788c2878a3985849b92825b7a4462bbe"
+  "built_at_commit": "ef9a56fbf8b5840a9b659064c2eef9f6ded018f0"
 }
