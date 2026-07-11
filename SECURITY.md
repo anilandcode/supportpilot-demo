@@ -18,7 +18,7 @@ The migrations enable RLS on every enterprise table. Policies separate customer-
 
 Widget-facing routes also enforce `workspace_domains` origin checks. A script installed on an unverified host cannot fetch widget config, create a widget session, or post chat messages for that workspace.
 
-Custom domains are not trusted when they are first added. Owners/admins receive a `_supportpilot.<domain>` TXT/CNAME challenge, and `/api/workspaces/[workspaceId]/domains/[domainId]/verify` must observe the expected DNS record before the domain becomes an allowed widget origin. Verification attempts are timestamped and audit logged.
+Custom domains are not trusted when they are first added. Owners/admins receive a `_supportpilot.<domain>` TXT/CNAME challenge, and `/api/workspaces/[workspaceId]/domains/[domainId]/verify` must observe the expected DNS record before the domain becomes an allowed widget origin. Verification attempts are timestamped and audit logged. The bulk recheck endpoint can run under owner/admin auth or `SUPPORTPILOT_DOMAIN_RECHECK_SECRET` for cron-style DNS health checks.
 
 When `SUPPORTPILOT_WIDGET_SESSION_SECRET` is configured, `POST /api/widget/session` issues a short-lived HMAC-signed session token for a verified origin. `/api/chat` validates that token before accepting widget traffic. Without the secret, local/demo mode keeps the older origin-allowlist behavior.
 
@@ -35,6 +35,8 @@ Required production secrets:
 - optional `NEXT_PUBLIC_POSTHOG_KEY`
 - optional `SUPPORTPILOT_WIDGET_SESSION_SECRET`
 - optional `SUPPORTPILOT_DOMAIN_CNAME_TARGET`
+- optional `SUPPORTPILOT_DOMAIN_RECHECK_SECRET`
+- optional `SUPPORTPILOT_DOMAIN_STALE_DAYS`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
 `SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, and Sentry auth tokens belong only in server-side deployment env vars.

@@ -67,6 +67,7 @@ import type {
   Workspace,
   WorkspaceChecklistItem,
   WorkspaceDomain,
+  WorkspaceDomainHealth,
   WorkspaceLaunchState,
 } from "@/lib/enterprise/types";
 import { createTextEmbedding, embeddingContentHash } from "@/lib/rag/embeddings";
@@ -206,6 +207,44 @@ function normalizeDomain(domain: string) {
 
 function domainVerificationRecord(domain: string) {
   return `_supportpilot.${normalizeDomain(domain)}`;
+}
+
+function domainExpectedCname() {
+  return process.env.SUPPORTPILOT_DOMAIN_CNAME_TARGET || "verify.supportpilot.ai";
+}
+
+function domainExpectedTxt(domain: WorkspaceDomain) {
+  return domain.verificationToken ? `supportpilot-verify=${domain.verificationToken}` : null;
+}
+
+function domainStaleMs() {
+  const days = Number(process.env.SUPPORTPILOT_DOMAIN_STALE_DAYS || 30);
+  return Math.max(1, Number.isFinite(days) ? days : 30) * 24 * 60 * 60 * 1000;
+}
+
+export function getDomainHealth(domain: WorkspaceDomain, now = new Date()): WorkspaceDomainHealth {
+  const record = domain.verificationRecord || domainVerificationRecord(domain.domain);
+  const expectedTxt = domainExpectedTxt(domain);
+  const expectedCname = domainExpectedCname();
+  const lastChecked = domain.lastCheckedAt ? new Date(domain.lastCheckedAt).getTime() : 0;
+  const stale = domain.status === "verified" && (!lastChecked || now.getTime() - lastChecked > domainStaleMs());
+
+  if (domain.status === "blocked") {
+    return { domain, status: "blocked", message: domain.verificationError || "Domain is blocked.", stale: false, expectedTxt, expectedCname, record };
+  }
+  if (domain.status === "pending" && domain.verificationError) {
+    return { domain, status: "failing", message: domain.verificationError, stale: false, expectedTxt, expectedCname, record };
+  }
+  if (domain.status === "pending") {
+    return { domain, status: "pending", message: "Waiting for TXT or CNAME verification.", stale: false, expectedTxt, expectedCname, record };
+  }
+  if (!expectedTxt && !domain.verificationRecord) {
+    return { domain, status: "legacy", message: "Verified seed or legacy domain without a stored DNS challenge.", stale, expectedTxt, expectedCname, record };
+  }
+  if (stale) {
+    return { domain, status: "stale", message: "DNS verification has not been checked recently.", stale, expectedTxt, expectedCname, record };
+  }
+  return { domain, status: "healthy", message: "DNS verification is current.", stale: false, expectedTxt, expectedCname, record };
 }
 
 function contentHash(content: string) {
@@ -369,6 +408,11 @@ export async function listWorkspaceDomains(workspaceId = DEMO_WORKSPACE_ID): Pro
   return localState.domains.filter((domain) => domain.workspaceId === workspace.id);
 }
 
+export async function getWorkspaceDomainHealth(workspaceId = DEMO_WORKSPACE_ID): Promise<{ domains: WorkspaceDomain[]; health: WorkspaceDomainHealth[] }> {
+  const domains = await listWorkspaceDomains(workspaceId);
+  return { domains, health: domains.map((domain) => getDomainHealth(domain)) };
+}
+
 export async function addWorkspaceDomain(input: { workspaceId?: string; domain: string }): Promise<WorkspaceDomain> {
   const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
   const workspaceId = workspace.id;
@@ -411,13 +455,13 @@ export async function verifyWorkspaceDomain(input: {
   workspaceId?: string;
   domainId: string;
   resolver?: Pick<typeof import("node:dns/promises"), "resolveTxt" | "resolveCname">;
-}): Promise<{ domain: WorkspaceDomain; verified: boolean; expectedTxt: string; expectedCname: string; observed: string[] }> {
+}): Promise<{ domain: WorkspaceDomain; verified: boolean; expectedTxt: string | null; expectedCname: string; observed: string[]; health: WorkspaceDomainHealth }> {
   const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
   const domain = localState.domains.find((item) => item.workspaceId === workspace.id && item.id === input.domainId) ?? (await getWorkspaceDomainFromSupabase(input.domainId));
   if (!domain || domain.workspaceId !== workspace.id) throw new Error(`Workspace domain ${input.domainId} was not found`);
 
-  const expectedTxt = domain.verificationToken ? `supportpilot-verify=${domain.verificationToken}` : "";
-  const expectedCname = process.env.SUPPORTPILOT_DOMAIN_CNAME_TARGET || "verify.supportpilot.ai";
+  const expectedTxt = domainExpectedTxt(domain);
+  const expectedCname = domainExpectedCname();
   const resolver = input.resolver ?? { resolveTxt, resolveCname };
   const record = domain.verificationRecord || domainVerificationRecord(domain.domain);
   const observed: string[] = [];
@@ -432,7 +476,7 @@ export async function verifyWorkspaceDomain(input: {
   domain.verificationRecord = record;
   domain.lastCheckedAt = new Date().toISOString();
   domain.verifiedAt = verified ? domain.lastCheckedAt : domain.verifiedAt;
-  domain.verificationError = verified ? null : `Expected TXT ${expectedTxt} or CNAME ${expectedCname} at ${record}`;
+  domain.verificationError = verified ? null : `Expected ${expectedTxt ? `TXT ${expectedTxt}` : "a TXT challenge"} or CNAME ${expectedCname} at ${record}`;
   await persistWorkspaceDomain(domain);
 
   await appendAuditLog({
@@ -444,7 +488,64 @@ export async function verifyWorkspaceDomain(input: {
     details: { domain: domain.domain, record, expectedTxt, expectedCname, observed },
   });
 
-  return { domain, verified, expectedTxt, expectedCname, observed };
+  return { domain, verified, expectedTxt, expectedCname, observed, health: getDomainHealth(domain) };
+}
+
+export async function recheckWorkspaceDomains(input: {
+  workspaceId?: string;
+  domainIds?: string[];
+  resolver?: Pick<typeof import("node:dns/promises"), "resolveTxt" | "resolveCname">;
+}) {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const domains = await listWorkspaceDomains(workspace.id);
+  const selected = domains.filter((domain) => {
+    if (input.domainIds?.length) return input.domainIds.includes(domain.id);
+    return domain.status !== "blocked";
+  });
+  const results: Array<{
+    domain: WorkspaceDomain;
+    verified: boolean;
+    skipped: boolean;
+    reason: string | null;
+    observed: string[];
+    health: WorkspaceDomainHealth;
+  }> = [];
+
+  for (const domain of selected) {
+    const canVerify = Boolean(domain.verificationToken || domain.verificationRecord);
+    if (!canVerify) {
+      results.push({
+        domain,
+        verified: domain.status === "verified",
+        skipped: true,
+        reason: "Domain has no stored DNS challenge.",
+        observed: [],
+        health: getDomainHealth(domain),
+      });
+      continue;
+    }
+
+    const result = await verifyWorkspaceDomain({ workspaceId: workspace.id, domainId: domain.id, resolver: input.resolver });
+    results.push({
+      domain: result.domain,
+      verified: result.verified,
+      skipped: false,
+      reason: result.verified ? null : result.domain.verificationError,
+      observed: result.observed,
+      health: result.health,
+    });
+  }
+
+  await appendAuditLog({
+    tenantId: workspace.tenantId,
+    workspaceId: workspace.id,
+    ticketId: null,
+    userId: null,
+    action: "workspace.domains.rechecked",
+    details: { checked: results.filter((item) => !item.skipped).length, skipped: results.filter((item) => item.skipped).length },
+  });
+
+  return { workspaceId: workspace.id, results, health: (await getWorkspaceDomainHealth(workspace.id)).health };
 }
 
 async function getWorkspaceDomainFromSupabase(domainId: string) {

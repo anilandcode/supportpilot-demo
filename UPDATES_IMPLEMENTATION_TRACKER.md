@@ -84,6 +84,7 @@ Date: 2026-06-24
 - Added staff-readable and owner/admin-manageable workspace domain APIs, including TXT/CNAME verification through `/api/workspaces/[workspaceId]/domains/[domainId]/verify`.
 - Widget origin checks now remain blocked for newly added custom domains until DNS proof succeeds; successful and failed verification attempts write audit logs.
 - Added `npm run test:domains` for pending-domain blocking, failed TXT checks, successful TXT verification, CNAME verification, and widget-origin activation.
+- Added domain health classification, stale-domain detection, settings-page DNS challenge visibility, manual per-domain verification, and bulk rechecks through a cron-ready worker-secret endpoint.
 
 ## Deferred
 
@@ -93,7 +94,7 @@ Date: 2026-06-24
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
-- Full custom-domain launch remains a follow-up: add scheduled DNS rechecks, domain health UI, expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
+- Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint, add expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.

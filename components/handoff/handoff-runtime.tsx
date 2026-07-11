@@ -444,6 +444,7 @@ function hydrateSettings(data: AnyRecord) {
   const launch = data.launchState || {};
   const workspace = launch.workspace || data.workspace || {};
   const domains = launch.domains || [];
+  const domainHealth = data.domainHealth || launch.domainHealth || [];
   const snippet = `<script src="${data.publicBaseUrl || "https://supportpilot-demo.vercel.app"}/widget.js" data-id="${workspace.widgetKey}" data-theme="warm" async><\\/script>`;
 
   const nameInput = q<HTMLInputElement>("#assistant-name-input");
@@ -452,6 +453,7 @@ function hydrateSettings(data: AnyRecord) {
   if (keyInput) keyInput.value = workspace.widgetKey || "";
   const domainInput = qa<HTMLInputElement>(".settings-card input").find((input) => input.value === "acme.co");
   if (domainInput) domainInput.value = domains.map((domain: AnyRecord) => domain.domain).join(", ");
+  renderDomainHealthPanel(workspace, domains, domainHealth);
   setText("#preview-agent-name", workspace.botName || "SupportPilot Agent");
   setText(".code-box code", snippet.replace(/\\\//g, "/"));
 
@@ -487,6 +489,89 @@ function hydrateSettings(data: AnyRecord) {
     }).catch(() => null);
     setText("#btn-save-settings", "Saved");
   }, true);
+}
+
+function renderDomainHealthPanel(workspace: AnyRecord, domains: AnyRecord[], domainHealth: AnyRecord[]) {
+  const grid = q(".settings-grid");
+  if (!grid || !workspace.id) return;
+  const byDomain = new Map(domainHealth.map((item: AnyRecord) => [item.domain?.id, item]));
+  const healthRows = domains.map((domain: AnyRecord) => byDomain.get(domain.id) || { domain, status: domain.status, message: "DNS health has not been checked.", record: domain.verificationRecord, expectedTxt: null, expectedCname: "verify.supportpilot.ai" });
+  const existing = q("#domain-health-card");
+  existing?.remove();
+
+  const card = document.createElement("section");
+  card.className = "settings-card";
+  card.id = "domain-health-card";
+  card.style.gridColumn = "1 / -1";
+  card.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;">
+      <div>
+        <h3 class="section-title">Domain verification health</h3>
+        <p style="margin-top:4px;color:var(--muted);font-size:12px;">DNS checks keep widget origins trusted after launch. Pending or stale domains should be rechecked before installing the widget.</p>
+      </div>
+      <button class="btn-secondary" id="btn-recheck-domains" type="button">Recheck all</button>
+    </div>
+    <div style="display:grid;gap:10px;">
+      ${healthRows.map((item: AnyRecord) => domainHealthRow(item)).join("") || `<div style="color:var(--muted);font-size:13px;">No custom domains are configured.</div>`}
+    </div>
+  `;
+  grid.appendChild(card);
+
+  const reloadDomains = async () => {
+    const next = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/domains`).then((res) => res.json()).catch(() => null);
+    if (next?.domains) {
+      const input = qa<HTMLInputElement>(".settings-card input").find((node) => node.value.includes(".") || node.placeholder?.toLowerCase().includes("domain"));
+      if (input) input.value = next.domains.map((domain: AnyRecord) => domain.domain).join(", ");
+      renderDomainHealthPanel(workspace, next.domains, next.health || []);
+    }
+  };
+
+  q<HTMLButtonElement>("#btn-recheck-domains")?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/domains/recheck`, { method: "POST" }).catch(() => null);
+    await reloadDomains();
+  });
+
+  qa<HTMLButtonElement>("[data-domain-verify]").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const domainId = button.dataset.domainVerify;
+      if (!domainId) return;
+      await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/domains/${encodeURIComponent(domainId)}/verify`, { method: "POST" }).catch(() => null);
+      await reloadDomains();
+    });
+  });
+}
+
+function domainHealthRow(item: AnyRecord) {
+  const domain = item.domain || item;
+  const status = String(item.status || domain.status || "pending");
+  const tone = status === "healthy" || status === "legacy" ? "#16a34a" : status === "stale" || status === "pending" ? "#ca8a04" : "#dc2626";
+  const expectedTxt = item.expectedTxt || (domain.verificationToken ? `supportpilot-verify=${domain.verificationToken}` : null);
+  const record = item.record || domain.verificationRecord || `_supportpilot.${domain.domain}`;
+  const canVerify = Boolean(domain.verificationToken || domain.verificationRecord);
+
+  return `
+    <div style="display:grid;grid-template-columns:minmax(160px,1fr) minmax(220px,1.3fr) auto;gap:12px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.6);">
+      <div style="min-width:0;">
+        <div style="font-weight:700;color:var(--ink);overflow-wrap:anywhere;">${escapeHtml(domain.domain)}</div>
+        <div style="margin-top:4px;font-size:11px;color:var(--muted);">Last checked ${escapeHtml(formatDateTime(domain.lastCheckedAt))}</div>
+      </div>
+      <div style="min-width:0;font-size:12px;color:var(--muted);">
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tone};margin-right:6px;"></span><strong style="color:var(--ink);">${escapeHtml(status.replace(/_/g, " "))}</strong> · ${escapeHtml(item.message || domain.verificationError || "Waiting for DNS proof.")}</div>
+        <div style="margin-top:6px;overflow-wrap:anywhere;"><strong>Record:</strong> ${escapeHtml(record)}</div>
+        <div style="margin-top:2px;overflow-wrap:anywhere;"><strong>TXT:</strong> ${escapeHtml(expectedTxt || "legacy domain")} <strong style="margin-left:8px;">CNAME:</strong> ${escapeHtml(item.expectedCname || "verify.supportpilot.ai")}</div>
+      </div>
+      <button class="btn-secondary" type="button" data-domain-verify="${escapeHtml(domain.id)}" ${canVerify ? "" : "disabled"}>${domain.status === "verified" ? "Recheck" : "Verify"}</button>
+    </div>
+  `;
+}
+
+function formatDateTime(value?: string | null) {
+  if (!value) return "never";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "never";
+  return date.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 function colorValue(value: string | undefined, fallback: string) {

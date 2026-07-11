@@ -76,6 +76,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `PATCH /api/workspaces/[workspaceId]/settings` - update workspace identity, brand, welcome copy, and escalation routing
 - `GET|POST /api/workspaces/[workspaceId]/domains` - list or add widget origins with DNS verification instructions
 - `POST /api/workspaces/[workspaceId]/domains/[domainId]/verify` - check TXT/CNAME records and activate a widget origin
+- `POST /api/workspaces/[workspaceId]/domains/recheck` - owner/admin or worker-secret DNS health recheck for verified/pending domains
 - `POST /api/escalations/email` - optional Resend-backed escalation email with audit and usage logging
 
 ## Enterprise Env
@@ -102,6 +103,8 @@ SENTRY_AUTH_TOKEN=...
 NEXT_PUBLIC_APP_URL=...
 SUPPORTPILOT_WIDGET_SESSION_SECRET=...
 SUPPORTPILOT_DOMAIN_CNAME_TARGET=verify.supportpilot.ai
+SUPPORTPILOT_DOMAIN_RECHECK_SECRET=...
+SUPPORTPILOT_DOMAIN_STALE_DAYS=30
 MODEL_ROUTER_DEFAULT=light
 EMBEDDING_PROVIDER=deterministic # deterministic | local | openai | google
 EMBEDDING_MODEL=...
@@ -151,7 +154,7 @@ Integration delivery is queued by default. Approval-needed drafts and approval d
 
 Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes, and audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
 
-Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds.
+Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds. The settings page shows domain health, stale checks, and the exact DNS challenge; scheduled jobs can call the recheck endpoint with `x-supportpilot-domain-secret`.
 
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
 

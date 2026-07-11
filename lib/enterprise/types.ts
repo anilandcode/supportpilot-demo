@@ -6,6 +6,7 @@ export type MessageSender = "customer" | "agent" | "ai";
 export type ApprovalStatus = "draft" | "approved" | "edited" | "rejected" | "escalated";
 export type MembershipRole = "owner" | "admin" | "manager" | "agent" | "analyst" | "viewer";
 export type DomainStatus = "pending" | "verified" | "blocked";
+export type DomainHealthStatus = "healthy" | "pending" | "failing" | "stale" | "blocked" | "legacy";
 export type BillingTierKey = "launch" | "pro" | "enterprise";
 export type BillingInterval = "monthly" | "annual";
 export type IntegrationProvider = "slack" | "webhook" | "zendesk" | "intercom";
@@ -143,6 +144,16 @@ export type WorkspaceDomain = {
   lastCheckedAt: string | null;
   verificationError: string | null;
   createdAt: string;
+};
+
+export type WorkspaceDomainHealth = {
+  domain: WorkspaceDomain;
+  status: DomainHealthStatus;
+  message: string;
+  stale: boolean;
+  expectedTxt: string | null;
+  expectedCname: string;
+  record: string;
 };
 
 export type WidgetConfig = {

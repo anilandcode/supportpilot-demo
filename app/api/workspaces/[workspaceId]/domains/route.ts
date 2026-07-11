@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
-import { addWorkspaceDomain, listWorkspaceDomains } from "@/lib/db/support";
+import { addWorkspaceDomain, getDomainHealth, getWorkspaceDomainHealth } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -15,8 +15,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ workspa
     return Response.json({ error: auth.error }, { status: auth.status });
   }
 
-  const domains = await listWorkspaceDomains(workspaceId);
-  return Response.json({ domains });
+  const result = await getWorkspaceDomainHealth(workspaceId);
+  return Response.json(result);
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ workspaceId: string }> }) {
@@ -45,5 +45,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
       value: domain.verificationToken ? `supportpilot-verify=${domain.verificationToken}` : null,
       cnameTarget: process.env.SUPPORTPILOT_DOMAIN_CNAME_TARGET || "verify.supportpilot.ai",
     },
+    health: getDomainHealth(domain),
   }, { status: 201 });
 }
