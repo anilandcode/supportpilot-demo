@@ -363,6 +363,7 @@ Required checks:
 - `npm run test:enterprise`
 - `npm run test:production`
 - `npm run test:journeys`
+- `npm run test:health`
 - `npm run build`
 - `git diff --check`
 - `graphify update .`

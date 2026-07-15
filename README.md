@@ -49,6 +49,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/chat` - embeddable/customer chat, with Lite fallback, workspace origin checks, and enterprise AI run/audit logging
 - `GET /api/widget/config` - public widget configuration scoped by workspace key and verified origin
 - `POST /api/widget/session` - optional signed widget session for verified origins when `SUPPORTPILOT_WIDGET_SESSION_SECRET` is configured
+- `GET /api/health` - secret-safe deployment health snapshot for Supabase, invitation email, Sentry, Redis, workers, and Stripe config
 - `GET /api/stats` - dashboard metrics from the enterprise service layer, optionally scoped by `workspace`
 - `GET /api/onboarding/state` - workspace launch checklist, health, golden questions, missing knowledge, and retention settings
 - `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
@@ -195,6 +196,7 @@ npm run test:rls
 npm run test:enterprise
 npm run test:production
 npm run test:journeys
+npm run test:health
 npm run build
 git diff --check
 ```

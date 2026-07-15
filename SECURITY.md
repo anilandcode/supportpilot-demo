@@ -57,3 +57,5 @@ Required production secrets:
 ## Current Limits
 
 The app can send invitation and escalation email through Resend, but it does not yet sync approved replies into an external helpdesk. Add Zendesk, Intercom, Slack, or CRM connectors only after final customer-copy review and audit logging succeed.
+
+`GET /api/health` exposes only pass/warn/fail readiness labels for production dependencies. It does not return secret values, tenant data, customer content, prompts, or workspace records.

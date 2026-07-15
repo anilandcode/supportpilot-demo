@@ -78,6 +78,9 @@ jobs:
       - name: Critical journey checks
         run: npm run test:journeys
 
+      - name: Health endpoint checks
+        run: npm run test:health
+
       - name: Diff whitespace check
         run: git diff --check
 

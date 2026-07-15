@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit --incremental false",
     "test:conversation": "node --import tsx scripts/test-conversation.ts",
     "test:journeys": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-critical-journeys.ts",
+    "test:health": "node --import tsx scripts/test-health.ts",
     "test:enterprise": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-enterprise.ts",
     "test:billing": "node --import tsx scripts/test-billing-lifecycle.ts",
     "test:rate-limit": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-rate-limit.ts",

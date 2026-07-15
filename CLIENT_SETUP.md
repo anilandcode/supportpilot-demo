@@ -113,6 +113,7 @@ Without these keys, demo escalation email and product analytics routes run as sa
 ```bash
 npm run typecheck
 npm run test:enterprise
+npm run test:health
 npm run build
 npm run dev
 ```
@@ -126,6 +127,7 @@ Open:
 - `http://localhost:3000/admin/analytics`
 - `http://localhost:3000/admin/settings`
 - `http://localhost:3000/portal`
+- `http://localhost:3000/api/health`
 
 ## 9. Configure Workspace
 
