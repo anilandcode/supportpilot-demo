@@ -1,27 +1,18 @@
-import { appendSecurityEvent, getWidgetConfig, getWorkspace, isOriginAllowed } from "@/lib/db/support";
+import { requireWidgetWorkspace } from "@/lib/auth/widget";
+import { appendSecurityEvent, getWidgetConfig } from "@/lib/db/support";
 import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const workspace = await getWorkspace(url.searchParams.get("workspace") || url.searchParams.get("workspaceId") || undefined);
-  const originAllowed = await isOriginAllowed(workspace.id, req.headers.get("origin"));
-
-  if (!originAllowed) {
-    await appendSecurityEvent({
-      tenantId: workspace.tenantId,
-      workspaceId: workspace.id,
-      eventType: "blocked_origin",
-      severity: "medium",
-      origin: req.headers.get("origin"),
-      ipHash: null,
-      details: { route: "/api/widget/config" },
-    });
-    return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
-  }
-
-  const origin = req.headers.get("origin");
+  const widgetAuth = await requireWidgetWorkspace({
+    req,
+    route: "/api/widget/config",
+    requestedWorkspace: url.searchParams.get("workspace") || url.searchParams.get("workspaceId") || undefined,
+  });
+  if (!widgetAuth.ok) return widgetAuth.response;
+  const { workspace, origin } = widgetAuth;
   const rate = await checkRateLimit({
     scope: "widget_config",
     workspaceId: workspace.id,

@@ -8,9 +8,10 @@ import {
 } from "ai";
 import { captureProductEvent } from "@/lib/analytics/events";
 import { estimateTokenCount, selectModelRoute } from "@/lib/ai/model-router";
+import { requireWidgetWorkspace } from "@/lib/auth/widget";
 import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { getLanguageModel, getModelReadiness } from "@/lib/generation";
-import { appendAuditLog, appendSecurityEvent, createAiRun, createModelRouteLog, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
+import { appendAuditLog, appendSecurityEvent, createAiRun, createModelRouteLog, recordUsageEvent } from "@/lib/db/support";
 import { checkRateLimit, retryAfterSeconds } from "@/lib/rate-limit";
 import { getRetriever, hasUsefulContext, type Chunk } from "@/lib/retriever";
 import { previewRedactedText } from "@/lib/security/redaction";
@@ -192,25 +193,14 @@ export async function POST(req: Request) {
       url.searchParams.get("workspace") ||
       req.headers.get("x-supportpilot-workspace") ||
       undefined;
-    const workspace = await getWorkspace(requestedWorkspace);
-    const originAllowed = await isOriginAllowed(workspace.id, req.headers.get("origin"));
-    if (!originAllowed) {
-      await appendSecurityEvent({
-        tenantId: workspace.tenantId,
-        workspaceId: workspace.id,
-        eventType: "blocked_origin",
-        severity: "medium",
-        origin: req.headers.get("origin"),
-        ipHash: ipHash(req),
-        details: { route: "/api/chat" },
-      });
-      return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
-    }
+    const widgetAuth = await requireWidgetWorkspace({ req, requestedWorkspace, route: "/api/chat" });
+    if (!widgetAuth.ok) return widgetAuth.response;
+    const { workspace, origin } = widgetAuth;
 
     const sessionToken = body.widgetSession || body.session || url.searchParams.get("widgetSession") || req.headers.get("x-supportpilot-widget-session");
     const widgetSession = verifySignedWidgetSession(typeof sessionToken === "string" ? sessionToken : null, {
       workspaceId: workspace.id,
-      origin: req.headers.get("origin"),
+      origin,
     });
     if (!widgetSession.ok && getWidgetSessionSecret()) {
       await appendSecurityEvent({
@@ -218,7 +208,7 @@ export async function POST(req: Request) {
         workspaceId: workspace.id,
         eventType: "widget_session_invalid",
         severity: "high",
-        origin: req.headers.get("origin"),
+        origin,
         ipHash: ipHash(req),
         details: { reason: widgetSession.reason },
       });
@@ -261,7 +251,7 @@ export async function POST(req: Request) {
         workspaceId: workspace.id,
         eventType: "rate_limited",
         severity: "high",
-        origin: req.headers.get("origin"),
+        origin,
         ipHash: ipHash(req),
         details: {
           reason: "plan_limit",
@@ -290,7 +280,7 @@ export async function POST(req: Request) {
     const rate = await checkRateLimit({
       scope: "chat",
       workspaceId: workspace.id,
-      key: `${getClientKey(req)}:${req.headers.get("origin") ?? "no-origin"}`,
+      key: `${getClientKey(req)}:${origin ?? "no-origin"}`,
     });
     if (!rate.allowed) {
       const retrySeconds = retryAfterSeconds(rate);
@@ -311,7 +301,7 @@ export async function POST(req: Request) {
         workspaceId: workspace.id,
         eventType: "rate_limited",
         severity: "medium",
-        origin: req.headers.get("origin"),
+        origin,
         ipHash: ipHash(req),
         details: { resetAt: rate.resetAt, scope: rate.scope, store: rate.store, keyHash: rate.keyHash, limit: rate.limit },
       });
@@ -321,7 +311,7 @@ export async function POST(req: Request) {
     await recordUsageEvent({
       workspaceId: workspace.id,
       eventType: "chat.message",
-      metadata: { origin: req.headers.get("origin"), rateLimitStore: rate.store, rateLimitRemaining: rate.remaining },
+      metadata: { origin, rateLimitStore: rate.store, rateLimitRemaining: rate.remaining },
     });
 
     if (containsSensitiveData(question)) {
@@ -343,7 +333,7 @@ export async function POST(req: Request) {
         workspaceId: workspace.id,
         eventType: "pii_redacted",
         severity: "high",
-        origin: req.headers.get("origin"),
+        origin,
         ipHash: ipHash(req),
         details: { reason: "Sensitive credential or payment-like content detected." },
       });

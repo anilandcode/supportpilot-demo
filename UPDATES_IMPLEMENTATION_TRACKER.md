@@ -94,6 +94,7 @@ Date: 2026-06-24
 - Updated first-workspace onboarding to seed default escalation rules and approval policies for low confidence, angry sentiment, legal/policy, billing/refund, and sensitive-data risk.
 - Hardened portal identity binding so portal ticket creation explicitly links the authenticated user to the created customer, portal ticket listing only returns that identity's customer tickets, and customer ticket-message writes cannot self-bind to foreign tickets.
 - Expanded runtime entitlement enforcement beyond conversations and AI replies to approved sources, document chunks, members, workspaces, domains, integrations, and advanced model routes; knowledge upload, domain creation, integration setup, invitations, chat, and ticket draft APIs now return explicit `402` plan-limit responses.
+- Centralized widget workspace resolution for chat, widget config, and widget session routes; production widget traffic now requires an `Origin`, blocked/missing origins write security events, and signed widget-session validation remains enforced when configured.
 
 ## Deferred
 

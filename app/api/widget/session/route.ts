@@ -1,4 +1,5 @@
-import { appendSecurityEvent, createWidgetSession, getWorkspace, isOriginAllowed, recordUsageEvent } from "@/lib/db/support";
+import { requireWidgetWorkspace } from "@/lib/auth/widget";
+import { appendSecurityEvent, createWidgetSession, recordUsageEvent } from "@/lib/db/support";
 import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 import { createSignedWidgetSession, getWidgetSessionSecret } from "@/lib/security/widget-session";
 
@@ -6,23 +7,13 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
-  const workspace = await getWorkspace(
-    typeof body?.workspace === "string" ? body.workspace : typeof body?.workspaceId === "string" ? body.workspaceId : undefined,
-  );
-  const origin = req.headers.get("origin") || "";
-  const originAllowed = await isOriginAllowed(workspace.id, origin);
-  if (!originAllowed) {
-    await appendSecurityEvent({
-      tenantId: workspace.tenantId,
-      workspaceId: workspace.id,
-      eventType: "blocked_origin",
-      severity: "medium",
-      origin,
-      ipHash: null,
-      details: { route: "/api/widget/session" },
-    });
-    return Response.json({ error: "origin is not allowed for this workspace" }, { status: 403 });
-  }
+  const widgetAuth = await requireWidgetWorkspace({
+    req,
+    route: "/api/widget/session",
+    requestedWorkspace: typeof body?.workspace === "string" ? body.workspace : typeof body?.workspaceId === "string" ? body.workspaceId : undefined,
+  });
+  if (!widgetAuth.ok) return widgetAuth.response;
+  const { workspace, origin } = widgetAuth;
 
   const rate = await checkRateLimit({
     scope: "widget_session",
@@ -45,7 +36,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const signed = createSignedWidgetSession({ workspaceId: workspace.id, origin });
+  const signed = createSignedWidgetSession({ workspaceId: workspace.id, origin: origin ?? "" });
   if (!signed || !getWidgetSessionSecret()) {
     return Response.json({ required: false });
   }
@@ -61,7 +52,7 @@ export async function POST(req: Request) {
   await createWidgetSession({
     workspaceId: workspace.id,
     tokenHash: signed.tokenHash,
-    origin,
+    origin: origin ?? "",
     domain,
     expiresAt: signed.expiresAt,
   });

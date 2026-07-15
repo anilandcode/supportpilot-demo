@@ -214,6 +214,9 @@ const integrationsRouteSource = readFileSync("app/api/integrations/accounts/rout
 const invitationsRouteSource = readFileSync("app/api/workspaces/[workspaceId]/invitations/route.ts", "utf8");
 const chatRouteSource = readFileSync("app/api/chat/route.ts", "utf8");
 const ticketDraftRouteSource = readFileSync("app/api/tickets/[ticketId]/draft/route.ts", "utf8");
+const widgetAuthSource = readFileSync("lib/auth/widget.ts", "utf8");
+const widgetSessionRouteSource = readFileSync("app/api/widget/session/route.ts", "utf8");
+const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "utf8");
 checks.push([
   "billing snapshot includes launch-critical entitlement metrics",
   billingCoreSource.includes('"documentChunks"') &&
@@ -232,6 +235,23 @@ checks.push([
     chatRouteSource.includes('getPlanLimitBlock(billing, ["conversations", "aiReplies", "modelFallbacks"])') &&
     ticketDraftRouteSource.includes('getPlanLimitBlock(billing, ["aiReplies", "modelFallbacks"])'),
   "entitlement route gates",
+]);
+checks.push([
+  "widget routes use centralized production origin gate",
+  chatRouteSource.includes("requireWidgetWorkspace({ req, requestedWorkspace, route: \"/api/chat\" })") &&
+    widgetSessionRouteSource.includes("requireWidgetWorkspace") &&
+    widgetConfigRouteSource.includes("requireWidgetWorkspace") &&
+    !chatRouteSource.includes("isOriginAllowed") &&
+    !widgetSessionRouteSource.includes("isOriginAllowed") &&
+    !widgetConfigRouteSource.includes("isOriginAllowed"),
+  "widget route guards",
+]);
+checks.push([
+  "production widget traffic requires origin",
+  widgetAuthSource.includes("isProductionMode() && !origin") &&
+    widgetAuthSource.includes("origin is required for widget traffic") &&
+    widgetAuthSource.includes('reason: "missing_origin"'),
+  "lib/auth/widget.ts",
 ]);
 
 let failed = 0;
