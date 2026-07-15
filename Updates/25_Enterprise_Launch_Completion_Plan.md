@@ -362,6 +362,7 @@ Required checks:
 - `npm run test:rls`
 - `npm run test:enterprise`
 - `npm run test:production`
+- `npm run test:journeys`
 - `npm run build`
 - `git diff --check`
 - `graphify update .`
@@ -407,7 +408,7 @@ The next implementation slices should be:
 2. Add API tests that prove protected routes do not use demo fallback in production mode.
 3. Tighten portal and widget workspace resolution so client-provided IDs cannot cross tenants.
 4. Add owner/admin-only billing and widget-key rotation tests.
-5. Add Playwright critical journeys after the API and auth gates are stable.
+5. Add browser Playwright critical journeys after the API and auth gates are stable.
 6. Run the full static/test/build/graphify suite.
 7. Commit and push `main`.
 

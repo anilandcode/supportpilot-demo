@@ -194,11 +194,12 @@ npm run test:evals
 npm run test:rls
 npm run test:enterprise
 npm run test:production
+npm run test:journeys
 npm run build
 git diff --check
 ```
 
-GitHub Actions runs the same production gates on pull requests and pushes to `main` through `.github/workflows/ci.yml`, then runs `npm run build` after the test gate passes. The workflow uploads static RLS and golden-question eval summaries as artifacts for release evidence.
+GitHub Actions runs the same production gates plus critical journey contract checks on pull requests and pushes to `main` through `.github/workflows/ci.yml`, then runs `npm run build` after the test gate passes. The workflow uploads static RLS and golden-question eval summaries as artifacts for release evidence.
 
 Run `npm run test:conversation` against a dev server or live app to exercise `/api/chat`.
 

@@ -101,6 +101,7 @@ Date: 2026-06-24
 - Added background ingestion entitlement enforcement so queued/retried jobs check projected approved-source and document-chunk limits before creating knowledge docs, park over-limit jobs in `needs_review`, and write `knowledge.ingestion.plan_limited` audit logs.
 - Added Resend-backed invitation email delivery: production invitation creation now fails closed without `RESEND_API_KEY`, sends role/workspace invite copy when configured, and records delivery metadata in the `member.invited` audit event.
 - Added production-readiness coverage for owner-only billing APIs, owner/admin-only widget-key rotation, and canonical authorized workspace IDs on settings/domain/widget-key routes to reduce IDOR regression risk.
+- Added `npm run test:journeys` and CI coverage for critical launch journey contracts: marketing, onboarding, knowledge upload, ticket inbox/detail, AI draft citations, approval decisions, portal ticket creation, widget chat, billing checkout/portal, and settings/domain/widget install.
 
 ## Deferred
 
@@ -111,7 +112,7 @@ Date: 2026-06-24
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint, add expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
-- Full QA launch remains a follow-up: add Playwright critical journeys, richer golden-question dashboards, and release/load gates to CI.
+- Full QA launch remains a follow-up: add browser Playwright critical journeys, richer golden-question dashboards, and release/load gates to CI.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.

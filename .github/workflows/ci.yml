@@ -75,6 +75,9 @@ jobs:
       - name: Production-readiness checks
         run: npm run test:production
 
+      - name: Critical journey checks
+        run: npm run test:journeys
+
       - name: Diff whitespace check
         run: git diff --check
 
