@@ -7,6 +7,7 @@ import {
   tierFromPriceId,
   verifyStripeWebhookSignature,
 } from "../lib/billing/stripe.ts";
+import { buildBillingReconciliationReport } from "../lib/billing/reconciliation.ts";
 import {
   getLocalBillingState,
   hasProcessedStripeWebhookEvent,
@@ -111,6 +112,30 @@ await processStripeBillingEvent({
 
 checks.push(["invoice payment failure records invoice", state.invoices.some((invoice) => invoice.stripeInvoiceId === "in_failed" && invoice.amountDue === 14900), String(state.invoices.length)]);
 checks.push(["invoice payment failure starts dunning", state.subscriptions.some((sub) => sub.stripeSubscriptionId === "sub_test_supportpilot" && sub.dunningState === "payment_failed"), state.subscriptions[0]?.dunningState ?? "none"]);
+
+const failedBillingReport = await buildBillingReconciliationReport(DEMO_WORKSPACE_ID, new Date("2027-01-20T00:00:00.000Z"));
+checks.push(["billing reconciliation flags unpaid invoice", failedBillingReport.status === "fail" && failedBillingReport.issues.some((issue) => issue.code === "invoice_unpaid"), failedBillingReport.status]);
+checks.push(["billing reconciliation flags dunning state", failedBillingReport.issues.some((issue) => issue.code === "subscription_payment_blocked"), failedBillingReport.issues.map((issue) => issue.code).join(",")]);
+
+await processStripeBillingEvent({
+  id: "evt_invoice_paid",
+  type: "invoice.paid",
+  livemode: false,
+  data: {
+    object: {
+      id: "in_failed",
+      customer: "cus_test_supportpilot",
+      subscription: "sub_test_supportpilot",
+      status: "paid",
+      amount_due: 14900,
+      amount_paid: 14900,
+      currency: "usd",
+      lines: { data: [{ period: { start: 1_800_000_000, end: 1_802_592_000 }, price: { id: "price_pro_monthly" } }] },
+    },
+  },
+});
+const recoveredBillingReport = await buildBillingReconciliationReport(DEMO_WORKSPACE_ID, new Date("2027-01-20T00:00:00.000Z"));
+checks.push(["billing reconciliation passes recovered subscription", recoveredBillingReport.status === "ok", recoveredBillingReport.issues.map((issue) => issue.code).join(",") || "ok"]);
 
 await recordStripeWebhookEvent({
   stripeEventId: "evt_duplicate",

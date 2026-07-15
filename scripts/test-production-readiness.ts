@@ -127,6 +127,7 @@ checks.push(["API routes use workspace auth helpers", legacyApiAuthFiles.length 
 const workspaceProtectedRoutes = [
   "app/api/billing/checkout/route.ts",
   "app/api/billing/portal/route.ts",
+  "app/api/billing/reconciliation/route.ts",
   "app/api/billing/subscription/route.ts",
   "app/api/integrations/accounts/route.ts",
   "app/api/integrations/events/route.ts",
@@ -160,6 +161,7 @@ checks.push(["API routes avoid direct demo workspace fallback", apiDemoFallbackF
 const membershipRouteSource = readFileSync("app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts", "utf8");
 const billingCheckoutSource = readFileSync("app/api/billing/checkout/route.ts", "utf8");
 const billingPortalSource = readFileSync("app/api/billing/portal/route.ts", "utf8");
+const billingReconciliationSource = readFileSync("app/api/billing/reconciliation/route.ts", "utf8");
 const billingSubscriptionSource = readFileSync("app/api/billing/subscription/route.ts", "utf8");
 const widgetKeyRouteSource = readFileSync("app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts", "utf8");
 const workspaceSettingsSource = readFileSync("app/api/workspaces/[workspaceId]/settings/route.ts", "utf8");
@@ -171,6 +173,7 @@ checks.push([
   "billing APIs are owner-only",
   billingCheckoutSource.includes('requireWorkspaceRole(body.workspaceId, ["owner"])') &&
     billingPortalSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])') &&
+    billingReconciliationSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])') &&
     billingSubscriptionSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])'),
   "billing routes",
 ]);
@@ -323,6 +326,7 @@ checks.push([
 ]);
 
 const billingCoreSource = readFileSync("lib/billing/core.ts", "utf8");
+const billingReconciliationLibSource = readFileSync("lib/billing/reconciliation.ts", "utf8");
 const knowledgeUploadSource = readFileSync("app/api/knowledge/upload/route.ts", "utf8");
 const domainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
 const integrationsRouteSource = readFileSync("app/api/integrations/accounts/route.ts", "utf8");
@@ -349,6 +353,15 @@ checks.push([
     billingCoreSource.includes("modelFallbacks") &&
     billingCoreSource.includes("enforced: true"),
   "billing core",
+]);
+checks.push([
+  "billing reconciliation catches Stripe launch drift",
+  billingReconciliationLibSource.includes("buildBillingReconciliationReport") &&
+    billingReconciliationLibSource.includes("stripe_price_catalog_incomplete") &&
+    billingReconciliationLibSource.includes("subscription_payment_blocked") &&
+    billingReconciliationLibSource.includes("entitlement_limit_mismatch") &&
+    billingReconciliationLibSource.includes("invoice_unpaid"),
+  "billing reconciliation",
 ]);
 checks.push([
   "runtime entitlements gate knowledge, domains, integrations, seats, chat, and drafts",
