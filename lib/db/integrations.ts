@@ -385,6 +385,74 @@ export async function deliverOutboundEvent(eventId: string): Promise<{ event: Ou
   }
 }
 
+export type IntegrationDeliveryBatchResult = {
+  workspaceId: string;
+  checkedAt: string;
+  limit: number;
+  selected: number;
+  delivered: number;
+  queued: number;
+  failed: number;
+  skipped: number;
+  results: Array<{
+    eventId: string;
+    status: OutboundEvent["status"];
+    deliveryStatus: IntegrationDelivery["status"];
+    attempts: number;
+    nextRunAt: string | null;
+    error: string | null;
+  }>;
+};
+
+export async function listDueOutboundEvents(workspaceId = DEMO_WORKSPACE_ID, now = new Date(), limit = 25): Promise<OutboundEvent[]> {
+  const events = await listOutboundEvents(workspaceId);
+  const safeLimit = Math.max(1, Math.min(Math.floor(limit), 100));
+  return events
+    .filter((event) => event.status === "queued" && (!event.nextRunAt || Date.parse(event.nextRunAt) <= now.getTime()))
+    .sort((a, b) => {
+      const aTime = a.nextRunAt ? Date.parse(a.nextRunAt) : Date.parse(a.createdAt);
+      const bTime = b.nextRunAt ? Date.parse(b.nextRunAt) : Date.parse(b.createdAt);
+      return aTime - bTime;
+    })
+    .slice(0, safeLimit);
+}
+
+export async function deliverDueOutboundEvents(input: {
+  workspaceId?: string | null;
+  now?: Date;
+  limit?: number;
+} = {}): Promise<IntegrationDeliveryBatchResult> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const now = input.now ?? new Date();
+  const limit = Math.max(1, Math.min(Math.floor(input.limit ?? 25), 100));
+  const due = await listDueOutboundEvents(workspace.id, now, limit);
+  const results: IntegrationDeliveryBatchResult["results"] = [];
+
+  for (const event of due) {
+    const result = await deliverOutboundEvent(event.id);
+    results.push({
+      eventId: result.event.id,
+      status: result.event.status,
+      deliveryStatus: result.delivery.status,
+      attempts: result.event.attempts,
+      nextRunAt: result.event.nextRunAt,
+      error: result.event.lastError ?? result.delivery.error,
+    });
+  }
+
+  return {
+    workspaceId: workspace.id,
+    checkedAt: now.toISOString(),
+    limit,
+    selected: due.length,
+    delivered: results.filter((result) => result.status === "delivered").length,
+    queued: results.filter((result) => result.status === "queued").length,
+    failed: results.filter((result) => result.status === "failed").length,
+    skipped: results.filter((result) => result.status === "skipped").length,
+    results,
+  };
+}
+
 async function listActiveChannels(workspaceId: string, eventType: OutboundEventType): Promise<IntegrationChannel[]> {
   const [accounts, endpoints] = await Promise.all([listIntegrationAccounts(workspaceId), listWebhookEndpoints(workspaceId)]);
   return [

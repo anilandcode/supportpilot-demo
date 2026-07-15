@@ -343,6 +343,7 @@ const billingReconciliationLibSource = readFileSync("lib/billing/reconciliation.
 const knowledgeUploadSource = readFileSync("app/api/knowledge/upload/route.ts", "utf8");
 const domainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
 const integrationsRouteSource = readFileSync("app/api/integrations/accounts/route.ts", "utf8");
+const integrationsBatchDeliverRouteSource = readFileSync("app/api/integrations/events/deliver/route.ts", "utf8");
 const integrationsHealthRouteSource = readFileSync("app/api/integrations/health/route.ts", "utf8");
 const integrationsDbSource = readFileSync("lib/db/integrations.ts", "utf8");
 const invitationsRouteSource = readFileSync("app/api/workspaces/[workspaceId]/invitations/route.ts", "utf8");
@@ -395,6 +396,17 @@ checks.push([
     integrationsDbSource.includes("retryDue") &&
     integrationsDbSource.includes("successRate"),
   "integration health route",
+]);
+checks.push([
+  "integration delivery worker drains due events with secret",
+  integrationsBatchDeliverRouteSource.includes("SUPPORTPILOT_INTEGRATION_WORKER_SECRET") &&
+    integrationsBatchDeliverRouteSource.includes('req.headers.get("x-supportpilot-integration-secret")') &&
+    integrationsBatchDeliverRouteSource.includes("deliverDueOutboundEvents") &&
+    integrationsDbSource.includes("export async function deliverDueOutboundEvents") &&
+    integrationsDbSource.includes("listDueOutboundEvents") &&
+    integrationsDbSource.includes('event.status === "queued"') &&
+    integrationsDbSource.includes("Date.parse(event.nextRunAt) <= now.getTime()"),
+  "integration delivery worker",
 ]);
 checks.push([
   "widget routes use centralized production origin gate",

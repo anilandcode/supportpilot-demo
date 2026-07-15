@@ -1,5 +1,6 @@
 import {
   deliverOutboundEvent,
+  deliverDueOutboundEvents,
   enqueueApprovalDecision,
   enqueueApprovalRequested,
   getIntegrationHealth,
@@ -116,6 +117,20 @@ async function main() {
       healthAfterFailure.deliveries.failed >= 1 &&
       healthAfterFailure.deliveries.successRate < 1,
     `${healthAfterFailure.status}/${healthAfterFailure.events.queued}/${healthAfterFailure.deliveries.successRate}`,
+  ]);
+
+  globalThis.fetch = (async () => new Response("ok", { status: 200 })) as typeof fetch;
+  const drained = await deliverDueOutboundEvents({ workspaceId: DEMO_WORKSPACE_ID, now: new Date(Date.now() + 120_000), limit: 10 });
+  checks.push([
+    "integration worker drains due queued events",
+    drained.selected > 0 && drained.delivered > 0 && drained.failed === 0 && drained.results.every((result) => result.status === "delivered"),
+    `${drained.selected}/${drained.delivered}/${drained.failed}`,
+  ]);
+  const healthAfterDrain = await getIntegrationHealth(DEMO_WORKSPACE_ID, new Date(Date.now() + 180_000));
+  checks.push([
+    "integration health clears retry backlog after worker drain",
+    healthAfterDrain.events.retryDue === 0 && healthAfterDrain.events.queued === 0,
+    `${healthAfterDrain.events.queued}/${healthAfterDrain.events.retryDue}`,
   ]);
 
   globalThis.fetch = originalFetch;

@@ -67,6 +67,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET|POST /api/integrations/accounts` - owner/admin integration account and generic webhook endpoint configuration with redacted reads
 - `GET /api/integrations/events` - manager/admin outbound integration event and delivery log feed
 - `POST /api/integrations/events/[eventId]/deliver` - manually or worker-run a queued integration delivery
+- `POST /api/integrations/events/deliver` - worker-secret batch delivery for due queued integration events
 - `GET|POST /api/knowledge/missing` - missing-source task list and creation endpoint
 - `GET|POST /api/knowledge/reembed` - manager/admin/owner re-embedding job endpoint for approved knowledge chunks
 - `GET /api/knowledge/ingest/jobs` - manager/agent ingestion job history for uploads, PDFs, retries, and extraction failures
@@ -163,7 +164,7 @@ Knowledge ingestion uses `EMBEDDING_PROVIDER` when configured and falls back to 
 
 Knowledge uploads now create `knowledge_ingestion_jobs` before extraction/chunking. Small text uploads process immediately; large files and PDFs attempt QStash background delivery when `QSTASH_TOKEN`, `NEXT_PUBLIC_APP_URL`, and `SUPPORTPILOT_INGESTION_WORKER_SECRET` are configured, otherwise they fall back to the local synchronous demo path. Jobs track status, attempts, retry timing, extraction errors, chunk counts, and content-hash dedupe.
 
-Integration delivery is queued by default. Approval-needed drafts and approval decisions create idempotent `outbound_events` for active Slack or generic webhook channels; delivery attempts write `integration_deliveries`. Set `SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=inline` only for controlled server-side demos where immediate external delivery is desired.
+Integration delivery is queued by default. Approval-needed drafts and approval decisions create idempotent `outbound_events` for active Slack or generic webhook channels; delivery attempts write `integration_deliveries`. A worker can call `POST /api/integrations/events/deliver` with `x-supportpilot-integration-secret` when `SUPPORTPILOT_INTEGRATION_WORKER_SECRET` is configured to drain due queued retries in batches. Set `SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=inline` only for controlled server-side demos where immediate external delivery is desired.
 
 Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes, and audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
 

@@ -73,8 +73,9 @@ Date: 2026-06-24
 - Added integration outbound migration `008_integration_outbound_events.sql` for Slack/generic webhook accounts, webhook endpoints, external mappings, idempotent outbound events, delivery attempts, retry metadata, and workspace RLS.
 - Added `lib/db/integrations.ts` with local/Supabase storage, approval-needed and approval-decision enqueue hooks, Slack payload delivery, signed generic webhook payloads, audit logging, and manual retry delivery.
 - Added `/api/integrations/accounts`, `/api/integrations/events`, and `/api/integrations/events/[eventId]/deliver` for redacted integration configuration, queue visibility, and manager/admin delivery execution.
+- Added `POST /api/integrations/events/deliver` and `deliverDueOutboundEvents()` for worker-secret batch delivery of due queued integration retries.
 - Wired ticket draft approval requests and AI-run approval decisions to create durable outbound integration events without sending externally unless a channel is active and delivery is explicitly run or inline mode is enabled.
-- Added `npm run test:integrations` for idempotent enqueueing, Slack delivery, generic webhook signing, failed delivery retry metadata, and no-config fallback.
+- Added `npm run test:integrations` for idempotent enqueueing, Slack delivery, generic webhook signing, failed delivery retry metadata, batch worker drain behavior, and no-config fallback.
 
 ## Production Readiness Phase 4 Started
 
@@ -121,7 +122,7 @@ Date: 2026-06-24
 - Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run external public widget abuse/load tests, and tune per-tenant thresholds from traffic.
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
-- Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add full webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
+- Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add full webhook health UI, provision the external delivery scheduler, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
 - Full QA launch remains a follow-up: add browser Playwright critical journeys, live uptime-provider configuration, richer golden-question dashboards, and release/load gates to CI.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
