@@ -92,6 +92,7 @@ Date: 2026-06-24
 - Hardened workspace data APIs so billing, integrations, knowledge jobs, model routes, onboarding state/steps, security events, retention jobs, audit exports, deletion requests, stats, and missing-knowledge endpoints authorize through `requireWorkspaceRole()` before reading workspace-scoped data.
 - Added membership lifecycle APIs for role changes and disabling, final-active-owner protection, and audited pending-invitation revocation.
 - Updated first-workspace onboarding to seed default escalation rules and approval policies for low confidence, angry sentiment, legal/policy, billing/refund, and sensitive-data risk.
+- Hardened portal identity binding so portal ticket creation explicitly links the authenticated user to the created customer, portal ticket listing only returns that identity's customer tickets, and customer ticket-message writes cannot self-bind to foreign tickets.
 
 ## Deferred
 

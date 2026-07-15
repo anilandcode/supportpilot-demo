@@ -181,6 +181,32 @@ checks.push([
   "onboarding workspace",
 ]);
 
+const portalTicketsRouteSource = readFileSync("app/api/portal/tickets/route.ts", "utf8");
+const authApiSource = readFileSync("lib/auth/api.ts", "utf8");
+const ticketMessagesRouteSource = readFileSync("app/api/tickets/[ticketId]/messages/route.ts", "utf8");
+checks.push([
+  "portal ticket list is customer scoped",
+  portalTicketsRouteSource.includes("export async function GET") &&
+    portalTicketsRouteSource.includes("ensurePortalIdentity") &&
+    portalTicketsRouteSource.includes("portal.customerId") &&
+    portalTicketsRouteSource.includes("listPortalTickets({ workspaceId: workspace.id, customerId: portal.customerId })"),
+  "portal tickets route",
+]);
+checks.push([
+  "portal ticket creation explicitly binds customer identity",
+  portalTicketsRouteSource.includes("allowCustomerBinding: true") &&
+    authApiSource.includes("allowCustomerBinding?: boolean") &&
+    authApiSource.includes("ticket does not belong to this customer"),
+  "portal identity binding",
+]);
+checks.push([
+  "customer ticket messages cannot self-bind to foreign tickets",
+  ticketMessagesRouteSource.includes('sender === "customer"') &&
+    ticketMessagesRouteSource.includes("ensurePortalIdentity") &&
+    !ticketMessagesRouteSource.includes("allowCustomerBinding: true"),
+  "ticket messages route",
+]);
+
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
 for (const [name, ok, detail] of checks) {

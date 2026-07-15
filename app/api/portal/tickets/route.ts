@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ensurePortalIdentity } from "@/lib/auth/api";
-import { createPortalTicket, getWorkspace } from "@/lib/db/support";
+import { createPortalTicket, getWorkspace, listPortalTickets } from "@/lib/db/support";
 
 export const runtime = "nodejs";
 
@@ -31,8 +31,23 @@ export async function POST(req: Request) {
   });
 
   if (portal.ok && portal.userId) {
-    await ensurePortalIdentity({ workspaceId: workspace.id, tenantId: workspace.tenantId, customerId: ticket.customerId });
+    await ensurePortalIdentity({ workspaceId: workspace.id, tenantId: workspace.tenantId, customerId: ticket.customerId, allowCustomerBinding: true });
   }
 
   return Response.json({ ticket }, { status: 201 });
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const workspace = await getWorkspace(url.searchParams.get("workspaceId") || url.searchParams.get("workspace") || undefined);
+  const portal = await ensurePortalIdentity({ workspaceId: workspace.id, tenantId: workspace.tenantId });
+  if (!portal.ok) {
+    return Response.json({ error: portal.error }, { status: portal.status });
+  }
+  if (!portal.customerId) {
+    return Response.json({ tickets: [] });
+  }
+
+  const tickets = await listPortalTickets({ workspaceId: workspace.id, customerId: portal.customerId });
+  return Response.json({ tickets });
 }

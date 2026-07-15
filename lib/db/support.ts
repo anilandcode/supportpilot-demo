@@ -800,6 +800,28 @@ export async function listTickets(filters: TicketFilters = {}): Promise<TicketWi
     .map(hydrateTicket);
 }
 
+export async function listPortalTickets(input: { workspaceId: string; customerId: string }): Promise<TicketWithRelations[]> {
+  const workspace = await getWorkspace(input.workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("tickets")
+      .select("*, customers(*), assigned_agent:users(*)")
+      .eq("workspace_id", workspace.id)
+      .eq("customer_id", input.customerId)
+      .order("updated_at", { ascending: false });
+
+    if (!error && data) {
+      return data.map((row: any) => hydrateSupabaseTicket(row));
+    }
+  }
+
+  return localState.tickets
+    .filter((ticket) => ticket.workspaceId === workspace.id && ticket.customerId === input.customerId)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .map(hydrateTicket);
+}
+
 export async function getTicket(ticketId: string): Promise<TicketWithRelations | null> {
   const ticket = localState.tickets.find((item) => item.id === ticketId);
   if (ticket) return hydrateTicket(ticket);
