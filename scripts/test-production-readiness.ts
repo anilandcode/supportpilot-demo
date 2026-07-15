@@ -164,6 +164,15 @@ checks.push([
   "invitations route",
 ]);
 
+const invitationAcceptSource = readFileSync("app/api/invitations/accept/route.ts", "utf8");
+checks.push([
+  "invitation accept persists expiry decisions",
+  invitationAcceptSource.includes('status: "expired"') &&
+    invitationAcceptSource.includes("member.invite.expired") &&
+    invitationAcceptSource.includes('eq("status", "pending")'),
+  "invitation accept route",
+]);
+
 const onboardingWorkspaceSource = readFileSync("app/api/onboarding/workspace/route.ts", "utf8");
 checks.push([
   "workspace onboarding seeds escalation defaults",

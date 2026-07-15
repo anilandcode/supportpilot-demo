@@ -42,7 +42,25 @@ export async function POST(req: Request) {
     .maybeSingle();
 
   if (invitationError) return Response.json({ error: invitationError.message }, { status: 500 });
-  if (!invitation || invitation.status !== "pending" || new Date(invitation.expires_at).getTime() < Date.now()) {
+  if (!invitation) {
+    return Response.json({ error: "Invitation is expired or unavailable" }, { status: 410 });
+  }
+  if (invitation.status !== "pending") {
+    return Response.json({ error: "Invitation is expired or unavailable" }, { status: 410 });
+  }
+  if (new Date(invitation.expires_at).getTime() < Date.now()) {
+    const expiredAt = new Date().toISOString();
+    await Promise.all([
+      admin.from("invitations").update({ status: "expired" }).eq("id", invitation.id).eq("status", "pending"),
+      admin.from("audit_logs").insert({
+        tenant_id: invitation.tenant_id,
+        workspace_id: invitation.workspace_id,
+        ticket_id: null,
+        user_id: user.id,
+        action: "member.invite.expired",
+        details: { invitationId: invitation.id, email: invitation.email, role: invitation.role, expiredAt },
+      }),
+    ]);
     return Response.json({ error: "Invitation is expired or unavailable" }, { status: 410 });
   }
   if (invitation.email.toLowerCase() !== user.email.toLowerCase()) {
