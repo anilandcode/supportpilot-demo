@@ -164,6 +164,23 @@ checks.push([
   "invitations route",
 ]);
 
+const onboardingWorkspaceSource = readFileSync("app/api/onboarding/workspace/route.ts", "utf8");
+checks.push([
+  "workspace onboarding seeds escalation defaults",
+  onboardingWorkspaceSource.includes('admin.from("escalation_rules").insert') &&
+    onboardingWorkspaceSource.includes("Billing/refund risk") &&
+    onboardingWorkspaceSource.includes("Sensitive data exposure"),
+  "onboarding workspace",
+]);
+checks.push([
+  "workspace onboarding seeds approval defaults",
+  onboardingWorkspaceSource.includes('admin.from("approval_policies").insert') &&
+    onboardingWorkspaceSource.includes("low_confidence") &&
+    onboardingWorkspaceSource.includes("billing_or_refund") &&
+    onboardingWorkspaceSource.includes("legal_or_policy"),
+  "onboarding workspace",
+]);
+
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
 for (const [name, ok, detail] of checks) {

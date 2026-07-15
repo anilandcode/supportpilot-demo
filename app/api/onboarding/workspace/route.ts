@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     .single();
   if (workspaceError || !workspace) return NextResponse.json({ error: workspaceError?.message ?? "Could not create workspace" }, { status: 500 });
 
-  const baseRows = {
+const baseRows = {
     tenant_id: organization.id,
     workspace_id: workspace.id,
   };
@@ -129,6 +129,40 @@ export async function POST(request: Request) {
         description: item.description,
         completed: false,
       })),
+    ),
+    admin.from("escalation_rules").insert(
+      [
+        { name: "Low confidence", trigger: "confidence < 0.72", risk_level: "medium", requires_manager_approval: false },
+        { name: "Angry sentiment", trigger: "sentiment = angry", risk_level: "high", requires_manager_approval: true },
+        { name: "Legal or policy risk", trigger: "legal|policy|DPA|GDPR", risk_level: "critical", requires_manager_approval: true },
+        { name: "Billing/refund risk", trigger: "refund|billing|invoice|charge", risk_level: "high", requires_manager_approval: true },
+        { name: "Sensitive data exposure", trigger: "password|token|secret|api key", risk_level: "critical", requires_manager_approval: true },
+      ].map((rule) => ({ ...baseRows, ...rule, active: true })),
+    ),
+    admin.from("approval_policies").insert(
+      [
+        {
+          risk_category: "low_confidence",
+          min_confidence_to_auto_send: 0.72,
+          require_approval: true,
+          allowed_actions: ["draft_reply", "email_escalation"],
+          approver_role: "manager",
+        },
+        {
+          risk_category: "billing_or_refund",
+          min_confidence_to_auto_send: 0.9,
+          require_approval: true,
+          allowed_actions: ["draft_reply"],
+          approver_role: "manager",
+        },
+        {
+          risk_category: "legal_or_policy",
+          min_confidence_to_auto_send: 0.95,
+          require_approval: true,
+          allowed_actions: ["draft_reply"],
+          approver_role: "manager",
+        },
+      ].map((policy) => ({ ...baseRows, ...policy, active: true })),
     ),
     admin.from("audit_logs").insert({
       ...baseRows,
