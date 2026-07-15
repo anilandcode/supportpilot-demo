@@ -4,9 +4,10 @@ import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { canInviteRole } from "@/lib/auth/permissions";
 import { createInviteToken, hashInviteToken, inviteUrlFromRequest } from "@/lib/auth/invitations";
 import { getCurrentWorkspaceMembership } from "@/lib/auth/roles";
+import { getTransactionalEmailConfigError, sendInvitationEmail } from "@/lib/integrations/resend";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv, isDemoMode } from "@/lib/supabase/config";
+import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv, isDemoMode, isProductionMode } from "@/lib/supabase/config";
 
 export const runtime = "nodejs";
 
@@ -30,6 +31,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
   const productionConfigError = getProductionSupabaseConfigError();
   if (productionConfigError) {
     return Response.json({ error: productionConfigError }, { status: 503 });
+  }
+  const emailConfigError = isProductionMode() ? getTransactionalEmailConfigError() : null;
+  if (emailConfigError) {
+    return Response.json({ error: emailConfigError }, { status: 503 });
   }
 
   if (isDemoMode() && (!hasSupabaseEnv() || !hasSupabaseAdminEnv())) {
@@ -75,6 +80,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
 
   const token = createInviteToken();
   const tokenHash = hashInviteToken(token);
+  const inviteUrl = inviteUrlFromRequest(req, token);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
   const { data, error } = await admin
@@ -93,16 +99,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
+  const delivery = await sendInvitationEmail({
+    to: parsed.data.email.toLowerCase(),
+    role: parsed.data.role,
+    workspaceName: billing.workspace.name,
+    inviteUrl,
+  });
+
   await admin.from("audit_logs").insert({
     tenant_id: membership.tenantId,
     workspace_id: workspaceId,
     ticket_id: null,
     user_id: user.id,
     action: "member.invited",
-    details: { email: parsed.data.email.toLowerCase(), role: parsed.data.role },
+    details: { email: parsed.data.email.toLowerCase(), role: parsed.data.role, delivery: { skipped: delivery.skipped, id: delivery.id, ok: delivery.ok, status: delivery.status } },
   });
 
-  return Response.json({ invitation: { ...data, inviteUrl: inviteUrlFromRequest(req, token) } }, { status: 201 });
+  return Response.json({ invitation: { ...data, inviteUrl }, delivery }, { status: 201 });
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ workspaceId: string }> }) {

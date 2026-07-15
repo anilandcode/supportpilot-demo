@@ -100,12 +100,13 @@ SENTRY_AUTH_TOKEN=...
 
 ```bash
 RESEND_API_KEY=...
+INVITATION_FROM_EMAIL="SupportPilot Invites <invites@your-client-domain.example>"
 ESCALATION_FROM_EMAIL="SupportPilot <support@your-client-domain.example>"
 NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 ```
 
-Without these keys, escalation email and product analytics routes run as safe no-ops while still writing local usage and audit rows.
+Without these keys, demo escalation email and product analytics routes run as safe no-ops while still writing local usage and audit rows. In `SUPPORTPILOT_APP_MODE=production`, workspace invitations require `RESEND_API_KEY` so invite records are not created without a deliverable email path.
 
 ## 8. Verify Locally
 

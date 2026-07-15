@@ -14,7 +14,7 @@ SupportPilot is an enterprise AI support workspace with a preserved Lite embedda
 - Provider-aware knowledge embeddings with deterministic fallback, embedding metadata, re-embedding job scaffolding, and background ingestion job scaffolding
 - Slack/generic webhook integration foundation with durable outbound events and delivery logs
 - Retention deletion request jobs and tamper-evident audit evidence exports
-- Optional Resend escalation email and PostHog product events
+- Optional Resend invitation/escalation email and PostHog product events
 - Sentry for optional app error monitoring
 - PDF, Markdown, and text knowledge ingestion
 
@@ -78,6 +78,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/workspaces/[workspaceId]/domains/[domainId]/verify` - check TXT/CNAME records and activate a widget origin
 - `POST /api/workspaces/[workspaceId]/domains/recheck` - owner/admin or worker-secret DNS health recheck for verified/pending domains
 - `POST /api/escalations/email` - optional Resend-backed escalation email with audit and usage logging
+- `POST /api/workspaces/[workspaceId]/invitations` - owner/admin invitation creation with hashed tokens, entitlement checks, Resend delivery, and audit logging
 
 ## Enterprise Env
 
@@ -118,6 +119,7 @@ LOCAL_MODEL_ENDPOINT=...
 LOCAL_EMBEDDING_ENDPOINT=...
 LOCAL_RERANKER_ENDPOINT=...
 RESEND_API_KEY=...
+INVITATION_FROM_EMAIL=...
 ESCALATION_FROM_EMAIL=...
 NEXT_PUBLIC_POSTHOG_KEY=...
 NEXT_PUBLIC_POSTHOG_HOST=...
@@ -143,7 +145,7 @@ SUPPORTPILOT_STRIPE_CUSTOMER_ID=...
 STRIPE_BILLING_PORTAL_RETURN_URL=...
 ```
 
-`SUPPORTPILOT_APP_MODE` defaults to `demo` for local previews. Set it to `production` for any deployed environment; production mode fails closed when Supabase URL, anon key, or service-role key is missing instead of silently returning demo auth/onboarding responses.
+`SUPPORTPILOT_APP_MODE` defaults to `demo` for local previews. Set it to `production` for any deployed environment; production mode fails closed when Supabase URL, anon key, service-role key, or invitation email delivery is missing instead of silently returning demo auth/onboarding responses.
 
 `/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
 

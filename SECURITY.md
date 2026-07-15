@@ -39,7 +39,7 @@ Required production secrets:
 - optional `SUPPORTPILOT_DOMAIN_STALE_DAYS`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
-`SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, and Sentry auth tokens belong only in server-side deployment env vars.
+`SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, invitation sender addresses, and Sentry auth tokens belong only in server-side deployment env vars.
 
 ## AI Safety Boundaries
 
@@ -50,10 +50,10 @@ Required production secrets:
 - Prompt logging is redacted by default. The app stores prompt hashes, redacted previews, route metadata, token estimates, latency, and cost estimates instead of raw private content.
 - The model router selects deterministic R0-R5 routes before generation and logs every route in `model_route_logs`.
 - Policy decisions are stored in `policy_evaluations`; citation coverage and source freshness are stored in `grounding_checks`.
-- Only read-only agent tools are scaffolded in this pass. Refunds, account changes, outbound email, and external system writes remain approval-gated future work.
+- Only read-only agent tools are scaffolded in this pass. Refunds, account changes, customer-reply email, and external system writes remain approval-gated future work.
 - Every draft and decision writes an audit event.
 - Usage events track chat, approval, knowledge upload, and escalation activity without storing raw secrets.
 
 ## Current Limits
 
-The app can send optional escalation email through Resend, but it does not yet sync approved replies into an external helpdesk. Add Zendesk, Intercom, Slack, or CRM connectors only after final customer-copy review and audit logging succeed.
+The app can send invitation and escalation email through Resend, but it does not yet sync approved replies into an external helpdesk. Add Zendesk, Intercom, Slack, or CRM connectors only after final customer-copy review and audit logging succeed.

@@ -9,6 +9,7 @@ import {
 } from "../lib/db/integrations.ts";
 import { DEMO_TENANT_ID, DEMO_WORKSPACE_ID } from "../lib/enterprise/demo-data.ts";
 import type { AIRun } from "../lib/enterprise/types.ts";
+import { sendInvitationEmail } from "../lib/integrations/resend.ts";
 
 const checks: Array<[string, boolean, string]> = [];
 
@@ -107,6 +108,54 @@ async function main() {
   globalThis.fetch = originalFetch;
   delete process.env.TEST_SUPPORTPILOT_WEBHOOK_SECRET;
 
+  const originalResendKey = process.env.RESEND_API_KEY;
+  const originalInviteFrom = process.env.INVITATION_FROM_EMAIL;
+  delete process.env.RESEND_API_KEY;
+  delete process.env.INVITATION_FROM_EMAIL;
+  const skippedInviteEmail = await sendInvitationEmail({
+    to: "new-agent@example.com",
+    role: "agent",
+    workspaceName: "AcmeDesk Support",
+    inviteUrl: "https://supportpilot.example/invite/accept?token=token_test",
+  });
+  checks.push([
+    "invitation email is a safe no-op without Resend",
+    skippedInviteEmail.skipped && skippedInviteEmail.reason === "RESEND_API_KEY not configured",
+    `${skippedInviteEmail.skipped}/${skippedInviteEmail.reason}`,
+  ]);
+
+  const resendCalls: Array<{ url: string; body: any; authorization: string | null }> = [];
+  process.env.RESEND_API_KEY = "resend_test_key";
+  process.env.INVITATION_FROM_EMAIL = "SupportPilot Invites <invites@example.com>";
+  globalThis.fetch = (async (input, init) => {
+    resendCalls.push({
+      url: String(input),
+      body: JSON.parse(String(init?.body ?? "{}")),
+      authorization: new Headers(init?.headers).get("Authorization"),
+    });
+    return Response.json({ id: "email_invite_test" }, { status: 200 });
+  }) as typeof fetch;
+  const sentInviteEmail = await sendInvitationEmail({
+    to: "manager@example.com",
+    role: "manager",
+    workspaceName: "AcmeDesk Support",
+    inviteUrl: "https://supportpilot.example/invite/accept?token=token_test",
+  });
+  checks.push([
+    "invitation email sends through Resend with invite copy",
+    !sentInviteEmail.skipped &&
+      sentInviteEmail.ok === true &&
+      sentInviteEmail.id === "email_invite_test" &&
+      resendCalls[0]?.url === "https://api.resend.com/emails" &&
+      resendCalls[0]?.authorization === "Bearer resend_test_key" &&
+      resendCalls[0]?.body.subject.includes("AcmeDesk Support") &&
+      resendCalls[0]?.body.html.includes("Accept your invitation"),
+    `${sentInviteEmail.ok}/${sentInviteEmail.id}/${resendCalls[0]?.body.subject}`,
+  ]);
+  globalThis.fetch = originalFetch;
+  restoreEnv("RESEND_API_KEY", originalResendKey);
+  restoreEnv("INVITATION_FROM_EMAIL", originalInviteFrom);
+
   let failed = 0;
   console.log("\nSupportPilot integration checks");
   for (const [name, ok, detail] of checks) {
@@ -120,6 +169,14 @@ async function main() {
   }
 
   console.log("\nIntegration checks passed\n");
+}
+
+function restoreEnv(key: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
 }
 
 function fakeAiRun(status: AIRun["approvalStatus"], id = crypto.randomUUID()): AIRun {

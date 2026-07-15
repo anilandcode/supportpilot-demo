@@ -163,6 +163,15 @@ checks.push([
   invitationRouteSource.includes("export async function DELETE") && invitationRouteSource.includes("member.invite.revoked"),
   "invitations route",
 ]);
+checks.push([
+  "invitation route sends production email",
+  invitationRouteSource.includes("getTransactionalEmailConfigError") &&
+    invitationRouteSource.includes("sendInvitationEmail") &&
+    invitationRouteSource.includes("isProductionMode()") &&
+    invitationRouteSource.includes("member.invited") &&
+    invitationRouteSource.includes("delivery:"),
+  "invitations route",
+]);
 
 const invitationAcceptSource = readFileSync("app/api/invitations/accept/route.ts", "utf8");
 checks.push([
