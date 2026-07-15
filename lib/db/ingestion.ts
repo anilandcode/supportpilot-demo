@@ -1,4 +1,6 @@
 import { PDFParse } from "pdf-parse";
+import { getProjectedPlanLimitBlock } from "@/lib/billing/core";
+import { getBillingSnapshot } from "@/lib/billing/plans";
 import { appendAuditLog, createKnowledgeDocument, getLocalState, getWorkspace } from "@/lib/db/support";
 import { DEMO_TENANT_ID, DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import type { KnowledgeDoc, KnowledgeIngestionJob } from "@/lib/enterprise/types";
@@ -130,6 +132,26 @@ export async function processIngestionJob(jobId: string, input: { actorUserId?: 
     }
 
     const chunks = chunkDocument({ docId: "pending", title: job.title, content: text });
+    const planLimitBlock = await getIngestionPlanLimitBlock(job.workspaceId, chunks.length);
+    if (planLimitBlock) {
+      job.status = "needs_review";
+      job.error = planLimitBlock.message;
+      job.chunksTotal = chunks.length;
+      job.chunksEmbedded = 0;
+      job.completedAt = new Date().toISOString();
+      job.updatedAt = job.completedAt;
+      await persistJob(job);
+      await appendAuditLog({
+        tenantId: job.tenantId,
+        workspaceId: job.workspaceId,
+        ticketId: null,
+        userId: input.actorUserId ?? null,
+        action: "knowledge.ingestion.plan_limited",
+        details: { jobId: job.id, metric: planLimitBlock.metricKey, used: planLimitBlock.used, limit: planLimitBlock.limit, pending: planLimitBlock.pending },
+      });
+      return job;
+    }
+
     const doc = await createKnowledgeDocument({
       workspaceId: job.workspaceId,
       title: job.title,
@@ -209,6 +231,22 @@ async function findDuplicateSuccessfulJob(workspaceId: string, sourceContentHash
 function hasDuplicateDoc(workspaceId: string, content: string) {
   const hash = embeddingContentHash(content);
   return getLocalState().docs.some((doc) => doc.workspaceId === workspaceId && embeddingContentHash(doc.content) === hash);
+}
+
+async function getIngestionPlanLimitBlock(workspaceId: string, pendingChunks: number) {
+  const billing = await getBillingSnapshot(workspaceId);
+  const projected = getProjectedPlanLimitBlock(billing, { sources: 1, documentChunks: pendingChunks });
+  if (!projected) return null;
+
+  const [metricKey, pending] = projected;
+  const metric = billing.metrics[metricKey];
+  return {
+    metricKey,
+    pending,
+    used: metric.used,
+    limit: metric.limit,
+    message: `Plan limit reached for ${metric.label} (${metric.used}/${metric.limit}) before ingestion. Upgrade or remove sources before retrying.`,
+  };
 }
 
 async function extractJobText(job: KnowledgeIngestionJob) {

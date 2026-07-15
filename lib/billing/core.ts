@@ -333,6 +333,14 @@ export function getPlanLimitBlock(snapshot: BillingSnapshot, keys: UsageMetricKe
   return keys.map((key) => snapshot.metrics[key]).find((metric) => metric.enforced && metric.exceeded) ?? null;
 }
 
+export function getProjectedPlanLimitBlock(snapshot: BillingSnapshot, additions: Partial<Record<UsageMetricKey, number>>): [UsageMetricKey, number] | null {
+  const projectedBlock = Object.entries(additions).find(([key, addition]) => {
+    const metric = snapshot.metrics[key as UsageMetricKey];
+    return Boolean(metric?.enforced && metric.limit !== null && metric.used + Number(addition ?? 0) > metric.limit);
+  }) as [UsageMetricKey, number] | undefined;
+  return projectedBlock ?? null;
+}
+
 export function getBillingPlans() {
   return Object.values(BILLING_PLANS).map((plan) => ({
     key: plan.key,

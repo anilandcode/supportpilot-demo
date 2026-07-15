@@ -238,6 +238,7 @@ const widgetAuthSource = readFileSync("lib/auth/widget.ts", "utf8");
 const widgetSessionRouteSource = readFileSync("app/api/widget/session/route.ts", "utf8");
 const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "utf8");
 const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
+const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
 checks.push([
   "billing snapshot includes launch-critical entitlement metrics",
   billingCoreSource.includes('"documentChunks"') &&
@@ -282,6 +283,15 @@ checks.push([
     retentionSource.includes("clampRetentionDays") &&
     retentionSource.includes("billing.retention_limit.applied"),
   "lib/db/retention.ts",
+]);
+checks.push([
+  "background ingestion jobs respect source and chunk entitlements",
+  ingestionSource.includes("getBillingSnapshot") &&
+    ingestionSource.includes("getProjectedPlanLimitBlock") &&
+    ingestionSource.includes("sources: 1") &&
+    ingestionSource.includes("documentChunks: pendingChunks") &&
+    ingestionSource.includes("knowledge.ingestion.plan_limited"),
+  "lib/db/ingestion.ts",
 ]);
 
 let failed = 0;

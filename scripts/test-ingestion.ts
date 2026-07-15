@@ -1,4 +1,5 @@
 import { createIngestionJob, getLocalIngestionJobs, retryIngestionJob } from "../lib/db/ingestion.ts";
+import { getLocalState } from "../lib/db/support.ts";
 import { DEMO_WORKSPACE_ID } from "../lib/enterprise/demo-data.ts";
 
 const checks: Array<[string, boolean, string]> = [];
@@ -12,6 +13,10 @@ async function main() {
   delete process.env.QSTASH_TOKEN;
   delete process.env.NEXT_PUBLIC_APP_URL;
   delete process.env.SUPPORTPILOT_INGESTION_WORKER_SECRET;
+
+  const demoOrganization = getLocalState().organizations[0];
+  const originalPlan = demoOrganization.plan;
+  demoOrganization.plan = "Pro";
 
   const unique = crypto.randomUUID();
   const content = [
@@ -96,6 +101,21 @@ async function main() {
     retried.status === "succeeded" && retried.chunksEmbedded > 0,
     `${retried.status}/${retried.chunksEmbedded}`,
   ]);
+
+  demoOrganization.plan = "Lite";
+  const planLimited = await createIngestionJob({
+    workspaceId: DEMO_WORKSPACE_ID,
+    title: `Plan limited source ${unique}`,
+    sourceType: "upload",
+    content: `# Plan limited source ${unique}\n\nThis source should be parked for review once Launch source limits are reached.`,
+  });
+  checks.push([
+    "ingestion processing parks jobs that would exceed source or chunk limits",
+    !planLimited.queued && planLimited.job.status === "needs_review" && Boolean(planLimited.job.error?.includes("Plan limit reached")),
+    `${planLimited.queued}/${planLimited.job.status}/${planLimited.job.error}`,
+  ]);
+
+  demoOrganization.plan = originalPlan;
 
   let failed = 0;
   console.log("\nSupportPilot ingestion checks");

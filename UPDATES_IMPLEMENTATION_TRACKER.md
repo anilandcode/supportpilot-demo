@@ -98,6 +98,7 @@ Date: 2026-06-24
 - Added retention-duration as an enforced billing metric and clamped scheduled conversation/AI cleanup jobs to the plan retention limit, with audit evidence when the configured setting is reduced for plan compliance.
 - Hardened invitation acceptance so expired pending invites are marked `expired` and produce `member.invite.expired` audit logs instead of only returning a transient 410 response.
 - Completed more of the first-workspace production seed path by adding retention settings and read-only AI tool definitions during onboarding workspace creation.
+- Added background ingestion entitlement enforcement so queued/retried jobs check projected approved-source and document-chunk limits before creating knowledge docs, park over-limit jobs in `needs_review`, and write `knowledge.ingestion.plan_limited` audit logs.
 
 ## Deferred
 

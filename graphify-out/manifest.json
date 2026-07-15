@@ -548,12 +548,12 @@
     "hash": "412cf4604c41facf9ab1f381c4dd621a"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/scripts/test-ingestion.ts": {
-    "mtime": 1782756684.028657,
-    "hash": "493b8ba05ee2f69e74e2655cd1e9c953"
+    "mtime": 1784119824.9081104,
+    "hash": "0a3fa57226637be874a3f821c7f4de5b"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/scripts/test-production-readiness.ts": {
-    "mtime": 1784119354.7183187,
-    "hash": "93c057947067671e18b36203c41ae136"
+    "mtime": 1784119751.0482142,
+    "hash": "fcb05a311e753461e625346427409932"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/scripts/test-billing-lifecycle.ts": {
     "mtime": 1782742551.2233498,
@@ -740,8 +740,8 @@
     "hash": "9411593a1be0360e2d2c479d125cee8f"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/lib/db/ingestion.ts": {
-    "mtime": 1782757117.0544097,
-    "hash": "841ff8038c5b8040bf2630360d5eee9a"
+    "mtime": 1784119709.4218497,
+    "hash": "b28c67e0c43b257df5dadf2f98bb8763"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/lib/billing/stripe.ts": {
     "mtime": 1782742171.4022665,
@@ -752,8 +752,8 @@
     "hash": "eaec257eb6fa1c9af0a44d7710ec5e1c"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/lib/billing/core.ts": {
-    "mtime": 1784118706.9790878,
-    "hash": "aceae0d3341f3c986e8823dfbb774a05"
+    "mtime": 1784119742.0253143,
+    "hash": "f4b25811cb3b0a14e55ece185c0b15e7"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/lib/billing/web.ts": {
     "mtime": 1782742218.2367606,
@@ -764,8 +764,8 @@
     "hash": "e79fd8002eccf9582376d54de616fe35"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/UPDATES_IMPLEMENTATION_TRACKER.md": {
-    "mtime": 1784119372.4866211,
-    "hash": "e613daad0f7563cee74f635361fdad24"
+    "mtime": 1784119781.4816387,
+    "hash": "da1875c5208deeb26842bde39de2ed3f"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/ARCHITECTURE.md": {
     "mtime": 1782135689.9726155,
@@ -780,8 +780,8 @@
     "hash": "74ece53aad866798b50eeadb9cff10ee"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/ENTERPRISE_AUDIT.md": {
-    "mtime": 1784119365.2511396,
-    "hash": "7a28d1b971bfe14ab8d2ea237abad4ac"
+    "mtime": 1784119770.3506296,
+    "hash": "6bcd96dd3e78b2ea606eb36e54887ef3"
   },
   "/Users/apple/Documents/AI-Demos/chatbot-demo/ROADMAP.md": {
     "mtime": 1781977496.0264602,
