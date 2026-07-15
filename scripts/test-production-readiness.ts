@@ -228,12 +228,31 @@ checks.push([
 ]);
 
 const onboardingWorkspaceSource = readFileSync("app/api/onboarding/workspace/route.ts", "utf8");
+const onboardingWizardSource = readFileSync("components/enterprise/onboarding-wizard.tsx", "utf8");
+const onboardingGoldenRouteSource = readFileSync("app/api/onboarding/golden-questions/run/route.ts", "utf8");
 checks.push([
   "workspace onboarding seeds escalation defaults",
   onboardingWorkspaceSource.includes('admin.from("escalation_rules").insert') &&
     onboardingWorkspaceSource.includes("Billing/refund risk") &&
     onboardingWorkspaceSource.includes("Sensitive data exposure"),
   "onboarding workspace",
+]);
+checks.push([
+  "onboarding wizard covers launch setup gates",
+  onboardingWizardSource.includes("/api/knowledge/upload") &&
+    onboardingWizardSource.includes("/api/workspaces/") &&
+    onboardingWizardSource.includes("/api/onboarding/golden-questions/run") &&
+    onboardingWizardSource.includes("widget_installed") &&
+    onboardingWizardSource.includes("monitoring_enabled"),
+  "onboarding wizard",
+]);
+checks.push([
+  "onboarding golden-question gate runs shared evals before completion",
+  onboardingGoldenRouteSource.includes("runGoldenQuestionEvals") &&
+    onboardingGoldenRouteSource.includes("summary.total >= 5") &&
+    onboardingGoldenRouteSource.includes("completeOnboardingStep") &&
+    onboardingGoldenRouteSource.includes('step: "golden_questions"'),
+  "onboarding golden route",
 ]);
 checks.push([
   "workspace onboarding seeds approval defaults",

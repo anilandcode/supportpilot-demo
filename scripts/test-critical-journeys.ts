@@ -17,6 +17,13 @@ addCheck("marketing page loads", [
 addCheck("owner onboarding creates workspace and launch defaults", [
   fileExists("app/onboarding/page.tsx"),
   fileContains("app/onboarding/page.tsx", ["OnboardingWizard", "getWorkspaceLaunchState"]),
+  fileContains("components/enterprise/onboarding-wizard.tsx", [
+    "/api/knowledge/upload",
+    "/api/onboarding/golden-questions/run",
+    "domain_verified",
+    "widget_installed",
+    "monitoring_enabled",
+  ]),
   fileContains("app/api/onboarding/workspace/route.ts", [
     '.from("organizations")',
     ".insert({",
@@ -25,6 +32,7 @@ addCheck("owner onboarding creates workspace and launch defaults", [
     'admin.from("escalation_rules").insert',
     'admin.from("approval_policies").insert',
   ]),
+  fileContains("app/api/onboarding/golden-questions/run/route.ts", ["runGoldenQuestionEvals", "completeOnboardingStep", "golden_questions"]),
 ]);
 
 addCheck("knowledge upload and ingestion journey", [
