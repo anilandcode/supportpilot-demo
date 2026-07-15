@@ -2,14 +2,19 @@ import type { MembershipRole, TicketWithRelations } from "@/lib/enterprise/types
 import { getCurrentEnterpriseUser, getCurrentWorkspaceMembership } from "@/lib/auth/roles";
 import { canAccessAnyRole } from "@/lib/auth/permissions";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { hasSupabaseAdminEnv, hasSupabaseEnv } from "@/lib/supabase/config";
+import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type ApiAuthResult =
   | { ok: true; userId: string | null; role: MembershipRole; workspaceId: string; tenantId: string }
-  | { ok: false; status: 401 | 403; error: string };
+  | { ok: false; status: 401 | 403 | 503; error: string };
 
 export async function requireWorkspaceRole(workspaceId: string, allowedRoles: MembershipRole[]): Promise<ApiAuthResult> {
+  const productionConfigError = getProductionSupabaseConfigError();
+  if (productionConfigError) {
+    return { ok: false, status: 503, error: productionConfigError };
+  }
+
   const membership = await getCurrentWorkspaceMembership(workspaceId);
   const user = await getCurrentEnterpriseUser();
 
@@ -45,6 +50,11 @@ export async function getAuthenticatedUser() {
 }
 
 export async function ensurePortalIdentity(input: { workspaceId: string; tenantId: string; customerId?: string | null }) {
+  const productionConfigError = getProductionSupabaseConfigError();
+  if (productionConfigError) {
+    return { ok: false as const, status: 503 as const, error: productionConfigError };
+  }
+
   if (!hasSupabaseEnv() || !hasSupabaseAdminEnv()) {
     return { ok: true as const, userId: null, email: null };
   }

@@ -35,6 +35,14 @@ The script verifies:
 - chunk embedding metadata
 - risky drafts routed to review
 
+Run:
+
+```bash
+npm run test:evals
+```
+
+The golden-question smoke test runs the seeded demo workspace questions through deterministic retrieval, confidence, grounding, and policy checks. It writes `artifacts/golden-eval-summary.json` with per-question source hits, retrieval score, confidence, grounding status, policy action, and pass/fail state. CI uploads this file as release evidence.
+
 ## Manual Evaluation Matrix
 
 | Eval | Passing behavior |

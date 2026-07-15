@@ -8,6 +8,14 @@ import {
 } from "../lib/auth/permissions.ts";
 import { makeWidgetKey, slugifyWorkspaceName, ONBOARDING_CHECKLIST } from "../lib/auth/onboarding.ts";
 import { createInviteToken, hashInviteToken } from "../lib/auth/invitations.ts";
+import {
+  getAppMode,
+  getMissingSupabaseConfig,
+  getProductionSupabaseConfigError,
+  hasSupabaseAdminEnv,
+  isDemoMode,
+  isProductionMode,
+} from "../lib/supabase/config.ts";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -58,6 +66,41 @@ checks.push(["invite token is URL safe", /^[A-Za-z0-9_-]{32,}$/.test(token), tok
 checks.push(["invite token hashes deterministically", hashInviteToken(token) === hashInviteToken(token) && hashInviteToken(token).length === 64, hashInviteToken(token).slice(0, 8)]);
 checks.push(["widget key uses production prefix", makeWidgetKey().startsWith("wk_"), makeWidgetKey().slice(0, 3)]);
 
+const originalAppMode = process.env.SUPPORTPILOT_APP_MODE;
+const originalSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const originalSupabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const originalSupabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+delete process.env.SUPPORTPILOT_APP_MODE;
+delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+checks.push(["app mode defaults to explicit demo fallback", getAppMode() === "demo" && isDemoMode(), getAppMode()]);
+
+process.env.SUPPORTPILOT_APP_MODE = "production";
+checks.push([
+  "production mode fails closed without Supabase service config",
+  isProductionMode() && !hasSupabaseAdminEnv() && getMissingSupabaseConfig().length === 3 && Boolean(getProductionSupabaseConfigError()),
+  getProductionSupabaseConfigError() ?? "none",
+]);
+
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://example.supabase.co";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon";
+process.env.SUPABASE_SERVICE_ROLE_KEY = "service";
+checks.push(["production mode accepts complete Supabase config", hasSupabaseAdminEnv() && getProductionSupabaseConfigError() === null, String(hasSupabaseAdminEnv())]);
+
+restoreEnv("SUPPORTPILOT_APP_MODE", originalAppMode);
+restoreEnv("NEXT_PUBLIC_SUPABASE_URL", originalSupabaseUrl);
+restoreEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", originalSupabaseAnonKey);
+restoreEnv("SUPABASE_SERVICE_ROLE_KEY", originalSupabaseServiceRoleKey);
+
+const supportDbSource = readFileSync("lib/db/support.ts", "utf8");
+checks.push([
+  "production workspace lookup rejects demo fallback",
+  supportDbSource.includes("if (local && isDemoMode()) return local") && supportDbSource.includes("throw new Error(`Workspace not found or Supabase service role is not configured: ${workspaceId}`)"),
+  "lib/db/support.ts",
+]);
+
 const apiFiles = walk("app/api").filter((file) => file.endsWith("route.ts"));
 const legacyApiAuthFiles = apiFiles.filter((file) => {
   const source = readFileSync(file, "utf8");
@@ -84,4 +127,12 @@ function walk(dir: string): string[] {
     const path = join(dir, entry);
     return statSync(path).isDirectory() ? walk(path) : [path];
   });
+}
+
+function restoreEnv(key: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
 }

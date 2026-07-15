@@ -4,10 +4,10 @@ import { DEMO_WORKSPACE_ID, demoMemberships } from "@/lib/enterprise/demo-data";
 import { canPerformMembershipAction, profileRoleToMembershipRole } from "@/lib/auth/permissions";
 import { getDemoUser } from "@/lib/supabase/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { hasSupabaseEnv } from "@/lib/supabase/config";
+import { hasSupabaseEnv, isDemoMode } from "@/lib/supabase/config";
 
 export const getCurrentEnterpriseUser = cache(async (): Promise<EnterpriseUser | null> => {
-  if (!hasSupabaseEnv()) return getDemoUser("admin");
+  if (!hasSupabaseEnv()) return isDemoMode() ? getDemoUser("admin") : null;
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -58,7 +58,7 @@ export const getCurrentWorkspaceMembership = cache(async (workspaceId = DEMO_WOR
   const user = await getCurrentEnterpriseUser();
   if (!user) return null;
 
-  if (!hasSupabaseEnv()) {
+  if (!hasSupabaseEnv() && isDemoMode()) {
     const demoMembership =
       demoMemberships.find((membership) => membership.userId === user.id && membership.workspaceId === workspaceId) ??
       demoMemberships.find((membership) => membership.userId === user.id);
@@ -71,6 +71,8 @@ export const getCurrentWorkspaceMembership = cache(async (workspaceId = DEMO_WOR
       status: demoMembership.status ?? "active",
     };
   }
+
+  if (!hasSupabaseEnv()) return null;
 
   const supabase = await createSupabaseServerClient();
   let query = supabase

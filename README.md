@@ -82,6 +82,7 @@ The app works without provider or Supabase credentials by using deterministic se
 ## Enterprise Env
 
 ```bash
+SUPPORTPILOT_APP_MODE=production # demo | production
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
@@ -142,6 +143,8 @@ SUPPORTPILOT_STRIPE_CUSTOMER_ID=...
 STRIPE_BILLING_PORTAL_RETURN_URL=...
 ```
 
+`SUPPORTPILOT_APP_MODE` defaults to `demo` for local previews. Set it to `production` for any deployed environment; production mode fails closed when Supabase URL, anon key, or service-role key is missing instead of silently returning demo auth/onboarding responses.
+
 `/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
 
 Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Without those variables, SupportPilot uses the local in-memory limiter for demos and tests. Chat, widget config, widget session creation, and knowledge upload boundaries all log `rate_limited` security events when blocked.
@@ -185,6 +188,7 @@ npm run test:ingestion
 npm run test:integrations
 npm run test:retention
 npm run test:domains
+npm run test:evals
 npm run test:rls
 npm run test:enterprise
 npm run test:production
@@ -192,7 +196,7 @@ npm run build
 git diff --check
 ```
 
-GitHub Actions runs the same production gates on pull requests and pushes to `main` through `.github/workflows/ci.yml`, then runs `npm run build` after the test gate passes. The workflow uploads the static RLS report output as an artifact for release evidence.
+GitHub Actions runs the same production gates on pull requests and pushes to `main` through `.github/workflows/ci.yml`, then runs `npm run build` after the test gate passes. The workflow uploads static RLS and golden-question eval summaries as artifacts for release evidence.
 
 Run `npm run test:conversation` against a dev server or live app to exercise `/api/chat`.
 
@@ -222,4 +226,5 @@ Run `npm run test:conversation` against a dev server or live app to exercise `/a
 - `Updates/22_Integrations_and_Infra_Hardening_Plan.md` - integrations, RLS proof, embeddings, rate limits, domains, retention, and local runtime plan
 - `Updates/23_Testing_and_QA_Strategy.md` - production test pyramid, RLS matrix, Playwright journeys, evals, and CI gates
 - `Updates/24_Production_Execution_Roadmap.md` - phased production-completion roadmap and go-live runbook
+- `Updates/25_Enterprise_Launch_Completion_Plan.md` - remaining launch gates for production mode, tenancy, auth, billing, AI, widget, integrations, compliance, infrastructure, and QA
 - `Design Upgrade/` - LynAI-style SupportPilot marketing handoff, clean HTML prototype, and related design artifacts

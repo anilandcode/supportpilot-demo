@@ -4,7 +4,7 @@ import { createInviteToken, hashInviteToken, inviteUrlFromRequest } from "@/lib/
 import { getCurrentWorkspaceMembership } from "@/lib/auth/roles";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { hasSupabaseAdminEnv, hasSupabaseEnv } from "@/lib/supabase/config";
+import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv, isDemoMode } from "@/lib/supabase/config";
 
 export const runtime = "nodejs";
 
@@ -21,7 +21,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
     return Response.json({ error: "invalid invitation", issues: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (!hasSupabaseEnv() || !hasSupabaseAdminEnv()) {
+  const productionConfigError = getProductionSupabaseConfigError();
+  if (productionConfigError) {
+    return Response.json({ error: productionConfigError }, { status: 503 });
+  }
+
+  if (isDemoMode() && (!hasSupabaseEnv() || !hasSupabaseAdminEnv())) {
     const token = createInviteToken();
     return Response.json({
       invitation: {

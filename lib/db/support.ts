@@ -73,6 +73,7 @@ import type {
 import { createTextEmbedding, embeddingContentHash } from "@/lib/rag/embeddings";
 import type { PendingDocumentChunk } from "@/lib/rag/chunking";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { isDemoMode } from "@/lib/supabase/config";
 
 type TicketFilters = {
   workspaceId?: string;
@@ -253,7 +254,7 @@ function contentHash(content: string) {
 
 export async function getWorkspace(workspaceId = DEMO_WORKSPACE_ID): Promise<Workspace> {
   const local = localState.workspaces.find((workspace) => workspace.id === workspaceId || workspace.widgetKey === workspaceId);
-  if (local) return local;
+  if (local && isDemoMode()) return local;
 
   const supabase = createSupabaseAdminClient();
   if (supabase) {
@@ -264,7 +265,8 @@ export async function getWorkspace(workspaceId = DEMO_WORKSPACE_ID): Promise<Wor
     if (!error && data) return mapWorkspace(data);
   }
 
-  return localState.workspaces[0];
+  if (isDemoMode()) return local ?? localState.workspaces[0];
+  throw new Error(`Workspace not found or Supabase service role is not configured: ${workspaceId}`);
 }
 
 export async function getWorkspaceLaunchState(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceLaunchState> {

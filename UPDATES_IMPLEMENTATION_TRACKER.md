@@ -86,6 +86,9 @@ Date: 2026-06-24
 - Added `npm run test:domains` for pending-domain blocking, failed TXT checks, successful TXT verification, CNAME verification, and widget-origin activation.
 - Added domain health classification, stale-domain detection, settings-page DNS challenge visibility, manual per-domain verification, and bulk rechecks through a cron-ready worker-secret endpoint.
 - Added `.github/workflows/ci.yml` to run production gates and the Next.js build on pull requests and `main`, including an uploaded RLS report artifact.
+- Added `npm run test:evals` for deterministic golden-question retrieval, grounding, confidence, and policy smoke checks, with CI artifact upload.
+- Added `Updates/25_Enterprise_Launch_Completion_Plan.md` to lock the remaining enterprise launch gates.
+- Added explicit `SUPPORTPILOT_APP_MODE=demo|production`; production mode now fails closed without Supabase URL, anon key, and service-role key for core auth/onboarding/invitation paths, with `npm run test:production` coverage.
 
 ## Deferred
 
@@ -96,7 +99,7 @@ Date: 2026-06-24
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint, add expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
-- Full QA launch remains a follow-up: add Playwright critical journeys, golden-question eval artifacts, and release/load gates to CI.
+- Full QA launch remains a follow-up: add Playwright critical journeys, richer golden-question dashboards, and release/load gates to CI.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
@@ -112,6 +115,7 @@ npm run test:ingestion
 npm run test:integrations
 npm run test:retention
 npm run test:domains
+npm run test:evals
 npm run test:rls
 npm run test:enterprise
 npm run test:production

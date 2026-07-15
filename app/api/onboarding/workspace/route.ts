@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { hasSupabaseAdminEnv, hasSupabaseEnv } from "@/lib/supabase/config";
+import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv, isDemoMode } from "@/lib/supabase/config";
 import { makeUniqueSlug, makeWidgetKey, ONBOARDING_CHECKLIST } from "@/lib/auth/onboarding";
 
 export async function POST(request: Request) {
-  if (!hasSupabaseEnv() || !hasSupabaseAdminEnv()) {
+  const productionConfigError = getProductionSupabaseConfigError();
+  if (productionConfigError) {
+    return NextResponse.json({ error: productionConfigError }, { status: 503 });
+  }
+
+  if (isDemoMode() && (!hasSupabaseEnv() || !hasSupabaseAdminEnv())) {
     return NextResponse.json({ ok: true, demo: true, redirectTo: "/admin" });
   }
 

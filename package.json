@@ -16,6 +16,7 @@
     "test:integrations": "node --import tsx scripts/test-integrations.ts",
     "test:retention": "node --import tsx scripts/test-retention.ts",
     "test:domains": "node --import tsx scripts/test-domains.ts",
+    "test:evals": "node --import tsx scripts/test-golden-evals.ts",
     "test:production": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-production-readiness.ts",
     "test:rls": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-rls-production.ts"
   },

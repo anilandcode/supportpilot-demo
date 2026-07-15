@@ -61,6 +61,9 @@ jobs:
       - name: Domain verification checks
         run: npm run test:domains
 
+      - name: Golden eval smoke
+        run: npm run test:evals
+
       - name: RLS checks
         run: |
           mkdir -p artifacts
@@ -81,6 +84,15 @@ jobs:
         with:
           name: rls-report
           path: artifacts/rls-report.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload golden eval summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-eval-summary
+          path: artifacts/golden-eval-summary.json
           if-no-files-found: ignore
           retention-days: 14
 
