@@ -154,7 +154,7 @@ STRIPE_BILLING_PORTAL_RETURN_URL=...
 
 `/api/chat` checks the current workspace plan snapshot before retrieval or generation. If the current billing period has reached the enforced conversation or AI reply limit, the request is escalated with audit/security events and no additional `ai_run` is created.
 
-Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Without those variables, SupportPilot uses the local in-memory limiter for demos and tests. Chat, widget config, widget session creation, and knowledge upload boundaries all log `rate_limited` security events when blocked.
+Public request rate limits use Upstash Redis REST when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Without those variables, SupportPilot uses the local in-memory limiter for demos and tests. Chat, widget config, widget session creation, and knowledge upload boundaries all log `rate_limited` security events when blocked. `npm run test:rate-limit` includes a deterministic burst simulation that proves public routes fail closed after quota and return retry metadata before live load testing.
 
 Knowledge ingestion uses `EMBEDDING_PROVIDER` when configured and falls back to deterministic 768-dimension embeddings for local demos. `document_chunks` store provider, model, version, dimensions, source version ID, content hash, and embedded timestamp so future provider migrations can be audited and re-run through `/api/knowledge/reembed`.
 

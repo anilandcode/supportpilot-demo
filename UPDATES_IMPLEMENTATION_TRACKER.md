@@ -110,12 +110,13 @@ Date: 2026-06-24
 - Added optional incident alert routing to `POST /api/health`: trusted monitors can authenticate with `SUPPORTPILOT_HEALTH_ALERT_SECRET`, send degraded/failing snapshots to `SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL`, and keep healthy/unconfigured alerts as safe no-ops. `npm run test:health` covers secret enforcement, sanitized payloads, and healthy skip behavior.
 - Added `GET /api/integrations/health` plus `getIntegrationHealth()` so owners/admins/managers can inspect active integration channels, queued retries, failed events, delivery success rate, and latest errors before wiring live Slack/webhook credentials.
 - Added sanitized custom-domain alerting during DNS rechecks: `POST /api/workspaces/[workspaceId]/domains/recheck` can send failing/stale/blocked domain summaries to `SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL` without exposing TXT tokens or observed DNS records.
+- Added a deterministic public rate-limit burst simulation through `simulateRateLimitBurst()` and `npm run test:rate-limit` so CI proves configured quotas fail closed with retry metadata before live load testing.
 
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
 - Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, add nightly reconciliation, and complete live-mode activation checks.
-- Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run public widget abuse/load tests, and tune per-tenant thresholds from traffic.
+- Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run external public widget abuse/load tests, and tune per-tenant thresholds from traffic.
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add full webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.

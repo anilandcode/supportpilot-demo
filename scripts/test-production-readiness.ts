@@ -334,6 +334,8 @@ const ticketDraftRouteSource = readFileSync("app/api/tickets/[ticketId]/draft/ro
 const widgetAuthSource = readFileSync("lib/auth/widget.ts", "utf8");
 const widgetSessionRouteSource = readFileSync("app/api/widget/session/route.ts", "utf8");
 const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "utf8");
+const rateLimitSource = readFileSync("lib/rate-limit.ts", "utf8");
+const rateLimitTestSource = readFileSync("scripts/test-rate-limit.ts", "utf8");
 const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
 const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
 const healthRouteSource = readFileSync("app/api/health/route.ts", "utf8");
@@ -377,6 +379,14 @@ checks.push([
     !widgetSessionRouteSource.includes("isOriginAllowed") &&
     !widgetConfigRouteSource.includes("isOriginAllowed"),
   "widget route guards",
+]);
+checks.push([
+  "rate-limit burst simulation covers public abuse behavior",
+  rateLimitSource.includes("simulateRateLimitBurst") &&
+    rateLimitSource.includes("RateLimitBurstSummary") &&
+    rateLimitTestSource.includes("burst simulation fails closed after configured quota") &&
+    rateLimitTestSource.includes("burst.blocked === 5"),
+  "rate-limit burst simulation",
 ]);
 checks.push([
   "production widget traffic requires origin",

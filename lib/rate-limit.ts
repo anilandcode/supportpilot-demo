@@ -22,6 +22,28 @@ export type RateLimitResult = {
   store: "redis" | "memory";
 };
 
+export type RateLimitBurstStep = {
+  index: number;
+  allowed: boolean;
+  remaining: number;
+  retryAfterSeconds: number | null;
+  resetAt: number;
+  store: RateLimitResult["store"];
+};
+
+export type RateLimitBurstSummary = {
+  scope: RateLimitScope;
+  workspaceId: string;
+  keyHash: string;
+  totalRequests: number;
+  allowed: number;
+  blocked: number;
+  limit: number;
+  windowMs: number;
+  store: RateLimitResult["store"];
+  steps: RateLimitBurstStep[];
+};
+
 type RateLimitEntry = {
   count: number;
   resetAt: number;
@@ -100,6 +122,42 @@ export function hasRedisRateLimitEnv() {
 
 export function resetLocalRateLimitForTests() {
   buckets.clear();
+}
+
+export async function simulateRateLimitBurst(input: RateLimitInput & { requests: number; intervalMs?: number }): Promise<RateLimitBurstSummary> {
+  const requests = Math.max(Math.floor(input.requests), 0);
+  const startMs = input.nowMs ?? Date.now();
+  const intervalMs = Math.max(Math.floor(input.intervalMs ?? 0), 0);
+  const steps: RateLimitBurstStep[] = [];
+  let last: RateLimitResult | null = null;
+
+  for (let index = 0; index < requests; index += 1) {
+    const nowMs = startMs + index * intervalMs;
+    const result = await checkRateLimit({ ...input, nowMs });
+    last = result;
+    steps.push({
+      index: index + 1,
+      allowed: result.allowed,
+      remaining: result.remaining,
+      retryAfterSeconds: result.allowed ? null : retryAfterSeconds(result, nowMs),
+      resetAt: result.resetAt,
+      store: result.store,
+    });
+  }
+
+  const normalized = normalizeInput(input);
+  return {
+    scope: normalized.scope,
+    workspaceId: normalized.workspaceId,
+    keyHash: normalized.keyHash,
+    totalRequests: requests,
+    allowed: steps.filter((step) => step.allowed).length,
+    blocked: steps.filter((step) => !step.allowed).length,
+    limit: last?.limit ?? normalized.limit,
+    windowMs: last?.windowMs ?? normalized.windowMs,
+    store: last?.store ?? (hasRedisRateLimitEnv() ? "redis" : "memory"),
+    steps,
+  };
 }
 
 function normalizeInput(input: RateLimitInput): NormalizedRateLimitInput {

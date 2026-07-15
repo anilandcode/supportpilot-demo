@@ -5,6 +5,7 @@ import {
   rateLimitIdentityHash,
   resetLocalRateLimitForTests,
   retryAfterSeconds,
+  simulateRateLimitBurst,
 } from "../lib/rate-limit.ts";
 
 const checks: Array<[string, boolean, string]> = [];
@@ -63,6 +64,27 @@ async function main() {
 
   const headers = rateLimitHeaders(third) as Record<string, string>;
   checks.push(["rate-limit headers expose limit state", headers["X-RateLimit-Limit"] === "2" && headers["X-RateLimit-Remaining"] === "0", JSON.stringify(headers)]);
+
+  resetLocalRateLimitForTests();
+  const burst = await simulateRateLimitBurst({
+    scope: "widget_config",
+    workspaceId: "ws_test",
+    key: "https://app.example",
+    limit: 3,
+    windowMs: 10_000,
+    requests: 8,
+    intervalMs: 100,
+    nowMs: 10_000,
+  });
+  checks.push([
+    "burst simulation fails closed after configured quota",
+    burst.allowed === 3 &&
+      burst.blocked === 5 &&
+      burst.steps.slice(0, 3).every((step) => step.allowed) &&
+      burst.steps.slice(3).every((step) => !step.allowed && step.retryAfterSeconds !== null) &&
+      burst.keyHash.length === 32,
+    `${burst.allowed}/${burst.blocked}/${burst.steps[3]?.retryAfterSeconds}`,
+  ]);
 
   const originalFetch = globalThis.fetch;
   process.env.UPSTASH_REDIS_REST_URL = "https://redis.example";
