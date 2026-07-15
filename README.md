@@ -80,6 +80,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/workspaces/[workspaceId]/domains/recheck` - owner/admin or worker-secret DNS health recheck for verified/pending domains
 - `POST /api/escalations/email` - optional Resend-backed escalation email with audit and usage logging
 - `POST /api/workspaces/[workspaceId]/invitations` - owner/admin invitation creation with hashed tokens, entitlement checks, Resend delivery, and audit logging
+- `GET /api/integrations/health` - owner/admin/manager integration delivery health summary with active channels, queued retries, failures, and success rate
 
 ## Enterprise Env
 

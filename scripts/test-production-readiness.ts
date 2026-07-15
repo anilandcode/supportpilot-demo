@@ -130,6 +130,7 @@ const workspaceProtectedRoutes = [
   "app/api/billing/subscription/route.ts",
   "app/api/integrations/accounts/route.ts",
   "app/api/integrations/events/route.ts",
+  "app/api/integrations/health/route.ts",
   "app/api/knowledge/ingest/jobs/route.ts",
   "app/api/knowledge/missing/route.ts",
   "app/api/knowledge/reembed/route.ts",
@@ -313,6 +314,8 @@ const billingCoreSource = readFileSync("lib/billing/core.ts", "utf8");
 const knowledgeUploadSource = readFileSync("app/api/knowledge/upload/route.ts", "utf8");
 const domainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
 const integrationsRouteSource = readFileSync("app/api/integrations/accounts/route.ts", "utf8");
+const integrationsHealthRouteSource = readFileSync("app/api/integrations/health/route.ts", "utf8");
+const integrationsDbSource = readFileSync("lib/db/integrations.ts", "utf8");
 const invitationsRouteSource = readFileSync("app/api/workspaces/[workspaceId]/invitations/route.ts", "utf8");
 const chatRouteSource = readFileSync("app/api/chat/route.ts", "utf8");
 const ticketDraftRouteSource = readFileSync("app/api/tickets/[ticketId]/draft/route.ts", "utf8");
@@ -342,6 +345,16 @@ checks.push([
     chatRouteSource.includes('getPlanLimitBlock(billing, ["conversations", "aiReplies", "modelFallbacks"])') &&
     ticketDraftRouteSource.includes('getPlanLimitBlock(billing, ["aiReplies", "modelFallbacks"])'),
   "entitlement route gates",
+]);
+checks.push([
+  "integration health route is workspace authorized and summarizes retries",
+  integrationsHealthRouteSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId") || url.searchParams.get("workspace"), ["owner", "admin", "manager"])') &&
+    integrationsHealthRouteSource.includes("getIntegrationHealth(auth.workspaceId)") &&
+    integrationsHealthRouteSource.includes('status: health.status === "fail" ? 503 : 200') &&
+    integrationsDbSource.includes("export async function getIntegrationHealth") &&
+    integrationsDbSource.includes("retryDue") &&
+    integrationsDbSource.includes("successRate"),
+  "integration health route",
 ]);
 checks.push([
   "widget routes use centralized production origin gate",

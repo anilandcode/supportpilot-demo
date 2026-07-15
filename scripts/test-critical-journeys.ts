@@ -96,6 +96,13 @@ addCheck("settings, domain, and widget install journey", [
   fileContains("components/handoff/handoff-runtime.tsx", ["renderMemberManagementPanel", "member-invite-form", "data-member-disable", "data-invite-revoke"]),
 ]);
 
+addCheck("integration health journey", [
+  fileExists("app/api/integrations/health/route.ts"),
+  fileContains("app/api/integrations/health/route.ts", ["requireWorkspaceRole", "getIntegrationHealth", "Cache-Control"]),
+  fileContains("lib/db/integrations.ts", ["getIntegrationHealth", "retryDue", "successRate"]),
+  fileContains("scripts/test-integrations.ts", ["integration health surfaces queued retries and delivery failures"]),
+]);
+
 let failed = 0;
 console.log("\nSupportPilot critical journey checks");
 for (const check of checks) {

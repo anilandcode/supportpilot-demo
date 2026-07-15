@@ -2,6 +2,7 @@ import {
   deliverOutboundEvent,
   enqueueApprovalDecision,
   enqueueApprovalRequested,
+  getIntegrationHealth,
   getLocalIntegrationState,
   resetLocalIntegrationStateForTests,
   upsertIntegrationAccount,
@@ -103,6 +104,18 @@ async function main() {
     "failed delivery returns to queued with retry metadata",
     Boolean(failedResult && failedResult.event.status === "queued" && failedResult.event.nextRunAt && failedResult.delivery.status === "failed" && failedResult.delivery.httpStatus === 502),
     `${failedResult?.event.status}/${failedResult?.event.nextRunAt}/${failedResult?.delivery.httpStatus}`,
+  ]);
+  const healthAfterFailure = await getIntegrationHealth(DEMO_WORKSPACE_ID, new Date(Date.now() + 60_000));
+  checks.push([
+    "integration health surfaces queued retries and delivery failures",
+    healthAfterFailure.status === "degraded" &&
+      healthAfterFailure.channels.activeAccounts === 1 &&
+      healthAfterFailure.channels.activeWebhookEndpoints >= 3 &&
+      healthAfterFailure.events.queued >= 1 &&
+      healthAfterFailure.events.retryDue >= 1 &&
+      healthAfterFailure.deliveries.failed >= 1 &&
+      healthAfterFailure.deliveries.successRate < 1,
+    `${healthAfterFailure.status}/${healthAfterFailure.events.queued}/${healthAfterFailure.deliveries.successRate}`,
   ]);
 
   globalThis.fetch = originalFetch;

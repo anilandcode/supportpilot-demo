@@ -43,6 +43,35 @@ type UpsertWebhookEndpointInput = {
   events?: OutboundEventType[];
 };
 
+export type IntegrationHealthSummary = {
+  status: "ok" | "degraded" | "fail";
+  checkedAt: string;
+  channels: {
+    activeAccounts: number;
+    activeWebhookEndpoints: number;
+    errorAccounts: number;
+    errorWebhookEndpoints: number;
+  };
+  events: {
+    queued: number;
+    processing: number;
+    delivered: number;
+    failed: number;
+    skipped: number;
+    retryDue: number;
+    nextRetryAt: string | null;
+  };
+  deliveries: {
+    total: number;
+    delivered: number;
+    failed: number;
+    skipped: number;
+    successRate: number;
+    latestStatus: IntegrationDelivery["status"] | null;
+    latestError: string | null;
+  };
+};
+
 const localIntegrationState = {
   accounts: [] as IntegrationAccount[],
   webhookEndpoints: [] as WebhookEndpoint[],
@@ -167,6 +196,56 @@ export async function listIntegrationDeliveries(workspaceId = DEMO_WORKSPACE_ID)
     if (!error && data) return data.map(mapIntegrationDelivery);
   }
   return localIntegrationState.deliveries.filter((delivery) => delivery.workspaceId === workspace.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getIntegrationHealth(workspaceId = DEMO_WORKSPACE_ID, now = new Date()): Promise<IntegrationHealthSummary> {
+  const [accounts, webhookEndpoints, events, deliveries] = await Promise.all([
+    listIntegrationAccounts(workspaceId),
+    listWebhookEndpoints(workspaceId),
+    listOutboundEvents(workspaceId),
+    listIntegrationDeliveries(workspaceId),
+  ]);
+  const nextRetryAt = events
+    .map((event) => event.nextRunAt)
+    .filter((value): value is string => Boolean(value))
+    .sort()[0] ?? null;
+  const retryDue = events.filter((event) => event.status === "queued" && event.nextRunAt && Date.parse(event.nextRunAt) <= now.getTime()).length;
+  const delivered = deliveries.filter((delivery) => delivery.status === "delivered").length;
+  const failedDeliveries = deliveries.filter((delivery) => delivery.status === "failed").length;
+  const failedEvents = events.filter((event) => event.status === "failed").length;
+  const queuedEvents = events.filter((event) => event.status === "queued").length;
+  const errorChannels = accounts.filter((account) => account.status === "error").length + webhookEndpoints.filter((endpoint) => endpoint.status === "error").length;
+  const latestDelivery = deliveries[0] ?? null;
+  const totalFinalDeliveries = delivered + failedDeliveries;
+
+  return {
+    status: failedEvents > 0 || errorChannels > 0 ? "fail" : failedDeliveries > 0 || queuedEvents > 0 || retryDue > 0 ? "degraded" : "ok",
+    checkedAt: now.toISOString(),
+    channels: {
+      activeAccounts: accounts.filter((account) => account.status === "active").length,
+      activeWebhookEndpoints: webhookEndpoints.filter((endpoint) => endpoint.status === "active").length,
+      errorAccounts: accounts.filter((account) => account.status === "error").length,
+      errorWebhookEndpoints: webhookEndpoints.filter((endpoint) => endpoint.status === "error").length,
+    },
+    events: {
+      queued: queuedEvents,
+      processing: events.filter((event) => event.status === "processing").length,
+      delivered: events.filter((event) => event.status === "delivered").length,
+      failed: failedEvents,
+      skipped: events.filter((event) => event.status === "skipped").length,
+      retryDue,
+      nextRetryAt,
+    },
+    deliveries: {
+      total: deliveries.length,
+      delivered,
+      failed: failedDeliveries,
+      skipped: deliveries.filter((delivery) => delivery.status === "skipped").length,
+      successRate: totalFinalDeliveries ? Number((delivered / totalFinalDeliveries).toFixed(2)) : 1,
+      latestStatus: latestDelivery?.status ?? null,
+      latestError: latestDelivery?.error ?? null,
+    },
+  };
 }
 
 export async function enqueueApprovalRequested(aiRun: AIRun) {
