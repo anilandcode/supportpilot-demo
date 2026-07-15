@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { getBillingSnapshot } from "@/lib/billing/plans";
 import {
   appendAuditLog,
   getLocalState,
@@ -153,9 +154,15 @@ export async function scheduleRetentionJobs(workspaceId = DEMO_WORKSPACE_ID) {
   const setting = await getRetentionSetting(workspace.id);
   if (!setting) return [];
 
+  const billing = await getBillingSnapshot(workspace.id);
+  const retentionLimit = billing.metrics.retentionDays.limit;
+  const conversationDays = clampRetentionDays(setting.conversationDays, retentionLimit);
+  const auditDays = clampRetentionDays(setting.auditDays, retentionLimit);
+  const clamped = conversationDays !== setting.conversationDays || auditDays !== setting.auditDays;
+
   const jobs: RetentionJob[] = [];
-  const conversationCutoff = daysAgo(setting.conversationDays);
-  const aiLogCutoff = daysAgo(setting.auditDays);
+  const conversationCutoff = daysAgo(conversationDays);
+  const aiLogCutoff = daysAgo(auditDays);
   jobs.push(
     await createRetentionJob({
       workspaceId: workspace.id,
@@ -176,6 +183,23 @@ export async function scheduleRetentionJobs(workspaceId = DEMO_WORKSPACE_ID) {
       cutoffAt: aiLogCutoff,
     }),
   );
+  if (clamped) {
+    await appendAuditLog({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      ticketId: null,
+      userId: null,
+      action: "billing.retention_limit.applied",
+      details: {
+        plan: billing.plan.key,
+        limit: retentionLimit,
+        configuredConversationDays: setting.conversationDays,
+        configuredAuditDays: setting.auditDays,
+        scheduledConversationDays: conversationDays,
+        scheduledAuditDays: auditDays,
+      },
+    });
+  }
   return jobs;
 }
 
@@ -439,6 +463,11 @@ async function persistAuditEvidenceExport(exportRecord: AuditEvidenceExport) {
 
 function daysAgo(days: number) {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+function clampRetentionDays(days: number, limit: number | null) {
+  if (!limit) return days;
+  return Math.min(days, limit);
 }
 
 function proofHash(payload: unknown) {

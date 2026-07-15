@@ -63,6 +63,12 @@ async function main() {
     jobs.some((job) => job.jobType === "conversation_cleanup" && job.cutoffAt) && jobs.some((job) => job.jobType === "ai_log_cleanup" && job.cutoffAt),
     jobs.map((job) => `${job.jobType}:${job.cutoffAt}`).join(" | "),
   ]);
+  const aiCleanupJob = jobs.find((job) => job.jobType === "ai_log_cleanup");
+  checks.push([
+    "retention jobs respect plan duration entitlement",
+    Boolean(aiCleanupJob?.cutoffAt) && Math.round(ageDays(aiCleanupJob!.cutoffAt!)) <= 365,
+    aiCleanupJob?.cutoffAt ? `${Math.round(ageDays(aiCleanupJob.cutoffAt))} days` : "missing cutoff",
+  ]);
 
   const exportRecord = await createAuditEvidenceExport({
     workspaceId: DEMO_WORKSPACE_ID,
@@ -94,4 +100,8 @@ async function main() {
   }
 
   console.log("\nRetention checks passed\n");
+}
+
+function ageDays(iso: string) {
+  return (Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000);
 }

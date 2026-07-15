@@ -162,6 +162,7 @@ const billing = buildBillingSnapshot({
   documentChunkCount: demoDocumentChunks.length,
   domainCount: demoDomains.length,
   integrationCount: 0,
+  retentionDays: Math.max(demoRetentionSettings[0]?.conversationDays ?? 0, demoRetentionSettings[0]?.auditDays ?? 0),
   routeLogs: demoModelRouteLogs,
   hasStripePortal: false,
   now: new Date("2026-06-24T00:00:00.000Z"),
@@ -173,6 +174,7 @@ const billingOk =
   billing.metrics.sources.used === demoKnowledgeDocs.length &&
   billing.metrics.documentChunks.used === demoDocumentChunks.length &&
   billing.metrics.domains.used === demoDomains.length &&
+  billing.metrics.retentionDays.used === demoRetentionSettings[0].auditDays &&
   getPlanLimitBlock(billing) === null;
 console.log(`${billingOk ? "PASS" : "FAIL"} billing plan limits: ${billing.plan.name}/${billing.metrics.aiReplies.used}/${billing.metrics.aiReplies.limit}`);
 if (!billingOk) failed++;
@@ -183,6 +185,7 @@ const entitlementOk =
   billing.metrics.members.enforced &&
   billing.metrics.domains.enforced &&
   billing.metrics.integrations.enforced &&
+  billing.metrics.retentionDays.enforced &&
   billing.metrics.modelFallbacks.enforced;
 console.log(`${entitlementOk ? "PASS" : "FAIL"} runtime entitlement gates: ${billing.orderedMetrics.filter((metric) => metric.enforced).length}`);
 if (!entitlementOk) failed++;

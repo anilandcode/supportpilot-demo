@@ -217,11 +217,13 @@ const ticketDraftRouteSource = readFileSync("app/api/tickets/[ticketId]/draft/ro
 const widgetAuthSource = readFileSync("lib/auth/widget.ts", "utf8");
 const widgetSessionRouteSource = readFileSync("app/api/widget/session/route.ts", "utf8");
 const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "utf8");
+const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
 checks.push([
   "billing snapshot includes launch-critical entitlement metrics",
   billingCoreSource.includes('"documentChunks"') &&
     billingCoreSource.includes('"domains"') &&
     billingCoreSource.includes('"integrations"') &&
+    billingCoreSource.includes('"retentionDays"') &&
     billingCoreSource.includes("modelFallbacks") &&
     billingCoreSource.includes("enforced: true"),
   "billing core",
@@ -252,6 +254,14 @@ checks.push([
     widgetAuthSource.includes("origin is required for widget traffic") &&
     widgetAuthSource.includes('reason: "missing_origin"'),
   "lib/auth/widget.ts",
+]);
+checks.push([
+  "retention background jobs respect billing entitlements",
+  retentionSource.includes("getBillingSnapshot") &&
+    retentionSource.includes("billing.metrics.retentionDays.limit") &&
+    retentionSource.includes("clampRetentionDays") &&
+    retentionSource.includes("billing.retention_limit.applied"),
+  "lib/db/retention.ts",
 ]);
 
 let failed = 0;

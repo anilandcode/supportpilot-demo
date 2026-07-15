@@ -11,6 +11,7 @@ export type UsageMetricKey =
   | "workspaces"
   | "domains"
   | "integrations"
+  | "retentionDays"
   | "modelFallbacks";
 
 export type BillingUsageMetric = {
@@ -72,6 +73,7 @@ type BillingSnapshotInput = {
   documentChunkCount: number;
   domainCount: number;
   integrationCount: number;
+  retentionDays: number;
   routeLogs: ModelRouteLog[];
   hasStripePortal: boolean;
   now?: Date;
@@ -93,6 +95,7 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       workspaces: 1,
       domains: 3,
       integrations: 2,
+      retentionDays: 365,
       modelFallbacks: 100,
     },
   },
@@ -111,6 +114,7 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       workspaces: 3,
       domains: 10,
       integrations: 10,
+      retentionDays: 730,
       modelFallbacks: 1500,
     },
   },
@@ -129,6 +133,7 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       workspaces: null,
       domains: null,
       integrations: null,
+      retentionDays: null,
       modelFallbacks: null,
     },
   },
@@ -189,6 +194,12 @@ const METRIC_COPY: Record<UsageMetricKey, Pick<BillingUsageMetric, "label" | "un
     description: "Slack, webhook, helpdesk, and outbound integration endpoints.",
     enforced: true,
   },
+  retentionDays: {
+    label: "Retention duration",
+    unit: "days",
+    description: "Maximum configured conversation and AI/audit retention window.",
+    enforced: true,
+  },
   modelFallbacks: {
     label: "Advanced routes",
     unit: "R4/R5 calls",
@@ -207,6 +218,7 @@ const METRIC_ORDER: UsageMetricKey[] = [
   "workspaces",
   "domains",
   "integrations",
+  "retentionDays",
   "modelFallbacks",
 ];
 
@@ -293,6 +305,7 @@ export function buildBillingSnapshot(input: BillingSnapshotInput): BillingSnapsh
     workspaces: buildMetric("workspaces", input.workspaceCount, limits.workspaces),
     domains: buildMetric("domains", input.domainCount, limits.domains),
     integrations: buildMetric("integrations", input.integrationCount, limits.integrations),
+    retentionDays: buildMetric("retentionDays", input.retentionDays, limits.retentionDays),
     modelFallbacks: buildMetric("modelFallbacks", currentPeriodRoutes.filter((log) => log.route === "R4" || log.route === "R5").length, limits.modelFallbacks),
   } satisfies Record<UsageMetricKey, BillingUsageMetric>;
 
