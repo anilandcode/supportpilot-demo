@@ -90,6 +90,7 @@ Date: 2026-06-24
 - Added `Updates/25_Enterprise_Launch_Completion_Plan.md` to lock the remaining enterprise launch gates.
 - Added explicit `SUPPORTPILOT_APP_MODE=demo|production`; production mode now fails closed without Supabase URL, anon key, and service-role key for core auth/onboarding/invitation paths, with `npm run test:production` coverage.
 - Hardened workspace data APIs so billing, integrations, knowledge jobs, model routes, onboarding state/steps, security events, retention jobs, audit exports, deletion requests, stats, and missing-knowledge endpoints authorize through `requireWorkspaceRole()` before reading workspace-scoped data.
+- Added membership lifecycle APIs for role changes and disabling, final-active-owner protection, and audited pending-invitation revocation.
 
 ## Deferred
 

@@ -8,6 +8,7 @@ import {
 } from "../lib/auth/permissions.ts";
 import { makeWidgetKey, slugifyWorkspaceName, ONBOARDING_CHECKLIST } from "../lib/auth/onboarding.ts";
 import { createInviteToken, hashInviteToken } from "../lib/auth/invitations.ts";
+import { canManageMembershipMutation } from "../lib/auth/memberships.ts";
 import {
   getAppMode,
   getMissingSupabaseConfig,
@@ -65,6 +66,21 @@ const token = createInviteToken();
 checks.push(["invite token is URL safe", /^[A-Za-z0-9_-]{32,}$/.test(token), token.slice(0, 8)]);
 checks.push(["invite token hashes deterministically", hashInviteToken(token) === hashInviteToken(token) && hashInviteToken(token).length === 64, hashInviteToken(token).slice(0, 8)]);
 checks.push(["widget key uses production prefix", makeWidgetKey().startsWith("wk_"), makeWidgetKey().slice(0, 3)]);
+checks.push([
+  "membership mutation blocks ownerless workspace",
+  !canManageMembershipMutation({ actorRole: "owner", targetRole: "owner", nextRole: "admin", activeOwnerCount: 1 }).allowed,
+  "last_owner",
+]);
+checks.push([
+  "admin cannot mutate owner membership",
+  !canManageMembershipMutation({ actorRole: "admin", targetRole: "owner", nextStatus: "disabled", activeOwnerCount: 2 }).allowed,
+  "admin",
+]);
+checks.push([
+  "owner can manage non-owner membership",
+  canManageMembershipMutation({ actorRole: "owner", targetRole: "agent", nextRole: "manager", activeOwnerCount: 1 }).allowed,
+  "owner",
+]);
 
 const originalAppMode = process.env.SUPPORTPILOT_APP_MODE;
 const originalSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -126,12 +142,27 @@ const workspaceProtectedRoutes = [
   "app/api/security/events/route.ts",
   "app/api/security/retention/jobs/route.ts",
   "app/api/stats/route.ts",
+  "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
 ];
 const unprotectedWorkspaceRoutes = workspaceProtectedRoutes.filter((file) => !readFileSync(file, "utf8").includes("requireWorkspaceRole("));
 checks.push(["workspace data APIs require role authorization", unprotectedWorkspaceRoutes.length === 0, unprotectedWorkspaceRoutes.join(",") || "none"]);
 
 const apiDemoFallbackFiles = apiFiles.filter((file) => readFileSync(file, "utf8").includes("DEMO_WORKSPACE_ID"));
 checks.push(["API routes avoid direct demo workspace fallback", apiDemoFallbackFiles.length === 0, apiDemoFallbackFiles.join(",") || "none"]);
+
+const membershipRouteSource = readFileSync("app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts", "utf8");
+checks.push([
+  "membership route prevents disabling final owner",
+  membershipRouteSource.includes("canManageMembershipMutation") && membershipRouteSource.includes("workspace must keep at least one active owner"),
+  "memberships route",
+]);
+
+const invitationRouteSource = readFileSync("app/api/workspaces/[workspaceId]/invitations/route.ts", "utf8");
+checks.push([
+  "invitation route supports audited revocation",
+  invitationRouteSource.includes("export async function DELETE") && invitationRouteSource.includes("member.invite.revoked"),
+  "invitations route",
+]);
 
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
