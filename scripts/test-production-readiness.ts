@@ -166,6 +166,7 @@ const workspaceSettingsSource = readFileSync("app/api/workspaces/[workspaceId]/s
 const workspaceDomainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
 const workspaceDomainVerifySource = readFileSync("app/api/workspaces/[workspaceId]/domains/[domainId]/verify/route.ts", "utf8");
 const workspaceDomainRecheckSource = readFileSync("app/api/workspaces/[workspaceId]/domains/recheck/route.ts", "utf8");
+const domainAlertsSource = readFileSync("lib/ops/domain-alerts.ts", "utf8");
 checks.push([
   "billing APIs are owner-only",
   billingCheckoutSource.includes('requireWorkspaceRole(body.workspaceId, ["owner"])') &&
@@ -188,6 +189,17 @@ checks.push([
     workspaceDomainVerifySource.includes("workspaceId: auth.workspaceId") &&
     workspaceDomainRecheckSource.includes("workspaceId = auth.workspaceId"),
   "workspace route canonical ids",
+]);
+checks.push([
+  "domain recheck can send sanitized monitoring alerts",
+  workspaceDomainRecheckSource.includes("sendDomainRecheckAlert(result)") &&
+    workspaceDomainRecheckSource.includes("alert") &&
+    domainAlertsSource.includes("SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL") &&
+    domainAlertsSource.includes("expectedCname") &&
+    !domainAlertsSource.includes("expectedTxt") &&
+    !domainAlertsSource.includes("observed: item.observed") &&
+    !domainAlertsSource.includes("expectedTxt:"),
+  "domain recheck alerting",
 ]);
 checks.push([
   "membership route prevents disabling final owner",

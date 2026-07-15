@@ -1,5 +1,6 @@
 import { requireWorkspaceRole } from "@/lib/auth/api";
 import { recheckWorkspaceDomains } from "@/lib/db/support";
+import { sendDomainRecheckAlert } from "@/lib/ops/domain-alerts";
 
 export const runtime = "nodejs";
 
@@ -21,6 +22,7 @@ export async function POST(req: Request, context: { params: Promise<{ workspaceI
   }
 
   const result = await recheckWorkspaceDomains({ workspaceId, domainIds });
+  const alert = await sendDomainRecheckAlert(result);
   const failed = result.results.some((item) => !item.skipped && !item.verified);
-  return Response.json(result, { status: failed ? 207 : 202 });
+  return Response.json({ ...result, alert }, { status: failed ? 207 : 202 });
 }

@@ -1,5 +1,6 @@
 import { addWorkspaceDomain, getDomainHealth, getWorkspaceDomainHealth, isOriginAllowed, recheckWorkspaceDomains, verifyWorkspaceDomain } from "../lib/db/support.ts";
 import { DEMO_WORKSPACE_ID } from "../lib/enterprise/demo-data.ts";
+import { sendDomainRecheckAlert } from "../lib/ops/domain-alerts.ts";
 
 const checks: Array<[string, boolean, string]> = [];
 
@@ -107,6 +108,34 @@ async function main() {
     `${cnameVerified.verified}/${cnameVerified.domain.status}/${cnameVerified.observed.join(",")}`,
   ]);
 
+  const alertCalls: Array<{ url: string; body: string | null }> = [];
+  const originalAlertUrl = process.env.SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL;
+  process.env.SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL = "https://hooks.example.test/domains?token=secret";
+  const failingRecheck = await recheckWorkspaceDomains({
+    workspaceId: DEMO_WORKSPACE_ID,
+    domainIds: [cnameDomain.id],
+    resolver: {
+      resolveTxt: async () => [["supportpilot-verify=do-not-leak"]],
+      resolveCname: async () => ["wrong-target.example.com"],
+    },
+  });
+  const alert = await sendDomainRecheckAlert(failingRecheck, async (url, init) => {
+    alertCalls.push({ url: String(url), body: typeof init?.body === "string" ? init.body : null });
+    return new Response("ok", { status: 200 });
+  });
+  const alertPayload = alertCalls[0]?.body ? JSON.parse(alertCalls[0].body) : null;
+  checks.push([
+    "domain recheck alert sends sanitized unhealthy-domain payload",
+    alert.status === "sent" &&
+      alert.destination === "https://hooks.example.test/domains" &&
+      alertPayload?.event === "domain_recheck_attention_required" &&
+      alertPayload?.domains?.[0]?.domain === cnameDomain.domain &&
+      !JSON.stringify(alertPayload).includes("do-not-leak") &&
+      !JSON.stringify(alertPayload).includes("token=secret"),
+    `${alert.status}/${alertPayload?.domains?.length}`,
+  ]);
+  restoreEnv("SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL", originalAlertUrl);
+
   let failedCount = 0;
   console.log("\nSupportPilot domain verification checks");
   for (const [name, ok, detail] of checks) {
@@ -120,4 +149,12 @@ async function main() {
   }
 
   console.log("\nDomain verification checks passed\n");
+}
+
+function restoreEnv(key: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
 }
