@@ -201,6 +201,14 @@ checks.push([
   "invitations route",
 ]);
 checks.push([
+  "invitation route exposes owner/admin member management state",
+  invitationRouteSource.includes("export async function GET") &&
+    invitationRouteSource.includes('requireWorkspaceRole(workspaceId, ["owner", "admin"])') &&
+    invitationRouteSource.includes("listWorkspaceMembers") &&
+    invitationRouteSource.includes("listWorkspaceInvitations"),
+  "invitations route",
+]);
+checks.push([
   "invitation route sends production email",
   invitationRouteSource.includes("getTransactionalEmailConfigError") &&
     invitationRouteSource.includes("sendInvitationEmail") &&

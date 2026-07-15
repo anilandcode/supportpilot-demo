@@ -454,6 +454,7 @@ function hydrateSettings(data: AnyRecord) {
   const domainInput = qa<HTMLInputElement>(".settings-card input").find((input) => input.value === "acme.co");
   if (domainInput) domainInput.value = domains.map((domain: AnyRecord) => domain.domain).join(", ");
   renderDomainHealthPanel(workspace, domains, domainHealth);
+  renderMemberManagementPanel(workspace, data.members || [], data.invitations || []);
   setText("#preview-agent-name", workspace.botName || "SupportPilot Agent");
   setText(".code-box code", snippet.replace(/\\\//g, "/"));
 
@@ -489,6 +490,149 @@ function hydrateSettings(data: AnyRecord) {
     }).catch(() => null);
     setText("#btn-save-settings", "Saved");
   }, true);
+}
+
+function renderMemberManagementPanel(workspace: AnyRecord, members: AnyRecord[], invitations: AnyRecord[]) {
+  const grid = q(".settings-grid");
+  if (!grid || !workspace.id) return;
+  q("#member-management-card")?.remove();
+
+  const card = document.createElement("section");
+  card.className = "settings-card";
+  card.id = "member-management-card";
+  card.style.gridColumn = "1 / -1";
+  card.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap;">
+      <div>
+        <h3 class="section-title">Members and invitations</h3>
+        <p style="margin-top:4px;color:var(--muted);font-size:12px;">Invite teammates, change roles, disable access, and revoke pending invites from the workspace console.</p>
+      </div>
+      <form id="member-invite-form" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="member-invite-email" type="email" placeholder="teammate@company.com" style="min-width:220px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:white;color:var(--ink);">
+        <select id="member-invite-role" style="border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:white;color:var(--ink);">
+          ${roleOptions("agent")}
+        </select>
+        <button class="btn-primary" id="member-invite-submit" type="submit">Invite</button>
+      </form>
+    </div>
+    <div id="member-action-status" style="min-height:18px;margin-bottom:10px;color:var(--muted);font-size:12px;"></div>
+    <div style="display:grid;gap:10px;">
+      ${members.map(memberRow).join("") || `<div style="color:var(--muted);font-size:13px;">No members found for this workspace.</div>`}
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Pending invitations</div>
+      <div style="display:grid;gap:10px;">
+        ${invitations.map(invitationRow).join("") || `<div style="color:var(--muted);font-size:13px;">No pending invitations.</div>`}
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+  bindMemberManagement(workspace);
+}
+
+function roleOptions(selected: string) {
+  const roles = ["owner", "admin", "manager", "agent", "analyst", "viewer"];
+  return roles.map((role) => `<option value="${role}" ${role === selected ? "selected" : ""}>${role}</option>`).join("");
+}
+
+function memberRow(member: AnyRecord) {
+  const status = member.status || "active";
+  const disabled = status === "disabled";
+  return `
+    <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.6);">
+      <div style="min-width:0;">
+        <div style="font-weight:800;color:var(--ink);overflow-wrap:anywhere;">${escapeHtml(member.fullName || member.email || "Workspace member")}</div>
+        <div style="margin-top:4px;font-size:12px;color:var(--muted);overflow-wrap:anywhere;">${escapeHtml(member.email || member.user?.email || member.userId)}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:${disabled ? "#dc2626" : "#15803d"};background:${disabled ? "rgba(254,226,226,.55)" : "rgba(220,252,231,.55)"};">${escapeHtml(status)}</span>
+        <select data-member-role="${escapeHtml(member.id)}" style="border:1px solid var(--border);border-radius:12px;padding:9px 10px;background:white;color:var(--ink);" ${disabled ? "disabled" : ""}>
+          ${roleOptions(member.role || "agent")}
+        </select>
+      </div>
+      <button class="btn-secondary" type="button" data-member-disable="${escapeHtml(member.id)}" ${disabled ? "disabled" : ""}>Disable</button>
+    </div>
+  `;
+}
+
+function invitationRow(invitation: AnyRecord) {
+  return `
+    <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.6);">
+      <div style="min-width:0;">
+        <div style="font-weight:800;color:var(--ink);overflow-wrap:anywhere;">${escapeHtml(invitation.email)}</div>
+        <div style="margin-top:4px;font-size:12px;color:var(--muted);">Invited as ${escapeHtml(invitation.role)} · expires ${escapeHtml(formatDateTime(invitation.expiresAt))}</div>
+      </div>
+      <span style="display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:#854d0e;background:rgba(254,249,195,.7);">${escapeHtml(invitation.status || "pending")}</span>
+      <button class="btn-secondary" type="button" data-invite-revoke="${escapeHtml(invitation.id)}">Revoke</button>
+    </div>
+  `;
+}
+
+function bindMemberManagement(workspace: AnyRecord) {
+  const setStatus = (message: string) => setText("#member-action-status", message);
+  const reloadMembers = async () => {
+    const next = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/invitations`).then((res) => res.json()).catch(() => null);
+    if (next?.members) renderMemberManagementPanel(workspace, next.members, next.invitations || []);
+  };
+
+  q<HTMLFormElement>("#member-invite-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const email = q<HTMLInputElement>("#member-invite-email")?.value.trim();
+    const role = q<HTMLSelectElement>("#member-invite-role")?.value || "agent";
+    if (!email) return;
+    setStatus("Sending invitation...");
+    const result = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/invitations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, role }),
+    }).then((res) => res.json()).catch(() => null);
+    setStatus(result?.error ? String(result.error) : "Invitation created.");
+    await reloadMembers();
+  }, true);
+
+  qa<HTMLSelectElement>("[data-member-role]").forEach((select) => {
+    select.addEventListener("change", async () => {
+      const membershipId = select.dataset.memberRole;
+      if (!membershipId) return;
+      setStatus("Updating member role...");
+      const result = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/memberships/${encodeURIComponent(membershipId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: select.value }),
+      }).then((res) => res.json()).catch(() => null);
+      setStatus(result?.error ? String(result.error) : "Member role updated.");
+      await reloadMembers();
+    });
+  });
+
+  qa<HTMLButtonElement>("[data-member-disable]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const membershipId = button.dataset.memberDisable;
+      if (!membershipId) return;
+      setStatus("Disabling member...");
+      const result = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/memberships/${encodeURIComponent(membershipId)}`, {
+        method: "DELETE",
+      }).then((res) => res.json()).catch(() => null);
+      setStatus(result?.error ? String(result.error) : "Member disabled.");
+      await reloadMembers();
+    });
+  });
+
+  qa<HTMLButtonElement>("[data-invite-revoke]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const invitationId = button.dataset.inviteRevoke;
+      if (!invitationId) return;
+      setStatus("Revoking invitation...");
+      const result = await fetch(`/api/workspaces/${encodeURIComponent(workspace.id)}/invitations`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invitationId }),
+      }).then((res) => res.json()).catch(() => null);
+      setStatus(result?.error ? String(result.error) : "Invitation revoked.");
+      await reloadMembers();
+    });
+  });
 }
 
 function renderDomainHealthPanel(workspace: AnyRecord, domains: AnyRecord[], domainHealth: AnyRecord[]) {

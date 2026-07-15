@@ -103,6 +103,7 @@ Date: 2026-06-24
 - Added production-readiness coverage for owner-only billing APIs, owner/admin-only widget-key rotation, and canonical authorized workspace IDs on settings/domain/widget-key routes to reduce IDOR regression risk.
 - Added `npm run test:journeys` and CI coverage for critical launch journey contracts: marketing, onboarding, knowledge upload, ticket inbox/detail, AI draft citations, approval decisions, portal ticket creation, widget chat, billing checkout/portal, and settings/domain/widget install.
 - Added `GET /api/health`, `lib/ops/health.ts`, `npm run test:health`, and CI coverage for secret-safe deployment readiness checks across Supabase, invitation email, Sentry, Redis rate limits, worker secrets, and Stripe.
+- Added settings-page member management backed by `GET /api/workspaces/[workspaceId]/invitations`, `listWorkspaceMembers()`, and `listWorkspaceInvitations()` so owners/admins can invite teammates, change roles, disable members, and revoke pending invitations from the enterprise console.
 
 ## Deferred
 

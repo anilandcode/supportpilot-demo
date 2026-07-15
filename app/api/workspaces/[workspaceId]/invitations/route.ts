@@ -5,6 +5,7 @@ import { canInviteRole } from "@/lib/auth/permissions";
 import { createInviteToken, hashInviteToken, inviteUrlFromRequest } from "@/lib/auth/invitations";
 import { getCurrentWorkspaceMembership } from "@/lib/auth/roles";
 import { getTransactionalEmailConfigError, sendInvitationEmail } from "@/lib/integrations/resend";
+import { listWorkspaceInvitations, listWorkspaceMembers } from "@/lib/db/support";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getProductionSupabaseConfigError, hasSupabaseAdminEnv, hasSupabaseEnv, isDemoMode, isProductionMode } from "@/lib/supabase/config";
@@ -19,6 +20,22 @@ const inviteSchema = z.object({
 const revokeSchema = z.object({
   invitationId: z.string().min(1),
 });
+
+export async function GET(_req: Request, { params }: { params: Promise<{ workspaceId: string }> }) {
+  const { workspaceId } = await params;
+  const auth = await requireWorkspaceRole(workspaceId, ["owner", "admin"]);
+  if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+
+  const [members, invitations] = await Promise.all([
+    listWorkspaceMembers(auth.workspaceId),
+    listWorkspaceInvitations(auth.workspaceId),
+  ]);
+
+  return Response.json({
+    members,
+    invitations: invitations.filter((invitation) => invitation.status === "pending"),
+  });
+}
 
 export async function POST(req: Request, { params }: { params: Promise<{ workspaceId: string }> }) {
   const { workspaceId } = await params;

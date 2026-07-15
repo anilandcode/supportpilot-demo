@@ -46,6 +46,8 @@ import type {
   GoldenQuestion,
   GroundingCheck,
   KnowledgeDoc,
+  Membership,
+  MembershipRole,
   MissingKnowledgeTask,
   ModelRouteLog,
   Organization,
@@ -64,6 +66,7 @@ import type {
   UsageEventType,
   WidgetConfig,
   WidgetSession,
+  WorkspaceInvitation,
   Workspace,
   WorkspaceChecklistItem,
   WorkspaceDomain,
@@ -282,6 +285,75 @@ export async function getWorkspaceLaunchState(workspaceId = DEMO_WORKSPACE_ID): 
   const widgetConfig = await getWidgetConfig(workspace.id);
   const health = await getWorkspaceHealth(workspace.id);
   return { workspace, domains, widgetConfig, approvalPolicies, checklist, goldenQuestions, missingKnowledge, retention, health };
+}
+
+export type WorkspaceMemberView = Membership & {
+  user: EnterpriseUser | null;
+  email: string;
+  fullName: string;
+};
+
+export async function listWorkspaceMembers(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceMemberView[]> {
+  const workspace = await getWorkspace(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data: membershipRows, error } = await supabase
+      .from("memberships")
+      .select("id,tenant_id,workspace_id,user_id,role,status,accepted_at")
+      .eq("workspace_id", workspace.id)
+      .order("created_at", { ascending: true });
+    if (!error && membershipRows) {
+      const userIds = membershipRows.map((row: any) => row.user_id).filter(Boolean);
+      const usersById = new Map<string, EnterpriseUser>();
+      if (userIds.length > 0) {
+        const { data: userRows } = await supabase.from("users").select("id,email,full_name,role").in("id", userIds);
+        userRows?.map(mapUser).forEach((user) => usersById.set(user.id, user));
+      }
+      return membershipRows.map((row: any) => {
+        const user = usersById.get(row.user_id) ?? null;
+        return {
+          id: row.id,
+          tenantId: row.tenant_id ?? workspace.tenantId,
+          workspaceId: row.workspace_id ?? workspace.id,
+          userId: row.user_id,
+          role: row.role as MembershipRole,
+          status: row.status ?? "active",
+          acceptedAt: row.accepted_at ?? null,
+          user,
+          email: user?.email ?? "unknown member",
+          fullName: user?.fullName ?? user?.email ?? "Workspace member",
+        };
+      });
+    }
+  }
+
+  return localState.memberships
+    .filter((membership) => membership.workspaceId === workspace.id)
+    .map((membership) => {
+      const user = localState.users.find((item) => item.id === membership.userId) ?? null;
+      return {
+        ...membership,
+        status: membership.status ?? "active",
+        acceptedAt: membership.acceptedAt ?? null,
+        user,
+        email: user?.email ?? "unknown member",
+        fullName: user?.fullName ?? user?.email ?? "Workspace member",
+      };
+    });
+}
+
+export async function listWorkspaceInvitations(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceInvitation[]> {
+  const workspace = await getWorkspace(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("invitations")
+      .select("id,tenant_id,workspace_id,email,role,token_hash,invited_by,status,expires_at,accepted_at,revoked_at,created_at")
+      .eq("workspace_id", workspace.id)
+      .order("created_at", { ascending: false });
+    if (!error && data) return data.map(mapWorkspaceInvitation);
+  }
+  return [];
 }
 
 export async function listWorkspaceChecklist(workspaceId = DEMO_WORKSPACE_ID): Promise<WorkspaceChecklistItem[]> {
@@ -1509,6 +1581,23 @@ function mapWorkspaceDomain(row: any): WorkspaceDomain {
     verifiedAt: row.verified_at ?? null,
     lastCheckedAt: row.last_checked_at ?? null,
     verificationError: row.verification_error ?? null,
+    createdAt: row.created_at,
+  };
+}
+
+function mapWorkspaceInvitation(row: any): WorkspaceInvitation {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    email: row.email,
+    role: row.role,
+    tokenHash: row.token_hash ?? "",
+    invitedBy: row.invited_by ?? null,
+    status: row.status ?? "pending",
+    expiresAt: row.expires_at,
+    acceptedAt: row.accepted_at ?? null,
+    revokedAt: row.revoked_at ?? null,
     createdAt: row.created_at,
   };
 }

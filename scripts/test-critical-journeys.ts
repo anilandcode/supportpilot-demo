@@ -80,11 +80,12 @@ addCheck("billing checkout and portal journey", [
 
 addCheck("settings, domain, and widget install journey", [
   fileExists("app/admin/settings/page.tsx"),
-  fileContains("app/admin/settings/page.tsx", ["dashboard-settings.html", "getWorkspaceDomainHealth"]),
+  fileContains("app/admin/settings/page.tsx", ["dashboard-settings.html", "getWorkspaceDomainHealth", "listWorkspaceMembers", "listWorkspaceInvitations"]),
   fileContains("app/api/workspaces/[workspaceId]/settings/route.ts", ["updateWorkspaceSettings", "workspaceId: auth.workspaceId"]),
   fileContains("app/api/workspaces/[workspaceId]/domains/route.ts", ["addWorkspaceDomain", "workspaceId: auth.workspaceId"]),
   fileContains("app/api/workspaces/[workspaceId]/domains/[domainId]/verify/route.ts", ["verifyWorkspaceDomain", "workspaceId: auth.workspaceId"]),
   fileContains("app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts", ["regenerateWorkspaceWidgetKey(auth.workspaceId)"]),
+  fileContains("components/handoff/handoff-runtime.tsx", ["renderMemberManagementPanel", "member-invite-form", "data-member-disable", "data-invite-revoke"]),
 ]);
 
 let failed = 0;
