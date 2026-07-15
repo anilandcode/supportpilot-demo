@@ -9,6 +9,10 @@ import {
 } from "../lib/billing/stripe.ts";
 import { buildBillingReconciliationReport } from "../lib/billing/reconciliation.ts";
 import {
+  sendBillingReconciliationAlert,
+  verifyBillingReconciliationSecret,
+} from "../lib/ops/billing-alerts.ts";
+import {
   getLocalBillingState,
   hasProcessedStripeWebhookEvent,
   processStripeBillingEvent,
@@ -116,6 +120,19 @@ checks.push(["invoice payment failure starts dunning", state.subscriptions.some(
 const failedBillingReport = await buildBillingReconciliationReport(DEMO_WORKSPACE_ID, new Date("2027-01-20T00:00:00.000Z"));
 checks.push(["billing reconciliation flags unpaid invoice", failedBillingReport.status === "fail" && failedBillingReport.issues.some((issue) => issue.code === "invoice_unpaid"), failedBillingReport.status]);
 checks.push(["billing reconciliation flags dunning state", failedBillingReport.issues.some((issue) => issue.code === "subscription_payment_blocked"), failedBillingReport.issues.map((issue) => issue.code).join(",")]);
+const originalBillingSecret = process.env.SUPPORTPILOT_BILLING_RECONCILIATION_SECRET;
+const originalBillingWebhook = process.env.SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL;
+process.env.SUPPORTPILOT_BILLING_RECONCILIATION_SECRET = "billing_reconcile_secret";
+process.env.SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL = "https://hooks.example.test/billing/reconciliation?token=secret";
+checks.push(["billing reconciliation worker secret rejects missing value", !verifyBillingReconciliationSecret(null), "missing"]);
+checks.push(["billing reconciliation worker secret accepts matching value", verifyBillingReconciliationSecret("billing_reconcile_secret"), "matched"]);
+let alertPayload: any = null;
+const alertResult = await sendBillingReconciliationAlert(failedBillingReport, async (_url, init) => {
+  alertPayload = JSON.parse(String(init?.body ?? "{}"));
+  return new Response(null, { status: 204 });
+});
+checks.push(["billing reconciliation alert sends failing report", alertResult.status === "sent" && alertPayload?.event === "billing_reconciliation_attention_required", alertResult.status]);
+checks.push(["billing reconciliation alert redacts Stripe object evidence", !JSON.stringify(alertPayload).includes("sub_test_supportpilot") && !JSON.stringify(alertPayload).includes("cus_test_supportpilot"), JSON.stringify(alertPayload?.issues ?? [])]);
 
 await processStripeBillingEvent({
   id: "evt_invoice_paid",
@@ -136,6 +153,10 @@ await processStripeBillingEvent({
 });
 const recoveredBillingReport = await buildBillingReconciliationReport(DEMO_WORKSPACE_ID, new Date("2027-01-20T00:00:00.000Z"));
 checks.push(["billing reconciliation passes recovered subscription", recoveredBillingReport.status === "ok", recoveredBillingReport.issues.map((issue) => issue.code).join(",") || "ok"]);
+const healthyAlert = await sendBillingReconciliationAlert(recoveredBillingReport, async () => new Response(null, { status: 204 }));
+checks.push(["billing reconciliation alert skips healthy report", healthyAlert.status === "skipped" && healthyAlert.reason === "healthy", healthyAlert.status]);
+restoreEnv("SUPPORTPILOT_BILLING_RECONCILIATION_SECRET", originalBillingSecret);
+restoreEnv("SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL", originalBillingWebhook);
 
 await recordStripeWebhookEvent({
   stripeEventId: "evt_duplicate",
@@ -159,4 +180,12 @@ if (failed > 0) {
 }
 
 console.log("\nBilling lifecycle checks passed\n");
+}
+
+function restoreEnv(key: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
 }

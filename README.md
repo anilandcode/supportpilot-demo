@@ -62,7 +62,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `POST /api/billing/checkout` - owner-only Launch/Pro hosted Checkout session creation with demo fallback when Stripe is not configured
 - `POST /api/billing/webhook` - verified Stripe webhook receiver for checkout, subscription, invoice, entitlement, and dunning state sync
 - `GET /api/billing/subscription` - owner-only internal billing lifecycle state for the active workspace
-- `GET /api/billing/reconciliation` - owner-only Stripe readiness report for price catalog, customer, subscription, invoice, entitlement, and checkout drift
+- `GET|POST /api/billing/reconciliation` - owner-readable and scheduler-runnable Stripe readiness report for price catalog, customer, subscription, invoice, entitlement, and checkout drift
 - `GET|POST /api/billing/portal` - create a Stripe customer portal session from tenant customer mapping or legacy env customer when Stripe env vars exist, otherwise return to the demo billing page
 - `GET|POST /api/integrations/accounts` - owner/admin integration account and generic webhook endpoint configuration with redacted reads
 - `GET /api/integrations/events` - manager/admin outbound integration event and delivery log feed
@@ -136,6 +136,8 @@ SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=queued # queued | inline
 SUPPORTPILOT_RETENTION_WORKER_SECRET=...
 SUPPORTPILOT_HEALTH_ALERT_SECRET=...
 SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL=...
+SUPPORTPILOT_BILLING_RECONCILIATION_SECRET=...
+SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL=...
 SUPPORTPILOT_RATE_LIMIT_CHAT_PER_MINUTE=10
 SUPPORTPILOT_RATE_LIMIT_WIDGET_CONFIG_PER_MINUTE=120
 SUPPORTPILOT_RATE_LIMIT_WIDGET_SESSIONS_PER_5_MINUTES=30
@@ -167,7 +169,7 @@ Retention workflows use `retention_settings` to schedule `conversation_cleanup` 
 
 Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds. The settings page shows domain health, stale checks, and the exact DNS challenge; scheduled jobs can call the recheck endpoint with `x-supportpilot-domain-secret`. When `SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL` is configured, rechecks send sanitized alerts for failing, stale, or blocked domains without exposing TXT tokens or observed DNS records.
 
-Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`. `GET /api/billing/reconciliation` and `npm run test:billing` now provide the local pre-launch reconciliation rehearsal for configured price IDs, customer mappings, subscriptions, unpaid invoices, entitlements, and checkout drift.
+Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`. `GET /api/billing/reconciliation` and `npm run test:billing` provide the local pre-launch reconciliation rehearsal for configured price IDs, customer mappings, subscriptions, unpaid invoices, entitlements, and checkout drift. A scheduler can call `POST /api/billing/reconciliation` with `x-supportpilot-billing-secret` when `SUPPORTPILOT_BILLING_RECONCILIATION_SECRET` is set; failing/degraded reports send sanitized issue-code alerts to `SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL` when configured.
 
 `GET /api/health` returns secret-safe readiness state for uptime probes. `POST /api/health` can be called by a trusted monitor with `x-supportpilot-health-secret` when `SUPPORTPILOT_HEALTH_ALERT_SECRET` is set; degraded/failing snapshots send a sanitized incident payload to `SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL`, while healthy snapshots and unconfigured webhooks are no-ops.
 

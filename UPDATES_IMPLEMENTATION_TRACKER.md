@@ -54,8 +54,9 @@ Date: 2026-06-24
 - Added billing repository with Supabase plus demo fallback for customer mapping, checkout recording, subscription/invoice sync, dunning state, entitlement upserts, and webhook idempotency.
 - Added owner-only `/api/billing/checkout`, `/api/billing/subscription`, and signed `/api/billing/webhook` routes while preserving the existing portal fallback.
 - Added owner-only `/api/billing/reconciliation` and `lib/billing/reconciliation.ts` to detect configured-price, customer, subscription, invoice, entitlement, and checkout drift before live Stripe activation.
+- Added secret-protected scheduled billing reconciliation through `POST /api/billing/reconciliation` plus sanitized `SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL` alerts for failed/degraded reports.
 - Billing page upgrade buttons now start Checkout through the API, synced invoices replace placeholders when present, and activation copy waits for verified webhooks.
-- Added `npm run test:billing` for catalog mapping, HMAC webhook verification, subscription entitlement sync, dunning state, reconciliation failure/recovery, and duplicate-event checks.
+- Added `npm run test:billing` for catalog mapping, HMAC webhook verification, subscription entitlement sync, dunning state, reconciliation failure/recovery, scheduled alert behavior, and duplicate-event checks.
 - Replaced the demo-only chat limiter with scoped rate limiting that uses Upstash Redis REST when configured and falls back to local memory for demos/tests.
 - Enforced scoped limits on chat generation, widget config fetches, widget session creation, and knowledge uploads with 429 responses, rate-limit headers, and `rate_limited` security events.
 - Added `npm run test:rate-limit` for local-window behavior, reset behavior, redacted key hashing, headers, and Redis pipeline selection.
@@ -116,7 +117,7 @@ Date: 2026-06-24
 ## Deferred
 
 - Live Google Stitch/Figma exports are not required for the production code pass; prompt files remain committed as references.
-- Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, schedule reconciliation, and complete live-mode activation checks.
+- Full live Stripe launch remains a follow-up: create real test/live products and prices, configure webhook endpoint secrets, run Stripe CLI replay, provision the external reconciliation scheduler, and complete live-mode activation checks.
 - Full live rate-limit launch remains a follow-up: provision Upstash Redis, set production env vars, run external public widget abuse/load tests, and tune per-tenant thresholds from traffic.
 - Full production embedding launch remains a follow-up: configure managed embedding credentials, run golden-question before/after comparisons, move re-embedding to QStash/background jobs, and add rollback promotion gates.
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.

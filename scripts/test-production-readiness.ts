@@ -163,6 +163,7 @@ const billingCheckoutSource = readFileSync("app/api/billing/checkout/route.ts", 
 const billingPortalSource = readFileSync("app/api/billing/portal/route.ts", "utf8");
 const billingReconciliationSource = readFileSync("app/api/billing/reconciliation/route.ts", "utf8");
 const billingSubscriptionSource = readFileSync("app/api/billing/subscription/route.ts", "utf8");
+const billingAlertsSource = readFileSync("lib/ops/billing-alerts.ts", "utf8");
 const widgetKeyRouteSource = readFileSync("app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts", "utf8");
 const workspaceSettingsSource = readFileSync("app/api/workspaces/[workspaceId]/settings/route.ts", "utf8");
 const workspaceDomainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
@@ -176,6 +177,18 @@ checks.push([
     billingReconciliationSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])') &&
     billingSubscriptionSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])'),
   "billing routes",
+]);
+checks.push([
+  "scheduled billing reconciliation requires secret and sanitized alerts",
+  billingReconciliationSource.includes("export async function POST") &&
+    billingReconciliationSource.includes('req.headers.get("x-supportpilot-billing-secret")') &&
+    billingReconciliationSource.includes("verifyBillingReconciliationSecret") &&
+    billingReconciliationSource.includes("sendBillingReconciliationAlert") &&
+    billingAlertsSource.includes("SUPPORTPILOT_BILLING_RECONCILIATION_SECRET") &&
+    billingAlertsSource.includes("SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL") &&
+    billingAlertsSource.includes("issue.code") &&
+    !billingAlertsSource.includes("issue.evidence"),
+  "billing reconciliation alerts",
 ]);
 checks.push([
   "widget key rotation is owner/admin-only and canonical",
