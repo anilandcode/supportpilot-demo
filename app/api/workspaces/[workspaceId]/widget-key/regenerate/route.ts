@@ -10,6 +10,6 @@ export async function POST(_req: Request, context: { params: Promise<{ workspace
     return Response.json({ error: auth.error }, { status: auth.status });
   }
 
-  const workspace = await regenerateWorkspaceWidgetKey(workspaceId);
+  const workspace = await regenerateWorkspaceWidgetKey(auth.workspaceId);
   return Response.json({ workspace });
 }

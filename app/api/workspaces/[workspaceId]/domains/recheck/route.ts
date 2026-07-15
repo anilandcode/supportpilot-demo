@@ -4,7 +4,7 @@ import { recheckWorkspaceDomains } from "@/lib/db/support";
 export const runtime = "nodejs";
 
 export async function POST(req: Request, context: { params: Promise<{ workspaceId: string }> }) {
-  const { workspaceId } = await context.params;
+  let { workspaceId } = await context.params;
   const workerSecret = process.env.SUPPORTPILOT_DOMAIN_RECHECK_SECRET;
   const providedSecret = req.headers.get("x-supportpilot-domain-secret");
   let domainIds: string[] | undefined;
@@ -17,6 +17,7 @@ export async function POST(req: Request, context: { params: Promise<{ workspaceI
   if (!workerSecret || providedSecret !== workerSecret) {
     const auth = await requireWorkspaceRole(workspaceId, ["owner", "admin"]);
     if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+    workspaceId = auth.workspaceId;
   }
 
   const result = await recheckWorkspaceDomains({ workspaceId, domainIds });

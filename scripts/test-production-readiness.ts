@@ -142,7 +142,13 @@ const workspaceProtectedRoutes = [
   "app/api/security/events/route.ts",
   "app/api/security/retention/jobs/route.ts",
   "app/api/stats/route.ts",
+  "app/api/workspaces/[workspaceId]/domains/route.ts",
+  "app/api/workspaces/[workspaceId]/domains/[domainId]/verify/route.ts",
+  "app/api/workspaces/[workspaceId]/domains/recheck/route.ts",
+  "app/api/workspaces/[workspaceId]/invitations/route.ts",
   "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
+  "app/api/workspaces/[workspaceId]/settings/route.ts",
+  "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
 ];
 const unprotectedWorkspaceRoutes = workspaceProtectedRoutes.filter((file) => !readFileSync(file, "utf8").includes("requireWorkspaceRole("));
 checks.push(["workspace data APIs require role authorization", unprotectedWorkspaceRoutes.length === 0, unprotectedWorkspaceRoutes.join(",") || "none"]);
@@ -151,6 +157,37 @@ const apiDemoFallbackFiles = apiFiles.filter((file) => readFileSync(file, "utf8"
 checks.push(["API routes avoid direct demo workspace fallback", apiDemoFallbackFiles.length === 0, apiDemoFallbackFiles.join(",") || "none"]);
 
 const membershipRouteSource = readFileSync("app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts", "utf8");
+const billingCheckoutSource = readFileSync("app/api/billing/checkout/route.ts", "utf8");
+const billingPortalSource = readFileSync("app/api/billing/portal/route.ts", "utf8");
+const billingSubscriptionSource = readFileSync("app/api/billing/subscription/route.ts", "utf8");
+const widgetKeyRouteSource = readFileSync("app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts", "utf8");
+const workspaceSettingsSource = readFileSync("app/api/workspaces/[workspaceId]/settings/route.ts", "utf8");
+const workspaceDomainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
+const workspaceDomainVerifySource = readFileSync("app/api/workspaces/[workspaceId]/domains/[domainId]/verify/route.ts", "utf8");
+const workspaceDomainRecheckSource = readFileSync("app/api/workspaces/[workspaceId]/domains/recheck/route.ts", "utf8");
+checks.push([
+  "billing APIs are owner-only",
+  billingCheckoutSource.includes('requireWorkspaceRole(body.workspaceId, ["owner"])') &&
+    billingPortalSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])') &&
+    billingSubscriptionSource.includes('requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"])'),
+  "billing routes",
+]);
+checks.push([
+  "widget key rotation is owner/admin-only and canonical",
+  widgetKeyRouteSource.includes('requireWorkspaceRole(workspaceId, ["owner", "admin"])') &&
+    widgetKeyRouteSource.includes("regenerateWorkspaceWidgetKey(auth.workspaceId)") &&
+    !widgetKeyRouteSource.includes("regenerateWorkspaceWidgetKey(workspaceId)"),
+  "widget key route",
+]);
+checks.push([
+  "workspace settings and domain actions use authorized workspace",
+  workspaceSettingsSource.includes("workspaceId: auth.workspaceId") &&
+    workspaceDomainRouteSource.includes("getWorkspaceDomainHealth(auth.workspaceId)") &&
+    workspaceDomainRouteSource.includes("workspaceId: auth.workspaceId") &&
+    workspaceDomainVerifySource.includes("workspaceId: auth.workspaceId") &&
+    workspaceDomainRecheckSource.includes("workspaceId = auth.workspaceId"),
+  "workspace route canonical ids",
+]);
 checks.push([
   "membership route prevents disabling final owner",
   membershipRouteSource.includes("canManageMembershipMutation") && membershipRouteSource.includes("workspace must keep at least one active owner"),

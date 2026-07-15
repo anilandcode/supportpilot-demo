@@ -9,7 +9,7 @@ export async function POST(_req: Request, context: { params: Promise<{ workspace
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
 
   try {
-    const result = await verifyWorkspaceDomain({ workspaceId, domainId });
+    const result = await verifyWorkspaceDomain({ workspaceId: auth.workspaceId, domainId });
     return Response.json(result, { status: result.verified ? 200 : 409 });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "domain verification failed" }, { status: 404 });

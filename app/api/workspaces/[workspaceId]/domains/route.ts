@@ -16,7 +16,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ workspa
     return Response.json({ error: auth.error }, { status: auth.status });
   }
 
-  const result = await getWorkspaceDomainHealth(workspaceId);
+  const result = await getWorkspaceDomainHealth(auth.workspaceId);
   return Response.json(result);
 }
 

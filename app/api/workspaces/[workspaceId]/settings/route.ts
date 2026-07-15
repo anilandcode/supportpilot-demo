@@ -27,7 +27,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ worksp
   }
 
   const workspace = await updateWorkspaceSettings({
-    workspaceId,
+    workspaceId: auth.workspaceId,
     ...parsed.data,
     calendlyUrl: parsed.data.calendlyUrl || null,
   });
