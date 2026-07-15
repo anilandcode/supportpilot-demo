@@ -256,6 +256,7 @@ checks.push([
 ]);
 
 const portalTicketsRouteSource = readFileSync("app/api/portal/tickets/route.ts", "utf8");
+const portalPageSource = readFileSync("app/portal/page.tsx", "utf8");
 const authApiSource = readFileSync("lib/auth/api.ts", "utf8");
 const ticketMessagesRouteSource = readFileSync("app/api/tickets/[ticketId]/messages/route.ts", "utf8");
 checks.push([
@@ -265,6 +266,14 @@ checks.push([
     portalTicketsRouteSource.includes("portal.customerId") &&
     portalTicketsRouteSource.includes("listPortalTickets({ workspaceId: workspace.id, customerId: portal.customerId })"),
   "portal tickets route",
+]);
+checks.push([
+  "portal account page avoids cross-customer ticket listing in Supabase mode",
+  portalPageSource.includes("ensurePortalIdentity") &&
+    portalPageSource.includes("hasSupabaseEnv") &&
+    portalPageSource.includes("listPortalTickets({ workspaceId: workspace.id, customerId: portal.customerId })") &&
+    portalPageSource.includes("portalAccount"),
+  "portal page",
 ]);
 checks.push([
   "portal ticket creation explicitly binds customer identity",

@@ -58,9 +58,9 @@ addCheck("approval decision journey", [
 
 addCheck("customer portal ticket creation journey", [
   fileExists("app/portal/page.tsx"),
-  fileContains("app/portal/page.tsx", ["customer-portal.html", "HtmlHandoffPage"]),
-  fileContains("app/api/portal/tickets/route.ts", ["export async function POST", "ensurePortalIdentity", "createPortalTicket"]),
-  fileContains("components/handoff/handoff-runtime.tsx", ["hydratePortal", "/api/portal/tickets"]),
+  fileContains("app/portal/page.tsx", ["customer-portal.html", "HtmlHandoffPage", "ensurePortalIdentity", "listPortalTickets"]),
+  fileContains("app/api/portal/tickets/route.ts", ["export async function POST", "ensurePortalIdentity", "createPortalTicket", "account:"]),
+  fileContains("components/handoff/handoff-runtime.tsx", ["hydratePortal", "/api/portal/tickets", "renderPortalAccountPanel"]),
 ]);
 
 addCheck("widget chat journey", [

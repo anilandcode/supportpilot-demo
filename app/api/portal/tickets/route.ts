@@ -45,9 +45,9 @@ export async function GET(req: Request) {
     return Response.json({ error: portal.error }, { status: portal.status });
   }
   if (!portal.customerId) {
-    return Response.json({ tickets: [] });
+    return Response.json({ tickets: [], account: { signedIn: true, email: portal.email, customerId: null } });
   }
 
   const tickets = await listPortalTickets({ workspaceId: workspace.id, customerId: portal.customerId });
-  return Response.json({ tickets });
+  return Response.json({ tickets, account: { signedIn: true, email: portal.email, customerId: portal.customerId } });
 }

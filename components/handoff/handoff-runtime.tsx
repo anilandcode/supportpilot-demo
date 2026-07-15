@@ -728,9 +728,11 @@ function colorValue(value: string | undefined, fallback: string) {
 function hydratePortal(data: AnyRecord) {
   const workspace = data.workspace || {};
   const tickets = data.tickets || [];
+  const portalAccount = data.portalAccount || {};
   setText(".chat-header-name", workspace.botName || "Pilot");
   setText(".welcome-name", workspace.botName || "Pilot");
   setText(".welcome-body", workspace.welcomeMessage || "Ask me anything about pricing, integrations, billing, or security.");
+  renderPortalAccountPanel(workspace, tickets, portalAccount);
   renderPortalTickets(tickets);
 
   const send = async (text: string) => {
@@ -772,14 +774,63 @@ function hydratePortal(data: AnyRecord) {
     }).then((res) => res.json()).catch(() => null);
     if (result?.ticket) {
       tickets.unshift(result.ticket);
+      renderPortalAccountPanel(workspace, tickets, { ...portalAccount, signedIn: true, customerId: result.ticket.customerId });
       renderPortalTickets(tickets);
       (window as any).closeCreateTicketModal?.();
     }
   };
 }
 
+function renderPortalAccountPanel(workspace: AnyRecord, tickets: AnyRecord[], portalAccount: AnyRecord) {
+  const anchor = q(".tickets-section");
+  if (!anchor) return;
+  q("#portal-account-panel")?.remove();
+  const openTickets = tickets.filter((ticket) => ticket.status !== "resolved");
+  const escalatedTickets = tickets.filter((ticket) => ticket.status === "escalated" || ticket.riskLevel === "high" || ticket.riskLevel === "critical");
+  const latest = tickets[0];
+  const signedIn = portalAccount.signedIn !== false;
+  const panel = document.createElement("section");
+  panel.className = "tickets-section";
+  panel.id = "portal-account-panel";
+  panel.innerHTML = `
+    <div class="section-header">
+      <h3 class="section-title">Account Overview</h3>
+      <span style="font-size:12px;color:var(--muted);">${signedIn ? "Customer session active" : "Sign in required"}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px;">
+      ${portalMetric("Open", openTickets.length)}
+      ${portalMetric("Escalated", escalatedTickets.length)}
+      ${portalMetric("Resolved", tickets.filter((ticket) => ticket.status === "resolved").length)}
+    </div>
+    <div style="border:1px solid var(--rule);border-radius:10px;background:rgba(255,255,255,.74);padding:14px;display:grid;gap:8px;">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+        <div style="min-width:0;">
+          <div style="font-size:12px;color:var(--muted);">Signed in as</div>
+          <div style="font-weight:700;overflow-wrap:anywhere;">${escapeHtml(portalAccount.email || "Portal visitor")}</div>
+        </div>
+        <a class="btn-secondary" href="/portal/login">${signedIn ? "Manage login" : "Sign in"}</a>
+      </div>
+      <div style="height:1px;background:var(--rule);"></div>
+      <div style="font-size:13px;color:var(--muted);">
+        ${latest ? `Latest ticket <strong style="color:var(--ink);">${escapeHtml(ticketCode(latest.id))}</strong> · ${escapeHtml(latest.subject)} · ${formatAge(latest.updatedAt)}` : `No tickets yet for this ${escapeHtml(workspace.name || "workspace")} account.`}
+      </div>
+    </div>
+  `;
+  anchor.parentElement?.insertBefore(panel, anchor);
+}
+
+function portalMetric(label: string, value: number) {
+  return `
+    <div style="border:1px solid var(--rule);border-radius:10px;background:rgba(255,255,255,.72);padding:12px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;">${escapeHtml(label)}</div>
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:26px;line-height:1;font-weight:600;margin-top:6px;">${value}</div>
+    </div>
+  `;
+}
+
 function renderPortalTickets(tickets: AnyRecord[]) {
-  setText("#open-tickets-count", `${tickets.length} active ticket${tickets.length === 1 ? "" : "s"}`);
+  const openTickets = tickets.filter((ticket) => ticket.status !== "resolved");
+  setText("#open-tickets-count", `${openTickets.length} active ticket${openTickets.length === 1 ? "" : "s"}`);
   setHtml("#ticket-container", tickets.slice(0, 5).map((ticket) => `
     <div class="ticket-row" onclick="openTicketDrawer('${escapeHtml(ticketCode(ticket.id))}', '${escapeHtml(ticket.subject)}')">
       <span class="ticket-id">${escapeHtml(ticketCode(ticket.id))}</span>
