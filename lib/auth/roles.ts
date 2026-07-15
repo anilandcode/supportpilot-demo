@@ -54,13 +54,14 @@ export type CurrentWorkspaceMembership = {
   status: "active" | "invited" | "disabled";
 };
 
-export const getCurrentWorkspaceMembership = cache(async (workspaceId = DEMO_WORKSPACE_ID): Promise<CurrentWorkspaceMembership | null> => {
+export const getCurrentWorkspaceMembership = cache(async (workspaceId?: string | null): Promise<CurrentWorkspaceMembership | null> => {
   const user = await getCurrentEnterpriseUser();
   if (!user) return null;
 
   if (!hasSupabaseEnv() && isDemoMode()) {
+    const requestedWorkspaceId = workspaceId || DEMO_WORKSPACE_ID;
     const demoMembership =
-      demoMemberships.find((membership) => membership.userId === user.id && membership.workspaceId === workspaceId) ??
+      demoMemberships.find((membership) => membership.userId === user.id && membership.workspaceId === requestedWorkspaceId) ??
       demoMemberships.find((membership) => membership.userId === user.id);
     if (!demoMembership) return null;
     return {

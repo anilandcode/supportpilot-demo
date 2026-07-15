@@ -1,7 +1,6 @@
 import { requireWorkspaceRole } from "@/lib/auth/api";
 import { appendSecurityEvent } from "@/lib/db/support";
 import { createIngestionJob } from "@/lib/db/ingestion";
-import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -12,7 +11,7 @@ export async function POST(req: Request) {
   const pastedContent = String(formData.get("content") || "");
   const workspaceId = String(formData.get("workspaceId") || "");
   const asyncRequested = String(formData.get("async") || "").toLowerCase() === "true";
-  const auth = await requireWorkspaceRole(workspaceId || DEMO_WORKSPACE_ID, ["owner", "admin", "manager", "agent"]);
+  const auth = await requireWorkspaceRole(workspaceId || undefined, ["owner", "admin", "manager", "agent"]);
   if (!auth.ok) {
     return Response.json({ error: auth.error }, { status: auth.status });
   }

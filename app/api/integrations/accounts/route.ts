@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
 import { listIntegrationAccounts, listWebhookEndpoints, upsertIntegrationAccount, upsertWebhookEndpoint } from "@/lib/db/integrations";
-import { getWorkspace } from "@/lib/db/support";
-import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 import type { IntegrationAccount, WebhookEndpoint } from "@/lib/enterprise/types";
 
 export const runtime = "nodejs";
@@ -28,11 +26,10 @@ const WebhookEndpointSchema = z.object({
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const workspace = await getWorkspace(url.searchParams.get("workspaceId") || url.searchParams.get("workspace") || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin", "manager"]);
+  const auth = await requireWorkspaceRole(url.searchParams.get("workspaceId") || url.searchParams.get("workspace"), ["owner", "admin", "manager"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
 
-  const [accounts, webhookEndpoints] = await Promise.all([listIntegrationAccounts(workspace.id), listWebhookEndpoints(workspace.id)]);
+  const [accounts, webhookEndpoints] = await Promise.all([listIntegrationAccounts(auth.workspaceId), listWebhookEndpoints(auth.workspaceId)]);
   return Response.json({
     accounts: accounts.map(redactAccount),
     webhookEndpoints: webhookEndpoints.map(redactEndpoint),
@@ -46,19 +43,17 @@ export async function POST(req: Request) {
   if (type === "webhook_endpoint") {
     const parsed = WebhookEndpointSchema.safeParse(body);
     if (!parsed.success) return Response.json({ error: "invalid integration payload", issues: parsed.error.flatten() }, { status: 400 });
-    const workspace = await getWorkspace(parsed.data.workspaceId || DEMO_WORKSPACE_ID);
-    const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin"]);
+    const auth = await requireWorkspaceRole(parsed.data.workspaceId, ["owner", "admin"]);
     if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
-    const endpoint = await upsertWebhookEndpoint({ ...parsed.data, workspaceId: workspace.id });
+    const endpoint = await upsertWebhookEndpoint({ ...parsed.data, workspaceId: auth.workspaceId });
     return Response.json({ webhookEndpoint: redactEndpoint(endpoint) });
   }
 
   const parsed = AccountSchema.safeParse(body);
   if (!parsed.success) return Response.json({ error: "invalid integration payload", issues: parsed.error.flatten() }, { status: 400 });
-  const workspace = await getWorkspace(parsed.data.workspaceId || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin"]);
+  const auth = await requireWorkspaceRole(parsed.data.workspaceId, ["owner", "admin"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
-  const account = await upsertIntegrationAccount({ ...parsed.data, workspaceId: workspace.id });
+  const account = await upsertIntegrationAccount({ ...parsed.data, workspaceId: auth.workspaceId });
   return Response.json({ account: redactAccount(account) });
 }
 

@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
 import { listEmbeddingJobs, runReembeddingJob } from "@/lib/db/embeddings";
-import { getWorkspace } from "@/lib/db/support";
-import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,11 +13,10 @@ const ReembedSchema = z.object({
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const workspace = await getWorkspace(url.searchParams.get("workspaceId") || url.searchParams.get("workspace") || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin", "manager"]);
+  const auth = await requireWorkspaceRole(url.searchParams.get("workspaceId") || url.searchParams.get("workspace"), ["owner", "admin", "manager"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
 
-  const jobs = await listEmbeddingJobs(workspace.id);
+  const jobs = await listEmbeddingJobs(auth.workspaceId);
   return Response.json({ jobs });
 }
 
@@ -27,12 +24,11 @@ export async function POST(req: Request) {
   const parsed = ReembedSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "workspaceId, docId, and limit must be valid" }, { status: 400 });
 
-  const workspace = await getWorkspace(parsed.data.workspaceId || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner", "admin", "manager"]);
+  const auth = await requireWorkspaceRole(parsed.data.workspaceId, ["owner", "admin", "manager"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
 
   const job = await runReembeddingJob({
-    workspaceId: workspace.id,
+    workspaceId: auth.workspaceId,
     docId: parsed.data.docId ?? null,
     limit: parsed.data.limit ?? 100,
     actorUserId: auth.userId,

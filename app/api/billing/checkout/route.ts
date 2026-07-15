@@ -8,7 +8,6 @@ import {
 import { parseBillingInterval, parseBillingTier } from "@/lib/billing/web";
 import { getStripeCustomerForTenant, recordCheckoutSession, upsertStripeCustomerMapping } from "@/lib/db/billing";
 import { getWorkspace } from "@/lib/db/support";
-import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 
 export const runtime = "nodejs";
 
@@ -20,9 +19,9 @@ type CheckoutBody = {
 
 export async function POST(req: Request) {
   const { body, formPost } = await readCheckoutBody(req);
-  const workspace = await getWorkspace(body.workspaceId || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner"]);
+  const auth = await requireWorkspaceRole(body.workspaceId, ["owner"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+  const workspace = await getWorkspace(auth.workspaceId);
 
   const tier = parseBillingTier(body.tier);
   const interval = parseBillingInterval(body.interval);

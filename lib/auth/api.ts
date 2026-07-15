@@ -9,7 +9,7 @@ export type ApiAuthResult =
   | { ok: true; userId: string | null; role: MembershipRole; workspaceId: string; tenantId: string }
   | { ok: false; status: 401 | 403 | 503; error: string };
 
-export async function requireWorkspaceRole(workspaceId: string, allowedRoles: MembershipRole[]): Promise<ApiAuthResult> {
+export async function requireWorkspaceRole(workspaceId: string | null | undefined, allowedRoles: MembershipRole[]): Promise<ApiAuthResult> {
   const productionConfigError = getProductionSupabaseConfigError();
   if (productionConfigError) {
     return { ok: false, status: 503, error: productionConfigError };

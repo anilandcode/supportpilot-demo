@@ -2,16 +2,15 @@ import { requireWorkspaceRole } from "@/lib/auth/api";
 import { createStripePortalSession } from "@/lib/billing/stripe";
 import { getStripeCustomerForTenant } from "@/lib/db/billing";
 import { getWorkspace } from "@/lib/db/support";
-import { DEMO_WORKSPACE_ID } from "@/lib/enterprise/demo-data";
 
 export const runtime = "nodejs";
 
 async function createPortalResult(req: Request) {
   const url = new URL(req.url);
-  const workspace = await getWorkspace(url.searchParams.get("workspaceId") || DEMO_WORKSPACE_ID);
-  const auth = await requireWorkspaceRole(workspace.id, ["owner"]);
+  const auth = await requireWorkspaceRole(url.searchParams.get("workspaceId"), ["owner"]);
   if (!auth.ok) return { error: auth.error, status: auth.status } as const;
 
+  const workspace = await getWorkspace(auth.workspaceId);
   const mappedCustomer = await getStripeCustomerForTenant(workspace.tenantId);
   const customerId = mappedCustomer?.stripeCustomerId || process.env.STRIPE_CUSTOMER_ID || process.env.SUPPORTPILOT_STRIPE_CUSTOMER_ID || null;
   return createStripePortalSession({ customerId, requestUrl: req.url });

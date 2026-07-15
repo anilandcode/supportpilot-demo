@@ -108,6 +108,31 @@ const legacyApiAuthFiles = apiFiles.filter((file) => {
 });
 checks.push(["API routes use workspace auth helpers", legacyApiAuthFiles.length === 0, legacyApiAuthFiles.join(",") || "none"]);
 
+const workspaceProtectedRoutes = [
+  "app/api/billing/checkout/route.ts",
+  "app/api/billing/portal/route.ts",
+  "app/api/billing/subscription/route.ts",
+  "app/api/integrations/accounts/route.ts",
+  "app/api/integrations/events/route.ts",
+  "app/api/knowledge/ingest/jobs/route.ts",
+  "app/api/knowledge/missing/route.ts",
+  "app/api/knowledge/reembed/route.ts",
+  "app/api/knowledge/upload/route.ts",
+  "app/api/model-routes/route.ts",
+  "app/api/onboarding/state/route.ts",
+  "app/api/onboarding/steps/[step]/complete/route.ts",
+  "app/api/security/audit-exports/route.ts",
+  "app/api/security/deletion-requests/route.ts",
+  "app/api/security/events/route.ts",
+  "app/api/security/retention/jobs/route.ts",
+  "app/api/stats/route.ts",
+];
+const unprotectedWorkspaceRoutes = workspaceProtectedRoutes.filter((file) => !readFileSync(file, "utf8").includes("requireWorkspaceRole("));
+checks.push(["workspace data APIs require role authorization", unprotectedWorkspaceRoutes.length === 0, unprotectedWorkspaceRoutes.join(",") || "none"]);
+
+const apiDemoFallbackFiles = apiFiles.filter((file) => readFileSync(file, "utf8").includes("DEMO_WORKSPACE_ID"));
+checks.push(["API routes avoid direct demo workspace fallback", apiDemoFallbackFiles.length === 0, apiDemoFallbackFiles.join(",") || "none"]);
+
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
 for (const [name, ok, detail] of checks) {
