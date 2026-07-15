@@ -121,6 +121,12 @@ const baseRows = {
       completed_steps: ["create_workspace"],
       created_by: user.id,
     }),
+    admin.from("retention_settings").insert({
+      ...baseRows,
+      conversation_days: 365,
+      audit_days: 730,
+      ai_prompt_logging: "redacted",
+    }),
     admin.from("workspace_checklist_items").insert(
       ONBOARDING_CHECKLIST.map((item) => ({
         ...baseRows,
@@ -163,6 +169,22 @@ const baseRows = {
           approver_role: "manager",
         },
       ].map((policy) => ({ ...baseRows, ...policy, active: true })),
+    ),
+    admin.from("tool_definitions").insert(
+      [
+        {
+          name: "search_knowledge",
+          description: "Search approved workspace knowledge chunks for cited support evidence.",
+        },
+        {
+          name: "get_ticket_history",
+          description: "Read customer metadata and ticket conversation history for agent-assist drafts.",
+        },
+        {
+          name: "get_workspace_policy",
+          description: "Read approval, escalation, and safety policies before deciding whether to answer.",
+        },
+      ].map((tool) => ({ ...baseRows, ...tool, read_only: true, active: true })),
     ),
     admin.from("audit_logs").insert({
       ...baseRows,

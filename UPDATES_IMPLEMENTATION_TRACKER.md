@@ -97,6 +97,7 @@ Date: 2026-06-24
 - Centralized widget workspace resolution for chat, widget config, and widget session routes; production widget traffic now requires an `Origin`, blocked/missing origins write security events, and signed widget-session validation remains enforced when configured.
 - Added retention-duration as an enforced billing metric and clamped scheduled conversation/AI cleanup jobs to the plan retention limit, with audit evidence when the configured setting is reduced for plan compliance.
 - Hardened invitation acceptance so expired pending invites are marked `expired` and produce `member.invite.expired` audit logs instead of only returning a transient 410 response.
+- Completed more of the first-workspace production seed path by adding retention settings and read-only AI tool definitions during onboarding workspace creation.
 
 ## Deferred
 

@@ -1,7 +1,7 @@
 # Graph Report - chatbot-demo  (2026-07-15)
 
 ## Corpus Check
-- 238 files · ~182,579 words
+- 238 files · ~182,710 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c792c399`
+- Built from commit: `83ba4c31`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

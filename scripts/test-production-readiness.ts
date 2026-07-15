@@ -189,6 +189,17 @@ checks.push([
     onboardingWorkspaceSource.includes("legal_or_policy"),
   "onboarding workspace",
 ]);
+checks.push([
+  "workspace onboarding seeds retention and tool defaults",
+  onboardingWorkspaceSource.includes('admin.from("retention_settings").insert') &&
+    onboardingWorkspaceSource.includes("conversation_days: 365") &&
+    onboardingWorkspaceSource.includes("audit_days: 730") &&
+    onboardingWorkspaceSource.includes('admin.from("tool_definitions").insert') &&
+    onboardingWorkspaceSource.includes("search_knowledge") &&
+    onboardingWorkspaceSource.includes("get_ticket_history") &&
+    onboardingWorkspaceSource.includes("get_workspace_policy"),
+  "onboarding workspace",
+]);
 
 const portalTicketsRouteSource = readFileSync("app/api/portal/tickets/route.ts", "utf8");
 const authApiSource = readFileSync("lib/auth/api.ts", "utf8");

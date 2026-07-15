@@ -4345,7 +4345,7 @@
       "label": "portalTicketsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L193",
+      "source_location": "L204",
       "id": "scripts_test_production_readiness_portalticketsroutesource",
       "community": 23,
       "norm_label": "portalticketsroutesource"
@@ -4354,7 +4354,7 @@
       "label": "authApiSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L194",
+      "source_location": "L205",
       "id": "scripts_test_production_readiness_authapisource",
       "community": 23,
       "norm_label": "authapisource"
@@ -4363,7 +4363,7 @@
       "label": "ticketMessagesRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L195",
+      "source_location": "L206",
       "id": "scripts_test_production_readiness_ticketmessagesroutesource",
       "community": 23,
       "norm_label": "ticketmessagesroutesource"
@@ -4372,7 +4372,7 @@
       "label": "billingCoreSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L219",
+      "source_location": "L230",
       "id": "scripts_test_production_readiness_billingcoresource",
       "community": 23,
       "norm_label": "billingcoresource"
@@ -4381,7 +4381,7 @@
       "label": "knowledgeUploadSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L220",
+      "source_location": "L231",
       "id": "scripts_test_production_readiness_knowledgeuploadsource",
       "community": 23,
       "norm_label": "knowledgeuploadsource"
@@ -4390,7 +4390,7 @@
       "label": "domainRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L221",
+      "source_location": "L232",
       "id": "scripts_test_production_readiness_domainroutesource",
       "community": 23,
       "norm_label": "domainroutesource"
@@ -4399,7 +4399,7 @@
       "label": "integrationsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L222",
+      "source_location": "L233",
       "id": "scripts_test_production_readiness_integrationsroutesource",
       "community": 23,
       "norm_label": "integrationsroutesource"
@@ -4408,7 +4408,7 @@
       "label": "invitationsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L223",
+      "source_location": "L234",
       "id": "scripts_test_production_readiness_invitationsroutesource",
       "community": 23,
       "norm_label": "invitationsroutesource"
@@ -4417,7 +4417,7 @@
       "label": "chatRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L224",
+      "source_location": "L235",
       "id": "scripts_test_production_readiness_chatroutesource",
       "community": 23,
       "norm_label": "chatroutesource"
@@ -4426,7 +4426,7 @@
       "label": "ticketDraftRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L225",
+      "source_location": "L236",
       "id": "scripts_test_production_readiness_ticketdraftroutesource",
       "community": 23,
       "norm_label": "ticketdraftroutesource"
@@ -4435,7 +4435,7 @@
       "label": "widgetAuthSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L226",
+      "source_location": "L237",
       "id": "scripts_test_production_readiness_widgetauthsource",
       "community": 23,
       "norm_label": "widgetauthsource"
@@ -4444,7 +4444,7 @@
       "label": "widgetSessionRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L227",
+      "source_location": "L238",
       "id": "scripts_test_production_readiness_widgetsessionroutesource",
       "community": 23,
       "norm_label": "widgetsessionroutesource"
@@ -4453,7 +4453,7 @@
       "label": "widgetConfigRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L228",
+      "source_location": "L239",
       "id": "scripts_test_production_readiness_widgetconfigroutesource",
       "community": 23,
       "norm_label": "widgetconfigroutesource"
@@ -4462,7 +4462,7 @@
       "label": "retentionSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L229",
+      "source_location": "L240",
       "id": "scripts_test_production_readiness_retentionsource",
       "community": 23,
       "norm_label": "retentionsource"
@@ -4471,7 +4471,7 @@
       "label": "walk()",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L290",
+      "source_location": "L301",
       "id": "scripts_test_production_readiness_walk",
       "community": 23,
       "norm_label": "walk()"
@@ -4480,7 +4480,7 @@
       "label": "restoreEnv()",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L297",
+      "source_location": "L308",
       "id": "scripts_test_production_readiness_restoreenv",
       "community": 23,
       "norm_label": "restoreenv()"
@@ -6075,7 +6075,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L371",
       "id": "enterprise_types_missingknowledgetask",
-      "community": 27,
+      "community": 24,
       "norm_label": "missingknowledgetask"
     },
     {
@@ -6147,7 +6147,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L468",
       "id": "enterprise_types_policyevaluation",
-      "community": 24,
+      "community": 27,
       "norm_label": "policyevaluation"
     },
     {
@@ -10510,7 +10510,7 @@
       "label": "Deferred",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L101",
+      "source_location": "L102",
       "id": "chatbot_demo_updates_implementation_tracker_deferred",
       "community": 48,
       "norm_label": "deferred"
@@ -10519,7 +10519,7 @@
       "label": "Verification Commands",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L115",
+      "source_location": "L116",
       "id": "chatbot_demo_updates_implementation_tracker_verification_commands",
       "community": 48,
       "norm_label": "verification commands"
@@ -10528,7 +10528,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L117",
+      "source_location": "L118",
       "id": "chatbot_demo_updates_implementation_tracker_codeblock_1",
       "community": 48,
       "norm_label": "code:bash (npm run typecheck)"
@@ -35679,9 +35679,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L167",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "scripts_test_production_readiness_invitationacceptsource",
-      "confidence_score": 1.0
+      "target": "scripts_test_production_readiness_invitationacceptsource"
     },
     {
       "relation": "contains",
@@ -61205,5 +61205,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c792c39909f3495ffecb0261a53b9e3d2639d109"
+  "built_at_commit": "83ba4c319f2d2b679ec56f46cf99fe3eb174e0c2"
 }
