@@ -1,4 +1,5 @@
 import { requireWorkspaceRole } from "@/lib/auth/api";
+import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { appendSecurityEvent } from "@/lib/db/support";
 import { createIngestionJob } from "@/lib/db/ingestion";
 import { checkRateLimit, rateLimitHeaders, retryAfterSeconds } from "@/lib/rate-limit";
@@ -46,6 +47,19 @@ export async function POST(req: Request) {
 
   if (!fileBase64 && !pastedContent.trim()) {
     return Response.json({ error: "document did not contain text" }, { status: 400 });
+  }
+
+  const billing = await getBillingSnapshot(auth.workspaceId);
+  const planLimitBlock = getPlanLimitBlock(billing, ["sources", "documentChunks"]);
+  if (planLimitBlock) {
+    return Response.json({
+      error: "plan limit reached",
+      metric: planLimitBlock.key,
+      label: planLimitBlock.label,
+      used: planLimitBlock.used,
+      limit: planLimitBlock.limit,
+      plan: billing.plan.key,
+    }, { status: 402 });
   }
 
   const { job, queued } = await createIngestionJob({

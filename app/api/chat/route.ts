@@ -241,7 +241,7 @@ export async function POST(req: Request) {
     }
 
     const billing = await getBillingSnapshot(workspace.id);
-    const planLimitBlock = getPlanLimitBlock(billing);
+    const planLimitBlock = getPlanLimitBlock(billing, ["conversations", "aiReplies", "modelFallbacks"]);
     if (planLimitBlock) {
       const text = `This workspace has reached the ${billing.plan.name} ${planLimitBlock.label.toLowerCase()} limit for the current billing period. ${theme.escalation.label} can review the request or upgrade the plan.`;
       const metadata = { tier: theme.tier, rateLimited: true, escalated: true } satisfies ChatMetadata;

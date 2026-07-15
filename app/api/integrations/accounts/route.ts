@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
+import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { listIntegrationAccounts, listWebhookEndpoints, upsertIntegrationAccount, upsertWebhookEndpoint } from "@/lib/db/integrations";
 import type { IntegrationAccount, WebhookEndpoint } from "@/lib/enterprise/types";
 
@@ -45,6 +46,8 @@ export async function POST(req: Request) {
     if (!parsed.success) return Response.json({ error: "invalid integration payload", issues: parsed.error.flatten() }, { status: 400 });
     const auth = await requireWorkspaceRole(parsed.data.workspaceId, ["owner", "admin"]);
     if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+    const planLimitBlock = await integrationLimitBlock(auth.workspaceId);
+    if (planLimitBlock) return planLimitBlock;
     const endpoint = await upsertWebhookEndpoint({ ...parsed.data, workspaceId: auth.workspaceId });
     return Response.json({ webhookEndpoint: redactEndpoint(endpoint) });
   }
@@ -53,8 +56,24 @@ export async function POST(req: Request) {
   if (!parsed.success) return Response.json({ error: "invalid integration payload", issues: parsed.error.flatten() }, { status: 400 });
   const auth = await requireWorkspaceRole(parsed.data.workspaceId, ["owner", "admin"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
+  const planLimitBlock = await integrationLimitBlock(auth.workspaceId);
+  if (planLimitBlock) return planLimitBlock;
   const account = await upsertIntegrationAccount({ ...parsed.data, workspaceId: auth.workspaceId });
   return Response.json({ account: redactAccount(account) });
+}
+
+async function integrationLimitBlock(workspaceId: string) {
+  const billing = await getBillingSnapshot(workspaceId);
+  const planLimitBlock = getPlanLimitBlock(billing, ["integrations"]);
+  if (!planLimitBlock) return null;
+  return Response.json({
+    error: "plan limit reached",
+    metric: planLimitBlock.key,
+    label: planLimitBlock.label,
+    used: planLimitBlock.used,
+    limit: planLimitBlock.limit,
+    plan: billing.plan.key,
+  }, { status: 402 });
 }
 
 function redactAccount(account: IntegrationAccount) {

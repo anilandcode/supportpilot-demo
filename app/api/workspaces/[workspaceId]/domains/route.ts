@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
+import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { addWorkspaceDomain, getDomainHealth, getWorkspaceDomainHealth } from "@/lib/db/support";
 
 export const runtime = "nodejs";
@@ -32,8 +33,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
     return Response.json({ error: "invalid domain", issues: parsed.error.flatten() }, { status: 400 });
   }
 
+  const billing = await getBillingSnapshot(auth.workspaceId);
+  const planLimitBlock = getPlanLimitBlock(billing, ["domains"]);
+  if (planLimitBlock) {
+    return Response.json({
+      error: "plan limit reached",
+      metric: planLimitBlock.key,
+      label: planLimitBlock.label,
+      used: planLimitBlock.used,
+      limit: planLimitBlock.limit,
+      plan: billing.plan.key,
+    }, { status: 402 });
+  }
+
   const domain = await addWorkspaceDomain({
-    workspaceId,
+    workspaceId: auth.workspaceId,
     domain: parsed.data.domain,
   });
 

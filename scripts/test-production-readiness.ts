@@ -207,6 +207,33 @@ checks.push([
   "ticket messages route",
 ]);
 
+const billingCoreSource = readFileSync("lib/billing/core.ts", "utf8");
+const knowledgeUploadSource = readFileSync("app/api/knowledge/upload/route.ts", "utf8");
+const domainRouteSource = readFileSync("app/api/workspaces/[workspaceId]/domains/route.ts", "utf8");
+const integrationsRouteSource = readFileSync("app/api/integrations/accounts/route.ts", "utf8");
+const invitationsRouteSource = readFileSync("app/api/workspaces/[workspaceId]/invitations/route.ts", "utf8");
+const chatRouteSource = readFileSync("app/api/chat/route.ts", "utf8");
+const ticketDraftRouteSource = readFileSync("app/api/tickets/[ticketId]/draft/route.ts", "utf8");
+checks.push([
+  "billing snapshot includes launch-critical entitlement metrics",
+  billingCoreSource.includes('"documentChunks"') &&
+    billingCoreSource.includes('"domains"') &&
+    billingCoreSource.includes('"integrations"') &&
+    billingCoreSource.includes("modelFallbacks") &&
+    billingCoreSource.includes("enforced: true"),
+  "billing core",
+]);
+checks.push([
+  "runtime entitlements gate knowledge, domains, integrations, seats, chat, and drafts",
+  knowledgeUploadSource.includes('getPlanLimitBlock(billing, ["sources", "documentChunks"])') &&
+    domainRouteSource.includes('getPlanLimitBlock(billing, ["domains"])') &&
+    integrationsRouteSource.includes('getPlanLimitBlock(billing, ["integrations"])') &&
+    invitationsRouteSource.includes('getPlanLimitBlock(billing, ["members"])') &&
+    chatRouteSource.includes('getPlanLimitBlock(billing, ["conversations", "aiReplies", "modelFallbacks"])') &&
+    ticketDraftRouteSource.includes('getPlanLimitBlock(billing, ["aiReplies", "modelFallbacks"])'),
+  "entitlement route gates",
+]);
+
 let failed = 0;
 console.log("\nSupportPilot production-readiness checks");
 for (const [name, ok, detail] of checks) {

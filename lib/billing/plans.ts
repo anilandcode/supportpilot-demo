@@ -1,5 +1,6 @@
 import { buildBillingSnapshot, currentBillingPeriod, getBillingPlans, getPlanLimitBlock, type BillingSnapshot } from "@/lib/billing/core";
-import { getLocalState, getWorkspace, listKnowledgeDocs, listModelRouteLogs } from "@/lib/db/support";
+import { listIntegrationAccounts, listWebhookEndpoints } from "@/lib/db/integrations";
+import { getLocalState, getWorkspace, listDocumentChunks, listKnowledgeDocs, listModelRouteLogs, listWorkspaceDomains } from "@/lib/db/support";
 import type { Organization, UsageEvent, Workspace } from "@/lib/enterprise/types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -79,10 +80,14 @@ async function readUsage(workspace: Workspace, start: Date, end: Date) {
 export async function getBillingSnapshot(workspaceId?: string | null): Promise<BillingSnapshot> {
   const workspace = await getWorkspace(workspaceId ?? undefined);
   const { start, end } = currentBillingPeriod();
-  const [organizationPlan, usage, knowledgeDocs, routeLogs] = await Promise.all([
+  const [organizationPlan, usage, knowledgeDocs, documentChunks, domains, accounts, webhookEndpoints, routeLogs] = await Promise.all([
     resolvePlanForWorkspace(workspace),
     readUsage(workspace, start, end),
     listKnowledgeDocs(workspace.id),
+    listDocumentChunks(workspace.id),
+    listWorkspaceDomains(workspace.id),
+    listIntegrationAccounts(workspace.id),
+    listWebhookEndpoints(workspace.id),
     listModelRouteLogs(workspace.id),
   ]);
 
@@ -94,6 +99,9 @@ export async function getBillingSnapshot(workspaceId?: string | null): Promise<B
     workspaceCount: usage.workspaceCount,
     memberCount: usage.memberCount,
     knowledgeDocs,
+    documentChunkCount: documentChunks.length,
+    domainCount: domains.length,
+    integrationCount: accounts.length + webhookEndpoints.length,
     routeLogs,
     hasStripePortal: Boolean(process.env.STRIPE_SECRET_KEY && (process.env.STRIPE_CUSTOMER_ID || process.env.SUPPORTPILOT_STRIPE_CUSTOMER_ID)),
   });

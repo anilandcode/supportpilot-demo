@@ -1,7 +1,17 @@
 import type { KnowledgeDoc, ModelRouteCode, ModelRouteLog, Organization, UsageEvent, Workspace } from "@/lib/enterprise/types";
 
 export type BillingPlanKey = "launch" | "pro" | "enterprise";
-export type UsageMetricKey = "conversations" | "aiReplies" | "approvalReviews" | "sources" | "members" | "workspaces" | "modelFallbacks";
+export type UsageMetricKey =
+  | "conversations"
+  | "aiReplies"
+  | "approvalReviews"
+  | "sources"
+  | "documentChunks"
+  | "members"
+  | "workspaces"
+  | "domains"
+  | "integrations"
+  | "modelFallbacks";
 
 export type BillingUsageMetric = {
   key: UsageMetricKey;
@@ -59,6 +69,9 @@ type BillingSnapshotInput = {
   workspaceCount: number;
   memberCount: number;
   knowledgeDocs: Pick<KnowledgeDoc, "approved">[];
+  documentChunkCount: number;
+  domainCount: number;
+  integrationCount: number;
   routeLogs: ModelRouteLog[];
   hasStripePortal: boolean;
   now?: Date;
@@ -75,8 +88,11 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       aiReplies: 1000,
       approvalReviews: 50,
       sources: 10,
+      documentChunks: 500,
       members: 3,
       workspaces: 1,
+      domains: 3,
+      integrations: 2,
       modelFallbacks: 100,
     },
   },
@@ -90,8 +106,11 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       aiReplies: 8000,
       approvalReviews: 1000,
       sources: 50,
+      documentChunks: 5000,
       members: 15,
       workspaces: 3,
+      domains: 10,
+      integrations: 10,
       modelFallbacks: 1500,
     },
   },
@@ -105,8 +124,11 @@ const BILLING_PLANS: Record<BillingPlanKey, BillingPlanDefinition> = {
       aiReplies: null,
       approvalReviews: null,
       sources: null,
+      documentChunks: null,
       members: null,
       workspaces: null,
+      domains: null,
+      integrations: null,
       modelFallbacks: null,
     },
   },
@@ -135,29 +157,58 @@ const METRIC_COPY: Record<UsageMetricKey, Pick<BillingUsageMetric, "label" | "un
     label: "Approved sources",
     unit: "docs",
     description: "Approved knowledge documents available to RAG.",
-    enforced: false,
+    enforced: true,
+  },
+  documentChunks: {
+    label: "Document chunks",
+    unit: "chunks",
+    description: "Approved indexed chunks available to retrieval.",
+    enforced: true,
   },
   members: {
     label: "Members",
     unit: "seats",
     description: "Owner, admin, manager, agent, analyst, and viewer memberships.",
-    enforced: false,
+    enforced: true,
   },
   workspaces: {
     label: "Workspaces",
     unit: "workspaces",
     description: "SupportPilot workspaces owned by the organization.",
-    enforced: false,
+    enforced: true,
+  },
+  domains: {
+    label: "Domains",
+    unit: "domains",
+    description: "Verified or pending widget/customer portal domains.",
+    enforced: true,
+  },
+  integrations: {
+    label: "Integrations",
+    unit: "connections",
+    description: "Slack, webhook, helpdesk, and outbound integration endpoints.",
+    enforced: true,
   },
   modelFallbacks: {
     label: "Advanced routes",
     unit: "R4/R5 calls",
     description: "Ambiguous, high-risk, legal, security, and billing model routes.",
-    enforced: false,
+    enforced: true,
   },
 };
 
-const METRIC_ORDER: UsageMetricKey[] = ["conversations", "aiReplies", "approvalReviews", "sources", "members", "workspaces", "modelFallbacks"];
+const METRIC_ORDER: UsageMetricKey[] = [
+  "conversations",
+  "aiReplies",
+  "approvalReviews",
+  "sources",
+  "documentChunks",
+  "members",
+  "workspaces",
+  "domains",
+  "integrations",
+  "modelFallbacks",
+];
 
 export function currentBillingPeriod(now = new Date()) {
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
@@ -237,8 +288,11 @@ export function buildBillingSnapshot(input: BillingSnapshotInput): BillingSnapsh
     aiReplies: buildMetric("aiReplies", currentPeriodAiRuns, limits.aiReplies),
     approvalReviews: buildMetric("approvalReviews", sumUsageEvents(input.usageEvents, ["approval.decided", "approval_decided"], start, end), limits.approvalReviews),
     sources: buildMetric("sources", input.knowledgeDocs.filter((doc) => doc.approved).length, limits.sources),
+    documentChunks: buildMetric("documentChunks", input.documentChunkCount, limits.documentChunks),
     members: buildMetric("members", input.memberCount, limits.members),
     workspaces: buildMetric("workspaces", input.workspaceCount, limits.workspaces),
+    domains: buildMetric("domains", input.domainCount, limits.domains),
+    integrations: buildMetric("integrations", input.integrationCount, limits.integrations),
     modelFallbacks: buildMetric("modelFallbacks", currentPeriodRoutes.filter((log) => log.route === "R4" || log.route === "R5").length, limits.modelFallbacks),
   } satisfies Record<UsageMetricKey, BillingUsageMetric>;
 

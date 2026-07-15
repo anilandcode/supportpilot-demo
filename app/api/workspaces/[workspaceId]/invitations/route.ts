@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
+import { getBillingSnapshot, getPlanLimitBlock } from "@/lib/billing/plans";
 import { canInviteRole } from "@/lib/auth/permissions";
 import { createInviteToken, hashInviteToken, inviteUrlFromRequest } from "@/lib/auth/invitations";
 import { getCurrentWorkspaceMembership } from "@/lib/auth/roles";
@@ -48,6 +49,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ workspa
   const membership = await getCurrentWorkspaceMembership(workspaceId);
   if (!membership || !canInviteRole(membership.role, parsed.data.role)) {
     return Response.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  const billing = await getBillingSnapshot(membership.workspaceId);
+  const planLimitBlock = getPlanLimitBlock(billing, ["members"]);
+  if (planLimitBlock) {
+    return Response.json({
+      error: "plan limit reached",
+      metric: planLimitBlock.key,
+      label: planLimitBlock.label,
+      used: planLimitBlock.used,
+      limit: planLimitBlock.limit,
+      plan: billing.plan.key,
+    }, { status: 402 });
   }
 
   const supabase = await createSupabaseServerClient();
