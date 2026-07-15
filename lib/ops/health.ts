@@ -16,6 +16,11 @@ export type HealthSnapshot = {
   checks: HealthCheck[];
 };
 
+export type HealthAlertResult =
+  | { status: "skipped"; reason: "not_configured" | "healthy" }
+  | { status: "sent"; destination: string }
+  | { status: "failed"; destination: string; error: string };
+
 export function buildHealthSnapshot(now = new Date()): HealthSnapshot {
   const checks: HealthCheck[] = [
     checkSupabaseConfig(),
@@ -33,6 +38,56 @@ export function buildHealthSnapshot(now = new Date()): HealthSnapshot {
     checkedAt: now.toISOString(),
     checks,
   };
+}
+
+export function verifyHealthAlertSecret(value: string | null) {
+  const expected = process.env.SUPPORTPILOT_HEALTH_ALERT_SECRET;
+  return !expected || value === expected;
+}
+
+export async function sendHealthAlert(
+  snapshot: HealthSnapshot,
+  fetcher: typeof fetch = fetch,
+): Promise<HealthAlertResult> {
+  const webhookUrl = process.env.SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL;
+  if (!webhookUrl) {
+    return { status: "skipped", reason: "not_configured" };
+  }
+  if (snapshot.status === "ok") {
+    return { status: "skipped", reason: "healthy" };
+  }
+
+  const payload = {
+    service: "supportpilot",
+    status: snapshot.status,
+    appMode: snapshot.appMode,
+    checkedAt: snapshot.checkedAt,
+    failingChecks: snapshot.checks
+      .filter((check) => check.status !== "pass")
+      .map((check) => ({
+        key: check.key,
+        status: check.status,
+        message: check.message,
+      })),
+  };
+
+  try {
+    const response = await fetcher(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      return { status: "failed", destination: redactUrl(webhookUrl), error: `webhook returned ${response.status}` };
+    }
+    return { status: "sent", destination: redactUrl(webhookUrl) };
+  } catch (error) {
+    return {
+      status: "failed",
+      destination: redactUrl(webhookUrl),
+      error: error instanceof Error ? error.message : "unknown alert delivery error",
+    };
+  }
 }
 
 function checkSupabaseConfig(): HealthCheck {
@@ -111,4 +166,13 @@ function checkStripe(): HealthCheck {
     status: isProductionMode() ? "warn" : "warn",
     message: `Missing Stripe config: ${missing.join(", ")}`,
   };
+}
+
+function redactUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return "configured-webhook";
+  }
 }

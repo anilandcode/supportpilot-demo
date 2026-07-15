@@ -131,6 +131,8 @@ SUPPORTPILOT_INGESTION_WORKER_SECRET=...
 SUPPORTPILOT_INTEGRATION_WORKER_SECRET=...
 SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=queued # queued | inline
 SUPPORTPILOT_RETENTION_WORKER_SECRET=...
+SUPPORTPILOT_HEALTH_ALERT_SECRET=...
+SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL=...
 SUPPORTPILOT_RATE_LIMIT_CHAT_PER_MINUTE=10
 SUPPORTPILOT_RATE_LIMIT_WIDGET_CONFIG_PER_MINUTE=120
 SUPPORTPILOT_RATE_LIMIT_WIDGET_SESSIONS_PER_5_MINUTES=30
@@ -163,6 +165,8 @@ Retention workflows use `retention_settings` to schedule `conversation_cleanup` 
 Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds. The settings page shows domain health, stale checks, and the exact DNS challenge; scheduled jobs can call the recheck endpoint with `x-supportpilot-domain-secret`.
 
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`.
+
+`GET /api/health` returns secret-safe readiness state for uptime probes. `POST /api/health` can be called by a trusted monitor with `x-supportpilot-health-secret` when `SUPPORTPILOT_HEALTH_ALERT_SECRET` is set; degraded/failing snapshots send a sanitized incident payload to `SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL`, while healthy snapshots and unconfigured webhooks are no-ops.
 
 ## Supabase
 

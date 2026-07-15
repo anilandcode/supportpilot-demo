@@ -107,6 +107,7 @@ Date: 2026-06-24
 - Added a customer portal account overview: `/portal` now uses `ensurePortalIdentity()` plus `listPortalTickets()` in Supabase mode, shows scoped ticket totals/latest activity, and `GET /api/portal/tickets` returns account metadata with customer-owned tickets.
 - Expanded `/onboarding` into a launch wizard with real actions for approved-source upload/chunking, brand/disclosure, escalation owner, domain verification, widget install, golden-question eval execution, and monitoring readiness. Added `POST /api/onboarding/golden-questions/run` to reuse the shared deterministic eval before completing the golden-question gate.
 - Added `npm run test:isolation` and CI coverage for launch-critical route isolation contracts across chat/widget origin gating, portal customer identity binding, ticket message ownership, staff ticket workspace authorization, and canonical workspace IDs for knowledge/settings mutations.
+- Added optional incident alert routing to `POST /api/health`: trusted monitors can authenticate with `SUPPORTPILOT_HEALTH_ALERT_SECRET`, send degraded/failing snapshots to `SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL`, and keep healthy/unconfigured alerts as safe no-ops. `npm run test:health` covers secret enforcement, sanitized payloads, and healthy skip behavior.
 
 ## Deferred
 
@@ -117,7 +118,7 @@ Date: 2026-06-24
 - Full background ingestion launch remains a follow-up: provision QStash, configure `SUPPORTPILOT_INGESTION_WORKER_SECRET`, move large files through Supabase Storage object references, add worker runbooks, and load-test large PDF/import queues.
 - Full integration launch remains a follow-up: provision real Slack incoming webhooks or OAuth, add webhook health UI, schedule delivery workers/retries, encrypt production secrets with a managed key strategy, and build Zendesk/Intercom approved-reply connectors.
 - Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint, add expiry/stale-check alerts, and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
-- Full QA launch remains a follow-up: add browser Playwright critical journeys, live uptime/incident alert routing, richer golden-question dashboards, and release/load gates to CI.
+- Full QA launch remains a follow-up: add browser Playwright critical journeys, live uptime-provider configuration, richer golden-question dashboards, and release/load gates to CI.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
 - SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.

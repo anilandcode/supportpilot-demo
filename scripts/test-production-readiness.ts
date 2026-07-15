@@ -321,6 +321,8 @@ const widgetSessionRouteSource = readFileSync("app/api/widget/session/route.ts",
 const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "utf8");
 const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
 const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
+const healthRouteSource = readFileSync("app/api/health/route.ts", "utf8");
+const healthOpsSource = readFileSync("lib/ops/health.ts", "utf8");
 checks.push([
   "billing snapshot includes launch-critical entitlement metrics",
   billingCoreSource.includes('"documentChunks"') &&
@@ -374,6 +376,15 @@ checks.push([
     ingestionSource.includes("documentChunks: pendingChunks") &&
     ingestionSource.includes("knowledge.ingestion.plan_limited"),
   "lib/db/ingestion.ts",
+]);
+checks.push([
+  "health endpoint supports authenticated incident alert routing",
+  healthRouteSource.includes("export async function POST") &&
+    healthRouteSource.includes("verifyHealthAlertSecret") &&
+    healthRouteSource.includes("sendHealthAlert") &&
+    healthOpsSource.includes("SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL") &&
+    healthOpsSource.includes("redactUrl"),
+  "health alert route",
 ]);
 
 let failed = 0;
