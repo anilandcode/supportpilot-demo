@@ -106,6 +106,7 @@ Date: 2026-06-24
 - Added settings-page member management backed by `GET /api/workspaces/[workspaceId]/invitations`, `listWorkspaceMembers()`, and `listWorkspaceInvitations()` so owners/admins can invite teammates, change roles, disable members, and revoke pending invitations from the enterprise console.
 - Added a customer portal account overview: `/portal` now uses `ensurePortalIdentity()` plus `listPortalTickets()` in Supabase mode, shows scoped ticket totals/latest activity, and `GET /api/portal/tickets` returns account metadata with customer-owned tickets.
 - Expanded `/onboarding` into a launch wizard with real actions for approved-source upload/chunking, brand/disclosure, escalation owner, domain verification, widget install, golden-question eval execution, and monitoring readiness. Added `POST /api/onboarding/golden-questions/run` to reuse the shared deterministic eval before completing the golden-question gate.
+- Added `npm run test:isolation` and CI coverage for launch-critical route isolation contracts across chat/widget origin gating, portal customer identity binding, ticket message ownership, staff ticket workspace authorization, and canonical workspace IDs for knowledge/settings mutations.
 
 ## Deferred
 

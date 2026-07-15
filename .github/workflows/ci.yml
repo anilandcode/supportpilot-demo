@@ -64,6 +64,9 @@ jobs:
       - name: Golden eval smoke
         run: npm run test:evals
 
+      - name: Route isolation checks
+        run: npm run test:isolation
+
       - name: RLS checks
         run: |
           mkdir -p artifacts
