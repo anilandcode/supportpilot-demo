@@ -7,6 +7,7 @@ import type { KnowledgeDoc, KnowledgeIngestionJob } from "@/lib/enterprise/types
 import { chunkDocument } from "@/lib/rag/chunking";
 import { embeddingContentHash } from "@/lib/rag/embeddings";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { isProductionMode } from "@/lib/supabase/config";
 
 type CreateIngestionJobInput = {
   workspaceId?: string;
@@ -41,11 +42,95 @@ export async function listIngestionJobs(workspaceId = DEMO_WORKSPACE_ID): Promis
   return localIngestionJobs.filter((job) => job.workspaceId === workspace.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+export async function listDueIngestionJobs(workspaceId = DEMO_WORKSPACE_ID, now = new Date(), limit = 25): Promise<KnowledgeIngestionJob[]> {
+  const safeLimit = Math.max(1, Math.min(Math.floor(limit), 100));
+  const jobs = await listIngestionJobs(workspaceId);
+  return jobs
+    .filter((job) => job.status === "queued" && (!job.nextRunAt || Date.parse(job.nextRunAt) <= now.getTime()))
+    .sort((a, b) => {
+      const aTime = a.nextRunAt ? Date.parse(a.nextRunAt) : Date.parse(a.createdAt);
+      const bTime = b.nextRunAt ? Date.parse(b.nextRunAt) : Date.parse(b.createdAt);
+      return aTime - bTime;
+    })
+    .slice(0, safeLimit);
+}
+
+export async function processDueIngestionJobs(input: { workspaceId?: string | null; now?: Date; limit?: number; actorUserId?: string | null } = {}) {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const now = input.now ?? new Date();
+  const limit = Math.max(1, Math.min(Math.floor(input.limit ?? 25), 100));
+  const due = await listDueIngestionJobs(workspace.id, now, limit);
+  const results: Array<{
+    jobId: string;
+    status: KnowledgeIngestionJob["status"];
+    attempts: number;
+    docId: string | null;
+    chunksEmbedded: number;
+    error: string | null;
+  }> = [];
+
+  for (const job of due) {
+    const result = await processIngestionJob(job.id, { actorUserId: input.actorUserId });
+    results.push({
+      jobId: result.id,
+      status: result.status,
+      attempts: result.attempts,
+      docId: result.docId,
+      chunksEmbedded: result.chunksEmbedded,
+      error: result.error,
+    });
+  }
+
+  return {
+    workspaceId: workspace.id,
+    checkedAt: now.toISOString(),
+    limit,
+    selected: due.length,
+    succeeded: results.filter((result) => result.status === "succeeded").length,
+    queued: results.filter((result) => result.status === "queued").length,
+    failed: results.filter((result) => result.status === "failed").length,
+    needsReview: results.filter((result) => result.status === "needs_review").length,
+    skipped: results.filter((result) => result.status === "skipped").length,
+    results,
+  };
+}
+
 export async function createIngestionJob(input: CreateIngestionJobInput): Promise<{ job: KnowledgeIngestionJob; queued: boolean }> {
   const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
-  const payload = buildPayload(input);
   const sourceContentHash = sourceHash(input);
   const now = new Date().toISOString();
+
+  const duplicate = await findDuplicateSuccessfulJob(workspace.id, sourceContentHash);
+  if (duplicate) {
+    const job: KnowledgeIngestionJob = {
+      id: publicId("ingest"),
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      docId: duplicate.docId,
+      jobType: inferJobType(input),
+      status: "skipped",
+      sourceType: input.sourceType,
+      title: input.title,
+      contentType: input.contentType ?? null,
+      sourceContentHash,
+      storageUrl: null,
+      payload: { filename: input.filename, duplicateOf: duplicate.id },
+      attempts: 0,
+      maxAttempts: 3,
+      chunksTotal: 0,
+      chunksEmbedded: 0,
+      error: "Duplicate source content already ingested.",
+      startedAt: null,
+      completedAt: now,
+      nextRunAt: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await persistJob(job);
+    return { job, queued: false };
+  }
+
+  const storedPayload = await buildPayload(input, workspace.id, sourceContentHash);
   const job: KnowledgeIngestionJob = {
     id: publicId("ingest"),
     tenantId: workspace.tenantId,
@@ -57,8 +142,8 @@ export async function createIngestionJob(input: CreateIngestionJobInput): Promis
     title: input.title,
     contentType: input.contentType ?? null,
     sourceContentHash,
-    storageUrl: null,
-    payload,
+    storageUrl: storedPayload.storageUrl,
+    payload: storedPayload.payload,
     attempts: 0,
     maxAttempts: 3,
     chunksTotal: 0,
@@ -71,19 +156,26 @@ export async function createIngestionJob(input: CreateIngestionJobInput): Promis
     updatedAt: now,
   };
 
-  const duplicate = await findDuplicateSuccessfulJob(workspace.id, sourceContentHash);
-  if (duplicate) {
-    job.status = "skipped";
-    job.docId = duplicate.docId;
+  localIngestionJobs.unshift(job);
+  await persistJob(job);
+
+  if (storedPayload.error && isProductionMode() && input.asyncRequested) {
+    job.status = "needs_review";
+    job.error = storedPayload.error;
     job.completedAt = now;
     job.updatedAt = now;
-    job.error = "Duplicate source content already ingested.";
     await persistJob(job);
+    await appendAuditLog({
+      tenantId: workspace.tenantId,
+      workspaceId: workspace.id,
+      ticketId: null,
+      userId: input.actorUserId ?? null,
+      action: "knowledge.ingestion.storage_failed",
+      details: { jobId: job.id, title: job.title, error: storedPayload.error },
+    });
     return { job, queued: false };
   }
 
-  localIngestionJobs.unshift(job);
-  await persistJob(job);
   await appendAuditLog({
     tenantId: workspace.tenantId,
     workspaceId: workspace.id,
@@ -250,21 +342,27 @@ async function getIngestionPlanLimitBlock(workspaceId: string, pendingChunks: nu
 }
 
 async function extractJobText(job: KnowledgeIngestionJob) {
+  const stored = await readStoredPayload(job);
+  if (stored) return extractBufferText(stored.buffer, job.contentType, stored.filename);
   if (typeof job.payload.content === "string") return job.payload.content;
   if (typeof job.payload.fileBase64 === "string") {
     const buffer = Buffer.from(job.payload.fileBase64, "base64");
-    if (job.contentType === "application/pdf" || /\.pdf$/i.test(String(job.payload.filename ?? ""))) {
-      const parser = new PDFParse({ data: new Uint8Array(buffer) });
-      try {
-        const result = await parser.getText();
-        return result.text;
-      } finally {
-        await parser.destroy();
-      }
-    }
-    return buffer.toString("utf8");
+    return extractBufferText(buffer, job.contentType, String(job.payload.filename ?? ""));
   }
   return "";
+}
+
+async function extractBufferText(buffer: Buffer, contentType: string | null, filename?: string | null) {
+  if (contentType === "application/pdf" || /\.pdf$/i.test(String(filename ?? ""))) {
+    const parser = new PDFParse({ data: new Uint8Array(buffer) });
+    try {
+      const result = await parser.getText();
+      return result.text;
+    } finally {
+      await parser.destroy();
+    }
+  }
+  return buffer.toString("utf8");
 }
 
 async function enqueueWithQStash(job: KnowledgeIngestionJob) {
@@ -294,12 +392,83 @@ async function persistJob(job: KnowledgeIngestionJob) {
   if (supabase) await supabase.from("knowledge_ingestion_jobs").upsert(toIngestionJobRow(job), { onConflict: "id" });
 }
 
-function buildPayload(input: CreateIngestionJobInput): Record<string, unknown> {
+async function buildPayload(input: CreateIngestionJobInput, workspaceId: string, sourceContentHash: string): Promise<{ payload: Record<string, unknown>; storageUrl: string | null; error: string | null }> {
+  const stored = await storeSourcePayload(input, workspaceId, sourceContentHash);
+  if (stored.storageUrl) {
+    return {
+      payload: {
+        filename: input.filename,
+        sourceBytes: stored.sourceBytes,
+        storageRef: stored.storageUrl,
+      },
+      storageUrl: stored.storageUrl,
+      error: null,
+    };
+  }
+
   return {
-    content: input.content,
-    fileBase64: input.fileBase64,
-    filename: input.filename,
+    payload: {
+      content: input.content,
+      fileBase64: input.fileBase64,
+      filename: input.filename,
+    },
+    storageUrl: null,
+    error: stored.error,
   };
+}
+
+async function storeSourcePayload(input: CreateIngestionJobInput, workspaceId: string, sourceContentHash: string): Promise<{ storageUrl: string | null; sourceBytes: number; error: string | null }> {
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return { storageUrl: null, sourceBytes: 0, error: null };
+
+  const buffer = input.fileBase64 ? Buffer.from(input.fileBase64, "base64") : input.content ? Buffer.from(input.content, "utf8") : null;
+  if (!buffer) return { storageUrl: null, sourceBytes: 0, error: null };
+
+  const bucket = sourceBucketName();
+  const path = storagePath(workspaceId, sourceContentHash, input.filename ?? `${input.title}.txt`);
+  const { error } = await supabase.storage.from(bucket).upload(path, buffer, {
+    contentType: input.contentType ?? "text/plain",
+    upsert: false,
+  });
+  if (error) return { storageUrl: null, sourceBytes: buffer.byteLength, error: `Source storage upload failed: ${error.message}` };
+  return { storageUrl: `supabase://${bucket}/${path}`, sourceBytes: buffer.byteLength, error: null };
+}
+
+async function readStoredPayload(job: KnowledgeIngestionJob): Promise<{ buffer: Buffer; filename: string | null } | null> {
+  const storageUrl = typeof job.storageUrl === "string" ? job.storageUrl : typeof job.payload.storageRef === "string" ? job.payload.storageRef : null;
+  const ref = parseStorageUrl(storageUrl);
+  if (!ref) return null;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) throw new Error("Supabase service role is required to read stored ingestion source.");
+
+  const { data, error } = await supabase.storage.from(ref.bucket).download(ref.path);
+  if (error || !data) throw new Error(`Stored ingestion source download failed: ${error?.message ?? "missing object"}`);
+  return { buffer: Buffer.from(await data.arrayBuffer()), filename: String(job.payload.filename ?? ref.path.split("/").pop() ?? "") };
+}
+
+function parseStorageUrl(storageUrl: string | null | undefined) {
+  if (!storageUrl?.startsWith("supabase://")) return null;
+  const withoutScheme = storageUrl.slice("supabase://".length);
+  const slashIndex = withoutScheme.indexOf("/");
+  if (slashIndex <= 0) return null;
+  return {
+    bucket: withoutScheme.slice(0, slashIndex),
+    path: withoutScheme.slice(slashIndex + 1),
+  };
+}
+
+function sourceBucketName() {
+  return process.env.SUPPORTPILOT_KNOWLEDGE_SOURCE_BUCKET || "supportpilot-knowledge-sources";
+}
+
+function storagePath(workspaceId: string, sourceContentHash: string, filename: string) {
+  return `${workspaceId}/${sourceContentHash.slice(0, 16)}/${safeFilename(filename)}`;
+}
+
+function safeFilename(filename: string) {
+  const normalized = filename.trim().replace(/[/\\]/g, "-").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  return normalized || "source.txt";
 }
 
 function inferJobType(input: CreateIngestionJobInput): KnowledgeIngestionJob["jobType"] {

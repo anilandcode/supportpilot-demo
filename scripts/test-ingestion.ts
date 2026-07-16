@@ -1,4 +1,4 @@
-import { createIngestionJob, getLocalIngestionJobs, retryIngestionJob } from "../lib/db/ingestion.ts";
+import { createIngestionJob, getLocalIngestionJobs, processDueIngestionJobs, retryIngestionJob } from "../lib/db/ingestion.ts";
 import { getLocalState } from "../lib/db/support.ts";
 import { DEMO_WORKSPACE_ID } from "../lib/enterprise/demo-data.ts";
 
@@ -84,10 +84,17 @@ async function main() {
     content: queuedContent,
     asyncRequested: true,
   });
+  const queuedForWorker = await createIngestionJob({
+    workspaceId: DEMO_WORKSPACE_ID,
+    title: `Queued worker source ${unique}`,
+    sourceType: "upload",
+    content: `Queued worker ingestion ${unique}`,
+    asyncRequested: true,
+  });
   checks.push([
     "async ingestion queues when QStash and worker secret are configured",
-    queued.queued && queued.job.status === "queued" && forwardedSecret === "test-worker-secret",
-    `${queued.queued}/${queued.job.status}/${forwardedSecret}`,
+    queued.queued && queuedForWorker.queued && queued.job.status === "queued" && queuedForWorker.job.status === "queued" && forwardedSecret === "test-worker-secret",
+    `${queued.queued}/${queuedForWorker.queued}/${queued.job.status}/${queuedForWorker.job.status}/${forwardedSecret}`,
   ]);
 
   globalThis.fetch = originalFetch;
@@ -100,6 +107,13 @@ async function main() {
     "queued ingestion can be manually retried",
     retried.status === "succeeded" && retried.chunksEmbedded > 0,
     `${retried.status}/${retried.chunksEmbedded}`,
+  ]);
+
+  const drained = await processDueIngestionJobs({ workspaceId: DEMO_WORKSPACE_ID, limit: 5, actorUserId: "usr_agent_omar" });
+  checks.push([
+    "ingestion worker drains due queued jobs",
+    drained.selected >= 1 && drained.succeeded >= 1 && drained.results.some((result) => result.jobId === queuedForWorker.job.id && result.status === "succeeded"),
+    `${drained.selected}/${drained.succeeded}/${drained.results.map((result) => `${result.jobId}:${result.status}`).join(",")}`,
   ]);
 
   demoOrganization.plan = "Lite";

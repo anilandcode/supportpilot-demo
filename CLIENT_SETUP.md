@@ -43,10 +43,10 @@ Use clear Markdown headings because Lite citations are generated as `filename#he
 ## 4. Enterprise Supabase
 
 1. Create a Supabase project.
-2. Apply `supabase/migrations/001_enterprise_supportpilot.sql`.
-3. Apply `supabase/migrations/002_light_mvp_productization.sql`.
+2. Apply all SQL files in `supabase/migrations/` in order.
+3. Confirm `011_private_knowledge_source_storage.sql` created the private `supportpilot-knowledge-sources` bucket for queued knowledge uploads.
 4. Run `supabase/seed.sql` for demo data.
-5. Create a Storage bucket for source files if the client wants original uploads retained.
+5. Keep the bucket private; workers read original uploads with the server-side service role.
 6. Add these env vars:
 
 ```bash

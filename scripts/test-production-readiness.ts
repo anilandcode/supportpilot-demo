@@ -357,6 +357,8 @@ const rateLimitTestSource = readFileSync("scripts/test-rate-limit.ts", "utf8");
 const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
 const retentionWorkerRouteSource = readFileSync("app/api/security/retention/jobs/run/route.ts", "utf8");
 const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
+const ingestionWorkerRouteSource = readFileSync("app/api/knowledge/ingest/jobs/run/route.ts", "utf8");
+const ingestionStorageMigrationSource = readFileSync("supabase/migrations/011_private_knowledge_source_storage.sql", "utf8");
 const healthRouteSource = readFileSync("app/api/health/route.ts", "utf8");
 const healthOpsSource = readFileSync("lib/ops/health.ts", "utf8");
 checks.push([
@@ -463,6 +465,20 @@ checks.push([
     ingestionSource.includes("documentChunks: pendingChunks") &&
     ingestionSource.includes("knowledge.ingestion.plan_limited"),
   "lib/db/ingestion.ts",
+]);
+checks.push([
+  "background ingestion uses private stored-source handoff and worker drain",
+  ingestionSource.includes("storeSourcePayload") &&
+    ingestionSource.includes("supabase://") &&
+    ingestionSource.includes("readStoredPayload") &&
+    ingestionSource.includes("export async function processDueIngestionJobs") &&
+    ingestionWorkerRouteSource.includes("SUPPORTPILOT_INGESTION_WORKER_SECRET") &&
+    ingestionWorkerRouteSource.includes('req.headers.get("x-supportpilot-worker-secret")') &&
+    ingestionWorkerRouteSource.includes("processDueIngestionJobs") &&
+    ingestionStorageMigrationSource.includes("supportpilot-knowledge-sources") &&
+    ingestionStorageMigrationSource.includes("public = false") &&
+    ingestionStorageMigrationSource.includes("storage.objects"),
+  "ingestion storage worker",
 ]);
 checks.push([
   "health endpoint supports authenticated incident alert routing",

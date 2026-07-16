@@ -37,10 +37,16 @@ Required production secrets:
 - optional `SUPPORTPILOT_DOMAIN_CNAME_TARGET`
 - optional `SUPPORTPILOT_DOMAIN_RECHECK_SECRET`
 - optional `SUPPORTPILOT_DOMAIN_STALE_DAYS`
+- optional `SUPPORTPILOT_INGESTION_WORKER_SECRET`
+- optional `SUPPORTPILOT_KNOWLEDGE_SOURCE_BUCKET`
 - optional `SUPPORTPILOT_RETENTION_WORKER_SECRET`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
 `SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, invitation sender addresses, and Sentry auth tokens belong only in server-side deployment env vars.
+
+## Knowledge Source Storage
+
+Supabase-backed knowledge ingestion stores uploaded source bytes in the private `supportpilot-knowledge-sources` Storage bucket before queued extraction. The database job payload keeps a `supabase://bucket/path` reference, filename, and byte count instead of raw base64 content when storage succeeds. Workers read sources through the server-side service-role client; browser code never receives the private object path as a public URL.
 
 ## Retention And Deletion
 
