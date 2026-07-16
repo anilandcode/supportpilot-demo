@@ -1,5 +1,8 @@
 import { getAppMode, getMissingSupabaseConfig, isProductionMode } from "@/lib/supabase/config";
 import { isTransactionalEmailConfigured } from "@/lib/integrations/resend";
+import { getDashboardMetrics, getTicket, getWidgetConfig, getWorkspace, listApprovalQueue, listTickets } from "@/lib/db/support";
+import { getModelReadiness } from "@/lib/generation";
+import { getRetriever, hasUsefulContext } from "@/lib/retriever";
 
 export type HealthCheckStatus = "pass" | "warn" | "fail";
 
@@ -36,6 +39,16 @@ export function buildHealthSnapshot(now = new Date()): HealthSnapshot {
     status: hasFail ? "fail" : hasWarn ? "degraded" : "ok",
     appMode: getAppMode(),
     checkedAt: now.toISOString(),
+    checks,
+  };
+}
+
+export async function buildDeploymentHealthSnapshot(now = new Date()): Promise<HealthSnapshot> {
+  const base = buildHealthSnapshot(now);
+  const checks = [...base.checks, ...(await checkCoreRouteContracts())];
+  return {
+    ...base,
+    status: snapshotStatus(checks),
     checks,
   };
 }
@@ -167,6 +180,86 @@ function checkStripe(): HealthCheck {
     status: isProductionMode() ? "warn" : "warn",
     message: `Missing Stripe config: ${missing.join(", ")}`,
   };
+}
+
+async function checkCoreRouteContracts(): Promise<HealthCheck[]> {
+  const workspace = await safeCheck("workspace_runtime", async () => {
+    const resolvedWorkspace = await getWorkspace();
+    return {
+      ok: Boolean(resolvedWorkspace.id && resolvedWorkspace.widgetKey),
+      message: `Workspace ${resolvedWorkspace.slug} resolved for deployment probes.`,
+      workspaceId: resolvedWorkspace.id,
+    };
+  });
+  const workspaceId = typeof workspace.extra?.workspaceId === "string" ? workspace.extra.workspaceId : undefined;
+
+  return [
+    workspace.check,
+    await safeCheck("stats_runtime", async () => {
+      const metrics = await getDashboardMetrics(workspaceId);
+      return {
+        ok: Number.isFinite(metrics.totalTickets) && Number.isFinite(metrics.acceptanceRate),
+        message: `/api/stats dependencies returned ${metrics.totalTickets} tickets and ${Math.round(metrics.acceptanceRate * 100)}% acceptance.`,
+      };
+    }),
+    await safeCheck("chat_runtime", async () => {
+      const [widgetConfig, chunks] = await Promise.all([
+        getWidgetConfig(workspaceId),
+        getRetriever(workspaceId).retrieve("pricing refund security support", 3),
+      ]);
+      const modelReadiness = getModelReadiness();
+      const retrievalReady = chunks.length > 0 && hasUsefulContext(chunks);
+      return {
+        ok: retrievalReady && modelReadiness.ready && Boolean(widgetConfig.launcherLabel),
+        allowWarn: retrievalReady && !modelReadiness.ready,
+        message: retrievalReady
+          ? modelReadiness.ready
+            ? `/api/chat dependencies can retrieve approved context and provider generation is configured.`
+            : `/api/chat retrieval works, but provider generation is not configured: ${modelReadiness.reason}`
+          : "/api/chat could not retrieve useful approved context.",
+      };
+    }),
+    await safeCheck("ticket_draft_runtime", async () => {
+      const tickets = await listTickets({ workspaceId });
+      const ticket = tickets[0] ? await getTicket(tickets[0].id) : null;
+      return {
+        ok: Boolean(ticket?.customer && Array.isArray(ticket.messages)),
+        message: ticket ? `/api/tickets/[ticketId]/draft dependencies resolved ticket ${ticket.id}.` : "No ticket is available for draft probes.",
+      };
+    }),
+    await safeCheck("approval_decision_runtime", async () => {
+      const queue = await listApprovalQueue(workspaceId);
+      return {
+        ok: Array.isArray(queue) && queue.every((run) => Boolean(run.id && run.approvalStatus)),
+        message: `/api/ai-runs/[aiRunId]/decision dependencies returned ${queue.length} review candidate(s).`,
+      };
+    }),
+  ].map((item) => ("check" in item ? item.check : item));
+}
+
+async function safeCheck(
+  key: string,
+  fn: () => Promise<{ ok: boolean; allowWarn?: boolean; message: string; workspaceId?: string }>,
+): Promise<{ check: HealthCheck; extra?: { workspaceId?: string } }> {
+  try {
+    const result = await fn();
+    const status: HealthCheckStatus = result.ok ? "pass" : result.allowWarn || !isProductionMode() ? "warn" : "fail";
+    return { check: { key, status, message: result.message }, extra: { workspaceId: result.workspaceId } };
+  } catch (error) {
+    return {
+      check: {
+        key,
+        status: isProductionMode() ? "fail" : "warn",
+        message: error instanceof Error ? error.message : "runtime probe failed",
+      },
+    };
+  }
+}
+
+function snapshotStatus(checks: HealthCheck[]): HealthSnapshot["status"] {
+  const hasFail = checks.some((check) => check.status === "fail");
+  const hasWarn = checks.some((check) => check.status === "warn");
+  return hasFail ? "fail" : hasWarn ? "degraded" : "ok";
 }
 
 function redactUrl(value: string) {

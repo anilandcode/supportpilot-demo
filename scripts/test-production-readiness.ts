@@ -524,10 +524,15 @@ checks.push([
 checks.push([
   "health endpoint supports authenticated incident alert routing",
   healthRouteSource.includes("export async function POST") &&
+    healthRouteSource.includes("buildDeploymentHealthSnapshot") &&
     healthRouteSource.includes("verifyHealthAlertSecret") &&
     healthRouteSource.includes("sendHealthAlert") &&
     healthOpsSource.includes("SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL") &&
     healthOpsSource.includes("SUPPORTPILOT_EVAL_WORKER_SECRET") &&
+    healthOpsSource.includes("stats_runtime") &&
+    healthOpsSource.includes("chat_runtime") &&
+    healthOpsSource.includes("ticket_draft_runtime") &&
+    healthOpsSource.includes("approval_decision_runtime") &&
     healthOpsSource.includes("redactUrl"),
   "health alert route",
 ]);

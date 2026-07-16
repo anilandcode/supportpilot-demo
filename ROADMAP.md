@@ -6,7 +6,7 @@
 - Replace deterministic demo embeddings with provider embeddings for production.
 - Add live scheduler provisioning and alert routing for the persisted golden-question eval worker.
 - Add row-level automated tests against a Supabase branch database.
-- Add deployment health checks for `/api/stats`, `/api/chat`, and draft/decision routes.
+- Add live uptime-provider configuration and alert routing around the deployment health endpoint.
 - Add WORM/retention-lock policy rehearsal for private knowledge-source and audit-evidence Storage buckets.
 - Add rate-limit persistence by workspace instead of in-memory demo limits.
 

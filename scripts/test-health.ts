@@ -1,4 +1,4 @@
-import { buildHealthSnapshot, sendHealthAlert, verifyHealthAlertSecret } from "../lib/ops/health.ts";
+import { buildDeploymentHealthSnapshot, buildHealthSnapshot, sendHealthAlert, verifyHealthAlertSecret } from "../lib/ops/health.ts";
 
 const checks: Array<[string, boolean, string]> = [];
 
@@ -20,6 +20,7 @@ const trackedEnv = [
   "STRIPE_WEBHOOK_SECRET",
   "SUPPORTPILOT_HEALTH_ALERT_SECRET",
   "SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL",
+  "GOOGLE_GENERATIVE_AI_API_KEY",
 ] as const;
 
 const originalEnv = Object.fromEntries(trackedEnv.map((key) => [key, process.env[key]]));
@@ -37,6 +38,15 @@ async function main() {
     "demo health is degraded but does not fail without optional services",
     demoHealth.status === "degraded" && demoHealth.appMode === "demo" && demoHealth.checks.some((check) => check.key === "supabase" && check.status === "warn"),
     `${demoHealth.status}/${demoHealth.appMode}`,
+  ]);
+  const demoDeploymentHealth = await buildDeploymentHealthSnapshot(new Date("2026-07-15T00:00:00.000Z"));
+  checks.push([
+    "demo deployment health probes core routes without failing",
+    demoDeploymentHealth.status === "degraded" &&
+      ["workspace_runtime", "stats_runtime", "chat_runtime", "ticket_draft_runtime", "approval_decision_runtime"].every((key) =>
+        demoDeploymentHealth.checks.some((check) => check.key === key && check.status !== "fail"),
+      ),
+    demoDeploymentHealth.checks.map((check) => `${check.key}:${check.status}`).join(","),
   ]);
 
   clearTrackedEnv();
@@ -63,13 +73,21 @@ async function main() {
   process.env.SUPPORTPILOT_INTEGRATION_WORKER_SECRET = "integrations";
   process.env.SUPPORTPILOT_RETENTION_WORKER_SECRET = "retention";
   process.env.SUPPORTPILOT_EVAL_WORKER_SECRET = "eval";
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY = "google";
   process.env.STRIPE_SECRET_KEY = "sk_test";
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
   const productionReady = buildHealthSnapshot(new Date("2026-07-15T00:00:00.000Z"));
   checks.push([
-    "production health passes when launch dependencies are configured",
+    "production config health passes when launch dependencies are configured",
     productionReady.status === "ok" && productionReady.checks.every((check) => check.status === "pass"),
     productionReady.checks.map((check) => `${check.key}:${check.status}`).join(","),
+  ]);
+  const productionDeploymentWithFakeSupabase = await buildDeploymentHealthSnapshot(new Date("2026-07-15T00:00:00.000Z"));
+  checks.push([
+    "production deployment health fails when Supabase runtime is unreachable",
+    productionDeploymentWithFakeSupabase.status === "fail" &&
+      productionDeploymentWithFakeSupabase.checks.some((check) => check.key === "workspace_runtime" && check.status === "fail"),
+    productionDeploymentWithFakeSupabase.checks.map((check) => `${check.key}:${check.status}`).join(","),
   ]);
 
   process.env.SUPPORTPILOT_HEALTH_ALERT_SECRET = "health-secret";
