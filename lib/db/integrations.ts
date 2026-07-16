@@ -503,6 +503,41 @@ async function buildDeliveryRequest(event: OutboundEvent): Promise<{ url: string
     };
   }
 
+  if (account?.provider === "zendesk") {
+    const subdomain = stringConfig(account.config, "subdomain");
+    const ticketId = stringConfig(account.config, "ticketId") || stringPayload(event.payload, "externalTicketId");
+    const email = stringConfig(account.config, "email");
+    const token = resolveSecret(account.secretRef) || stringConfig(account.config, "apiToken");
+    if (!subdomain || !ticketId || !email || !token) return null;
+    const body = JSON.stringify(toZendeskPayload(event));
+    return {
+      url: `https://${subdomain}.zendesk.com/api/v2/tickets/${encodeURIComponent(ticketId)}.json`,
+      body,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${Buffer.from(`${email}/token:${token}`).toString("base64")}`,
+      },
+    };
+  }
+
+  if (account?.provider === "intercom") {
+    const conversationId = stringConfig(account.config, "conversationId") || stringPayload(event.payload, "externalConversationId");
+    const adminId = stringConfig(account.config, "adminId");
+    const token = resolveSecret(account.secretRef) || stringConfig(account.config, "accessToken");
+    if (!conversationId || !adminId || !token) return null;
+    const body = JSON.stringify(toIntercomPayload(event, adminId));
+    return {
+      url: `https://api.intercom.io/conversations/${encodeURIComponent(conversationId)}/reply`,
+      body,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Intercom-Version": "2.11",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  }
+
   if (account?.provider === "webhook" || endpoint) {
     const url = endpoint?.url ?? stringConfig(account?.config ?? {}, "url");
     if (!url) return null;
@@ -535,6 +570,43 @@ function toSlackPayload(event: OutboundEvent) {
       { type: "context", elements: [{ type: "mrkdwn", text: `AI run: ${event.subjectId}` }] },
     ],
   };
+}
+
+function toZendeskPayload(event: OutboundEvent) {
+  return {
+    ticket: {
+      comment: {
+        public: false,
+        body: supportNoteBody(event),
+      },
+      tags: ["supportpilot", event.eventType],
+    },
+  };
+}
+
+function toIntercomPayload(event: OutboundEvent, adminId: string) {
+  return {
+    message_type: "note",
+    type: "admin",
+    admin_id: adminId,
+    body: supportNoteBody(event),
+  };
+}
+
+function supportNoteBody(event: OutboundEvent) {
+  const subject = String(event.payload.ticketSubject ?? "SupportPilot ticket");
+  const status = String(event.payload.approvalStatus ?? event.eventType);
+  const confidence = typeof event.payload.confidence === "number" ? `${Math.round(event.payload.confidence * 100)}%` : "n/a";
+  const responsePreview = String(event.payload.responsePreview ?? "").slice(0, 700);
+  const riskFlags = Array.isArray(event.payload.riskFlags) ? event.payload.riskFlags.map(String).join(", ") : "";
+  return [
+    `SupportPilot ${event.eventType.replace(/_/g, " ")}: ${subject}`,
+    `Status: ${status}`,
+    `Confidence: ${confidence}`,
+    riskFlags ? `Risk flags: ${riskFlags}` : null,
+    responsePreview ? `Draft preview: ${responsePreview}` : null,
+    `AI run: ${event.subjectId}`,
+  ].filter(Boolean).join("\n");
 }
 
 function signedWebhookHeaders(body: string, secret: string) {
@@ -659,6 +731,11 @@ async function maybeDeliverInline(events: OutboundEvent[]) {
 
 function stringConfig(config: Record<string, unknown>, key: string) {
   const value = config[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function stringPayload(payload: Record<string, unknown>, key: string) {
+  const value = payload[key];
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 

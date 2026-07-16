@@ -53,12 +53,15 @@ async function main() {
   ]);
 
   const originalFetch = globalThis.fetch;
-  const calls: Array<{ url: string; body: string; signature: string | null }> = [];
+  const calls: Array<{ url: string; body: string; signature: string | null; authorization: string | null; intercomVersion: string | null }> = [];
   globalThis.fetch = (async (input, init) => {
+    const headers = new Headers(init?.headers);
     calls.push({
       url: String(input),
       body: String(init?.body ?? ""),
-      signature: new Headers(init?.headers).get("X-SupportPilot-Signature"),
+      signature: headers.get("X-SupportPilot-Signature"),
+      authorization: headers.get("Authorization"),
+      intercomVersion: headers.get("Intercom-Version"),
     });
     return new Response("ok", { status: 200 });
   }) as typeof fetch;
@@ -90,6 +93,64 @@ async function main() {
     calls.map((call) => `${call.url}:${call.signature ?? "none"}`).join(" | "),
   ]);
 
+  process.env.TEST_ZENDESK_TOKEN = "zendesk-token";
+  process.env.TEST_INTERCOM_TOKEN = "intercom-token";
+  await upsertIntegrationAccount({
+    workspaceId: DEMO_WORKSPACE_ID,
+    provider: "zendesk",
+    name: "Zendesk helpdesk",
+    status: "active",
+    secretRef: "TEST_ZENDESK_TOKEN",
+    config: {
+      subdomain: "acmedesk",
+      email: "support@example.com",
+      ticketId: "456",
+      events: ["approved_reply"],
+    },
+  });
+  await upsertIntegrationAccount({
+    workspaceId: DEMO_WORKSPACE_ID,
+    provider: "intercom",
+    name: "Intercom inbox",
+    status: "active",
+    secretRef: "TEST_INTERCOM_TOKEN",
+    config: {
+      conversationId: "conv_123",
+      adminId: "admin_789",
+      events: ["approved_reply"],
+    },
+  });
+  const helpdeskEvents = await enqueueApprovalDecision(fakeAiRun("approved", crypto.randomUUID()));
+  const zendeskEvent = helpdeskEvents.find((event) => event.integrationAccountId === getLocalIntegrationState().accounts.find((account) => account.provider === "zendesk")?.id);
+  const intercomEvent = helpdeskEvents.find((event) => event.integrationAccountId === getLocalIntegrationState().accounts.find((account) => account.provider === "intercom")?.id);
+  const zendeskResult = zendeskEvent ? await deliverOutboundEvent(zendeskEvent.id) : null;
+  const intercomResult = intercomEvent ? await deliverOutboundEvent(intercomEvent.id) : null;
+  const zendeskCall = calls.find((call) => call.url.includes("zendesk.com/api/v2/tickets/456.json"));
+  const intercomCall = calls.find((call) => call.url.includes("api.intercom.io/conversations/conv_123/reply"));
+  checks.push([
+    "Zendesk delivery creates private ticket comment with token auth",
+    Boolean(
+      zendeskResult?.event.status === "delivered" &&
+        zendeskCall?.authorization?.startsWith("Basic ") &&
+        zendeskCall.body.includes('"public":false') &&
+        zendeskCall.body.includes("SupportPilot approved reply"),
+    ),
+    `${zendeskResult?.event.status}/${zendeskCall?.url}/${zendeskCall?.authorization?.slice(0, 8)}`,
+  ]);
+  checks.push([
+    "Intercom delivery creates admin note with bearer auth",
+    Boolean(
+      intercomResult?.event.status === "delivered" &&
+        intercomCall?.authorization === "Bearer intercom-token" &&
+        intercomCall?.intercomVersion === "2.11" &&
+        intercomCall.body.includes('"message_type":"note"') &&
+        intercomCall.body.includes('"admin_id":"admin_789"'),
+    ),
+    `${intercomResult?.event.status}/${intercomCall?.url}/${intercomCall?.authorization}`,
+  ]);
+  delete process.env.TEST_ZENDESK_TOKEN;
+  delete process.env.TEST_INTERCOM_TOKEN;
+
   globalThis.fetch = (async () => new Response("bad gateway", { status: 502 })) as typeof fetch;
   const failingEndpoint = await upsertWebhookEndpoint({
     workspaceId: DEMO_WORKSPACE_ID,
@@ -110,7 +171,7 @@ async function main() {
   checks.push([
     "integration health surfaces queued retries and delivery failures",
     healthAfterFailure.status === "degraded" &&
-      healthAfterFailure.channels.activeAccounts === 1 &&
+      healthAfterFailure.channels.activeAccounts >= 3 &&
       healthAfterFailure.channels.activeWebhookEndpoints >= 3 &&
       healthAfterFailure.events.queued >= 1 &&
       healthAfterFailure.events.retryDue >= 1 &&
@@ -120,10 +181,10 @@ async function main() {
   ]);
 
   globalThis.fetch = (async () => new Response("ok", { status: 200 })) as typeof fetch;
-  const drained = await deliverDueOutboundEvents({ workspaceId: DEMO_WORKSPACE_ID, now: new Date(Date.now() + 120_000), limit: 10 });
+  const drained = await deliverDueOutboundEvents({ workspaceId: DEMO_WORKSPACE_ID, now: new Date(Date.now() + 120_000), limit: 25 });
   checks.push([
     "integration worker drains due queued events",
-    drained.selected > 0 && drained.delivered > 0 && drained.failed === 0 && drained.results.every((result) => result.status === "delivered"),
+    drained.selected > 0 && drained.delivered > 0 && drained.failed === 0 && drained.queued === 0 && drained.results.every((result) => result.status === "delivered" || result.status === "skipped"),
     `${drained.selected}/${drained.delivered}/${drained.failed}`,
   ]);
   const healthAfterDrain = await getIntegrationHealth(DEMO_WORKSPACE_ID, new Date(Date.now() + 180_000));

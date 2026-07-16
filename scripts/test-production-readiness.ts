@@ -412,6 +412,17 @@ checks.push([
   "integration delivery worker",
 ]);
 checks.push([
+  "helpdesk integrations build Zendesk and Intercom delivery requests",
+  integrationsDbSource.includes('account?.provider === "zendesk"') &&
+    integrationsDbSource.includes("toZendeskPayload") &&
+    integrationsDbSource.includes("zendesk.com/api/v2/tickets") &&
+    integrationsDbSource.includes('account?.provider === "intercom"') &&
+    integrationsDbSource.includes("toIntercomPayload") &&
+    integrationsDbSource.includes("api.intercom.io/conversations") &&
+    integrationsDbSource.includes('"Intercom-Version"'),
+  "helpdesk delivery builders",
+]);
+checks.push([
   "widget routes use centralized production origin gate",
   chatRouteSource.includes("requireWidgetWorkspace({ req, requestedWorkspace, route: \"/api/chat\" })") &&
     widgetSessionRouteSource.includes("requireWidgetWorkspace") &&
