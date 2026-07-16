@@ -149,8 +149,10 @@ async function main() {
     generatedBy: "usr_admin_mira",
   });
   checks.push([
-    "audit evidence export is tamper-evident",
-    exportRecord.status === "succeeded" && Boolean(exportRecord.artifactHash) && exportRecord.artifactUrl?.startsWith("memory://audit-evidence/") === true,
+    "audit evidence export is tamper-evident with local artifact fallback",
+    exportRecord.status === "succeeded" &&
+      Boolean(exportRecord.artifactHash) &&
+      (exportRecord.artifactUrl?.startsWith("memory://audit-evidence/") === true || exportRecord.artifactUrl?.startsWith("supabase://supportpilot-audit-evidence/") === true),
     `${exportRecord.status}/${exportRecord.artifactHash?.slice(0, 8)}/${exportRecord.artifactUrl}`,
   ]);
   checks.push([

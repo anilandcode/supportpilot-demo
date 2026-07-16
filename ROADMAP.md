@@ -2,12 +2,12 @@
 
 ## Production Hardening
 
-- Add background ingestion jobs for large PDFs and site crawls.
+- Add site-crawl ingestion jobs after the current upload/PDF background ingestion baseline.
 - Replace deterministic demo embeddings with provider embeddings for production.
 - Add scheduled eval runs for groundedness, citations, escalation correctness, and response latency.
 - Add row-level automated tests against a Supabase branch database.
 - Add deployment health checks for `/api/stats`, `/api/chat`, and draft/decision routes.
-- Add durable file retention in Supabase Storage for original uploaded sources.
+- Add WORM/retention-lock policy rehearsal for private knowledge-source and audit-evidence Storage buckets.
 - Add rate-limit persistence by workspace instead of in-memory demo limits.
 
 ## Multi-Tenant Support

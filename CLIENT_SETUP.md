@@ -45,9 +45,10 @@ Use clear Markdown headings because Lite citations are generated as `filename#he
 1. Create a Supabase project.
 2. Apply all SQL files in `supabase/migrations/` in order.
 3. Confirm `011_private_knowledge_source_storage.sql` created the private `supportpilot-knowledge-sources` bucket for queued knowledge uploads.
-4. Run `supabase/seed.sql` for demo data.
-5. Keep the bucket private; workers read original uploads with the server-side service role.
-6. Add these env vars:
+4. Confirm `012_private_audit_evidence_storage.sql` created the private `supportpilot-audit-evidence` bucket for audit evidence artifacts.
+5. Run `supabase/seed.sql` for demo data.
+6. Keep both buckets private; workers and audit export jobs use the server-side service role.
+7. Add these env vars:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=...

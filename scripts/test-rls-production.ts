@@ -11,7 +11,7 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["ten migration files exist", migrationFiles.length >= 10, String(migrationFiles.length)]);
+checks.push(["twelve migration files exist", migrationFiles.length >= 12, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
 checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 checks.push(["embedding versioning migration present", migrationFiles.some((file) => file.endsWith("006_embedding_versioning_jobs.sql")), migrationFiles.join(",")]);
@@ -19,6 +19,8 @@ checks.push(["background ingestion migration present", migrationFiles.some((file
 checks.push(["integration outbound migration present", migrationFiles.some((file) => file.endsWith("008_integration_outbound_events.sql")), migrationFiles.join(",")]);
 checks.push(["retention evidence migration present", migrationFiles.some((file) => file.endsWith("009_retention_evidence_jobs.sql")), migrationFiles.join(",")]);
 checks.push(["domain verification migration present", migrationFiles.some((file) => file.endsWith("010_domain_verification_tokens.sql")), migrationFiles.join(",")]);
+checks.push(["private knowledge source storage migration present", migrationFiles.some((file) => file.endsWith("011_private_knowledge_source_storage.sql")), migrationFiles.join(",")]);
+checks.push(["private audit evidence storage migration present", migrationFiles.some((file) => file.endsWith("012_private_audit_evidence_storage.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -52,6 +54,15 @@ checks.push(["deletion requests are workspace gated", sql.includes("workspace ma
 checks.push(["retention jobs track proof hashes", sql.includes("retention_jobs") && sql.includes("audit_proof_hash") && sql.includes("affected_counts"), "retention_jobs"]);
 checks.push(["evidence exports are tamper evident", sql.includes("audit_evidence_exports") && sql.includes("artifact_hash") && sql.includes("period_start"), "audit_evidence_exports"]);
 checks.push(["workspace domains track DNS verification", sql.includes("verification_token text") && sql.includes("verification_record text") && sql.includes("last_checked_at"), "workspace_domains"]);
+checks.push([
+  "audit evidence artifacts use private workspace-scoped storage policies",
+  sql.includes("supportpilot-audit-evidence") &&
+    sql.includes("public = false") &&
+    sql.includes("workspace members read audit evidence artifacts") &&
+    sql.includes("workspace managers write audit evidence artifacts") &&
+    sql.includes("storage.objects"),
+  "supportpilot-audit-evidence",
+]);
 
 let failed = 0;
 console.log("\nSupportPilot RLS production checks");

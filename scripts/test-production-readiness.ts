@@ -359,6 +359,7 @@ const retentionWorkerRouteSource = readFileSync("app/api/security/retention/jobs
 const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
 const ingestionWorkerRouteSource = readFileSync("app/api/knowledge/ingest/jobs/run/route.ts", "utf8");
 const ingestionStorageMigrationSource = readFileSync("supabase/migrations/011_private_knowledge_source_storage.sql", "utf8");
+const auditEvidenceStorageMigrationSource = readFileSync("supabase/migrations/012_private_audit_evidence_storage.sql", "utf8");
 const healthRouteSource = readFileSync("app/api/health/route.ts", "utf8");
 const healthOpsSource = readFileSync("lib/ops/health.ts", "utf8");
 checks.push([
@@ -467,6 +468,17 @@ checks.push([
     retentionWorkerRouteSource.includes('req.headers.get("x-supportpilot-retention-secret")') &&
     retentionWorkerRouteSource.includes("processDueRetentionJobs"),
   "retention enforcement",
+]);
+checks.push([
+  "audit evidence exports use private Supabase storage with demo fallback",
+  retentionSource.includes("storeAuditEvidenceArtifact") &&
+    retentionSource.includes("SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET") &&
+    retentionSource.includes("supabase://") &&
+    retentionSource.includes("memory://audit-evidence/") &&
+    auditEvidenceStorageMigrationSource.includes("supportpilot-audit-evidence") &&
+    auditEvidenceStorageMigrationSource.includes("public = false") &&
+    auditEvidenceStorageMigrationSource.includes("storage.objects"),
+  "audit evidence artifact storage",
 ]);
 checks.push([
   "background ingestion jobs respect source and chunk entitlements",

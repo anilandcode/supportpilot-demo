@@ -347,7 +347,7 @@ export async function createAuditEvidenceExport(input: CreateEvidenceExportInput
     exportRecord.status = "succeeded";
     exportRecord.itemCounts = { auditLogs: auditLogs.length, securityEvents: securityEvents.length, rlsReports: 1 };
     exportRecord.artifactHash = proofHash(payload);
-    exportRecord.artifactUrl = `memory://audit-evidence/${exportRecord.id}.json`;
+    exportRecord.artifactUrl = await storeAuditEvidenceArtifact(exportRecord, payload);
     exportRecord.completedAt = new Date().toISOString();
     await persistAuditEvidenceExport(exportRecord);
     await appendAuditLog({
@@ -739,6 +739,30 @@ async function persistAuditEvidenceExport(exportRecord: AuditEvidenceExport) {
   if (!local) localRetentionState.evidenceExports.unshift(exportRecord);
   const supabase = createSupabaseAdminClient();
   if (supabase) await supabase.from("audit_evidence_exports").upsert(toAuditEvidenceExportRow(exportRecord), { onConflict: "id" });
+}
+
+async function storeAuditEvidenceArtifact(exportRecord: AuditEvidenceExport, payload: unknown) {
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return `memory://audit-evidence/${exportRecord.id}.json`;
+
+  const bucket = auditEvidenceBucketName();
+  const path = auditEvidencePath(exportRecord);
+  const body = Buffer.from(JSON.stringify(payload, null, 2), "utf8");
+  const { error } = await supabase.storage.from(bucket).upload(path, body, {
+    contentType: "application/json",
+    upsert: false,
+  });
+  if (error) throw new Error(`Audit evidence storage upload failed: ${error.message}`);
+  return `supabase://${bucket}/${path}`;
+}
+
+function auditEvidenceBucketName() {
+  return process.env.SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET || "supportpilot-audit-evidence";
+}
+
+function auditEvidencePath(exportRecord: AuditEvidenceExport) {
+  const period = exportRecord.periodStart.slice(0, 10);
+  return `${exportRecord.workspaceId}/${period}/${exportRecord.id}.json`;
 }
 
 function daysAgo(days: number) {

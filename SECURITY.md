@@ -40,6 +40,7 @@ Required production secrets:
 - optional `SUPPORTPILOT_INGESTION_WORKER_SECRET`
 - optional `SUPPORTPILOT_KNOWLEDGE_SOURCE_BUCKET`
 - optional `SUPPORTPILOT_RETENTION_WORKER_SECRET`
+- optional `SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
 `SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, invitation sender addresses, and Sentry auth tokens belong only in server-side deployment env vars.
@@ -53,6 +54,8 @@ Supabase-backed knowledge ingestion stores uploaded source bytes in the private 
 Workspace retention settings schedule conversation and AI-log cleanup jobs. Processed jobs redact aged ticket subjects, messages, escalation details, AI prompts, AI responses, rationales, model-route task text, and model-route reasons while preserving non-PII operational metadata, counts, timestamps, costs, confidence, and proof hashes for auditability.
 
 Verified deletion requests create scoped jobs for tickets, customers, or source documents. Ticket/customer requests anonymize personal support content and customer identity fields without deleting the audit trail. Source-document requests delete the approved source and its vector chunks. `POST /api/security/retention/jobs/run` is worker-secret protected and can drain queued jobs for an external scheduler when `SUPPORTPILOT_RETENTION_WORKER_SECRET` is configured.
+
+Audit evidence exports write a non-PII manifest hash to `audit_evidence_exports`. Supabase-backed deployments also upload the JSON artifact to the private `supportpilot-audit-evidence` Storage bucket, or the bucket named by `SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET`, and store only a `supabase://bucket/path` reference in the database. Workspace members can read artifacts through RLS-scoped storage policies; owner/admin/manager roles can write them. Local demos keep a `memory://audit-evidence/...` artifact reference.
 
 ## AI Safety Boundaries
 

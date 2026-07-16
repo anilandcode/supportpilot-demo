@@ -81,7 +81,7 @@ Date: 2026-06-24
 
 - Added retention/evidence migration `009_retention_evidence_jobs.sql` for data deletion requests, retention cleanup jobs, audit evidence exports, proof hashes, affected counts, retry metadata, and workspace RLS.
 - Added `lib/db/retention.ts` plus `/api/security/deletion-requests`, `/api/security/retention/jobs`, `/api/security/retention/jobs/[jobId]/run`, and `/api/security/audit-exports`.
-- Verified deletion requests now queue deletion jobs; retention settings schedule conversation and AI-log cleanup jobs; evidence exports produce tamper-evident hashes and SOC 2 readiness claim boundaries.
+- Verified deletion requests now queue deletion jobs; retention settings schedule conversation and AI-log cleanup jobs; evidence exports produce tamper-evident hashes, private Supabase Storage artifact references when configured, local demo artifact references otherwise, and SOC 2 readiness claim boundaries.
 - Added `npm run test:retention` for deletion request verification, queued deletion processing, proof hashes, settings-driven cleanup scheduling, and evidence export item counts.
 - Added domain verification migration `010_domain_verification_tokens.sql` for widget-origin verification tokens, DNS records, timestamps, and verification errors.
 - Added staff-readable and owner/admin-manageable workspace domain APIs, including TXT/CNAME verification through `/api/workspaces/[workspaceId]/domains/[domainId]/verify`.
@@ -126,7 +126,7 @@ Date: 2026-06-24
 - Full custom-domain launch remains a follow-up: configure an external scheduler for the recheck endpoint and production DNS monitoring around `SUPPORTPILOT_DOMAIN_CNAME_TARGET`.
 - Full QA launch remains a follow-up: add browser Playwright critical journeys, live uptime-provider configuration, richer golden-question dashboards, and release/load gates to CI.
 - Full local small-model execution, local embeddings, and reranker runtime calls remain optional P2 experiments behind environment variables.
-- SSO/SAML/SCIM, live Supabase data deletion/anonymization, private storage retention lock, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
+- SSO/SAML/SCIM, live Supabase data deletion/anonymization rehearsal, true WORM/retention-lock storage controls, SOC2 evidence packet automation, and external helpdesk sync remain roadmap items.
 - Live Supabase RLS role verification requires a real Supabase project and credentials.
 
 ## Verification Commands
