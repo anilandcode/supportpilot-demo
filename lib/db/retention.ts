@@ -84,6 +84,59 @@ export async function listRetentionJobs(workspaceId = DEMO_WORKSPACE_ID): Promis
   return localRetentionState.retentionJobs.filter((job) => job.workspaceId === workspace.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+export async function listDueRetentionJobs(workspaceId = DEMO_WORKSPACE_ID, now = new Date(), limit = 25): Promise<RetentionJob[]> {
+  const safeLimit = Math.max(1, Math.min(Math.floor(limit), 100));
+  const jobs = await listRetentionJobs(workspaceId);
+  return jobs
+    .filter((job) => job.status === "queued" && (!job.nextRunAt || Date.parse(job.nextRunAt) <= now.getTime()))
+    .sort((a, b) => {
+      const aTime = a.nextRunAt ? Date.parse(a.nextRunAt) : Date.parse(a.createdAt);
+      const bTime = b.nextRunAt ? Date.parse(b.nextRunAt) : Date.parse(b.createdAt);
+      return aTime - bTime;
+    })
+    .slice(0, safeLimit);
+}
+
+export async function processDueRetentionJobs(input: { workspaceId?: string | null; now?: Date; limit?: number; actorUserId?: string | null } = {}) {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const now = input.now ?? new Date();
+  const limit = Math.max(1, Math.min(Math.floor(input.limit ?? 25), 100));
+  const due = await listDueRetentionJobs(workspace.id, now, limit);
+  const results: Array<{
+    jobId: string;
+    jobType: RetentionJobType;
+    status: RetentionJob["status"];
+    attempts: number;
+    affectedCounts: Record<string, number>;
+    auditProofHash: string | null;
+    error: string | null;
+  }> = [];
+
+  for (const job of due) {
+    const result = await processRetentionJob(job.id, input.actorUserId ?? null);
+    results.push({
+      jobId: result.id,
+      jobType: result.jobType,
+      status: result.status,
+      attempts: result.attempts,
+      affectedCounts: result.affectedCounts,
+      auditProofHash: result.auditProofHash,
+      error: result.error,
+    });
+  }
+
+  return {
+    workspaceId: workspace.id,
+    checkedAt: now.toISOString(),
+    limit,
+    selected: due.length,
+    succeeded: results.filter((result) => result.status === "succeeded").length,
+    queued: results.filter((result) => result.status === "queued").length,
+    failed: results.filter((result) => result.status === "failed").length,
+    results,
+  };
+}
+
 export async function listAuditEvidenceExports(workspaceId = DEMO_WORKSPACE_ID): Promise<AuditEvidenceExport[]> {
   const workspace = await getWorkspace(workspaceId);
   const supabase = createSupabaseAdminClient();
@@ -215,7 +268,7 @@ export async function processRetentionJob(jobId: string, actorUserId?: string | 
   await persistRetentionJob(job);
 
   try {
-    const affectedCounts = await estimateAffectedCounts(job);
+    const affectedCounts = await applyRetentionJob(job);
     const proof = proofHash({ jobId: job.id, jobType: job.jobType, scope: job.scope, cutoffAt: job.cutoffAt, affectedCounts });
     job.affectedCounts = affectedCounts;
     job.auditProofHash = proof;
@@ -360,23 +413,52 @@ async function createRetentionJob(input: {
   return job;
 }
 
-async function estimateAffectedCounts(job: RetentionJob): Promise<Record<string, number>> {
+async function applyRetentionJob(job: RetentionJob): Promise<Record<string, number>> {
   const state = getLocalState();
   if (job.jobType === "conversation_cleanup") {
-    return {
-      tickets: countOlderThan(state.tickets.filter((ticket) => ticket.workspaceId === job.workspaceId).map((ticket) => ticket.updatedAt), job.cutoffAt),
-      messages: countOlderThan(state.messages.filter((message) => message.workspaceId === job.workspaceId).map((message) => message.createdAt), job.cutoffAt),
+    const ticketIds = new Set(
+      state.tickets
+        .filter((ticket) => ticket.workspaceId === job.workspaceId && isOlderThan(ticket.updatedAt, job.cutoffAt))
+        .map((ticket) => ticket.id),
+    );
+    const counts = {
+      tickets: ticketIds.size,
+      messages: state.messages.filter(
+        (message) => message.workspaceId === job.workspaceId && (ticketIds.has(message.ticketId) || isOlderThan(message.createdAt, job.cutoffAt)),
+      ).length,
     };
+    const now = new Date().toISOString();
+    for (const ticket of state.tickets) {
+      if (!ticketIds.has(ticket.id)) continue;
+      ticket.subject = redactedValue("ticket subject", ticket.id);
+      ticket.escalationReason = ticket.escalationReason ? redactedValue("escalation reason", ticket.id) : null;
+      ticket.tags = ticket.tags.filter((tag) => !/email|phone|billing|refund|legal|privacy/i.test(tag));
+      ticket.updatedAt = now;
+    }
+    for (const message of state.messages) {
+      if (message.workspaceId === job.workspaceId && (ticketIds.has(message.ticketId) || isOlderThan(message.createdAt, job.cutoffAt))) {
+        message.body = redactedValue("ticket message", message.id);
+      }
+    }
+    await applySupabaseConversationCleanup(job.workspaceId, job.cutoffAt);
+    return counts;
   }
   if (job.jobType === "ai_log_cleanup") {
-    return {
-      aiRuns: countOlderThan(state.aiRuns.filter((run) => run.workspaceId === job.workspaceId).map((run) => run.createdAt), job.cutoffAt),
-      modelRouteLogs: countOlderThan(state.modelRouteLogs.filter((log) => log.workspaceId === job.workspaceId).map((log) => log.createdAt), job.cutoffAt),
+    const counts = {
+      aiRuns: state.aiRuns.filter((run) => run.workspaceId === job.workspaceId && isOlderThan(run.createdAt, job.cutoffAt)).length,
+      modelRouteLogs: state.modelRouteLogs.filter((log) => log.workspaceId === job.workspaceId && isOlderThan(log.createdAt, job.cutoffAt)).length,
     };
+    redactLocalAiLogs(job.workspaceId, job.cutoffAt);
+    await applySupabaseAiLogCleanup(job.workspaceId, job.cutoffAt);
+    return counts;
   }
   if (job.jobType === "deletion_request" && job.deletionRequestId) {
     const request = await getDeletionRequest(job.deletionRequestId);
-    return request ? deletionScopeCounts(request) : {};
+    if (!request) return {};
+    const counts = deletionScopeCounts(request);
+    applyLocalDeletionRequest(request);
+    await applySupabaseDeletionRequest(request);
+    return counts;
   }
   return {};
 }
@@ -411,6 +493,204 @@ function countOlderThan(values: string[], cutoffAt: string | null) {
   if (!cutoffAt) return 0;
   const cutoff = new Date(cutoffAt).getTime();
   return values.filter((value) => new Date(value).getTime() < cutoff).length;
+}
+
+function isOlderThan(value: string, cutoffAt: string | null) {
+  if (!cutoffAt) return false;
+  return new Date(value).getTime() < new Date(cutoffAt).getTime();
+}
+
+function redactedValue(label: string, id: string) {
+  return `[retention-redacted:${label}:${proofHash({ label, id }).slice(0, 12)}]`;
+}
+
+function redactLocalAiLogs(workspaceId: string, cutoffAt: string | null, ticketIds?: Set<string>) {
+  for (const run of getLocalState().aiRuns) {
+    const selectedByAge = isOlderThan(run.createdAt, cutoffAt);
+    const selectedByTicket = Boolean(ticketIds?.has(run.ticketId ?? ""));
+    if (run.workspaceId !== workspaceId || (!selectedByAge && !selectedByTicket)) continue;
+    run.promptHash ??= proofHash({ prompt: run.prompt });
+    run.redactedPromptPreview = redactedValue("prompt preview", run.id);
+    run.prompt = redactedValue("prompt", run.id);
+    run.response = redactedValue("ai response", run.id);
+    run.rationale = redactedValue("rationale", run.id);
+    run.sources = [];
+    run.escalationReason = run.escalationReason ? redactedValue("escalation reason", run.id) : null;
+    run.riskFlags = run.riskFlags.filter((flag) => !/email|phone|account|billing|refund|legal|privacy|deletion/i.test(flag));
+  }
+
+  for (const log of getLocalState().modelRouteLogs) {
+    const selectedByAge = isOlderThan(log.createdAt, cutoffAt);
+    const selectedByRun = getLocalState().aiRuns.some((run) => ticketIds?.has(run.ticketId ?? "") && run.id === log.aiRunId);
+    if (log.workspaceId !== workspaceId || (!selectedByAge && !selectedByRun)) continue;
+    log.task = redactedValue("model route task", log.id);
+    log.reason = redactedValue("model route reason", log.id);
+  }
+}
+
+function applyLocalDeletionRequest(request: DataDeletionRequest) {
+  const state = getLocalState();
+  if (request.scope === "ticket") {
+    const ticketIds = new Set([request.subjectId]);
+    for (const ticket of state.tickets) {
+      if (ticket.workspaceId !== request.workspaceId || !ticketIds.has(ticket.id)) continue;
+      ticket.subject = redactedValue("ticket subject", ticket.id);
+      ticket.escalationReason = ticket.escalationReason ? redactedValue("escalation reason", ticket.id) : null;
+      ticket.tags = [];
+      ticket.status = "resolved";
+      ticket.updatedAt = new Date().toISOString();
+    }
+    for (const message of state.messages) {
+      if (message.workspaceId === request.workspaceId && ticketIds.has(message.ticketId)) message.body = redactedValue("ticket message", message.id);
+    }
+    redactLocalAiLogs(request.workspaceId, null, ticketIds);
+    return;
+  }
+
+  if (request.scope === "customer") {
+    const ticketIds = new Set(state.tickets.filter((ticket) => ticket.workspaceId === request.workspaceId && ticket.customerId === request.subjectId).map((ticket) => ticket.id));
+    for (const customer of state.customers) {
+      if (customer.workspaceId !== request.workspaceId || customer.id !== request.subjectId) continue;
+      customer.name = redactedValue("customer name", customer.id);
+      customer.email = `deleted-${proofHash({ customerId: customer.id }).slice(0, 12)}@supportpilot.invalid`;
+      customer.company = "Deleted customer";
+      customer.metadata = {};
+    }
+    for (const ticket of state.tickets) {
+      if (!ticketIds.has(ticket.id)) continue;
+      ticket.subject = redactedValue("ticket subject", ticket.id);
+      ticket.escalationReason = ticket.escalationReason ? redactedValue("escalation reason", ticket.id) : null;
+      ticket.tags = [];
+      ticket.updatedAt = new Date().toISOString();
+    }
+    for (const message of state.messages) {
+      if (message.workspaceId === request.workspaceId && ticketIds.has(message.ticketId)) message.body = redactedValue("ticket message", message.id);
+    }
+    redactLocalAiLogs(request.workspaceId, null, ticketIds);
+    return;
+  }
+
+  if (request.scope === "source_document") {
+    removeWhere(state.chunks, (chunk) => chunk.workspaceId === request.workspaceId && chunk.docId === request.subjectId);
+    removeWhere(state.docs, (doc) => doc.workspaceId === request.workspaceId && doc.id === request.subjectId);
+  }
+}
+
+async function applySupabaseConversationCleanup(workspaceId: string, cutoffAt: string | null) {
+  const supabase = createSupabaseAdminClient();
+  const workspaceUuid = maybeUuid(workspaceId);
+  if (!supabase || !workspaceUuid || !cutoffAt) return;
+
+  const { data: tickets } = await supabase.from("tickets").select("id").eq("workspace_id", workspaceUuid).lt("updated_at", cutoffAt);
+  const ticketIds = (tickets ?? []).map((ticket: any) => ticket.id).filter(Boolean);
+
+  await supabase
+    .from("tickets")
+    .update({ subject: "[retention-redacted:ticket subject]", escalation_reason: null, tags: [], updated_at: new Date().toISOString() })
+    .eq("workspace_id", workspaceUuid)
+    .lt("updated_at", cutoffAt);
+
+  await supabase
+    .from("ticket_messages")
+    .update({ body: "[retention-redacted:ticket message]" })
+    .eq("workspace_id", workspaceUuid)
+    .lt("created_at", cutoffAt);
+
+  if (ticketIds.length > 0) {
+    await supabase.from("ticket_messages").update({ body: "[retention-redacted:ticket message]" }).eq("workspace_id", workspaceUuid).in("ticket_id", ticketIds);
+  }
+}
+
+async function applySupabaseAiLogCleanup(workspaceId: string, cutoffAt: string | null, ticketIds?: string[]) {
+  const supabase = createSupabaseAdminClient();
+  const workspaceUuid = maybeUuid(workspaceId);
+  if (!supabase || !workspaceUuid) return;
+
+  const aiRunUpdate = {
+    prompt: "[retention-redacted:prompt]",
+    redacted_prompt_preview: "[retention-redacted:prompt preview]",
+    response: "[retention-redacted:ai response]",
+    sources: [],
+    escalation_reason: null,
+    risk_flags: [],
+    rationale: "[retention-redacted:rationale]",
+  };
+  const routeUpdate = {
+    task: "[retention-redacted:model route task]",
+    reason: "[retention-redacted:model route reason]",
+  };
+
+  if (cutoffAt) {
+    await supabase.from("ai_runs").update(aiRunUpdate).eq("workspace_id", workspaceUuid).lt("created_at", cutoffAt);
+    await supabase.from("model_route_logs").update(routeUpdate).eq("workspace_id", workspaceUuid).lt("created_at", cutoffAt);
+  }
+
+  const uuidTicketIds = (ticketIds ?? []).map(maybeUuid).filter(Boolean);
+  if (uuidTicketIds.length > 0) {
+    const { data: aiRuns } = await supabase.from("ai_runs").select("id").eq("workspace_id", workspaceUuid).in("ticket_id", uuidTicketIds);
+    const aiRunIds = (aiRuns ?? []).map((run: any) => run.id).filter(Boolean);
+    await supabase.from("ai_runs").update(aiRunUpdate).eq("workspace_id", workspaceUuid).in("ticket_id", uuidTicketIds);
+    if (aiRunIds.length > 0) await supabase.from("model_route_logs").update(routeUpdate).eq("workspace_id", workspaceUuid).in("ai_run_id", aiRunIds);
+  }
+}
+
+async function applySupabaseDeletionRequest(request: DataDeletionRequest) {
+  const supabase = createSupabaseAdminClient();
+  const workspaceUuid = maybeUuid(request.workspaceId);
+  if (!supabase || !workspaceUuid) return;
+
+  if (request.scope === "ticket") {
+    const ticketUuid = maybeUuid(request.subjectId);
+    if (!ticketUuid) return;
+    await supabase
+      .from("tickets")
+      .update({ subject: "[retention-redacted:ticket subject]", escalation_reason: null, tags: [], status: "resolved", updated_at: new Date().toISOString() })
+      .eq("workspace_id", workspaceUuid)
+      .eq("id", ticketUuid);
+    await supabase.from("ticket_messages").update({ body: "[retention-redacted:ticket message]" }).eq("workspace_id", workspaceUuid).eq("ticket_id", ticketUuid);
+    await applySupabaseAiLogCleanup(request.workspaceId, null, [request.subjectId]);
+    return;
+  }
+
+  if (request.scope === "customer") {
+    const customerUuid = maybeUuid(request.subjectId);
+    if (!customerUuid) return;
+    const { data: tickets } = await supabase.from("tickets").select("id").eq("workspace_id", workspaceUuid).eq("customer_id", customerUuid);
+    const ticketIds = (tickets ?? []).map((ticket: any) => ticket.id).filter(Boolean);
+    await supabase
+      .from("customers")
+      .update({
+        name: "[retention-redacted:customer name]",
+        email: `deleted-${proofHash({ customerId: request.subjectId }).slice(0, 12)}@supportpilot.invalid`,
+        company: "Deleted customer",
+        metadata: {},
+      })
+      .eq("workspace_id", workspaceUuid)
+      .eq("id", customerUuid);
+    if (ticketIds.length > 0) {
+      await supabase
+        .from("tickets")
+        .update({ subject: "[retention-redacted:ticket subject]", escalation_reason: null, tags: [], updated_at: new Date().toISOString() })
+        .eq("workspace_id", workspaceUuid)
+        .in("id", ticketIds);
+      await supabase.from("ticket_messages").update({ body: "[retention-redacted:ticket message]" }).eq("workspace_id", workspaceUuid).in("ticket_id", ticketIds);
+      await applySupabaseAiLogCleanup(request.workspaceId, null, ticketIds);
+    }
+    return;
+  }
+
+  if (request.scope === "source_document") {
+    const docUuid = maybeUuid(request.subjectId);
+    if (!docUuid) return;
+    await supabase.from("document_chunks").delete().eq("workspace_id", workspaceUuid).eq("doc_id", docUuid);
+    await supabase.from("knowledge_docs").delete().eq("workspace_id", workspaceUuid).eq("id", docUuid);
+  }
+}
+
+function removeWhere<T>(items: T[], predicate: (item: T) => boolean) {
+  for (let index = items.length - 1; index >= 0; index--) {
+    if (predicate(items[index])) items.splice(index, 1);
+  }
 }
 
 async function getDeletionRequest(requestId: string) {

@@ -56,6 +56,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET /api/security/events` - workspace security event feed
 - `GET|POST /api/security/deletion-requests` - manager/admin data deletion request intake with verification and queued jobs
 - `GET|POST /api/security/retention/jobs` - retention cleanup job list and scheduler driven by workspace settings
+- `POST /api/security/retention/jobs/run` - worker-secret batch drain for queued retention/deletion jobs
 - `POST /api/security/retention/jobs/[jobId]/run` - manually or worker-run a queued retention/deletion job
 - `GET|POST /api/security/audit-exports` - tamper-evident audit/security evidence export records
 - `GET /api/model-routes` - AI model route/cost/latency log feed
@@ -166,7 +167,7 @@ Knowledge uploads now create `knowledge_ingestion_jobs` before extraction/chunki
 
 Integration delivery is queued by default. Approval-needed drafts and approval decisions create idempotent `outbound_events` for active Slack or generic webhook channels; delivery attempts write `integration_deliveries`. A worker can call `POST /api/integrations/events/deliver` with `x-supportpilot-integration-secret` when `SUPPORTPILOT_INTEGRATION_WORKER_SECRET` is configured to drain due queued retries in batches. Set `SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=inline` only for controlled server-side demos where immediate external delivery is desired.
 
-Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes, and audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
+Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes. Processed jobs redact aged ticket/message and AI-run content, remove deleted source documents with their vector chunks, and preserve audit-safe operational metadata. A worker can call `POST /api/security/retention/jobs/run` with `x-supportpilot-retention-secret` when `SUPPORTPILOT_RETENTION_WORKER_SECRET` is configured to drain due queued jobs in batches. Audit evidence exports hash the export manifest so SOC 2 readiness evidence is tamper-evident without claiming certification.
 
 Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds. The settings page shows domain health, stale checks, and the exact DNS challenge; scheduled jobs can call the recheck endpoint with `x-supportpilot-domain-secret`. When `SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL` is configured, rechecks send sanitized alerts for failing, stale, or blocked domains without exposing TXT tokens or observed DNS records.
 

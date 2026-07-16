@@ -37,9 +37,16 @@ Required production secrets:
 - optional `SUPPORTPILOT_DOMAIN_CNAME_TARGET`
 - optional `SUPPORTPILOT_DOMAIN_RECHECK_SECRET`
 - optional `SUPPORTPILOT_DOMAIN_STALE_DAYS`
+- optional `SUPPORTPILOT_RETENTION_WORKER_SECRET`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
 `SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, invitation sender addresses, and Sentry auth tokens belong only in server-side deployment env vars.
+
+## Retention And Deletion
+
+Workspace retention settings schedule conversation and AI-log cleanup jobs. Processed jobs redact aged ticket subjects, messages, escalation details, AI prompts, AI responses, rationales, model-route task text, and model-route reasons while preserving non-PII operational metadata, counts, timestamps, costs, confidence, and proof hashes for auditability.
+
+Verified deletion requests create scoped jobs for tickets, customers, or source documents. Ticket/customer requests anonymize personal support content and customer identity fields without deleting the audit trail. Source-document requests delete the approved source and its vector chunks. `POST /api/security/retention/jobs/run` is worker-secret protected and can drain queued jobs for an external scheduler when `SUPPORTPILOT_RETENTION_WORKER_SECRET` is configured.
 
 ## AI Safety Boundaries
 

@@ -355,6 +355,7 @@ const widgetConfigRouteSource = readFileSync("app/api/widget/config/route.ts", "
 const rateLimitSource = readFileSync("lib/rate-limit.ts", "utf8");
 const rateLimitTestSource = readFileSync("scripts/test-rate-limit.ts", "utf8");
 const retentionSource = readFileSync("lib/db/retention.ts", "utf8");
+const retentionWorkerRouteSource = readFileSync("app/api/security/retention/jobs/run/route.ts", "utf8");
 const ingestionSource = readFileSync("lib/db/ingestion.ts", "utf8");
 const healthRouteSource = readFileSync("app/api/health/route.ts", "utf8");
 const healthOpsSource = readFileSync("lib/ops/health.ts", "utf8");
@@ -440,6 +441,19 @@ checks.push([
     retentionSource.includes("clampRetentionDays") &&
     retentionSource.includes("billing.retention_limit.applied"),
   "lib/db/retention.ts",
+]);
+checks.push([
+  "retention jobs redact/delete scoped data and expose secret worker drain",
+    retentionSource.includes("applyRetentionJob") &&
+    retentionSource.includes("applySupabaseDeletionRequest") &&
+    retentionSource.includes("redactLocalAiLogs") &&
+    retentionSource.includes("document_chunks") &&
+    retentionSource.includes("delete().eq(\"workspace_id\"") &&
+    retentionSource.includes("export async function processDueRetentionJobs") &&
+    retentionWorkerRouteSource.includes("SUPPORTPILOT_RETENTION_WORKER_SECRET") &&
+    retentionWorkerRouteSource.includes('req.headers.get("x-supportpilot-retention-secret")') &&
+    retentionWorkerRouteSource.includes("processDueRetentionJobs"),
+  "retention enforcement",
 ]);
 checks.push([
   "background ingestion jobs respect source and chunk entitlements",
