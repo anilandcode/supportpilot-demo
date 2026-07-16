@@ -43,6 +43,7 @@ import type {
   DashboardMetrics,
   DocumentChunk,
   EnterpriseUser,
+  GoldenEvalRun,
   GoldenQuestion,
   GroundingCheck,
   KnowledgeDoc,
@@ -106,6 +107,7 @@ const localState = {
   usageEvents: [...demoUsageEvents],
   checklistItems: [...demoChecklistItems],
   goldenQuestions: [...demoGoldenQuestions],
+  goldenEvalRuns: [] as GoldenEvalRun[],
   missingKnowledgeTasks: [...demoMissingKnowledgeTasks],
   modelRouteLogs: [...demoModelRouteLogs],
   securityEvents: [...demoSecurityEvents],
@@ -412,6 +414,73 @@ export async function listGoldenQuestions(workspaceId = DEMO_WORKSPACE_ID): Prom
     if (!error && data) return data.map(mapGoldenQuestion);
   }
   return localState.goldenQuestions.filter((question) => question.workspaceId === resolvedWorkspaceId);
+}
+
+export async function updateGoldenQuestionOutcomes(input: {
+  workspaceId?: string;
+  cases: { id: string; confidence: number; passed: boolean }[];
+}): Promise<GoldenQuestion[]> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  for (const result of input.cases) {
+    const local = localState.goldenQuestions.find((question) => question.workspaceId === workspace.id && question.id === result.id);
+    if (local) {
+      local.lastScore = result.confidence;
+      local.passed = result.passed;
+    }
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    await Promise.all(
+      input.cases.map((result) =>
+        supabase
+          .from("golden_questions")
+          .update({ last_score: result.confidence, passed: result.passed })
+          .eq("workspace_id", workspace.id)
+          .eq("id", maybeUuid(result.id) ?? result.id),
+      ),
+    );
+  }
+
+  return listGoldenQuestions(workspace.id);
+}
+
+export async function appendGoldenEvalRun(
+  input: Omit<GoldenEvalRun, "id" | "createdAt" | "tenantId" | "workspaceId"> & Partial<Pick<GoldenEvalRun, "tenantId" | "workspaceId">>,
+): Promise<GoldenEvalRun> {
+  const workspace = await getWorkspace(input.workspaceId ?? DEMO_WORKSPACE_ID);
+  const run: GoldenEvalRun = {
+    ...input,
+    id: publicId("golden_eval"),
+    tenantId: input.tenantId ?? workspace.tenantId,
+    workspaceId: workspace.id,
+    createdAt: new Date().toISOString(),
+  };
+  localState.goldenEvalRuns.unshift(run);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) await supabase.from("golden_eval_runs").insert(toGoldenEvalRunRow(run));
+  return run;
+}
+
+export async function listGoldenEvalRuns(workspaceId = DEMO_WORKSPACE_ID): Promise<GoldenEvalRun[]> {
+  const resolvedWorkspaceId = workspaceIdOrDefault(workspaceId);
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("golden_eval_runs").select("*").eq("workspace_id", resolvedWorkspaceId).order("created_at", { ascending: false }).limit(50);
+    if (!error && data) return data.map(mapGoldenEvalRun);
+  }
+  return localState.goldenEvalRuns.filter((run) => run.workspaceId === resolvedWorkspaceId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function listWorkspacesForScheduledJobs(input: { workspaceId?: string | null; limit?: number } = {}): Promise<Workspace[]> {
+  if (input.workspaceId) return [await getWorkspace(input.workspaceId)];
+  const limit = Math.max(1, Math.min(input.limit ?? 25, 100));
+  const supabase = createSupabaseAdminClient();
+  if (supabase) {
+    const { data, error } = await supabase.from("workspaces").select("*").order("created_at", { ascending: true }).limit(limit);
+    if (!error && data) return data.map(mapWorkspace);
+  }
+  return localState.workspaces.slice(0, limit);
 }
 
 export async function getRetentionSetting(workspaceId = DEMO_WORKSPACE_ID): Promise<RetentionSetting | null> {
@@ -1657,6 +1726,24 @@ function mapGoldenQuestion(row: any): GoldenQuestion {
   };
 }
 
+function mapGoldenEvalRun(row: any): GoldenEvalRun {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id ?? DEMO_TENANT_ID,
+    workspaceId: row.workspace_id ?? DEMO_WORKSPACE_ID,
+    status: row.status,
+    total: Number(row.total ?? 0),
+    passed: Number(row.passed ?? 0),
+    failed: Number(row.failed ?? 0),
+    passRate: Number(row.pass_rate ?? 0),
+    thresholds: row.thresholds ?? {},
+    cases: row.cases ?? [],
+    triggeredBy: row.triggered_by ?? "manual",
+    artifactHash: row.artifact_hash ?? "",
+    createdAt: row.created_at,
+  };
+}
+
 function mapRetentionSetting(row: any): RetentionSetting {
   return {
     id: row.id,
@@ -2024,6 +2111,24 @@ function toMissingKnowledgeTaskRow(task: MissingKnowledgeTask) {
     source_ai_run_id: maybeUuid(task.sourceAiRunId),
     status: task.status,
     created_at: task.createdAt,
+  };
+}
+
+function toGoldenEvalRunRow(run: GoldenEvalRun) {
+  return {
+    id: maybeUuid(run.id) ?? crypto.randomUUID(),
+    tenant_id: maybeUuid(run.tenantId),
+    workspace_id: maybeUuid(run.workspaceId),
+    status: run.status,
+    total: run.total,
+    passed: run.passed,
+    failed: run.failed,
+    pass_rate: run.passRate,
+    thresholds: run.thresholds,
+    cases: run.cases,
+    triggered_by: run.triggeredBy,
+    artifact_hash: run.artifactHash,
+    created_at: run.createdAt,
   };
 }
 

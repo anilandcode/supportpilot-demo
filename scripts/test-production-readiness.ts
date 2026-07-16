@@ -277,11 +277,29 @@ checks.push([
 ]);
 checks.push([
   "onboarding golden-question gate runs shared evals before completion",
-  onboardingGoldenRouteSource.includes("runGoldenQuestionEvals") &&
-    onboardingGoldenRouteSource.includes("summary.total >= 5") &&
+  onboardingGoldenRouteSource.includes("runAndRecordGoldenQuestionEvals") &&
+    onboardingGoldenRouteSource.includes('result.status === "passed"') &&
     onboardingGoldenRouteSource.includes("completeOnboardingStep") &&
     onboardingGoldenRouteSource.includes('step: "golden_questions"'),
   "onboarding golden route",
+]);
+const evalWorkerRouteSource = readFileSync("app/api/evals/golden/run/route.ts", "utf8");
+const evalSource = readFileSync("lib/evals/golden.ts", "utf8");
+const evalMigrationSource = readFileSync("supabase/migrations/013_scheduled_golden_eval_runs.sql", "utf8");
+checks.push([
+  "scheduled golden eval worker requires secret and stores evidence",
+  evalWorkerRouteSource.includes("SUPPORTPILOT_EVAL_WORKER_SECRET") &&
+    evalWorkerRouteSource.includes('req.headers.get("x-supportpilot-eval-secret")') &&
+    evalWorkerRouteSource.includes("processScheduledGoldenEvals") &&
+    evalSource.includes("runAndRecordGoldenQuestionEvals") &&
+    evalSource.includes("appendGoldenEvalRun") &&
+    evalSource.includes("updateGoldenQuestionOutcomes") &&
+    evalSource.includes("eval.golden_questions.completed") &&
+    evalMigrationSource.includes("create table if not exists public.golden_eval_runs") &&
+    evalMigrationSource.includes("artifact_hash") &&
+    evalMigrationSource.includes("public.can_access_workspace(workspace_id)") &&
+    evalMigrationSource.includes("public.can_manage_workspace(workspace_id)"),
+  "scheduled golden evals",
 ]);
 checks.push([
   "workspace onboarding seeds approval defaults",
@@ -509,6 +527,7 @@ checks.push([
     healthRouteSource.includes("verifyHealthAlertSecret") &&
     healthRouteSource.includes("sendHealthAlert") &&
     healthOpsSource.includes("SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL") &&
+    healthOpsSource.includes("SUPPORTPILOT_EVAL_WORKER_SECRET") &&
     healthOpsSource.includes("redactUrl"),
   "health alert route",
 ]);

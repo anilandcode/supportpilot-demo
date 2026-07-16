@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/api";
 import { completeOnboardingStep } from "@/lib/db/support";
-import { runGoldenQuestionEvals } from "@/lib/evals/golden";
+import { runAndRecordGoldenQuestionEvals } from "@/lib/evals/golden";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,8 +15,8 @@ export async function POST(req: Request) {
   const auth = await requireWorkspaceRole(parsed.success ? parsed.data.workspaceId : undefined, ["owner", "admin", "manager"]);
   if (!auth.ok) return Response.json({ error: auth.error }, { status: auth.status });
 
-  const summary = await runGoldenQuestionEvals(auth.workspaceId);
-  const passed = summary.total >= 5 && summary.passRate >= summary.thresholds.minimumPassRate;
+  const result = await runAndRecordGoldenQuestionEvals(auth.workspaceId, "onboarding");
+  const passed = result.status === "passed";
   const checklist = passed
     ? await completeOnboardingStep({
         workspaceId: auth.workspaceId,
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
   return Response.json(
     {
       ok: passed,
-      summary,
+      summary: result.summary,
+      artifactHash: result.artifactHash,
       checklist,
       error: passed ? null : "golden questions did not meet launch thresholds",
     },

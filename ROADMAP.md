@@ -4,7 +4,7 @@
 
 - Add site-crawl ingestion jobs after the current upload/PDF background ingestion baseline.
 - Replace deterministic demo embeddings with provider embeddings for production.
-- Add scheduled eval runs for groundedness, citations, escalation correctness, and response latency.
+- Add live scheduler provisioning and alert routing for the persisted golden-question eval worker.
 - Add row-level automated tests against a Supabase branch database.
 - Add deployment health checks for `/api/stats`, `/api/chat`, and draft/decision routes.
 - Add WORM/retention-lock policy rehearsal for private knowledge-source and audit-evidence Storage buckets.

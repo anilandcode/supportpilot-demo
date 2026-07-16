@@ -368,6 +368,22 @@ export type GoldenQuestion = {
   createdAt: string;
 };
 
+export type GoldenEvalRun = {
+  id: string;
+  tenantId: string;
+  workspaceId: string;
+  status: "passed" | "failed";
+  total: number;
+  passed: number;
+  failed: number;
+  passRate: number;
+  thresholds: Record<string, number>;
+  cases: Record<string, unknown>[];
+  triggeredBy: "manual" | "scheduled" | "onboarding";
+  artifactHash: string;
+  createdAt: string;
+};
+
 export type MissingKnowledgeTask = {
   id: string;
   tenantId: string;

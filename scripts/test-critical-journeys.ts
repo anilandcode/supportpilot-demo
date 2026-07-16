@@ -32,7 +32,7 @@ addCheck("owner onboarding creates workspace and launch defaults", [
     'admin.from("escalation_rules").insert',
     'admin.from("approval_policies").insert',
   ]),
-  fileContains("app/api/onboarding/golden-questions/run/route.ts", ["runGoldenQuestionEvals", "completeOnboardingStep", "golden_questions"]),
+  fileContains("app/api/onboarding/golden-questions/run/route.ts", ["runAndRecordGoldenQuestionEvals", "completeOnboardingStep", "golden_questions"]),
 ]);
 
 addCheck("knowledge upload and ingestion journey", [

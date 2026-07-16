@@ -43,6 +43,8 @@ npm run test:evals
 
 The golden-question smoke test runs the seeded demo workspace questions through deterministic retrieval, confidence, grounding, and policy checks. It writes `artifacts/golden-eval-summary.json` with per-question source hits, retrieval score, confidence, grounding status, policy action, and pass/fail state. CI uploads this file as release evidence.
 
+For deployed workspaces, `POST /api/evals/golden/run` is the scheduled evaluation worker. Call it with `x-supportpilot-eval-secret` when `SUPPORTPILOT_EVAL_WORKER_SECRET` is configured. The worker can run all workspaces or a single `workspaceId`, updates each golden question's latest score/pass flag, writes a `golden_eval_runs` evidence row with an artifact hash, and appends an audit log named `eval.golden_questions.completed`.
+
 ## Manual Evaluation Matrix
 
 | Eval | Passing behavior |
@@ -59,6 +61,7 @@ The golden-question smoke test runs the seeded demo workspace questions through 
 | Workspace scoping | Widget config, chat logging, knowledge retrieval, and analytics resolve the active workspace key. |
 | Origin gating | Unverified widget origins receive a 403 from widget config and chat APIs. |
 | Widget sessions | When `SUPPORTPILOT_WIDGET_SESSION_SECRET` is configured, unsigned or invalid widget sessions receive a 403. |
+| Scheduled evals | Worker-secret golden eval runs persist pass/fail summaries and audit evidence before launch gates are trusted. |
 | Responsive UI | `/admin/tickets`, ticket detail, knowledge, approvals, analytics, and `/portal` fit desktop and mobile widths. |
 
 ## Suggested Live Supabase Test

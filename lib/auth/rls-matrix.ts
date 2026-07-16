@@ -42,6 +42,7 @@ export const REQUIRED_RLS_TABLES = [
   "escalation_rules",
   "workspace_checklist_items",
   "golden_questions",
+  "golden_eval_runs",
   "missing_knowledge_tasks",
   "model_route_logs",
   "security_events",

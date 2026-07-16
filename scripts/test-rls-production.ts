@@ -11,7 +11,7 @@ const migrationFiles = readdirSync(migrationDir)
 const sql = migrationFiles.map((file) => readFileSync(file, "utf8")).join("\n").toLowerCase();
 const checks: Array<[string, boolean, string]> = [];
 
-checks.push(["twelve migration files exist", migrationFiles.length >= 12, String(migrationFiles.length)]);
+checks.push(["thirteen migration files exist", migrationFiles.length >= 13, String(migrationFiles.length)]);
 checks.push(["production auth migration present", migrationFiles.some((file) => file.endsWith("004_production_auth_onboarding.sql")), migrationFiles.join(",")]);
 checks.push(["billing lifecycle migration present", migrationFiles.some((file) => file.endsWith("005_billing_stripe_lifecycle.sql")), migrationFiles.join(",")]);
 checks.push(["embedding versioning migration present", migrationFiles.some((file) => file.endsWith("006_embedding_versioning_jobs.sql")), migrationFiles.join(",")]);
@@ -21,6 +21,7 @@ checks.push(["retention evidence migration present", migrationFiles.some((file) 
 checks.push(["domain verification migration present", migrationFiles.some((file) => file.endsWith("010_domain_verification_tokens.sql")), migrationFiles.join(",")]);
 checks.push(["private knowledge source storage migration present", migrationFiles.some((file) => file.endsWith("011_private_knowledge_source_storage.sql")), migrationFiles.join(",")]);
 checks.push(["private audit evidence storage migration present", migrationFiles.some((file) => file.endsWith("012_private_audit_evidence_storage.sql")), migrationFiles.join(",")]);
+checks.push(["scheduled golden eval migration present", migrationFiles.some((file) => file.endsWith("013_scheduled_golden_eval_runs.sql")), migrationFiles.join(",")]);
 
 for (const table of REQUIRED_RLS_TABLES) {
   checks.push([`RLS enabled on ${table}`, hasRlsEnable(table), table]);
@@ -62,6 +63,16 @@ checks.push([
     sql.includes("workspace managers write audit evidence artifacts") &&
     sql.includes("storage.objects"),
   "supportpilot-audit-evidence",
+]);
+checks.push([
+  "golden eval runs are workspace gated and tamper evident",
+  sql.includes("golden_eval_runs") &&
+    sql.includes("artifact_hash text not null") &&
+    sql.includes("members read golden_eval_runs") &&
+    sql.includes("managers manage golden_eval_runs") &&
+    sql.includes("public.can_access_workspace(workspace_id)") &&
+    sql.includes("public.can_manage_workspace(workspace_id)"),
+  "golden_eval_runs",
 ]);
 
 let failed = 0;

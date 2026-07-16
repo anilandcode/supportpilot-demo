@@ -46,6 +46,7 @@ Use clear Markdown headings because Lite citations are generated as `filename#he
 2. Apply all SQL files in `supabase/migrations/` in order.
 3. Confirm `011_private_knowledge_source_storage.sql` created the private `supportpilot-knowledge-sources` bucket for queued knowledge uploads.
 4. Confirm `012_private_audit_evidence_storage.sql` created the private `supportpilot-audit-evidence` bucket for audit evidence artifacts.
+5. Confirm `013_scheduled_golden_eval_runs.sql` created `golden_eval_runs` with workspace-scoped RLS.
 5. Run `supabase/seed.sql` for demo data.
 6. Keep both buckets private; workers and audit export jobs use the server-side service role.
 7. Add these env vars:

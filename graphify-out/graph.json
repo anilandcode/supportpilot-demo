@@ -63,7 +63,7 @@
       "source_file": "proxy.ts",
       "source_location": "L1",
       "id": "proxy_ts",
-      "community": 119,
+      "community": 80,
       "norm_label": "proxy.ts"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "proxy.ts",
       "source_location": "L5",
       "id": "chatbot_demo_proxy_proxy",
-      "community": 119,
+      "community": 80,
       "norm_label": "proxy()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "proxy.ts",
       "source_location": "L74",
       "id": "chatbot_demo_proxy_config",
-      "community": 119,
+      "community": 80,
       "norm_label": "config"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "app/admin/page.tsx",
       "source_location": "L13",
       "id": "admin_page_adminpage",
-      "community": 111,
+      "community": 88,
       "norm_label": "adminpage()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "app/admin/settings/page.tsx",
       "source_location": "L13",
       "id": "settings_page_settingspage",
-      "community": 102,
+      "community": 83,
       "norm_label": "settingspage()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L1",
       "id": "app_admin_tickets_ticketid_page_tsx",
-      "community": 7,
+      "community": 62,
       "norm_label": "page.tsx"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L7",
       "id": "ticketid_page_metadata",
-      "community": 7,
+      "community": 62,
       "norm_label": "metadata"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L14",
       "id": "ticketid_page_ticketdetailpage",
-      "community": 88,
+      "community": 62,
       "norm_label": "ticketdetailpage()"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L1",
       "id": "app_admin_knowledge_page_tsx",
-      "community": 35,
+      "community": 86,
       "norm_label": "page.tsx"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L6",
       "id": "knowledge_page_metadata",
-      "community": 35,
+      "community": 86,
       "norm_label": "metadata"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L13",
       "id": "knowledge_page_knowledgepage",
-      "community": 88,
+      "community": 86,
       "norm_label": "knowledgepage()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "app/admin/billing/page.tsx",
       "source_location": "L22",
       "id": "billing_page_billingpage",
-      "community": 86,
+      "community": 15,
       "norm_label": "billingpage()"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "app/api/escalations/email/route.ts",
       "source_location": "L1",
       "id": "app_api_escalations_email_route_ts",
-      "community": 77,
+      "community": 94,
       "norm_label": "route.ts"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "app/api/escalations/email/route.ts",
       "source_location": "L9",
       "id": "email_route_escalationemailschema",
-      "community": 77,
+      "community": 94,
       "norm_label": "escalationemailschema"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "app/api/escalations/email/route.ts",
       "source_location": "L17",
       "id": "email_route_post",
-      "community": 77,
+      "community": 94,
       "norm_label": "post()"
     },
     {
@@ -937,6 +937,24 @@
       "source_location": "L12",
       "id": "messages_route_post",
       "community": 116,
+      "norm_label": "post()"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "app/api/evals/golden/run/route.ts",
+      "source_location": "L1",
+      "id": "app_api_evals_golden_run_route_ts",
+      "community": 61,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "POST()",
+      "file_type": "code",
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L13",
+      "id": "run_route_post",
+      "community": 97,
       "norm_label": "post()"
     },
     {
@@ -1143,7 +1161,7 @@
       "source_file": "app/api/security/retention/jobs/route.ts",
       "source_location": "L1",
       "id": "app_api_security_retention_jobs_route_ts",
-      "community": 85,
+      "community": 97,
       "norm_label": "route.ts"
     },
     {
@@ -1152,7 +1170,7 @@
       "source_file": "app/api/knowledge/ingest/jobs/route.ts",
       "source_location": "L7",
       "id": "jobs_route_get",
-      "community": 85,
+      "community": 97,
       "norm_label": "get()"
     },
     {
@@ -1161,7 +1179,7 @@
       "source_file": "app/api/security/retention/jobs/route.ts",
       "source_location": "L16",
       "id": "jobs_route_post",
-      "community": 85,
+      "community": 97,
       "norm_label": "post()"
     },
     {
@@ -1170,17 +1188,8 @@
       "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
       "source_location": "L1",
       "id": "app_api_security_retention_jobs_jobid_run_route_ts",
-      "community": 62,
-      "norm_label": "route.ts"
-    },
-    {
-      "label": "POST()",
-      "file_type": "code",
-      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
-      "source_location": "L13",
-      "id": "run_route_post",
       "community": 97,
-      "norm_label": "post()"
+      "norm_label": "route.ts"
     },
     {
       "label": "route.ts",
@@ -1197,7 +1206,7 @@
       "source_file": "app/api/security/audit-exports/route.ts",
       "source_location": "L1",
       "id": "app_api_security_audit_exports_route_ts",
-      "community": 118,
+      "community": 97,
       "norm_label": "route.ts"
     },
     {
@@ -1206,7 +1215,7 @@
       "source_file": "app/api/security/audit-exports/route.ts",
       "source_location": "L8",
       "id": "audit_exports_route_auditexportschema",
-      "community": 118,
+      "community": 97,
       "norm_label": "auditexportschema"
     },
     {
@@ -1215,7 +1224,7 @@
       "source_file": "app/api/security/audit-exports/route.ts",
       "source_location": "L15",
       "id": "audit_exports_route_get",
-      "community": 118,
+      "community": 97,
       "norm_label": "get()"
     },
     {
@@ -1224,7 +1233,7 @@
       "source_file": "app/api/security/audit-exports/route.ts",
       "source_location": "L24",
       "id": "audit_exports_route_post",
-      "community": 118,
+      "community": 97,
       "norm_label": "post()"
     },
     {
@@ -1233,7 +1242,7 @@
       "source_file": "app/api/security/deletion-requests/route.ts",
       "source_location": "L1",
       "id": "app_api_security_deletion_requests_route_ts",
-      "community": 93,
+      "community": 97,
       "norm_label": "route.ts"
     },
     {
@@ -1242,7 +1251,7 @@
       "source_file": "app/api/security/deletion-requests/route.ts",
       "source_location": "L8",
       "id": "deletion_requests_route_deletionrequestschema",
-      "community": 93,
+      "community": 97,
       "norm_label": "deletionrequestschema"
     },
     {
@@ -1251,7 +1260,7 @@
       "source_file": "app/api/security/deletion-requests/route.ts",
       "source_location": "L18",
       "id": "deletion_requests_route_get",
-      "community": 93,
+      "community": 97,
       "norm_label": "get()"
     },
     {
@@ -1260,7 +1269,7 @@
       "source_file": "app/api/security/deletion-requests/route.ts",
       "source_location": "L27",
       "id": "deletion_requests_route_post",
-      "community": 93,
+      "community": 97,
       "norm_label": "post()"
     },
     {
@@ -1278,7 +1287,7 @@
       "source_file": "app/api/integrations/events/route.ts",
       "source_location": "L7",
       "id": "events_route_get",
-      "community": 115,
+      "community": 85,
       "norm_label": "get()"
     },
     {
@@ -1332,7 +1341,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L1",
       "id": "app_api_ai_runs_airunid_decision_route_ts",
-      "community": 117,
+      "community": 116,
       "norm_label": "route.ts"
     },
     {
@@ -1341,7 +1350,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L8",
       "id": "decision_route_decisionschema",
-      "community": 117,
+      "community": 116,
       "norm_label": "decisionschema"
     },
     {
@@ -1350,7 +1359,7 @@
       "source_file": "app/api/ai-runs/[aiRunId]/decision/route.ts",
       "source_location": "L13",
       "id": "decision_route_patch",
-      "community": 117,
+      "community": 116,
       "norm_label": "patch()"
     },
     {
@@ -1413,7 +1422,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/domains/route.ts",
       "source_location": "L23",
       "id": "domains_route_post",
-      "community": 86,
+      "community": 3,
       "norm_label": "post()"
     },
     {
@@ -1458,7 +1467,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_widget_key_regenerate_route_ts",
-      "community": 77,
+      "community": 85,
       "norm_label": "route.ts"
     },
     {
@@ -1467,7 +1476,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/widget-key/regenerate/route.ts",
       "source_location": "L6",
       "id": "regenerate_route_post",
-      "community": 77,
+      "community": 85,
       "norm_label": "post()"
     },
     {
@@ -1476,7 +1485,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_memberships_membershipid_route_ts",
-      "community": 49,
+      "community": 120,
       "norm_label": "route.ts"
     },
     {
@@ -1485,7 +1494,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
       "source_location": "L9",
       "id": "membershipid_route_membershipupdateschema",
-      "community": 49,
+      "community": 120,
       "norm_label": "membershipupdateschema"
     },
     {
@@ -1494,7 +1503,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
       "source_location": "L16",
       "id": "membershipid_route_patch",
-      "community": 49,
+      "community": 120,
       "norm_label": "patch()"
     },
     {
@@ -1503,7 +1512,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/memberships/[membershipId]/route.ts",
       "source_location": "L109",
       "id": "membershipid_route_delete",
-      "community": 49,
+      "community": 120,
       "norm_label": "delete()"
     },
     {
@@ -1512,7 +1521,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L1",
       "id": "app_api_workspaces_workspaceid_invitations_route_ts",
-      "community": 102,
+      "community": 49,
       "norm_label": "route.ts"
     },
     {
@@ -1521,7 +1530,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L15",
       "id": "invitations_route_inviteschema",
-      "community": 102,
+      "community": 49,
       "norm_label": "inviteschema"
     },
     {
@@ -1530,7 +1539,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L20",
       "id": "invitations_route_revokeschema",
-      "community": 102,
+      "community": 49,
       "norm_label": "revokeschema"
     },
     {
@@ -1539,7 +1548,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L24",
       "id": "invitations_route_get",
-      "community": 102,
+      "community": 83,
       "norm_label": "get()"
     },
     {
@@ -1548,7 +1557,7 @@
       "source_file": "app/api/workspaces/[workspaceId]/invitations/route.ts",
       "source_location": "L40",
       "id": "invitations_route_post",
-      "community": 102,
+      "community": 49,
       "norm_label": "post()"
     },
     {
@@ -1566,7 +1575,7 @@
       "source_file": "app/api/feedback/route.ts",
       "source_location": "L1",
       "id": "app_api_feedback_route_ts",
-      "community": 112,
+      "community": 109,
       "norm_label": "route.ts"
     },
     {
@@ -1575,7 +1584,7 @@
       "source_file": "app/api/feedback/route.ts",
       "source_location": "L5",
       "id": "feedback_route_post",
-      "community": 112,
+      "community": 109,
       "norm_label": "post()"
     },
     {
@@ -1593,7 +1602,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L1",
       "id": "app_api_integrations_accounts_route_ts",
-      "community": 86,
+      "community": 110,
       "norm_label": "route.ts"
     },
     {
@@ -1602,7 +1611,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L10",
       "id": "accounts_route_accountschema",
-      "community": 86,
+      "community": 110,
       "norm_label": "accountschema"
     },
     {
@@ -1611,7 +1620,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L19",
       "id": "accounts_route_webhookendpointschema",
-      "community": 86,
+      "community": 110,
       "norm_label": "webhookendpointschema"
     },
     {
@@ -1620,7 +1629,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L28",
       "id": "accounts_route_get",
-      "community": 86,
+      "community": 115,
       "norm_label": "get()"
     },
     {
@@ -1638,7 +1647,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L65",
       "id": "accounts_route_integrationlimitblock",
-      "community": 86,
+      "community": 15,
       "norm_label": "integrationlimitblock()"
     },
     {
@@ -1647,7 +1656,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L79",
       "id": "accounts_route_redactaccount",
-      "community": 86,
+      "community": 110,
       "norm_label": "redactaccount()"
     },
     {
@@ -1665,7 +1674,7 @@
       "source_file": "app/api/integrations/accounts/route.ts",
       "source_location": "L95",
       "id": "accounts_route_redactconfig",
-      "community": 86,
+      "community": 110,
       "norm_label": "redactconfig()"
     },
     {
@@ -1674,7 +1683,7 @@
       "source_file": "app/api/integrations/events/route.ts",
       "source_location": "L1",
       "id": "app_api_integrations_events_route_ts",
-      "community": 115,
+      "community": 85,
       "norm_label": "route.ts"
     },
     {
@@ -1746,7 +1755,7 @@
       "source_file": "app/api/knowledge/ingest/jobs/route.ts",
       "source_location": "L1",
       "id": "app_api_knowledge_ingest_jobs_route_ts",
-      "community": 85,
+      "community": 97,
       "norm_label": "route.ts"
     },
     {
@@ -1791,7 +1800,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L14",
       "id": "missing_route_get",
-      "community": 85,
+      "community": 88,
       "norm_label": "get()"
     },
     {
@@ -1800,7 +1809,7 @@
       "source_file": "app/api/knowledge/missing/route.ts",
       "source_location": "L24",
       "id": "missing_route_post",
-      "community": 112,
+      "community": 85,
       "norm_label": "post()"
     },
     {
@@ -1809,7 +1818,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L1",
       "id": "app_api_knowledge_upload_route_ts",
-      "community": 77,
+      "community": 4,
       "norm_label": "route.ts"
     },
     {
@@ -1818,7 +1827,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L9",
       "id": "upload_route_post",
-      "community": 77,
+      "community": 4,
       "norm_label": "post()"
     },
     {
@@ -1827,7 +1836,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L85",
       "id": "upload_route_normalizesourcetype",
-      "community": 77,
+      "community": 4,
       "norm_label": "normalizesourcetype()"
     },
     {
@@ -1836,7 +1845,7 @@
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L92",
       "id": "upload_route_clientkey",
-      "community": 77,
+      "community": 4,
       "norm_label": "clientkey()"
     },
     {
@@ -1845,7 +1854,7 @@
       "source_file": "app/api/stats/route.ts",
       "source_location": "L1",
       "id": "app_api_stats_route_ts",
-      "community": 111,
+      "community": 88,
       "norm_label": "route.ts"
     },
     {
@@ -1854,7 +1863,7 @@
       "source_file": "app/api/stats/route.ts",
       "source_location": "L6",
       "id": "stats_route_get",
-      "community": 111,
+      "community": 88,
       "norm_label": "get()"
     },
     {
@@ -1863,7 +1872,7 @@
       "source_file": "app/api/billing/webhook/route.ts",
       "source_location": "L1",
       "id": "app_api_billing_webhook_route_ts",
-      "community": 107,
+      "community": 31,
       "norm_label": "route.ts"
     },
     {
@@ -1872,7 +1881,7 @@
       "source_file": "app/api/billing/webhook/route.ts",
       "source_location": "L10",
       "id": "webhook_route_post",
-      "community": 107,
+      "community": 31,
       "norm_label": "post()"
     },
     {
@@ -1881,7 +1890,7 @@
       "source_file": "app/api/billing/reconciliation/route.ts",
       "source_location": "L1",
       "id": "app_api_billing_reconciliation_route_ts",
-      "community": 90,
+      "community": 31,
       "norm_label": "route.ts"
     },
     {
@@ -1890,7 +1899,7 @@
       "source_file": "app/api/billing/reconciliation/route.ts",
       "source_location": "L8",
       "id": "reconciliation_route_get",
-      "community": 90,
+      "community": 31,
       "norm_label": "get()"
     },
     {
@@ -1899,7 +1908,7 @@
       "source_file": "app/api/billing/reconciliation/route.ts",
       "source_location": "L20",
       "id": "reconciliation_route_post",
-      "community": 90,
+      "community": 31,
       "norm_label": "post()"
     },
     {
@@ -1908,7 +1917,7 @@
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L1",
       "id": "app_api_billing_portal_route_ts",
-      "community": 114,
+      "community": 31,
       "norm_label": "route.ts"
     },
     {
@@ -1917,7 +1926,7 @@
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L8",
       "id": "portal_route_createportalresult",
-      "community": 114,
+      "community": 31,
       "norm_label": "createportalresult()"
     },
     {
@@ -1926,7 +1935,7 @@
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L19",
       "id": "portal_route_get",
-      "community": 114,
+      "community": 31,
       "norm_label": "get()"
     },
     {
@@ -1935,7 +1944,7 @@
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L25",
       "id": "portal_route_post",
-      "community": 114,
+      "community": 31,
       "norm_label": "post()"
     },
     {
@@ -1944,7 +1953,7 @@
       "source_file": "app/api/billing/checkout/route.ts",
       "source_location": "L1",
       "id": "app_api_billing_checkout_route_ts",
-      "community": 105,
+      "community": 31,
       "norm_label": "route.ts"
     },
     {
@@ -1953,7 +1962,7 @@
       "source_file": "app/api/billing/checkout/route.ts",
       "source_location": "L14",
       "id": "checkout_route_checkoutbody",
-      "community": 105,
+      "community": 31,
       "norm_label": "checkoutbody"
     },
     {
@@ -1962,7 +1971,7 @@
       "source_file": "app/api/billing/checkout/route.ts",
       "source_location": "L20",
       "id": "checkout_route_post",
-      "community": 105,
+      "community": 31,
       "norm_label": "post()"
     },
     {
@@ -1971,7 +1980,7 @@
       "source_file": "app/api/billing/checkout/route.ts",
       "source_location": "L87",
       "id": "checkout_route_readcheckoutbody",
-      "community": 105,
+      "community": 31,
       "norm_label": "readcheckoutbody()"
     },
     {
@@ -1980,7 +1989,7 @@
       "source_file": "app/api/billing/checkout/route.ts",
       "source_location": "L103",
       "id": "checkout_route_stringfield",
-      "community": 105,
+      "community": 31,
       "norm_label": "stringfield()"
     },
     {
@@ -2007,7 +2016,7 @@
       "source_file": "app/api/onboarding/golden-questions/run/route.ts",
       "source_location": "L1",
       "id": "app_api_onboarding_golden_questions_run_route_ts",
-      "community": 61,
+      "community": 85,
       "norm_label": "route.ts"
     },
     {
@@ -2016,7 +2025,7 @@
       "source_file": "app/api/onboarding/golden-questions/run/route.ts",
       "source_location": "L9",
       "id": "run_route_bodyschema",
-      "community": 61,
+      "community": 85,
       "norm_label": "bodyschema"
     },
     {
@@ -2061,7 +2070,7 @@
       "source_file": "app/api/onboarding/steps/[step]/complete/route.ts",
       "source_location": "L1",
       "id": "app_api_onboarding_steps_step_complete_route_ts",
-      "community": 98,
+      "community": 85,
       "norm_label": "route.ts"
     },
     {
@@ -2070,7 +2079,7 @@
       "source_file": "app/api/onboarding/steps/[step]/complete/route.ts",
       "source_location": "L8",
       "id": "complete_route_bodyschema",
-      "community": 98,
+      "community": 85,
       "norm_label": "bodyschema"
     },
     {
@@ -2079,7 +2088,7 @@
       "source_file": "app/api/onboarding/steps/[step]/complete/route.ts",
       "source_location": "L12",
       "id": "complete_route_steps",
-      "community": 98,
+      "community": 85,
       "norm_label": "steps"
     },
     {
@@ -2088,7 +2097,7 @@
       "source_file": "app/api/onboarding/steps/[step]/complete/route.ts",
       "source_location": "L23",
       "id": "complete_route_post",
-      "community": 98,
+      "community": 85,
       "norm_label": "post()"
     },
     {
@@ -2538,7 +2547,7 @@
       "source_file": "components/chat/welcome-card.tsx",
       "source_location": "L11",
       "id": "chat_welcome_card_welcomecard",
-      "community": 75,
+      "community": 68,
       "norm_label": "welcomecard()"
     },
     {
@@ -3159,7 +3168,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L1",
       "id": "components_enterprise_ticket_list_tsx",
-      "community": 5,
+      "community": 71,
       "norm_label": "ticket-list.tsx"
     },
     {
@@ -3168,7 +3177,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L6",
       "id": "enterprise_ticket_list_ticketlistprops",
-      "community": 5,
+      "community": 71,
       "norm_label": "ticketlistprops"
     },
     {
@@ -3177,7 +3186,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L10",
       "id": "enterprise_ticket_list_ticketlist",
-      "community": 5,
+      "community": 71,
       "norm_label": "ticketlist()"
     },
     {
@@ -3186,7 +3195,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L82",
       "id": "enterprise_ticket_list_th",
-      "community": 5,
+      "community": 71,
       "norm_label": "th()"
     },
     {
@@ -3195,7 +3204,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L86",
       "id": "enterprise_ticket_list_td",
-      "community": 5,
+      "community": 71,
       "norm_label": "td()"
     },
     {
@@ -3204,7 +3213,7 @@
       "source_file": "components/enterprise/ticket-list.tsx",
       "source_location": "L90",
       "id": "enterprise_ticket_list_formatdate",
-      "community": 5,
+      "community": 71,
       "norm_label": "formatdate()"
     },
     {
@@ -3357,7 +3366,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L1",
       "id": "components_enterprise_admin_shell_tsx",
-      "community": 79,
+      "community": 35,
       "norm_label": "admin-shell.tsx"
     },
     {
@@ -3366,7 +3375,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L7",
       "id": "enterprise_admin_shell_nav_items",
-      "community": 79,
+      "community": 35,
       "norm_label": "nav_items"
     },
     {
@@ -3375,7 +3384,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L17",
       "id": "enterprise_admin_shell_adminshellprops",
-      "community": 79,
+      "community": 35,
       "norm_label": "adminshellprops"
     },
     {
@@ -3384,7 +3393,7 @@
       "source_file": "components/enterprise/admin-shell.tsx",
       "source_location": "L24",
       "id": "enterprise_admin_shell_adminshell",
-      "community": 79,
+      "community": 35,
       "norm_label": "adminshell()"
     },
     {
@@ -3393,7 +3402,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L1",
       "id": "components_enterprise_approval_audit_timeline_tsx",
-      "community": 7,
+      "community": 62,
       "norm_label": "approval-audit-timeline.tsx"
     },
     {
@@ -3402,7 +3411,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L4",
       "id": "enterprise_approval_audit_timeline_approvalaudittimelineprops",
-      "community": 7,
+      "community": 62,
       "norm_label": "approvalaudittimelineprops"
     },
     {
@@ -3411,7 +3420,7 @@
       "source_file": "components/enterprise/approval-audit-timeline.tsx",
       "source_location": "L8",
       "id": "enterprise_approval_audit_timeline_approvalaudittimeline",
-      "community": 7,
+      "community": 62,
       "norm_label": "approvalaudittimeline()"
     },
     {
@@ -4192,7 +4201,7 @@
       "label": "originalEnv",
       "file_type": "code",
       "source_file": "scripts/test-health.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "id": "scripts_test_health_originalenv",
       "community": 94,
       "norm_label": "originalenv"
@@ -4201,7 +4210,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "scripts/test-health.ts",
-      "source_location": "L32",
+      "source_location": "L33",
       "id": "scripts_test_health_main",
       "community": 94,
       "norm_label": "main()"
@@ -4210,7 +4219,7 @@
       "label": "clearTrackedEnv()",
       "file_type": "code",
       "source_file": "scripts/test-health.ts",
-      "source_location": "L122",
+      "source_location": "L124",
       "id": "scripts_test_health_cleartrackedenv",
       "community": 94,
       "norm_label": "cleartrackedenv()"
@@ -4219,7 +4228,7 @@
       "label": "restoreTrackedEnv()",
       "file_type": "code",
       "source_file": "scripts/test-health.ts",
-      "source_location": "L126",
+      "source_location": "L128",
       "id": "scripts_test_health_restoretrackedenv",
       "community": 94,
       "norm_label": "restoretrackedenv()"
@@ -4230,7 +4239,7 @@
       "source_file": "scripts/test-retention.ts",
       "source_location": "L1",
       "id": "scripts_test_retention_ts",
-      "community": 71,
+      "community": 97,
       "norm_label": "test-retention.ts"
     },
     {
@@ -4239,7 +4248,7 @@
       "source_file": "scripts/test-retention.ts",
       "source_location": "L13",
       "id": "scripts_test_retention_checks",
-      "community": 71,
+      "community": 97,
       "norm_label": "checks"
     },
     {
@@ -4248,7 +4257,7 @@
       "source_file": "scripts/test-retention.ts",
       "source_location": "L20",
       "id": "scripts_test_retention_main",
-      "community": 71,
+      "community": 97,
       "norm_label": "main()"
     },
     {
@@ -4257,7 +4266,7 @@
       "source_file": "scripts/test-retention.ts",
       "source_location": "L179",
       "id": "scripts_test_retention_agedays",
-      "community": 71,
+      "community": 97,
       "norm_label": "agedays()"
     },
     {
@@ -4489,7 +4498,7 @@
       "label": "evidenceOk",
       "file_type": "code",
       "source_file": "scripts/test-rls-production.ts",
-      "source_location": "L34",
+      "source_location": "L35",
       "id": "scripts_test_rls_production_evidenceok",
       "community": 92,
       "norm_label": "evidenceok"
@@ -4498,7 +4507,7 @@
       "label": "hasRlsEnable()",
       "file_type": "code",
       "source_file": "scripts/test-rls-production.ts",
-      "source_location": "L89",
+      "source_location": "L100",
       "id": "scripts_test_rls_production_hasrlsenable",
       "community": 92,
       "norm_label": "hasrlsenable()"
@@ -4882,10 +4891,37 @@
       "norm_label": "onboardinggoldenroutesource"
     },
     {
+      "label": "evalWorkerRouteSource",
+      "file_type": "code",
+      "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L286",
+      "id": "scripts_test_production_readiness_evalworkerroutesource",
+      "community": 23,
+      "norm_label": "evalworkerroutesource"
+    },
+    {
+      "label": "evalSource",
+      "file_type": "code",
+      "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L287",
+      "id": "scripts_test_production_readiness_evalsource",
+      "community": 23,
+      "norm_label": "evalsource"
+    },
+    {
+      "label": "evalMigrationSource",
+      "file_type": "code",
+      "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L288",
+      "id": "scripts_test_production_readiness_evalmigrationsource",
+      "community": 23,
+      "norm_label": "evalmigrationsource"
+    },
+    {
       "label": "portalTicketsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L306",
+      "source_location": "L324",
       "id": "scripts_test_production_readiness_portalticketsroutesource",
       "community": 23,
       "norm_label": "portalticketsroutesource"
@@ -4894,7 +4930,7 @@
       "label": "portalPageSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L307",
+      "source_location": "L325",
       "id": "scripts_test_production_readiness_portalpagesource",
       "community": 23,
       "norm_label": "portalpagesource"
@@ -4903,7 +4939,7 @@
       "label": "authApiSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L308",
+      "source_location": "L326",
       "id": "scripts_test_production_readiness_authapisource",
       "community": 23,
       "norm_label": "authapisource"
@@ -4912,7 +4948,7 @@
       "label": "ticketMessagesRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L309",
+      "source_location": "L327",
       "id": "scripts_test_production_readiness_ticketmessagesroutesource",
       "community": 23,
       "norm_label": "ticketmessagesroutesource"
@@ -4921,7 +4957,7 @@
       "label": "billingCoreSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L341",
+      "source_location": "L359",
       "id": "scripts_test_production_readiness_billingcoresource",
       "community": 23,
       "norm_label": "billingcoresource"
@@ -4930,7 +4966,7 @@
       "label": "billingReconciliationLibSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L342",
+      "source_location": "L360",
       "id": "scripts_test_production_readiness_billingreconciliationlibsource",
       "community": 23,
       "norm_label": "billingreconciliationlibsource"
@@ -4939,7 +4975,7 @@
       "label": "knowledgeUploadSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L343",
+      "source_location": "L361",
       "id": "scripts_test_production_readiness_knowledgeuploadsource",
       "community": 23,
       "norm_label": "knowledgeuploadsource"
@@ -4948,7 +4984,7 @@
       "label": "domainRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L344",
+      "source_location": "L362",
       "id": "scripts_test_production_readiness_domainroutesource",
       "community": 23,
       "norm_label": "domainroutesource"
@@ -4957,7 +4993,7 @@
       "label": "integrationsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L345",
+      "source_location": "L363",
       "id": "scripts_test_production_readiness_integrationsroutesource",
       "community": 23,
       "norm_label": "integrationsroutesource"
@@ -4966,7 +5002,7 @@
       "label": "integrationsBatchDeliverRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L346",
+      "source_location": "L364",
       "id": "scripts_test_production_readiness_integrationsbatchdeliverroutesource",
       "community": 23,
       "norm_label": "integrationsbatchdeliverroutesource"
@@ -4975,7 +5011,7 @@
       "label": "integrationsHealthRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L347",
+      "source_location": "L365",
       "id": "scripts_test_production_readiness_integrationshealthroutesource",
       "community": 23,
       "norm_label": "integrationshealthroutesource"
@@ -4984,7 +5020,7 @@
       "label": "integrationsDbSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L348",
+      "source_location": "L366",
       "id": "scripts_test_production_readiness_integrationsdbsource",
       "community": 23,
       "norm_label": "integrationsdbsource"
@@ -4993,7 +5029,7 @@
       "label": "invitationsRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L349",
+      "source_location": "L367",
       "id": "scripts_test_production_readiness_invitationsroutesource",
       "community": 23,
       "norm_label": "invitationsroutesource"
@@ -5002,7 +5038,7 @@
       "label": "chatRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L350",
+      "source_location": "L368",
       "id": "scripts_test_production_readiness_chatroutesource",
       "community": 23,
       "norm_label": "chatroutesource"
@@ -5011,7 +5047,7 @@
       "label": "ticketDraftRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L351",
+      "source_location": "L369",
       "id": "scripts_test_production_readiness_ticketdraftroutesource",
       "community": 23,
       "norm_label": "ticketdraftroutesource"
@@ -5020,7 +5056,7 @@
       "label": "widgetAuthSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L352",
+      "source_location": "L370",
       "id": "scripts_test_production_readiness_widgetauthsource",
       "community": 23,
       "norm_label": "widgetauthsource"
@@ -5029,7 +5065,7 @@
       "label": "widgetSessionRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L353",
+      "source_location": "L371",
       "id": "scripts_test_production_readiness_widgetsessionroutesource",
       "community": 23,
       "norm_label": "widgetsessionroutesource"
@@ -5038,7 +5074,7 @@
       "label": "widgetConfigRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L354",
+      "source_location": "L372",
       "id": "scripts_test_production_readiness_widgetconfigroutesource",
       "community": 23,
       "norm_label": "widgetconfigroutesource"
@@ -5047,7 +5083,7 @@
       "label": "rateLimitSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L355",
+      "source_location": "L373",
       "id": "scripts_test_production_readiness_ratelimitsource",
       "community": 23,
       "norm_label": "ratelimitsource"
@@ -5056,7 +5092,7 @@
       "label": "rateLimitTestSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L356",
+      "source_location": "L374",
       "id": "scripts_test_production_readiness_ratelimittestsource",
       "community": 23,
       "norm_label": "ratelimittestsource"
@@ -5065,7 +5101,7 @@
       "label": "retentionSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L357",
+      "source_location": "L375",
       "id": "scripts_test_production_readiness_retentionsource",
       "community": 23,
       "norm_label": "retentionsource"
@@ -5074,7 +5110,7 @@
       "label": "retentionWorkerRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L358",
+      "source_location": "L376",
       "id": "scripts_test_production_readiness_retentionworkerroutesource",
       "community": 23,
       "norm_label": "retentionworkerroutesource"
@@ -5083,7 +5119,7 @@
       "label": "ingestionSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L359",
+      "source_location": "L377",
       "id": "scripts_test_production_readiness_ingestionsource",
       "community": 23,
       "norm_label": "ingestionsource"
@@ -5092,7 +5128,7 @@
       "label": "ingestionWorkerRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L360",
+      "source_location": "L378",
       "id": "scripts_test_production_readiness_ingestionworkerroutesource",
       "community": 23,
       "norm_label": "ingestionworkerroutesource"
@@ -5101,7 +5137,7 @@
       "label": "ingestionStorageMigrationSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L361",
+      "source_location": "L379",
       "id": "scripts_test_production_readiness_ingestionstoragemigrationsource",
       "community": 23,
       "norm_label": "ingestionstoragemigrationsource"
@@ -5110,7 +5146,7 @@
       "label": "auditEvidenceStorageMigrationSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L362",
+      "source_location": "L380",
       "id": "scripts_test_production_readiness_auditevidencestoragemigrationsource",
       "community": 23,
       "norm_label": "auditevidencestoragemigrationsource"
@@ -5119,7 +5155,7 @@
       "label": "healthRouteSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L363",
+      "source_location": "L381",
       "id": "scripts_test_production_readiness_healthroutesource",
       "community": 23,
       "norm_label": "healthroutesource"
@@ -5128,7 +5164,7 @@
       "label": "healthOpsSource",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L364",
+      "source_location": "L382",
       "id": "scripts_test_production_readiness_healthopssource",
       "community": 23,
       "norm_label": "healthopssource"
@@ -5137,7 +5173,7 @@
       "label": "walk()",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L530",
+      "source_location": "L549",
       "id": "scripts_test_production_readiness_walk",
       "community": 23,
       "norm_label": "walk()"
@@ -5146,7 +5182,7 @@
       "label": "restoreEnv()",
       "file_type": "code",
       "source_file": "scripts/test-production-readiness.ts",
-      "source_location": "L537",
+      "source_location": "L556",
       "id": "scripts_test_production_readiness_restoreenv",
       "community": 23,
       "norm_label": "restoreenv()"
@@ -5157,7 +5193,7 @@
       "source_file": "scripts/test-billing-lifecycle.ts",
       "source_location": "L1",
       "id": "scripts_test_billing_lifecycle_ts",
-      "community": 107,
+      "community": 31,
       "norm_label": "test-billing-lifecycle.ts"
     },
     {
@@ -5166,7 +5202,7 @@
       "source_file": "scripts/test-billing-lifecycle.ts",
       "source_location": "L29",
       "id": "scripts_test_billing_lifecycle_checks",
-      "community": 107,
+      "community": 31,
       "norm_label": "checks"
     },
     {
@@ -5175,7 +5211,7 @@
       "source_file": "scripts/test-billing-lifecycle.ts",
       "source_location": "L36",
       "id": "scripts_test_billing_lifecycle_main",
-      "community": 107,
+      "community": 31,
       "norm_label": "main()"
     },
     {
@@ -5184,7 +5220,7 @@
       "source_file": "scripts/test-billing-lifecycle.ts",
       "source_location": "L185",
       "id": "scripts_test_billing_lifecycle_restoreenv",
-      "community": 107,
+      "community": 31,
       "norm_label": "restoreenv()"
     },
     {
@@ -5391,7 +5427,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L1",
       "id": "lib_analytics_ts",
-      "community": 112,
+      "community": 76,
       "norm_label": "analytics.ts"
     },
     {
@@ -5400,7 +5436,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L3",
       "id": "lib_analytics_conversationlog",
-      "community": 112,
+      "community": 76,
       "norm_label": "conversationlog"
     },
     {
@@ -5409,7 +5445,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L13",
       "id": "lib_analytics_feedbacklog",
-      "community": 112,
+      "community": 76,
       "norm_label": "feedbacklog"
     },
     {
@@ -5418,7 +5454,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L19",
       "id": "lib_analytics_analyticsstore",
-      "community": 112,
+      "community": 76,
       "norm_label": "analyticsstore"
     },
     {
@@ -5427,7 +5463,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L24",
       "id": "lib_analytics_globalforanalytics",
-      "community": 112,
+      "community": 76,
       "norm_label": "globalforanalytics"
     },
     {
@@ -5445,7 +5481,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L45",
       "id": "lib_analytics_logfeedback",
-      "community": 112,
+      "community": 109,
       "norm_label": "logfeedback()"
     },
     {
@@ -5454,7 +5490,7 @@
       "source_file": "lib/analytics.ts",
       "source_location": "L58",
       "id": "lib_analytics_getstatssnapshot",
-      "community": 111,
+      "community": 88,
       "norm_label": "getstatssnapshot()"
     },
     {
@@ -5481,7 +5517,7 @@
       "source_file": "lib/system-prompt.ts",
       "source_location": "L1",
       "id": "lib_system_prompt_ts",
-      "community": 69,
+      "community": 66,
       "norm_label": "system-prompt.ts"
     },
     {
@@ -5490,7 +5526,7 @@
       "source_file": "lib/system-prompt.ts",
       "source_location": "L5",
       "id": "lib_system_prompt_buildsystemprompt",
-      "community": 69,
+      "community": 66,
       "norm_label": "buildsystemprompt()"
     },
     {
@@ -5553,7 +5589,7 @@
       "source_file": "lib/retriever.ts",
       "source_location": "L9",
       "id": "lib_retriever_chunk",
-      "community": 69,
+      "community": 66,
       "norm_label": "chunk"
     },
     {
@@ -5688,7 +5724,7 @@
       "source_file": "lib/retriever.ts",
       "source_location": "L183",
       "id": "lib_retriever_formatcontext",
-      "community": 69,
+      "community": 66,
       "norm_label": "formatcontext()"
     },
     {
@@ -6001,7 +6037,7 @@
       "label": "GoldenEvalCase",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L8",
+      "source_location": "L15",
       "id": "evals_golden_goldenevalcase",
       "community": 61,
       "norm_label": "goldenevalcase"
@@ -6010,25 +6046,61 @@
       "label": "GoldenEvalSummary",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L22",
+      "source_location": "L29",
       "id": "evals_golden_goldenevalsummary",
       "community": 61,
       "norm_label": "goldenevalsummary"
     },
     {
+      "label": "GoldenEvalRecordResult",
+      "file_type": "code",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L44",
+      "id": "evals_golden_goldenevalrecordresult",
+      "community": 61,
+      "norm_label": "goldenevalrecordresult"
+    },
+    {
+      "label": "ScheduledGoldenEvalResult",
+      "file_type": "code",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L50",
+      "id": "evals_golden_scheduledgoldenevalresult",
+      "community": 61,
+      "norm_label": "scheduledgoldenevalresult"
+    },
+    {
       "label": "runGoldenQuestionEvals()",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L37",
+      "source_location": "L57",
       "id": "evals_golden_rungoldenquestionevals",
       "community": 61,
       "norm_label": "rungoldenquestionevals()"
     },
     {
+      "label": "runAndRecordGoldenQuestionEvals()",
+      "file_type": "code",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L85",
+      "id": "evals_golden_runandrecordgoldenquestionevals",
+      "community": 61,
+      "norm_label": "runandrecordgoldenquestionevals()"
+    },
+    {
+      "label": "processScheduledGoldenEvals()",
+      "file_type": "code",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L134",
+      "id": "evals_golden_processscheduledgoldenevals",
+      "community": 61,
+      "norm_label": "processscheduledgoldenevals()"
+    },
+    {
       "label": "evaluateGoldenQuestion()",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L65",
+      "source_location": "L150",
       "id": "evals_golden_evaluategoldenquestion",
       "community": 61,
       "norm_label": "evaluategoldenquestion()"
@@ -6037,7 +6109,7 @@
       "label": "normalize()",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L112",
+      "source_location": "L197",
       "id": "evals_golden_normalize",
       "community": 61,
       "norm_label": "normalize()"
@@ -6046,7 +6118,7 @@
       "label": "riskLevelFor()",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L116",
+      "source_location": "L201",
       "id": "evals_golden_risklevelfor",
       "community": 61,
       "norm_label": "risklevelfor()"
@@ -6055,10 +6127,19 @@
       "label": "requiresHumanReview()",
       "file_type": "code",
       "source_file": "lib/evals/golden.ts",
-      "source_location": "L120",
+      "source_location": "L205",
       "id": "evals_golden_requireshumanreview",
       "community": 61,
       "norm_label": "requireshumanreview()"
+    },
+    {
+      "label": "hashSummary()",
+      "file_type": "code",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L209",
+      "id": "evals_golden_hashsummary",
+      "community": 61,
+      "norm_label": "hashsummary()"
     },
     {
       "label": "demo-data.ts",
@@ -6453,7 +6534,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L7",
       "id": "enterprise_types_membershiprole",
-      "community": 27,
+      "community": 120,
       "norm_label": "membershiprole"
     },
     {
@@ -6480,7 +6561,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L10",
       "id": "enterprise_types_billingtierkey",
-      "community": 104,
+      "community": 31,
       "norm_label": "billingtierkey"
     },
     {
@@ -6489,7 +6570,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L11",
       "id": "enterprise_types_billinginterval",
-      "community": 104,
+      "community": 31,
       "norm_label": "billinginterval"
     },
     {
@@ -6552,7 +6633,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L18",
       "id": "enterprise_types_deletionrequestscope",
-      "community": 62,
+      "community": 27,
       "norm_label": "deletionrequestscope"
     },
     {
@@ -6561,7 +6642,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L19",
       "id": "enterprise_types_retentionjobtype",
-      "community": 62,
+      "community": 27,
       "norm_label": "retentionjobtype"
     },
     {
@@ -6579,7 +6660,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L21",
       "id": "enterprise_types_evidenceexportstatus",
-      "community": 62,
+      "community": 27,
       "norm_label": "evidenceexportstatus"
     },
     {
@@ -6588,7 +6669,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L22",
       "id": "enterprise_types_billingsubscriptionstatus",
-      "community": 31,
+      "community": 27,
       "norm_label": "billingsubscriptionstatus"
     },
     {
@@ -6597,7 +6678,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L31",
       "id": "enterprise_types_billingdunningstate",
-      "community": 31,
+      "community": 27,
       "norm_label": "billingdunningstate"
     },
     {
@@ -6606,7 +6687,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L32",
       "id": "enterprise_types_usageeventtype",
-      "community": 27,
+      "community": 94,
       "norm_label": "usageeventtype"
     },
     {
@@ -6615,7 +6696,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L51",
       "id": "enterprise_types_launchcheckliststep",
-      "community": 98,
+      "community": 85,
       "norm_label": "launchcheckliststep"
     },
     {
@@ -6660,7 +6741,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L72",
       "id": "enterprise_types_organization",
-      "community": 24,
+      "community": 15,
       "norm_label": "organization"
     },
     {
@@ -6669,7 +6750,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L80",
       "id": "enterprise_types_workspace",
-      "community": 27,
+      "community": 15,
       "norm_label": "workspace"
     },
     {
@@ -6741,7 +6822,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L178",
       "id": "enterprise_types_customer",
-      "community": 24,
+      "community": 27,
       "norm_label": "customer"
     },
     {
@@ -6759,7 +6840,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L207",
       "id": "enterprise_types_ticketmessage",
-      "community": 27,
+      "community": 24,
       "norm_label": "ticketmessage"
     },
     {
@@ -6795,7 +6876,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L270",
       "id": "enterprise_types_knowledgeingestionjob",
-      "community": 97,
+      "community": 27,
       "norm_label": "knowledgeingestionjob"
     },
     {
@@ -6822,7 +6903,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L337",
       "id": "enterprise_types_auditlog",
-      "community": 27,
+      "community": 24,
       "norm_label": "auditlog"
     },
     {
@@ -6831,7 +6912,7 @@
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L348",
       "id": "enterprise_types_workspacechecklistitem",
-      "community": 27,
+      "community": 24,
       "norm_label": "workspacechecklistitem"
     },
     {
@@ -6844,10 +6925,19 @@
       "norm_label": "goldenquestion"
     },
     {
-      "label": "MissingKnowledgeTask",
+      "label": "GoldenEvalRun",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
       "source_location": "L371",
+      "id": "enterprise_types_goldenevalrun",
+      "community": 27,
+      "norm_label": "goldenevalrun"
+    },
+    {
+      "label": "MissingKnowledgeTask",
+      "file_type": "code",
+      "source_file": "lib/enterprise/types.ts",
+      "source_location": "L387",
       "id": "enterprise_types_missingknowledgetask",
       "community": 27,
       "norm_label": "missingknowledgetask"
@@ -6856,16 +6946,16 @@
       "label": "ModelRouteLog",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L382",
+      "source_location": "L398",
       "id": "enterprise_types_modelroutelog",
-      "community": 27,
+      "community": 24,
       "norm_label": "modelroutelog"
     },
     {
       "label": "SecurityEvent",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L400",
+      "source_location": "L416",
       "id": "enterprise_types_securityevent",
       "community": 27,
       "norm_label": "securityevent"
@@ -6874,25 +6964,25 @@
       "label": "WidgetSession",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L412",
+      "source_location": "L428",
       "id": "enterprise_types_widgetsession",
-      "community": 24,
+      "community": 27,
       "norm_label": "widgetsession"
     },
     {
       "label": "RetentionSetting",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L424",
+      "source_location": "L440",
       "id": "enterprise_types_retentionsetting",
-      "community": 27,
+      "community": 24,
       "norm_label": "retentionsetting"
     },
     {
       "label": "ToolDefinition",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L435",
+      "source_location": "L451",
       "id": "enterprise_types_tooldefinition",
       "community": 27,
       "norm_label": "tooldefinition"
@@ -6901,7 +6991,7 @@
       "label": "ToolCall",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L445",
+      "source_location": "L461",
       "id": "enterprise_types_toolcall",
       "community": 24,
       "norm_label": "toolcall"
@@ -6910,25 +7000,25 @@
       "label": "AgentRun",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L457",
+      "source_location": "L473",
       "id": "enterprise_types_agentrun",
-      "community": 24,
+      "community": 27,
       "norm_label": "agentrun"
     },
     {
       "label": "PolicyEvaluation",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L468",
+      "source_location": "L484",
       "id": "enterprise_types_policyevaluation",
-      "community": 24,
+      "community": 27,
       "norm_label": "policyevaluation"
     },
     {
       "label": "GroundingCheck",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L481",
+      "source_location": "L497",
       "id": "enterprise_types_groundingcheck",
       "community": 27,
       "norm_label": "groundingcheck"
@@ -6937,16 +7027,16 @@
       "label": "EscalationRule",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L494",
+      "source_location": "L510",
       "id": "enterprise_types_escalationrule",
-      "community": 27,
+      "community": 24,
       "norm_label": "escalationrule"
     },
     {
       "label": "ApprovalPolicy",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L505",
+      "source_location": "L521",
       "id": "enterprise_types_approvalpolicy",
       "community": 24,
       "norm_label": "approvalpolicy"
@@ -6955,88 +7045,88 @@
       "label": "UsageEvent",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L517",
+      "source_location": "L533",
       "id": "enterprise_types_usageevent",
-      "community": 27,
+      "community": 15,
       "norm_label": "usageevent"
     },
     {
       "label": "StripeCustomerMapping",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L527",
+      "source_location": "L543",
       "id": "enterprise_types_stripecustomermapping",
-      "community": 31,
+      "community": 27,
       "norm_label": "stripecustomermapping"
     },
     {
       "label": "BillingCheckoutSession",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L538",
+      "source_location": "L554",
       "id": "enterprise_types_billingcheckoutsession",
-      "community": 31,
+      "community": 27,
       "norm_label": "billingcheckoutsession"
     },
     {
       "label": "BillingSubscription",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L556",
+      "source_location": "L572",
       "id": "enterprise_types_billingsubscription",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingsubscription"
     },
     {
       "label": "BillingInvoice",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L576",
+      "source_location": "L592",
       "id": "enterprise_types_billinginvoice",
-      "community": 90,
+      "community": 31,
       "norm_label": "billinginvoice"
     },
     {
       "label": "BillingEntitlement",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L595",
+      "source_location": "L611",
       "id": "enterprise_types_billingentitlement",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingentitlement"
     },
     {
       "label": "StripeWebhookEvent",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L609",
+      "source_location": "L625",
       "id": "enterprise_types_stripewebhookevent",
-      "community": 31,
+      "community": 27,
       "norm_label": "stripewebhookevent"
     },
     {
       "label": "IntegrationAccount",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L621",
+      "source_location": "L637",
       "id": "enterprise_types_integrationaccount",
-      "community": 1,
+      "community": 110,
       "norm_label": "integrationaccount"
     },
     {
       "label": "WebhookEndpoint",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L634",
+      "source_location": "L650",
       "id": "enterprise_types_webhookendpoint",
-      "community": 1,
+      "community": 110,
       "norm_label": "webhookendpoint"
     },
     {
       "label": "IntegrationExternalMapping",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L647",
+      "source_location": "L663",
       "id": "enterprise_types_integrationexternalmapping",
       "community": 27,
       "norm_label": "integrationexternalmapping"
@@ -7045,7 +7135,7 @@
       "label": "OutboundEvent",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L660",
+      "source_location": "L676",
       "id": "enterprise_types_outboundevent",
       "community": 1,
       "norm_label": "outboundevent"
@@ -7054,7 +7144,7 @@
       "label": "IntegrationDelivery",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L680",
+      "source_location": "L696",
       "id": "enterprise_types_integrationdelivery",
       "community": 1,
       "norm_label": "integrationdelivery"
@@ -7063,34 +7153,34 @@
       "label": "DataDeletionRequest",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L697",
+      "source_location": "L713",
       "id": "enterprise_types_datadeletionrequest",
-      "community": 62,
+      "community": 27,
       "norm_label": "datadeletionrequest"
     },
     {
       "label": "RetentionJob",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L717",
+      "source_location": "L733",
       "id": "enterprise_types_retentionjob",
-      "community": 62,
+      "community": 27,
       "norm_label": "retentionjob"
     },
     {
       "label": "AuditEvidenceExport",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L739",
+      "source_location": "L755",
       "id": "enterprise_types_auditevidenceexport",
-      "community": 62,
+      "community": 27,
       "norm_label": "auditevidenceexport"
     },
     {
       "label": "TicketWithRelations",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L756",
+      "source_location": "L772",
       "id": "enterprise_types_ticketwithrelations",
       "community": 27,
       "norm_label": "ticketwithrelations"
@@ -7099,7 +7189,7 @@
       "label": "DashboardMetrics",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L763",
+      "source_location": "L779",
       "id": "enterprise_types_dashboardmetrics",
       "community": 27,
       "norm_label": "dashboardmetrics"
@@ -7108,7 +7198,7 @@
       "label": "WorkspaceHealth",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L777",
+      "source_location": "L793",
       "id": "enterprise_types_workspacehealth",
       "community": 5,
       "norm_label": "workspacehealth"
@@ -7117,16 +7207,16 @@
       "label": "ConfidenceBreakdown",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L788",
+      "source_location": "L804",
       "id": "enterprise_types_confidencebreakdown",
-      "community": 61,
+      "community": 7,
       "norm_label": "confidencebreakdown"
     },
     {
       "label": "PolicyDecision",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L795",
+      "source_location": "L811",
       "id": "enterprise_types_policydecision",
       "community": 27,
       "norm_label": "policydecision"
@@ -7135,7 +7225,7 @@
       "label": "DraftResult",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L803",
+      "source_location": "L819",
       "id": "enterprise_types_draftresult",
       "community": 7,
       "norm_label": "draftresult"
@@ -7144,9 +7234,9 @@
       "label": "WorkspaceLaunchState",
       "file_type": "code",
       "source_file": "lib/enterprise/types.ts",
-      "source_location": "L816",
+      "source_location": "L832",
       "id": "enterprise_types_workspacelaunchstate",
-      "community": 27,
+      "community": 98,
       "norm_label": "workspacelaunchstate"
     },
     {
@@ -7335,7 +7425,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L1",
       "id": "lib_auth_invitations_ts",
-      "community": 102,
+      "community": 49,
       "norm_label": "invitations.ts"
     },
     {
@@ -7344,7 +7434,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L3",
       "id": "auth_invitations_createinvitetoken",
-      "community": 102,
+      "community": 49,
       "norm_label": "createinvitetoken()"
     },
     {
@@ -7353,7 +7443,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L7",
       "id": "auth_invitations_hashinvitetoken",
-      "community": 102,
+      "community": 49,
       "norm_label": "hashinvitetoken()"
     },
     {
@@ -7362,7 +7452,7 @@
       "source_file": "lib/auth/invitations.ts",
       "source_location": "L11",
       "id": "auth_invitations_inviteurlfromrequest",
-      "community": 102,
+      "community": 49,
       "norm_label": "inviteurlfromrequest()"
     },
     {
@@ -7452,7 +7542,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L29",
       "id": "auth_permissions_canaccessanyrole",
-      "community": 85,
+      "community": 80,
       "norm_label": "canaccessanyrole()"
     },
     {
@@ -7461,7 +7551,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L33",
       "id": "auth_permissions_getrequiredadminroles",
-      "community": 119,
+      "community": 80,
       "norm_label": "getrequiredadminroles()"
     },
     {
@@ -7470,7 +7560,7 @@
       "source_file": "lib/auth/permissions.ts",
       "source_location": "L41",
       "id": "auth_permissions_decideadminrouteaccess",
-      "community": 119,
+      "community": 80,
       "norm_label": "decideadminrouteaccess()"
     },
     {
@@ -7551,7 +7641,7 @@
       "source_file": "lib/auth/api.ts",
       "source_location": "L42",
       "id": "auth_api_getauthenticateduser",
-      "community": 83,
+      "community": 85,
       "norm_label": "getauthenticateduser()"
     },
     {
@@ -7612,7 +7702,7 @@
       "label": "REQUIRED_RLS_HELPERS",
       "file_type": "code",
       "source_file": "lib/auth/rls-matrix.ts",
-      "source_location": "L58",
+      "source_location": "L59",
       "id": "auth_rls_matrix_required_rls_helpers",
       "community": 92,
       "norm_label": "required_rls_helpers"
@@ -7621,7 +7711,7 @@
       "label": "RLS_EXPECTATIONS",
       "file_type": "code",
       "source_file": "lib/auth/rls-matrix.ts",
-      "source_location": "L68",
+      "source_location": "L69",
       "id": "auth_rls_matrix_rls_expectations",
       "community": 92,
       "norm_label": "rls_expectations"
@@ -7630,7 +7720,7 @@
       "label": "describeRlsMatrix()",
       "file_type": "code",
       "source_file": "lib/auth/rls-matrix.ts",
-      "source_location": "L143",
+      "source_location": "L144",
       "id": "auth_rls_matrix_describerlsmatrix",
       "community": 92,
       "norm_label": "describerlsmatrix()"
@@ -7641,7 +7731,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L1",
       "id": "lib_auth_onboarding_ts",
-      "community": 49,
+      "community": 23,
       "norm_label": "onboarding.ts"
     },
     {
@@ -7650,7 +7740,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L3",
       "id": "auth_onboarding_onboarding_checklist",
-      "community": 49,
+      "community": 23,
       "norm_label": "onboarding_checklist"
     },
     {
@@ -7659,7 +7749,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L46",
       "id": "auth_onboarding_slugifyworkspacename",
-      "community": 49,
+      "community": 23,
       "norm_label": "slugifyworkspacename()"
     },
     {
@@ -7668,7 +7758,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L55",
       "id": "auth_onboarding_makeuniqueslug",
-      "community": 49,
+      "community": 23,
       "norm_label": "makeuniqueslug()"
     },
     {
@@ -7677,7 +7767,7 @@
       "source_file": "lib/auth/onboarding.ts",
       "source_location": "L59",
       "id": "auth_onboarding_makewidgetkey",
-      "community": 49,
+      "community": 23,
       "norm_label": "makewidgetkey()"
     },
     {
@@ -7686,7 +7776,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L1",
       "id": "lib_auth_roles_ts",
-      "community": 79,
+      "community": 49,
       "norm_label": "roles.ts"
     },
     {
@@ -7695,7 +7785,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L9",
       "id": "auth_roles_getcurrententerpriseuser",
-      "community": 79,
+      "community": 85,
       "norm_label": "getcurrententerpriseuser"
     },
     {
@@ -7704,7 +7794,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L42",
       "id": "auth_roles_hasenterpriserole",
-      "community": 77,
+      "community": 85,
       "norm_label": "hasenterpriserole()"
     },
     {
@@ -7713,7 +7803,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L49",
       "id": "auth_roles_currentworkspacemembership",
-      "community": 79,
+      "community": 49,
       "norm_label": "currentworkspacemembership"
     },
     {
@@ -7722,7 +7812,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L57",
       "id": "auth_roles_getcurrentworkspacemembership",
-      "community": 102,
+      "community": 49,
       "norm_label": "getcurrentworkspacemembership"
     },
     {
@@ -7731,7 +7821,7 @@
       "source_file": "lib/auth/roles.ts",
       "source_location": "L99",
       "id": "auth_roles_hasworkspacepermission",
-      "community": 79,
+      "community": 49,
       "norm_label": "hasworkspacepermission()"
     },
     {
@@ -7839,7 +7929,7 @@
       "source_file": "lib/workflows/grounding.ts",
       "source_location": "L26",
       "id": "workflows_grounding_round",
-      "community": 61,
+      "community": 27,
       "norm_label": "round()"
     },
     {
@@ -8199,7 +8289,7 @@
       "source_file": "lib/supabase/admin.ts",
       "source_location": "L4",
       "id": "supabase_admin_createsupabaseadminclient",
-      "community": 88,
+      "community": 31,
       "norm_label": "createsupabaseadminclient()"
     },
     {
@@ -8424,7 +8514,7 @@
       "source_file": "lib/integrations/resend.ts",
       "source_location": "L32",
       "id": "integrations_resend_gettransactionalemailconfigerror",
-      "community": 102,
+      "community": 94,
       "norm_label": "gettransactionalemailconfigerror()"
     },
     {
@@ -8613,7 +8703,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L143",
       "id": "db_integrations_listintegrationaccounts",
-      "community": 86,
+      "community": 115,
       "norm_label": "listintegrationaccounts()"
     },
     {
@@ -8622,7 +8712,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L157",
       "id": "db_integrations_listwebhookendpoints",
-      "community": 86,
+      "community": 115,
       "norm_label": "listwebhookendpoints()"
     },
     {
@@ -8667,7 +8757,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L264",
       "id": "db_integrations_enqueueapprovaldecision",
-      "community": 117,
+      "community": 116,
       "norm_label": "enqueueapprovaldecision()"
     },
     {
@@ -8703,7 +8793,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L407",
       "id": "db_integrations_listdueoutboundevents",
-      "community": 108,
+      "community": 115,
       "norm_label": "listdueoutboundevents()"
     },
     {
@@ -8721,7 +8811,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L456",
       "id": "db_integrations_listactivechannels",
-      "community": 86,
+      "community": 115,
       "norm_label": "listactivechannels()"
     },
     {
@@ -8739,7 +8829,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L473",
       "id": "db_integrations_buildapprovalpayload",
-      "community": 117,
+      "community": 116,
       "norm_label": "buildapprovalpayload()"
     },
     {
@@ -8847,7 +8937,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L674",
       "id": "db_integrations_recorddelivery",
-      "community": 108,
+      "community": 1,
       "norm_label": "recorddelivery()"
     },
     {
@@ -8973,7 +9063,7 @@
       "source_file": "lib/db/integrations.ts",
       "source_location": "L870",
       "id": "db_integrations_tointegrationdeliveryrow",
-      "community": 108,
+      "community": 1,
       "norm_label": "tointegrationdeliveryrow()"
     },
     {
@@ -9000,7 +9090,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L1",
       "id": "lib_db_retention_ts",
-      "community": 62,
+      "community": 97,
       "norm_label": "retention.ts"
     },
     {
@@ -9009,7 +9099,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L22",
       "id": "db_retention_createdeletionrequestinput",
-      "community": 62,
+      "community": 97,
       "norm_label": "createdeletionrequestinput"
     },
     {
@@ -9018,7 +9108,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L33",
       "id": "db_retention_createevidenceexportinput",
-      "community": 62,
+      "community": 97,
       "norm_label": "createevidenceexportinput"
     },
     {
@@ -9027,7 +9117,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L41",
       "id": "db_retention_localretentionstate",
-      "community": 62,
+      "community": 97,
       "norm_label": "localretentionstate"
     },
     {
@@ -9036,7 +9126,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L47",
       "id": "db_retention_getlocalretentionstate",
-      "community": 71,
+      "community": 97,
       "norm_label": "getlocalretentionstate()"
     },
     {
@@ -9045,7 +9135,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L51",
       "id": "db_retention_resetlocalretentionstatefortests",
-      "community": 71,
+      "community": 97,
       "norm_label": "resetlocalretentionstatefortests()"
     },
     {
@@ -9054,7 +9144,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L57",
       "id": "db_retention_listdeletionrequests",
-      "community": 93,
+      "community": 97,
       "norm_label": "listdeletionrequests()"
     },
     {
@@ -9063,7 +9153,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L72",
       "id": "db_retention_listretentionjobs",
-      "community": 85,
+      "community": 97,
       "norm_label": "listretentionjobs()"
     },
     {
@@ -9072,7 +9162,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L87",
       "id": "db_retention_listdueretentionjobs",
-      "community": 71,
+      "community": 97,
       "norm_label": "listdueretentionjobs()"
     },
     {
@@ -9081,7 +9171,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L100",
       "id": "db_retention_processdueretentionjobs",
-      "community": 71,
+      "community": 97,
       "norm_label": "processdueretentionjobs()"
     },
     {
@@ -9090,7 +9180,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L140",
       "id": "db_retention_listauditevidenceexports",
-      "community": 118,
+      "community": 97,
       "norm_label": "listauditevidenceexports()"
     },
     {
@@ -9099,7 +9189,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L155",
       "id": "db_retention_createdeletionrequest",
-      "community": 93,
+      "community": 97,
       "norm_label": "createdeletionrequest()"
     },
     {
@@ -9108,7 +9198,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L205",
       "id": "db_retention_scheduleretentionjobs",
-      "community": 71,
+      "community": 97,
       "norm_label": "scheduleretentionjobs()"
     },
     {
@@ -9117,7 +9207,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L259",
       "id": "db_retention_processretentionjob",
-      "community": 71,
+      "community": 97,
       "norm_label": "processretentionjob()"
     },
     {
@@ -9126,7 +9216,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L311",
       "id": "db_retention_createauditevidenceexport",
-      "community": 118,
+      "community": 97,
       "norm_label": "createauditevidenceexport()"
     },
     {
@@ -9135,7 +9225,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L370",
       "id": "db_retention_createretentionjob",
-      "community": 93,
+      "community": 97,
       "norm_label": "createretentionjob()"
     },
     {
@@ -9144,7 +9234,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L416",
       "id": "db_retention_applyretentionjob",
-      "community": 113,
+      "community": 97,
       "norm_label": "applyretentionjob()"
     },
     {
@@ -9153,7 +9243,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L466",
       "id": "db_retention_deletionscopecounts",
-      "community": 113,
+      "community": 97,
       "norm_label": "deletionscopecounts()"
     },
     {
@@ -9162,7 +9252,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L492",
       "id": "db_retention_countolderthan",
-      "community": 113,
+      "community": 97,
       "norm_label": "countolderthan()"
     },
     {
@@ -9171,7 +9261,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L498",
       "id": "db_retention_isolderthan",
-      "community": 113,
+      "community": 97,
       "norm_label": "isolderthan()"
     },
     {
@@ -9180,7 +9270,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L503",
       "id": "db_retention_redactedvalue",
-      "community": 113,
+      "community": 97,
       "norm_label": "redactedvalue()"
     },
     {
@@ -9189,7 +9279,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L507",
       "id": "db_retention_redactlocalailogs",
-      "community": 113,
+      "community": 97,
       "norm_label": "redactlocalailogs()"
     },
     {
@@ -9198,7 +9288,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L531",
       "id": "db_retention_applylocaldeletionrequest",
-      "community": 113,
+      "community": 97,
       "norm_label": "applylocaldeletionrequest()"
     },
     {
@@ -9207,7 +9297,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L579",
       "id": "db_retention_applysupabaseconversationcleanup",
-      "community": 62,
+      "community": 97,
       "norm_label": "applysupabaseconversationcleanup()"
     },
     {
@@ -9216,7 +9306,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L604",
       "id": "db_retention_applysupabaseailogcleanup",
-      "community": 62,
+      "community": 97,
       "norm_label": "applysupabaseailogcleanup()"
     },
     {
@@ -9225,7 +9315,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L637",
       "id": "db_retention_applysupabasedeletionrequest",
-      "community": 62,
+      "community": 97,
       "norm_label": "applysupabasedeletionrequest()"
     },
     {
@@ -9234,7 +9324,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L690",
       "id": "db_retention_removewhere",
-      "community": 113,
+      "community": 97,
       "norm_label": "removewhere()"
     },
     {
@@ -9243,7 +9333,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L696",
       "id": "db_retention_getdeletionrequest",
-      "community": 62,
+      "community": 97,
       "norm_label": "getdeletionrequest()"
     },
     {
@@ -9252,7 +9342,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L708",
       "id": "db_retention_getretentionjob",
-      "community": 62,
+      "community": 97,
       "norm_label": "getretentionjob()"
     },
     {
@@ -9261,7 +9351,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L720",
       "id": "db_retention_persistdeletionrequest",
-      "community": 62,
+      "community": 97,
       "norm_label": "persistdeletionrequest()"
     },
     {
@@ -9270,7 +9360,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L728",
       "id": "db_retention_persistretentionjob",
-      "community": 62,
+      "community": 97,
       "norm_label": "persistretentionjob()"
     },
     {
@@ -9279,7 +9369,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L736",
       "id": "db_retention_persistauditevidenceexport",
-      "community": 62,
+      "community": 97,
       "norm_label": "persistauditevidenceexport()"
     },
     {
@@ -9288,7 +9378,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L744",
       "id": "db_retention_storeauditevidenceartifact",
-      "community": 62,
+      "community": 97,
       "norm_label": "storeauditevidenceartifact()"
     },
     {
@@ -9297,7 +9387,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L759",
       "id": "db_retention_auditevidencebucketname",
-      "community": 62,
+      "community": 97,
       "norm_label": "auditevidencebucketname()"
     },
     {
@@ -9306,7 +9396,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L763",
       "id": "db_retention_auditevidencepath",
-      "community": 62,
+      "community": 97,
       "norm_label": "auditevidencepath()"
     },
     {
@@ -9315,7 +9405,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L768",
       "id": "db_retention_daysago",
-      "community": 71,
+      "community": 97,
       "norm_label": "daysago()"
     },
     {
@@ -9324,7 +9414,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L772",
       "id": "db_retention_clampretentiondays",
-      "community": 71,
+      "community": 97,
       "norm_label": "clampretentiondays()"
     },
     {
@@ -9333,7 +9423,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L777",
       "id": "db_retention_proofhash",
-      "community": 113,
+      "community": 97,
       "norm_label": "proofhash()"
     },
     {
@@ -9342,7 +9432,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L781",
       "id": "db_retention_mapdeletionrequest",
-      "community": 62,
+      "community": 97,
       "norm_label": "mapdeletionrequest()"
     },
     {
@@ -9351,7 +9441,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L803",
       "id": "db_retention_mapretentionjob",
-      "community": 62,
+      "community": 97,
       "norm_label": "mapretentionjob()"
     },
     {
@@ -9360,7 +9450,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L827",
       "id": "db_retention_mapauditevidenceexport",
-      "community": 62,
+      "community": 97,
       "norm_label": "mapauditevidenceexport()"
     },
     {
@@ -9369,7 +9459,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L846",
       "id": "db_retention_todeletionrequestrow",
-      "community": 62,
+      "community": 97,
       "norm_label": "todeletionrequestrow()"
     },
     {
@@ -9378,7 +9468,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L868",
       "id": "db_retention_toretentionjobrow",
-      "community": 62,
+      "community": 97,
       "norm_label": "toretentionjobrow()"
     },
     {
@@ -9387,7 +9477,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L892",
       "id": "db_retention_toauditevidenceexportrow",
-      "community": 62,
+      "community": 97,
       "norm_label": "toauditevidenceexportrow()"
     },
     {
@@ -9396,7 +9486,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L911",
       "id": "db_retention_publicid",
-      "community": 93,
+      "community": 97,
       "norm_label": "publicid()"
     },
     {
@@ -9405,7 +9495,7 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L915",
       "id": "db_retention_maybeuuid",
-      "community": 62,
+      "community": 97,
       "norm_label": "maybeuuid()"
     },
     {
@@ -9540,7 +9630,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L31",
       "id": "db_billing_getlocalbillingstate",
-      "community": 107,
+      "community": 31,
       "norm_label": "getlocalbillingstate()"
     },
     {
@@ -9549,7 +9639,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L35",
       "id": "db_billing_getstripecustomerfortenant",
-      "community": 114,
+      "community": 31,
       "norm_label": "getstripecustomerfortenant()"
     },
     {
@@ -9567,7 +9657,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L59",
       "id": "db_billing_upsertstripecustomermapping",
-      "community": 105,
+      "community": 31,
       "norm_label": "upsertstripecustomermapping()"
     },
     {
@@ -9576,7 +9666,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L89",
       "id": "db_billing_recordcheckoutsession",
-      "community": 105,
+      "community": 31,
       "norm_label": "recordcheckoutsession()"
     },
     {
@@ -9594,7 +9684,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L135",
       "id": "db_billing_hasprocessedstripewebhookevent",
-      "community": 107,
+      "community": 31,
       "norm_label": "hasprocessedstripewebhookevent()"
     },
     {
@@ -9603,7 +9693,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L147",
       "id": "db_billing_recordstripewebhookevent",
-      "community": 107,
+      "community": 31,
       "norm_label": "recordstripewebhookevent()"
     },
     {
@@ -9774,7 +9864,7 @@
       "source_file": "lib/db/billing.ts",
       "source_location": "L634",
       "id": "db_billing_publicid",
-      "community": 105,
+      "community": 31,
       "norm_label": "publicid()"
     },
     {
@@ -9801,32 +9891,32 @@
       "source_file": "lib/db/support.ts",
       "source_location": "L1",
       "id": "lib_db_support_ts",
-      "community": 24,
+      "community": 109,
       "norm_label": "support.ts"
     },
     {
       "label": "TicketFilters",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L81",
+      "source_location": "L82",
       "id": "db_support_ticketfilters",
-      "community": 24,
+      "community": 109,
       "norm_label": "ticketfilters"
     },
     {
       "label": "localState",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L89",
+      "source_location": "L90",
       "id": "db_support_localstate",
-      "community": 24,
+      "community": 109,
       "norm_label": "localstate"
     },
     {
       "label": "publicId()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L126",
+      "source_location": "L128",
       "id": "db_support_publicid",
       "community": 52,
       "norm_label": "publicid()"
@@ -9835,7 +9925,7 @@
       "label": "maybeUuid()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L131",
+      "source_location": "L133",
       "id": "db_support_maybeuuid",
       "community": 109,
       "norm_label": "maybeuuid()"
@@ -9844,16 +9934,16 @@
       "label": "getLocalState()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L136",
+      "source_location": "L138",
       "id": "db_support_getlocalstate",
-      "community": 113,
+      "community": 97,
       "norm_label": "getlocalstate()"
     },
     {
       "label": "workspaceIdOrDefault()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L140",
+      "source_location": "L142",
       "id": "db_support_workspaceidordefault",
       "community": 88,
       "norm_label": "workspaceidordefault()"
@@ -9862,16 +9952,16 @@
       "label": "tenantIdForWorkspace()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L145",
+      "source_location": "L147",
       "id": "db_support_tenantidforworkspace",
-      "community": 85,
+      "community": 88,
       "norm_label": "tenantidforworkspace()"
     },
     {
       "label": "resolveCustomerId()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L151",
+      "source_location": "L153",
       "id": "db_support_resolvecustomerid",
       "community": 109,
       "norm_label": "resolvecustomerid()"
@@ -9880,7 +9970,7 @@
       "label": "resolvePortalCustomer()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L164",
+      "source_location": "L166",
       "id": "db_support_resolveportalcustomer",
       "community": 109,
       "norm_label": "resolveportalcustomer()"
@@ -9889,7 +9979,7 @@
       "label": "normalizeDomain()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L208",
+      "source_location": "L210",
       "id": "db_support_normalizedomain",
       "community": 3,
       "norm_label": "normalizedomain()"
@@ -9898,7 +9988,7 @@
       "label": "domainVerificationRecord()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L212",
+      "source_location": "L214",
       "id": "db_support_domainverificationrecord",
       "community": 3,
       "norm_label": "domainverificationrecord()"
@@ -9907,7 +9997,7 @@
       "label": "domainExpectedCname()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L216",
+      "source_location": "L218",
       "id": "db_support_domainexpectedcname",
       "community": 3,
       "norm_label": "domainexpectedcname()"
@@ -9916,7 +10006,7 @@
       "label": "domainExpectedTxt()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L220",
+      "source_location": "L222",
       "id": "db_support_domainexpectedtxt",
       "community": 3,
       "norm_label": "domainexpectedtxt()"
@@ -9925,7 +10015,7 @@
       "label": "domainStaleMs()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L224",
+      "source_location": "L226",
       "id": "db_support_domainstalems",
       "community": 3,
       "norm_label": "domainstalems()"
@@ -9934,7 +10024,7 @@
       "label": "getDomainHealth()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L229",
+      "source_location": "L231",
       "id": "db_support_getdomainhealth",
       "community": 3,
       "norm_label": "getdomainhealth()"
@@ -9943,25 +10033,25 @@
       "label": "contentHash()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L254",
+      "source_location": "L256",
       "id": "db_support_contenthash",
-      "community": 24,
+      "community": 109,
       "norm_label": "contenthash()"
     },
     {
       "label": "getWorkspace()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L258",
+      "source_location": "L260",
       "id": "db_support_getworkspace",
-      "community": 96,
+      "community": 97,
       "norm_label": "getworkspace()"
     },
     {
       "label": "getWorkspaceLaunchState()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L275",
+      "source_location": "L277",
       "id": "db_support_getworkspacelaunchstate",
       "community": 88,
       "norm_label": "getworkspacelaunchstate()"
@@ -9970,34 +10060,34 @@
       "label": "WorkspaceMemberView",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L290",
+      "source_location": "L292",
       "id": "db_support_workspacememberview",
-      "community": 24,
+      "community": 109,
       "norm_label": "workspacememberview"
     },
     {
       "label": "listWorkspaceMembers()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L296",
+      "source_location": "L298",
       "id": "db_support_listworkspacemembers",
-      "community": 102,
+      "community": 83,
       "norm_label": "listworkspacemembers()"
     },
     {
       "label": "listWorkspaceInvitations()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L345",
+      "source_location": "L347",
       "id": "db_support_listworkspaceinvitations",
-      "community": 102,
+      "community": 83,
       "norm_label": "listworkspaceinvitations()"
     },
     {
       "label": "listWorkspaceChecklist()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L359",
+      "source_location": "L361",
       "id": "db_support_listworkspacechecklist",
       "community": 88,
       "norm_label": "listworkspacechecklist()"
@@ -10006,34 +10096,70 @@
       "label": "completeOnboardingStep()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L373",
+      "source_location": "L375",
       "id": "db_support_completeonboardingstep",
-      "community": 98,
+      "community": 85,
       "norm_label": "completeonboardingstep()"
     },
     {
       "label": "listGoldenQuestions()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L407",
+      "source_location": "L409",
       "id": "db_support_listgoldenquestions",
       "community": 61,
       "norm_label": "listgoldenquestions()"
     },
     {
+      "label": "updateGoldenQuestionOutcomes()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L419",
+      "id": "db_support_updategoldenquestionoutcomes",
+      "community": 61,
+      "norm_label": "updategoldenquestionoutcomes()"
+    },
+    {
+      "label": "appendGoldenEvalRun()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L448",
+      "id": "db_support_appendgoldenevalrun",
+      "community": 61,
+      "norm_label": "appendgoldenevalrun()"
+    },
+    {
+      "label": "listGoldenEvalRuns()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L465",
+      "id": "db_support_listgoldenevalruns",
+      "community": 88,
+      "norm_label": "listgoldenevalruns()"
+    },
+    {
+      "label": "listWorkspacesForScheduledJobs()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L475",
+      "id": "db_support_listworkspacesforscheduledjobs",
+      "community": 61,
+      "norm_label": "listworkspacesforscheduledjobs()"
+    },
+    {
       "label": "getRetentionSetting()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L417",
+      "source_location": "L486",
       "id": "db_support_getretentionsetting",
-      "community": 86,
+      "community": 15,
       "norm_label": "getretentionsetting()"
     },
     {
       "label": "updateWorkspaceSettings()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L427",
+      "source_location": "L496",
       "id": "db_support_updateworkspacesettings",
       "community": 85,
       "norm_label": "updateworkspacesettings()"
@@ -10042,7 +10168,7 @@
       "label": "listWorkspaceDomains()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L474",
+      "source_location": "L543",
       "id": "db_support_listworkspacedomains",
       "community": 3,
       "norm_label": "listworkspacedomains()"
@@ -10051,7 +10177,7 @@
       "label": "getWorkspaceDomainHealth()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L485",
+      "source_location": "L554",
       "id": "db_support_getworkspacedomainhealth",
       "community": 3,
       "norm_label": "getworkspacedomainhealth()"
@@ -10060,7 +10186,7 @@
       "label": "addWorkspaceDomain()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L490",
+      "source_location": "L559",
       "id": "db_support_addworkspacedomain",
       "community": 3,
       "norm_label": "addworkspacedomain()"
@@ -10069,7 +10195,7 @@
       "label": "verifyWorkspaceDomain()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L528",
+      "source_location": "L597",
       "id": "db_support_verifyworkspacedomain",
       "community": 3,
       "norm_label": "verifyworkspacedomain()"
@@ -10078,7 +10204,7 @@
       "label": "recheckWorkspaceDomains()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L568",
+      "source_location": "L637",
       "id": "db_support_recheckworkspacedomains",
       "community": 3,
       "norm_label": "recheckworkspacedomains()"
@@ -10087,25 +10213,25 @@
       "label": "getWorkspaceDomainFromSupabase()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L625",
+      "source_location": "L694",
       "id": "db_support_getworkspacedomainfromsupabase",
-      "community": 3,
+      "community": 109,
       "norm_label": "getworkspacedomainfromsupabase()"
     },
     {
       "label": "persistWorkspaceDomain()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L635",
+      "source_location": "L704",
       "id": "db_support_persistworkspacedomain",
-      "community": 3,
+      "community": 109,
       "norm_label": "persistworkspacedomain()"
     },
     {
       "label": "createPortalTicket()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L643",
+      "source_location": "L712",
       "id": "db_support_createportalticket",
       "community": 109,
       "norm_label": "createportalticket()"
@@ -10114,7 +10240,7 @@
       "label": "appendTicketMessage()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L705",
+      "source_location": "L774",
       "id": "db_support_appendticketmessage",
       "community": 116,
       "norm_label": "appendticketmessage()"
@@ -10123,16 +10249,16 @@
       "label": "regenerateWorkspaceWidgetKey()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L760",
+      "source_location": "L829",
       "id": "db_support_regenerateworkspacewidgetkey",
-      "community": 77,
+      "community": 85,
       "norm_label": "regenerateworkspacewidgetkey()"
     },
     {
       "label": "isOriginAllowed()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L787",
+      "source_location": "L856",
       "id": "db_support_isoriginallowed",
       "community": 96,
       "norm_label": "isoriginallowed()"
@@ -10141,7 +10267,7 @@
       "label": "getWidgetConfig()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L799",
+      "source_location": "L868",
       "id": "db_support_getwidgetconfig",
       "community": 96,
       "norm_label": "getwidgetconfig()"
@@ -10150,7 +10276,7 @@
       "label": "recordUsageEvent()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L810",
+      "source_location": "L879",
       "id": "db_support_recordusageevent",
       "community": 52,
       "norm_label": "recordusageevent()"
@@ -10159,7 +10285,7 @@
       "label": "listApprovalPolicies()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L833",
+      "source_location": "L902",
       "id": "db_support_listapprovalpolicies",
       "community": 88,
       "norm_label": "listapprovalpolicies()"
@@ -10168,7 +10294,7 @@
       "label": "listTickets()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L844",
+      "source_location": "L913",
       "id": "db_support_listtickets",
       "community": 83,
       "norm_label": "listtickets()"
@@ -10177,7 +10303,7 @@
       "label": "listPortalTickets()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L875",
+      "source_location": "L944",
       "id": "db_support_listportaltickets",
       "community": 83,
       "norm_label": "listportaltickets()"
@@ -10186,7 +10312,7 @@
       "label": "getTicket()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L897",
+      "source_location": "L966",
       "id": "db_support_getticket",
       "community": 116,
       "norm_label": "getticket()"
@@ -10195,16 +10321,16 @@
       "label": "getAiRun()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L922",
+      "source_location": "L991",
       "id": "db_support_getairun",
-      "community": 117,
+      "community": 116,
       "norm_label": "getairun()"
     },
     {
       "label": "listAgents()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L934",
+      "source_location": "L1003",
       "id": "db_support_listagents",
       "community": 91,
       "norm_label": "listagents()"
@@ -10213,7 +10339,7 @@
       "label": "listKnowledgeDocs()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L947",
+      "source_location": "L1016",
       "id": "db_support_listknowledgedocs",
       "community": 86,
       "norm_label": "listknowledgedocs()"
@@ -10222,25 +10348,25 @@
       "label": "listDocumentChunks()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L957",
+      "source_location": "L1026",
       "id": "db_support_listdocumentchunks",
-      "community": 88,
+      "community": 61,
       "norm_label": "listdocumentchunks()"
     },
     {
       "label": "createKnowledgeDocument()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L967",
+      "source_location": "L1036",
       "id": "db_support_createknowledgedocument",
-      "community": 77,
+      "community": 4,
       "norm_label": "createknowledgedocument()"
     },
     {
       "label": "createAiRun()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1044",
+      "source_location": "L1113",
       "id": "db_support_createairun",
       "community": 52,
       "norm_label": "createairun()"
@@ -10249,25 +10375,25 @@
       "label": "updateAiRunDecision()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1078",
+      "source_location": "L1147",
       "id": "db_support_updateairundecision",
-      "community": 117,
+      "community": 116,
       "norm_label": "updateairundecision()"
     },
     {
       "label": "appendFeedback()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1148",
+      "source_location": "L1217",
       "id": "db_support_appendfeedback",
-      "community": 112,
+      "community": 109,
       "norm_label": "appendfeedback()"
     },
     {
       "label": "listMissingKnowledgeTasks()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1174",
+      "source_location": "L1243",
       "id": "db_support_listmissingknowledgetasks",
       "community": 88,
       "norm_label": "listmissingknowledgetasks()"
@@ -10276,16 +10402,16 @@
       "label": "createMissingKnowledgeTask()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1184",
+      "source_location": "L1253",
       "id": "db_support_createmissingknowledgetask",
-      "community": 112,
+      "community": 109,
       "norm_label": "createmissingknowledgetask()"
     },
     {
       "label": "createModelRouteLog()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1217",
+      "source_location": "L1286",
       "id": "db_support_createmodelroutelog",
       "community": 52,
       "norm_label": "createmodelroutelog()"
@@ -10294,7 +10420,7 @@
       "label": "listModelRouteLogs()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1239",
+      "source_location": "L1308",
       "id": "db_support_listmodelroutelogs",
       "community": 85,
       "norm_label": "listmodelroutelogs()"
@@ -10303,7 +10429,7 @@
       "label": "appendSecurityEvent()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1249",
+      "source_location": "L1318",
       "id": "db_support_appendsecurityevent",
       "community": 96,
       "norm_label": "appendsecurityevent()"
@@ -10312,16 +10438,16 @@
       "label": "listSecurityEvents()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1271",
+      "source_location": "L1340",
       "id": "db_support_listsecurityevents",
-      "community": 88,
+      "community": 85,
       "norm_label": "listsecurityevents()"
     },
     {
       "label": "createWidgetSession()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1281",
+      "source_location": "L1350",
       "id": "db_support_createwidgetsession",
       "community": 96,
       "norm_label": "createwidgetsession()"
@@ -10330,7 +10456,7 @@
       "label": "appendGroundingCheck()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1306",
+      "source_location": "L1375",
       "id": "db_support_appendgroundingcheck",
       "community": 52,
       "norm_label": "appendgroundingcheck()"
@@ -10339,7 +10465,7 @@
       "label": "appendPolicyEvaluation()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1323",
+      "source_location": "L1392",
       "id": "db_support_appendpolicyevaluation",
       "community": 52,
       "norm_label": "appendpolicyevaluation()"
@@ -10348,7 +10474,7 @@
       "label": "appendAgentRun()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1340",
+      "source_location": "L1409",
       "id": "db_support_appendagentrun",
       "community": 52,
       "norm_label": "appendagentrun()"
@@ -10357,7 +10483,7 @@
       "label": "appendToolCall()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1357",
+      "source_location": "L1426",
       "id": "db_support_appendtoolcall",
       "community": 52,
       "norm_label": "appendtoolcall()"
@@ -10366,7 +10492,7 @@
       "label": "listToolDefinitions()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1374",
+      "source_location": "L1443",
       "id": "db_support_listtooldefinitions",
       "community": 88,
       "norm_label": "listtooldefinitions()"
@@ -10375,34 +10501,34 @@
       "label": "listAuditLogs()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1384",
+      "source_location": "L1453",
       "id": "db_support_listauditlogs",
-      "community": 88,
+      "community": 62,
       "norm_label": "listauditlogs()"
     },
     {
       "label": "appendAuditLog()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1398",
+      "source_location": "L1467",
       "id": "db_support_appendauditlog",
-      "community": 77,
+      "community": 61,
       "norm_label": "appendauditlog()"
     },
     {
       "label": "getDashboardMetrics()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1415",
+      "source_location": "L1484",
       "id": "db_support_getdashboardmetrics",
-      "community": 111,
+      "community": 88,
       "norm_label": "getdashboardmetrics()"
     },
     {
       "label": "getWorkspaceHealth()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1454",
+      "source_location": "L1523",
       "id": "db_support_getworkspacehealth",
       "community": 88,
       "norm_label": "getworkspacehealth()"
@@ -10411,7 +10537,7 @@
       "label": "listApprovalQueue()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1479",
+      "source_location": "L1548",
       "id": "db_support_listapprovalqueue",
       "community": 88,
       "norm_label": "listapprovalqueue()"
@@ -10420,16 +10546,16 @@
       "label": "calculateMetrics()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1492",
+      "source_location": "L1561",
       "id": "db_support_calculatemetrics",
-      "community": 111,
+      "community": 88,
       "norm_label": "calculatemetrics()"
     },
     {
       "label": "hydrateTicket()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1523",
+      "source_location": "L1592",
       "id": "db_support_hydrateticket",
       "community": 116,
       "norm_label": "hydrateticket()"
@@ -10438,52 +10564,52 @@
       "label": "hydrateSupabaseTicket()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1531",
+      "source_location": "L1600",
       "id": "db_support_hydratesupabaseticket",
-      "community": 121,
+      "community": 109,
       "norm_label": "hydratesupabaseticket()"
     },
     {
       "label": "mapUser()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1544",
+      "source_location": "L1613",
       "id": "db_support_mapuser",
-      "community": 121,
+      "community": 109,
       "norm_label": "mapuser()"
     },
     {
       "label": "mapWorkspace()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1553",
+      "source_location": "L1622",
       "id": "db_support_mapworkspace",
-      "community": 96,
+      "community": 97,
       "norm_label": "mapworkspace()"
     },
     {
       "label": "mapWorkspaceDomain()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1572",
+      "source_location": "L1641",
       "id": "db_support_mapworkspacedomain",
-      "community": 3,
+      "community": 109,
       "norm_label": "mapworkspacedomain()"
     },
     {
       "label": "mapWorkspaceInvitation()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1588",
+      "source_location": "L1657",
       "id": "db_support_mapworkspaceinvitation",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapworkspaceinvitation()"
     },
     {
       "label": "mapWidgetConfig()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1605",
+      "source_location": "L1674",
       "id": "db_support_mapwidgetconfig",
       "community": 96,
       "norm_label": "mapwidgetconfig()"
@@ -10492,151 +10618,160 @@
       "label": "mapApprovalPolicy()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1619",
+      "source_location": "L1688",
       "id": "db_support_mapapprovalpolicy",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapapprovalpolicy()"
     },
     {
       "label": "mapChecklistItem()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1633",
+      "source_location": "L1702",
       "id": "db_support_mapchecklistitem",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapchecklistitem()"
     },
     {
       "label": "mapGoldenQuestion()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1647",
+      "source_location": "L1716",
       "id": "db_support_mapgoldenquestion",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapgoldenquestion()"
+    },
+    {
+      "label": "mapGoldenEvalRun()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L1729",
+      "id": "db_support_mapgoldenevalrun",
+      "community": 109,
+      "norm_label": "mapgoldenevalrun()"
     },
     {
       "label": "mapRetentionSetting()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1660",
+      "source_location": "L1747",
       "id": "db_support_mapretentionsetting",
-      "community": 86,
+      "community": 15,
       "norm_label": "mapretentionsetting()"
     },
     {
       "label": "mapMissingKnowledgeTask()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1673",
+      "source_location": "L1760",
       "id": "db_support_mapmissingknowledgetask",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapmissingknowledgetask()"
     },
     {
       "label": "mapModelRouteLog()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1686",
+      "source_location": "L1773",
       "id": "db_support_mapmodelroutelog",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapmodelroutelog()"
     },
     {
       "label": "mapSecurityEvent()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1706",
+      "source_location": "L1793",
       "id": "db_support_mapsecurityevent",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapsecurityevent()"
     },
     {
       "label": "mapToolDefinition()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1720",
+      "source_location": "L1807",
       "id": "db_support_maptooldefinition",
-      "community": 24,
+      "community": 109,
       "norm_label": "maptooldefinition()"
     },
     {
       "label": "mapAuditLog()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1732",
+      "source_location": "L1819",
       "id": "db_support_mapauditlog",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapauditlog()"
     },
     {
       "label": "mapCustomer()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1745",
+      "source_location": "L1832",
       "id": "db_support_mapcustomer",
-      "community": 121,
+      "community": 109,
       "norm_label": "mapcustomer()"
     },
     {
       "label": "mapTicket()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1759",
+      "source_location": "L1846",
       "id": "db_support_mapticket",
-      "community": 121,
+      "community": 109,
       "norm_label": "mapticket()"
     },
     {
       "label": "mapKnowledgeDoc()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1778",
+      "source_location": "L1865",
       "id": "db_support_mapknowledgedoc",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapknowledgedoc()"
     },
     {
       "label": "mapDocumentChunk()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1793",
+      "source_location": "L1880",
       "id": "db_support_mapdocumentchunk",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapdocumentchunk()"
     },
     {
       "label": "mapTicketMessage()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1815",
+      "source_location": "L1902",
       "id": "db_support_mapticketmessage",
-      "community": 24,
+      "community": 109,
       "norm_label": "mapticketmessage()"
     },
     {
       "label": "mapAiRun()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1828",
+      "source_location": "L1915",
       "id": "db_support_mapairun",
-      "community": 117,
+      "community": 116,
       "norm_label": "mapairun()"
     },
     {
       "label": "toWorkspaceDomainRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1861",
+      "source_location": "L1948",
       "id": "db_support_toworkspacedomainrow",
-      "community": 3,
+      "community": 109,
       "norm_label": "toworkspacedomainrow()"
     },
     {
       "label": "toTicketRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1877",
+      "source_location": "L1964",
       "id": "db_support_toticketrow",
       "community": 109,
       "norm_label": "toticketrow()"
@@ -10645,7 +10780,7 @@
       "label": "toTicketMessageRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1896",
+      "source_location": "L1983",
       "id": "db_support_toticketmessagerow",
       "community": 109,
       "norm_label": "toticketmessagerow()"
@@ -10654,7 +10789,7 @@
       "label": "toUsageEventRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1909",
+      "source_location": "L1996",
       "id": "db_support_tousageeventrow",
       "community": 109,
       "norm_label": "tousageeventrow()"
@@ -10663,16 +10798,16 @@
       "label": "toKnowledgeDocRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1921",
+      "source_location": "L2008",
       "id": "db_support_toknowledgedocrow",
-      "community": 77,
+      "community": 109,
       "norm_label": "toknowledgedocrow()"
     },
     {
       "label": "toDocumentChunkRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1936",
+      "source_location": "L2023",
       "id": "db_support_todocumentchunkrow",
       "community": 63,
       "norm_label": "todocumentchunkrow()"
@@ -10681,7 +10816,7 @@
       "label": "toAiRunRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1958",
+      "source_location": "L2045",
       "id": "db_support_toairunrow",
       "community": 109,
       "norm_label": "toairunrow()"
@@ -10690,34 +10825,43 @@
       "label": "toFeedbackRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L1991",
+      "source_location": "L2078",
       "id": "db_support_tofeedbackrow",
-      "community": 112,
+      "community": 109,
       "norm_label": "tofeedbackrow()"
     },
     {
       "label": "toAuditLogRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2004",
+      "source_location": "L2091",
       "id": "db_support_toauditlogrow",
-      "community": 77,
+      "community": 109,
       "norm_label": "toauditlogrow()"
     },
     {
       "label": "toMissingKnowledgeTaskRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2017",
+      "source_location": "L2104",
       "id": "db_support_tomissingknowledgetaskrow",
-      "community": 112,
+      "community": 109,
       "norm_label": "tomissingknowledgetaskrow()"
+    },
+    {
+      "label": "toGoldenEvalRunRow()",
+      "file_type": "code",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L2117",
+      "id": "db_support_togoldenevalrunrow",
+      "community": 109,
+      "norm_label": "togoldenevalrunrow()"
     },
     {
       "label": "toModelRouteLogRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2030",
+      "source_location": "L2135",
       "id": "db_support_tomodelroutelogrow",
       "community": 109,
       "norm_label": "tomodelroutelogrow()"
@@ -10726,7 +10870,7 @@
       "label": "toSecurityEventRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2050",
+      "source_location": "L2155",
       "id": "db_support_tosecurityeventrow",
       "community": 109,
       "norm_label": "tosecurityeventrow()"
@@ -10735,7 +10879,7 @@
       "label": "toWidgetSessionRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2064",
+      "source_location": "L2169",
       "id": "db_support_towidgetsessionrow",
       "community": 109,
       "norm_label": "towidgetsessionrow()"
@@ -10744,7 +10888,7 @@
       "label": "toGroundingCheckRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2078",
+      "source_location": "L2183",
       "id": "db_support_togroundingcheckrow",
       "community": 109,
       "norm_label": "togroundingcheckrow()"
@@ -10753,7 +10897,7 @@
       "label": "toPolicyEvaluationRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2093",
+      "source_location": "L2198",
       "id": "db_support_topolicyevaluationrow",
       "community": 109,
       "norm_label": "topolicyevaluationrow()"
@@ -10762,7 +10906,7 @@
       "label": "toAgentRunRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2108",
+      "source_location": "L2213",
       "id": "db_support_toagentrunrow",
       "community": 109,
       "norm_label": "toagentrunrow()"
@@ -10771,7 +10915,7 @@
       "label": "toToolCallRow()",
       "file_type": "code",
       "source_file": "lib/db/support.ts",
-      "source_location": "L2121",
+      "source_location": "L2226",
       "id": "db_support_totoolcallrow",
       "community": 109,
       "norm_label": "totoolcallrow()"
@@ -10818,7 +10962,7 @@
       "source_file": "lib/db/ingestion.ts",
       "source_location": "L30",
       "id": "db_ingestion_listingestionjobs",
-      "community": 85,
+      "community": 97,
       "norm_label": "listingestionjobs()"
     },
     {
@@ -10890,7 +11034,7 @@
       "source_file": "lib/db/ingestion.ts",
       "source_location": "L323",
       "id": "db_ingestion_hasduplicatedoc",
-      "community": 113,
+      "community": 97,
       "norm_label": "hasduplicatedoc()"
     },
     {
@@ -11061,7 +11205,7 @@
       "source_file": "lib/ops/billing-alerts.ts",
       "source_location": "L1",
       "id": "lib_ops_billing_alerts_ts",
-      "community": 90,
+      "community": 31,
       "norm_label": "billing-alerts.ts"
     },
     {
@@ -11070,7 +11214,7 @@
       "source_file": "lib/ops/billing-alerts.ts",
       "source_location": "L3",
       "id": "ops_billing_alerts_billingreconciliationalertresult",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingreconciliationalertresult"
     },
     {
@@ -11079,7 +11223,7 @@
       "source_file": "lib/ops/billing-alerts.ts",
       "source_location": "L8",
       "id": "ops_billing_alerts_verifybillingreconciliationsecret",
-      "community": 90,
+      "community": 31,
       "norm_label": "verifybillingreconciliationsecret()"
     },
     {
@@ -11088,7 +11232,7 @@
       "source_file": "lib/ops/billing-alerts.ts",
       "source_location": "L13",
       "id": "ops_billing_alerts_sendbillingreconciliationalert",
-      "community": 90,
+      "community": 31,
       "norm_label": "sendbillingreconciliationalert()"
     },
     {
@@ -11097,7 +11241,7 @@
       "source_file": "lib/ops/billing-alerts.ts",
       "source_location": "L61",
       "id": "ops_billing_alerts_redacturl",
-      "community": 90,
+      "community": 31,
       "norm_label": "redacturl()"
     },
     {
@@ -11221,7 +11365,7 @@
       "label": "checkStripe()",
       "file_type": "code",
       "source_file": "lib/ops/health.ts",
-      "source_location": "L155",
+      "source_location": "L156",
       "id": "ops_health_checkstripe",
       "community": 94,
       "norm_label": "checkstripe()"
@@ -11230,7 +11374,7 @@
       "label": "redactUrl()",
       "file_type": "code",
       "source_file": "lib/ops/health.ts",
-      "source_location": "L171",
+      "source_location": "L172",
       "id": "ops_health_redacturl",
       "community": 94,
       "norm_label": "redacturl()"
@@ -11286,7 +11430,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L1",
       "id": "lib_billing_stripe_ts",
-      "community": 104,
+      "community": 31,
       "norm_label": "stripe.ts"
     },
     {
@@ -11295,7 +11439,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L5",
       "id": "billing_stripe_stripecheckoutinput",
-      "community": 104,
+      "community": 31,
       "norm_label": "stripecheckoutinput"
     },
     {
@@ -11304,7 +11448,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L16",
       "id": "billing_stripe_stripecheckoutresult",
-      "community": 104,
+      "community": 31,
       "norm_label": "stripecheckoutresult"
     },
     {
@@ -11313,7 +11457,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L20",
       "id": "billing_stripe_stripeportalresult",
-      "community": 104,
+      "community": 31,
       "norm_label": "stripeportalresult"
     },
     {
@@ -11322,7 +11466,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L24",
       "id": "billing_stripe_stripebillingevent",
-      "community": 107,
+      "community": 31,
       "norm_label": "stripebillingevent"
     },
     {
@@ -11331,7 +11475,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L31",
       "id": "billing_stripe_normalizedstripebillingevent",
-      "community": 104,
+      "community": 31,
       "norm_label": "normalizedstripebillingevent"
     },
     {
@@ -11340,7 +11484,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L55",
       "id": "billing_stripe_price_env",
-      "community": 104,
+      "community": 31,
       "norm_label": "price_env"
     },
     {
@@ -11349,7 +11493,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L66",
       "id": "billing_stripe_billing_plan_key_by_tier",
-      "community": 104,
+      "community": 31,
       "norm_label": "billing_plan_key_by_tier"
     },
     {
@@ -11358,7 +11502,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L72",
       "id": "billing_stripe_getstripesecretkey",
-      "community": 105,
+      "community": 31,
       "norm_label": "getstripesecretkey()"
     },
     {
@@ -11367,7 +11511,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L76",
       "id": "billing_stripe_getconfiguredstripepriceid",
-      "community": 105,
+      "community": 31,
       "norm_label": "getconfiguredstripepriceid()"
     },
     {
@@ -11376,7 +11520,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L81",
       "id": "billing_stripe_getbillingcatalog",
-      "community": 107,
+      "community": 31,
       "norm_label": "getbillingcatalog()"
     },
     {
@@ -11385,7 +11529,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L93",
       "id": "billing_stripe_dashboardbillingurl",
-      "community": 114,
+      "community": 31,
       "norm_label": "dashboardbillingurl()"
     },
     {
@@ -11394,7 +11538,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L101",
       "id": "billing_stripe_derivebillingentitlementlimits",
-      "community": 90,
+      "community": 31,
       "norm_label": "derivebillingentitlementlimits()"
     },
     {
@@ -11403,7 +11547,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L106",
       "id": "billing_stripe_tierfrompriceid",
-      "community": 107,
+      "community": 31,
       "norm_label": "tierfrompriceid()"
     },
     {
@@ -11412,7 +11556,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L114",
       "id": "billing_stripe_intervalfrompriceid",
-      "community": 107,
+      "community": 31,
       "norm_label": "intervalfrompriceid()"
     },
     {
@@ -11421,7 +11565,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L122",
       "id": "billing_stripe_createstripecustomer",
-      "community": 105,
+      "community": 31,
       "norm_label": "createstripecustomer()"
     },
     {
@@ -11430,7 +11574,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L138",
       "id": "billing_stripe_createstripecheckoutsession",
-      "community": 105,
+      "community": 31,
       "norm_label": "createstripecheckoutsession()"
     },
     {
@@ -11439,7 +11583,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L196",
       "id": "billing_stripe_createstripeportalsession",
-      "community": 114,
+      "community": 31,
       "norm_label": "createstripeportalsession()"
     },
     {
@@ -11448,7 +11592,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L218",
       "id": "billing_stripe_verifystripewebhooksignature",
-      "community": 107,
+      "community": 31,
       "norm_label": "verifystripewebhooksignature()"
     },
     {
@@ -11457,7 +11601,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L240",
       "id": "billing_stripe_makestripetestsignature",
-      "community": 107,
+      "community": 31,
       "norm_label": "makestripetestsignature()"
     },
     {
@@ -11466,7 +11610,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L245",
       "id": "billing_stripe_normalizestripebillingevent",
-      "community": 104,
+      "community": 31,
       "norm_label": "normalizestripebillingevent()"
     },
     {
@@ -11475,7 +11619,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L280",
       "id": "billing_stripe_stripepost",
-      "community": 105,
+      "community": 31,
       "norm_label": "stripepost()"
     },
     {
@@ -11484,7 +11628,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L291",
       "id": "billing_stripe_safecomparehex",
-      "community": 104,
+      "community": 31,
       "norm_label": "safecomparehex()"
     },
     {
@@ -11493,7 +11637,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L301",
       "id": "billing_stripe_firstsubscriptionprice",
-      "community": 104,
+      "community": 31,
       "norm_label": "firstsubscriptionprice()"
     },
     {
@@ -11502,7 +11646,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L305",
       "id": "billing_stripe_timestamptoiso",
-      "community": 104,
+      "community": 31,
       "norm_label": "timestamptoiso()"
     },
     {
@@ -11511,7 +11655,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L310",
       "id": "billing_stripe_stringornull",
-      "community": 104,
+      "community": 31,
       "norm_label": "stringornull()"
     },
     {
@@ -11520,7 +11664,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L314",
       "id": "billing_stripe_numberorzero",
-      "community": 104,
+      "community": 31,
       "norm_label": "numberorzero()"
     },
     {
@@ -11529,7 +11673,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L318",
       "id": "billing_stripe_normalizetier",
-      "community": 104,
+      "community": 31,
       "norm_label": "normalizetier()"
     },
     {
@@ -11538,7 +11682,7 @@
       "source_file": "lib/billing/stripe.ts",
       "source_location": "L322",
       "id": "billing_stripe_normalizeinterval",
-      "community": 104,
+      "community": 31,
       "norm_label": "normalizeinterval()"
     },
     {
@@ -11547,7 +11691,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L1",
       "id": "lib_billing_plans_ts",
-      "community": 86,
+      "community": 15,
       "norm_label": "plans.ts"
     },
     {
@@ -11556,7 +11700,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L10",
       "id": "billing_plans_resolveplanforworkspace",
-      "community": 86,
+      "community": 15,
       "norm_label": "resolveplanforworkspace()"
     },
     {
@@ -11565,7 +11709,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L21",
       "id": "billing_plans_readsupabaseusage",
-      "community": 86,
+      "community": 15,
       "norm_label": "readsupabaseusage()"
     },
     {
@@ -11574,7 +11718,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L62",
       "id": "billing_plans_inperiod",
-      "community": 86,
+      "community": 15,
       "norm_label": "inperiod()"
     },
     {
@@ -11583,7 +11727,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L67",
       "id": "billing_plans_readusage",
-      "community": 86,
+      "community": 15,
       "norm_label": "readusage()"
     },
     {
@@ -11592,7 +11736,7 @@
       "source_file": "lib/billing/plans.ts",
       "source_location": "L80",
       "id": "billing_plans_getbillingsnapshot",
-      "community": 86,
+      "community": 15,
       "norm_label": "getbillingsnapshot()"
     },
     {
@@ -11610,7 +11754,7 @@
       "source_file": "lib/billing/core.ts",
       "source_location": "L3",
       "id": "billing_core_billingplankey",
-      "community": 104,
+      "community": 31,
       "norm_label": "billingplankey"
     },
     {
@@ -11763,7 +11907,7 @@
       "source_file": "lib/billing/core.ts",
       "source_location": "L332",
       "id": "billing_core_getplanlimitblock",
-      "community": 86,
+      "community": 15,
       "norm_label": "getplanlimitblock()"
     },
     {
@@ -11781,7 +11925,7 @@
       "source_file": "lib/billing/core.ts",
       "source_location": "L344",
       "id": "billing_core_getbillingplans",
-      "community": 86,
+      "community": 15,
       "norm_label": "getbillingplans()"
     },
     {
@@ -11790,7 +11934,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L1",
       "id": "lib_billing_reconciliation_ts",
-      "community": 90,
+      "community": 31,
       "norm_label": "reconciliation.ts"
     },
     {
@@ -11799,7 +11943,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L6",
       "id": "billing_reconciliation_billingreconciliationseverity",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingreconciliationseverity"
     },
     {
@@ -11808,7 +11952,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L8",
       "id": "billing_reconciliation_billingreconciliationissue",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingreconciliationissue"
     },
     {
@@ -11817,7 +11961,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L15",
       "id": "billing_reconciliation_billingreconciliationreport",
-      "community": 90,
+      "community": 31,
       "norm_label": "billingreconciliationreport"
     },
     {
@@ -11826,7 +11970,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L33",
       "id": "billing_reconciliation_active_subscription_statuses",
-      "community": 90,
+      "community": 31,
       "norm_label": "active_subscription_statuses"
     },
     {
@@ -11835,7 +11979,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L34",
       "id": "billing_reconciliation_blocked_subscription_statuses",
-      "community": 90,
+      "community": 31,
       "norm_label": "blocked_subscription_statuses"
     },
     {
@@ -11844,7 +11988,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L35",
       "id": "billing_reconciliation_open_invoice_statuses",
-      "community": 90,
+      "community": 31,
       "norm_label": "open_invoice_statuses"
     },
     {
@@ -11853,7 +11997,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L37",
       "id": "billing_reconciliation_buildbillingreconciliationreport",
-      "community": 90,
+      "community": 31,
       "norm_label": "buildbillingreconciliationreport()"
     },
     {
@@ -11862,7 +12006,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L133",
       "id": "billing_reconciliation_reconcilesubscription",
-      "community": 107,
+      "community": 31,
       "norm_label": "reconcilesubscription()"
     },
     {
@@ -11871,7 +12015,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L213",
       "id": "billing_reconciliation_reconcileentitlement",
-      "community": 90,
+      "community": 31,
       "norm_label": "reconcileentitlement()"
     },
     {
@@ -11880,7 +12024,7 @@
       "source_file": "lib/billing/reconciliation.ts",
       "source_location": "L254",
       "id": "billing_reconciliation_reconcileinvoice",
-      "community": 90,
+      "community": 31,
       "norm_label": "reconcileinvoice()"
     },
     {
@@ -11889,7 +12033,7 @@
       "source_file": "lib/billing/web.ts",
       "source_location": "L1",
       "id": "lib_billing_web_ts",
-      "community": 105,
+      "community": 31,
       "norm_label": "web.ts"
     },
     {
@@ -11898,7 +12042,7 @@
       "source_file": "lib/billing/web.ts",
       "source_location": "L3",
       "id": "billing_web_parsebillingtier",
-      "community": 105,
+      "community": 31,
       "norm_label": "parsebillingtier()"
     },
     {
@@ -11907,7 +12051,7 @@
       "source_file": "lib/billing/web.ts",
       "source_location": "L7",
       "id": "billing_web_parsebillinginterval",
-      "community": 105,
+      "community": 31,
       "norm_label": "parsebillinginterval()"
     },
     {
@@ -11916,7 +12060,7 @@
       "source_file": "lib/analytics/events.ts",
       "source_location": "L1",
       "id": "lib_analytics_events_ts",
-      "community": 77,
+      "community": 94,
       "norm_label": "events.ts"
     },
     {
@@ -11925,7 +12069,7 @@
       "source_file": "lib/analytics/events.ts",
       "source_location": "L3",
       "id": "analytics_events_captureinput",
-      "community": 77,
+      "community": 94,
       "norm_label": "captureinput"
     },
     {
@@ -11934,7 +12078,7 @@
       "source_file": "lib/analytics/events.ts",
       "source_location": "L10",
       "id": "analytics_events_captureproductevent",
-      "community": 77,
+      "community": 94,
       "norm_label": "captureproductevent()"
     },
     {
@@ -12013,7 +12157,7 @@
       "label": "Deferred",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L118",
+      "source_location": "L119",
       "id": "chatbot_demo_updates_implementation_tracker_deferred",
       "community": 48,
       "norm_label": "deferred"
@@ -12022,7 +12166,7 @@
       "label": "Verification Commands",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L132",
+      "source_location": "L133",
       "id": "chatbot_demo_updates_implementation_tracker_verification_commands",
       "community": 48,
       "norm_label": "verification commands"
@@ -12031,7 +12175,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "UPDATES_IMPLEMENTATION_TRACKER.md",
-      "source_location": "L134",
+      "source_location": "L135",
       "id": "chatbot_demo_updates_implementation_tracker_codeblock_1",
       "community": 48,
       "norm_label": "code:bash (npm run typecheck)"
@@ -12238,7 +12382,7 @@
       "label": "Enterprise Env",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L89",
+      "source_location": "L90",
       "id": "chatbot_demo_readme_enterprise_env",
       "community": 8,
       "norm_label": "enterprise env"
@@ -12247,7 +12391,7 @@
       "label": "code:bash (SUPPORTPILOT_APP_MODE=production # demo | production)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L91",
+      "source_location": "L92",
       "id": "chatbot_demo_readme_codeblock_2",
       "community": 8,
       "norm_label": "code:bash (supportpilot_app_mode=production # demo | production)"
@@ -12256,7 +12400,7 @@
       "label": "Supabase",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L181",
+      "source_location": "L185",
       "id": "chatbot_demo_readme_supabase",
       "community": 8,
       "norm_label": "supabase"
@@ -12265,7 +12409,7 @@
       "label": "code:text (wk_demo_acmedesk)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L187",
+      "source_location": "L191",
       "id": "chatbot_demo_readme_codeblock_3",
       "community": 8,
       "norm_label": "code:text (wk_demo_acmedesk)"
@@ -12274,7 +12418,7 @@
       "label": "code:text (SupportPilot2026!)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L193",
+      "source_location": "L197",
       "id": "chatbot_demo_readme_codeblock_4",
       "community": 8,
       "norm_label": "code:text (supportpilot2026!)"
@@ -12283,7 +12427,7 @@
       "label": "Verify",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L197",
+      "source_location": "L201",
       "id": "chatbot_demo_readme_verify",
       "community": 8,
       "norm_label": "verify"
@@ -12292,7 +12436,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L199",
+      "source_location": "L203",
       "id": "chatbot_demo_readme_codeblock_5",
       "community": 8,
       "norm_label": "code:bash (npm run typecheck)"
@@ -12301,7 +12445,7 @@
       "label": "Docs",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L222",
+      "source_location": "L226",
       "id": "chatbot_demo_readme_docs",
       "community": 8,
       "norm_label": "docs"
@@ -12562,7 +12706,7 @@
       "label": "code:bash (NEXT_PUBLIC_SUPABASE_URL=...)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L53",
+      "source_location": "L54",
       "id": "chatbot_demo_client_setup_codeblock_2",
       "community": 6,
       "norm_label": "code:bash (next_public_supabase_url=...)"
@@ -12571,7 +12715,7 @@
       "label": "code:text (SupportPilot2026!)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L64",
+      "source_location": "L65",
       "id": "chatbot_demo_client_setup_codeblock_3",
       "community": 6,
       "norm_label": "code:text (supportpilot2026!)"
@@ -12580,7 +12724,7 @@
       "label": "5. LLM Provider",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L68",
+      "source_location": "L69",
       "id": "chatbot_demo_client_setup_5_llm_provider",
       "community": 6,
       "norm_label": "5. llm provider"
@@ -12589,7 +12733,7 @@
       "label": "code:bash (LLM_PROVIDER=google)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L72",
+      "source_location": "L73",
       "id": "chatbot_demo_client_setup_codeblock_4",
       "community": 6,
       "norm_label": "code:bash (llm_provider=google)"
@@ -12598,7 +12742,7 @@
       "label": "code:bash (LLM_PROVIDER=openai)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L78",
+      "source_location": "L79",
       "id": "chatbot_demo_client_setup_codeblock_5",
       "community": 6,
       "norm_label": "code:bash (llm_provider=openai)"
@@ -12607,7 +12751,7 @@
       "label": "code:bash (LLM_PROVIDER=anthropic)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L84",
+      "source_location": "L85",
       "id": "chatbot_demo_client_setup_codeblock_6",
       "community": 6,
       "norm_label": "code:bash (llm_provider=anthropic)"
@@ -12616,7 +12760,7 @@
       "label": "6. Optional Sentry",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L90",
+      "source_location": "L91",
       "id": "chatbot_demo_client_setup_6_optional_sentry",
       "community": 6,
       "norm_label": "6. optional sentry"
@@ -12625,7 +12769,7 @@
       "label": "code:bash (SENTRY_DSN=...)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L92",
+      "source_location": "L93",
       "id": "chatbot_demo_client_setup_codeblock_7",
       "community": 6,
       "norm_label": "code:bash (sentry_dsn=...)"
@@ -12634,7 +12778,7 @@
       "label": "7. Optional Escalation and Analytics",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L100",
+      "source_location": "L101",
       "id": "chatbot_demo_client_setup_7_optional_escalation_and_analytics",
       "community": 6,
       "norm_label": "7. optional escalation and analytics"
@@ -12643,7 +12787,7 @@
       "label": "code:bash (RESEND_API_KEY=...)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L102",
+      "source_location": "L103",
       "id": "chatbot_demo_client_setup_codeblock_8",
       "community": 6,
       "norm_label": "code:bash (resend_api_key=...)"
@@ -12652,7 +12796,7 @@
       "label": "8. Verify Locally",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L112",
+      "source_location": "L113",
       "id": "chatbot_demo_client_setup_8_verify_locally",
       "community": 6,
       "norm_label": "8. verify locally"
@@ -12661,7 +12805,7 @@
       "label": "code:bash (npm run typecheck)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L114",
+      "source_location": "L115",
       "id": "chatbot_demo_client_setup_codeblock_9",
       "community": 6,
       "norm_label": "code:bash (npm run typecheck)"
@@ -12670,7 +12814,7 @@
       "label": "9. Configure Workspace",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L133",
+      "source_location": "L134",
       "id": "chatbot_demo_client_setup_9_configure_workspace",
       "community": 6,
       "norm_label": "9. configure workspace"
@@ -12679,7 +12823,7 @@
       "label": "10. Install the Widget",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L143",
+      "source_location": "L144",
       "id": "chatbot_demo_client_setup_10_install_the_widget",
       "community": 6,
       "norm_label": "10. install the widget"
@@ -12688,7 +12832,7 @@
       "label": "code:html (<script async src=\"https://your-client-domain.example/widget)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L147",
+      "source_location": "L148",
       "id": "chatbot_demo_client_setup_codeblock_10",
       "community": 6,
       "norm_label": "code:html (<script async src=\"https://your-client-domain.example/widget)"
@@ -12697,7 +12841,7 @@
       "label": "code:html (<iframe src=\"https://your-client-domain.example/embed?worksp)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L153",
+      "source_location": "L154",
       "id": "chatbot_demo_client_setup_codeblock_11",
       "community": 6,
       "norm_label": "code:html (<iframe src=\"https://your-client-domain.example/embed?worksp)"
@@ -12706,7 +12850,7 @@
       "label": "11. Deploy",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L157",
+      "source_location": "L158",
       "id": "chatbot_demo_client_setup_11_deploy",
       "community": 6,
       "norm_label": "11. deploy"
@@ -12715,7 +12859,7 @@
       "label": "code:bash (vercel deploy --prod)",
       "file_type": "document",
       "source_file": "CLIENT_SETUP.md",
-      "source_location": "L161",
+      "source_location": "L162",
       "id": "chatbot_demo_client_setup_codeblock_12",
       "community": 6,
       "norm_label": "code:bash (vercel deploy --prod)"
@@ -12787,7 +12931,7 @@
       "label": "Manual Evaluation Matrix",
       "file_type": "document",
       "source_file": "EVALS.md",
-      "source_location": "L46",
+      "source_location": "L48",
       "id": "chatbot_demo_evals_manual_evaluation_matrix",
       "community": 50,
       "norm_label": "manual evaluation matrix"
@@ -12796,7 +12940,7 @@
       "label": "Suggested Live Supabase Test",
       "file_type": "document",
       "source_file": "EVALS.md",
-      "source_location": "L64",
+      "source_location": "L67",
       "id": "chatbot_demo_evals_suggested_live_supabase_test",
       "community": 50,
       "norm_label": "suggested live supabase test"
@@ -13021,7 +13165,7 @@
       "label": "Knowledge Source Storage",
       "file_type": "document",
       "source_file": "SECURITY.md",
-      "source_location": "L48",
+      "source_location": "L49",
       "id": "chatbot_demo_security_knowledge_source_storage",
       "community": 46,
       "norm_label": "knowledge source storage"
@@ -13030,7 +13174,7 @@
       "label": "Retention And Deletion",
       "file_type": "document",
       "source_file": "SECURITY.md",
-      "source_location": "L52",
+      "source_location": "L53",
       "id": "chatbot_demo_security_retention_and_deletion",
       "community": 46,
       "norm_label": "retention and deletion"
@@ -13039,7 +13183,7 @@
       "label": "AI Safety Boundaries",
       "file_type": "document",
       "source_file": "SECURITY.md",
-      "source_location": "L60",
+      "source_location": "L63",
       "id": "chatbot_demo_security_ai_safety_boundaries",
       "community": 46,
       "norm_label": "ai safety boundaries"
@@ -13048,7 +13192,7 @@
       "label": "Current Limits",
       "file_type": "document",
       "source_file": "SECURITY.md",
-      "source_location": "L73",
+      "source_location": "L76",
       "id": "chatbot_demo_security_current_limits",
       "community": 46,
       "norm_label": "current limits"
@@ -19079,7 +19223,7 @@
       "file_type": "code",
       "source_file": "lib/db/retention.ts",
       "source_location": "L363",
-      "community": 113,
+      "community": 97,
       "norm_label": "estimateaffectedcounts()",
       "id": "db_retention_estimateaffectedcounts"
     },
@@ -19160,7 +19304,7 @@
       "file_type": "code",
       "source_file": "app/api/knowledge/upload/route.ts",
       "source_location": "L71",
-      "community": 77,
+      "community": 4,
       "norm_label": "extracttext()",
       "id": "upload_route_extracttext"
     },
@@ -19169,7 +19313,7 @@
       "file_type": "code",
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L3",
-      "community": 114,
+      "community": 31,
       "norm_label": "portalresult",
       "id": "portal_route_portalresult"
     },
@@ -19178,7 +19322,7 @@
       "file_type": "code",
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L7",
-      "community": 114,
+      "community": 31,
       "norm_label": "dashboardurl()",
       "id": "portal_route_dashboardurl"
     },
@@ -19187,7 +19331,7 @@
       "file_type": "code",
       "source_file": "app/api/billing/portal/route.ts",
       "source_location": "L13",
-      "community": 114,
+      "community": 31,
       "norm_label": "returnurl()",
       "id": "portal_route_returnurl"
     },
@@ -19196,7 +19340,7 @@
       "file_type": "code",
       "source_file": "proxy.ts",
       "source_location": "L4",
-      "community": 119,
+      "community": 80,
       "norm_label": "staff_roles",
       "id": "chatbot_demo_proxy_staff_roles"
     },
@@ -19205,7 +19349,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L45",
-      "community": 79,
+      "community": 49,
       "norm_label": "role_rank",
       "id": "auth_roles_role_rank"
     },
@@ -19214,7 +19358,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L54",
-      "community": 79,
+      "community": 49,
       "norm_label": "profileroletomembershiprole()",
       "id": "auth_roles_profileroletomembershiprole"
     },
@@ -19223,7 +19367,7 @@
       "file_type": "code",
       "source_file": "lib/auth/roles.ts",
       "source_location": "L61",
-      "community": 79,
+      "community": 49,
       "norm_label": "canperformmembershipaction()",
       "id": "auth_roles_canperformmembershipaction"
     },
@@ -19250,7 +19394,7 @@
       "file_type": "code",
       "source_file": "app/admin/tickets/[ticketId]/page.tsx",
       "source_location": "L66",
-      "community": 7,
+      "community": 62,
       "norm_label": "info()",
       "id": "ticketid_page_info"
     },
@@ -19259,7 +19403,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L146",
-      "community": 35,
+      "community": 86,
       "norm_label": "summary()",
       "id": "knowledge_page_summary"
     },
@@ -19268,7 +19412,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L158",
-      "community": 35,
+      "community": 86,
       "norm_label": "sourcestatus()",
       "id": "knowledge_page_sourcestatus"
     },
@@ -19277,7 +19421,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L164",
-      "community": 35,
+      "community": 86,
       "norm_label": "freshnessbar()",
       "id": "knowledge_page_freshnessbar"
     },
@@ -19286,7 +19430,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L177",
-      "community": 35,
+      "community": 86,
       "norm_label": "stat()",
       "id": "knowledge_page_stat"
     },
@@ -19295,7 +19439,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L186",
-      "community": 35,
+      "community": 86,
       "norm_label": "th()",
       "id": "knowledge_page_th"
     },
@@ -19304,7 +19448,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L190",
-      "community": 35,
+      "community": 86,
       "norm_label": "td()",
       "id": "knowledge_page_td"
     },
@@ -19313,7 +19457,7 @@
       "file_type": "code",
       "source_file": "app/admin/knowledge/page.tsx",
       "source_location": "L194",
-      "community": 88,
+      "community": 86,
       "norm_label": "daysold()",
       "id": "knowledge_page_daysold"
     },
@@ -24170,6 +24314,220 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "app/api/evals/golden/run/route.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "app_api_evals_golden_run_route_ts",
+      "target": "lib_evals_golden_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/evals/golden/run/route.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "app_api_evals_golden_run_route_ts",
+      "target": "evals_golden_processscheduledgoldenevals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/evals/golden/run/route.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "app_api_evals_golden_run_route_ts",
+      "target": "run_route_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_security_retention_jobs_jobid_run_route_ts",
+      "target": "run_route_post"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/security/retention/jobs/run/route.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_security_retention_jobs_run_route_ts",
+      "target": "run_route_post"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_knowledge_ingest_jobs_jobid_run_route_ts",
+      "target": "run_route_post"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/knowledge/ingest/jobs/run/route.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_knowledge_ingest_jobs_run_route_ts",
+      "target": "run_route_post"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_onboarding_golden_questions_run_route_ts",
+      "target": "run_route_post"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/evals/golden/run/route.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "evals_golden_processscheduledgoldenevals"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_retention_getretentionjob"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "auth_api_requireworkspacerole"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_retention_processretentionjob"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/api/security/retention/jobs/run/route.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_retention_processdueretentionjobs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_ingestion_getingestionjob"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_ingestion_retryingestionjob"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_ingestion_processingestionjob"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/api/knowledge/ingest/jobs/run/route.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_ingestion_processdueingestionjobs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "evals_golden_runandrecordgoldenquestionevals"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "db_support_completeonboardingstep"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "run_route_post",
+      "target": "evals_golden_rungoldenquestionevals"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "app/api/portal/tickets/route.ts",
       "source_location": "L2",
       "weight": 1.0,
@@ -26135,166 +26493,6 @@
       "confidence_score": 1.0,
       "source": "app_api_security_retention_jobs_jobid_run_route_ts",
       "target": "db_retention_processretentionjob"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_api_security_retention_jobs_jobid_run_route_ts",
-      "target": "run_route_post"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/api/security/retention/jobs/run/route.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_api_security_retention_jobs_run_route_ts",
-      "target": "run_route_post"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_api_knowledge_ingest_jobs_jobid_run_route_ts",
-      "target": "run_route_post"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/api/knowledge/ingest/jobs/run/route.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_api_knowledge_ingest_jobs_run_route_ts",
-      "target": "run_route_post"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
-      "source_location": "L13",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_api_onboarding_golden_questions_run_route_ts",
-      "target": "run_route_post"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_retention_getretentionjob"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "auth_api_requireworkspacerole"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/api/security/retention/jobs/[jobId]/run/route.ts",
-      "source_location": "L21",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_retention_processretentionjob"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/api/security/retention/jobs/run/route.ts",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_retention_processdueretentionjobs"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_ingestion_getingestionjob"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_ingestion_retryingestionjob"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/knowledge/ingest/jobs/[jobId]/run/route.ts",
-      "source_location": "L23",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_ingestion_processingestionjob"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "app/api/knowledge/ingest/jobs/run/route.ts",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_ingestion_processdueingestionjobs"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
-      "source_location": "L18",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "evals_golden_rungoldenquestionevals"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
-      "source_location": "L21",
-      "weight": 1.0,
-      "source": "run_route_post",
-      "target": "db_support_completeonboardingstep"
     },
     {
       "relation": "imports_from",
@@ -31594,9 +31792,9 @@
       "source_file": "app/api/onboarding/golden-questions/run/route.ts",
       "source_location": "L4",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "app_api_onboarding_golden_questions_run_route_ts",
-      "target": "evals_golden_rungoldenquestionevals"
+      "target": "evals_golden_runandrecordgoldenquestionevals",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -31607,6 +31805,17 @@
       "confidence_score": 1.0,
       "source": "app_api_onboarding_golden_questions_run_route_ts",
       "target": "run_route_bodyschema"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/onboarding/golden-questions/run/route.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_api_onboarding_golden_questions_run_route_ts",
+      "target": "evals_golden_rungoldenquestionevals"
     },
     {
       "relation": "imports_from",
@@ -39403,6 +39612,36 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L286",
+      "weight": 1.0,
+      "source": "scripts_test_production_readiness_ts",
+      "target": "scripts_test_production_readiness_evalworkerroutesource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L287",
+      "weight": 1.0,
+      "source": "scripts_test_production_readiness_ts",
+      "target": "scripts_test_production_readiness_evalsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-production-readiness.ts",
+      "source_location": "L288",
+      "weight": 1.0,
+      "source": "scripts_test_production_readiness_ts",
+      "target": "scripts_test_production_readiness_evalmigrationsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L184",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -39655,9 +39894,9 @@
       "source_file": "scripts/test-production-readiness.ts",
       "source_location": "L362",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_test_production_readiness_ts",
-      "target": "scripts_test_production_readiness_auditevidencestoragemigrationsource",
-      "confidence_score": 1.0
+      "target": "scripts_test_production_readiness_auditevidencestoragemigrationsource"
     },
     {
       "relation": "contains",
@@ -41922,11 +42161,55 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "lib/evals/golden.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "db_support_appendauditlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "db_support_appendgoldenevalrun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "lib_evals_golden_ts",
       "target": "db_support_listgoldenquestions"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "db_support_listworkspacesforscheduledjobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "db_support_updategoldenquestionoutcomes",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -42040,11 +42323,51 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/evals/golden.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "evals_golden_goldenevalrecordresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "evals_golden_scheduledgoldenevalresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
       "source_location": "L37",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "lib_evals_golden_ts",
       "target": "evals_golden_rungoldenquestionevals"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "evals_golden_runandrecordgoldenquestionevals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "evals_golden_processscheduledgoldenevals",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -42087,6 +42410,16 @@
       "target": "evals_golden_requireshumanreview"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L209",
+      "weight": 1.0,
+      "source": "lib_evals_golden_ts",
+      "target": "evals_golden_hashsummary",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -42096,6 +42429,17 @@
       "confidence_score": 1.0,
       "source": "evals_golden_rungoldenquestionevals",
       "target": "evals_golden_evaluategoldenquestion"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "evals_golden_runandrecordgoldenquestionevals",
+      "target": "evals_golden_rungoldenquestionevals",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -42118,6 +42462,72 @@
       "weight": 1.0,
       "source": "evals_golden_rungoldenquestionevals",
       "target": "rag_retrieval_retrieveenterprisechunks"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "evals_golden_runandrecordgoldenquestionevals",
+      "target": "evals_golden_hashsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "evals_golden_processscheduledgoldenevals",
+      "target": "evals_golden_runandrecordgoldenquestionevals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "evals_golden_runandrecordgoldenquestionevals",
+      "target": "db_support_updategoldenquestionoutcomes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "evals_golden_runandrecordgoldenquestionevals",
+      "target": "db_support_appendgoldenevalrun"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "evals_golden_runandrecordgoldenquestionevals",
+      "target": "db_support_appendauditlog"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/evals/golden.ts",
+      "source_location": "L135",
+      "weight": 1.0,
+      "source": "evals_golden_processscheduledgoldenevals",
+      "target": "db_support_listworkspacesforscheduledjobs"
     },
     {
       "relation": "calls",
@@ -43809,6 +44219,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/enterprise/types.ts",
+      "source_location": "L371",
+      "weight": 1.0,
+      "source": "lib_enterprise_types_ts",
+      "target": "enterprise_types_goldenevalrun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/enterprise/types.ts",
       "source_location": "L255",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -45222,6 +45642,17 @@
       "confidence_score": 1.0,
       "source": "lib_db_support_ts",
       "target": "enterprise_types_goldenquestion"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "enterprise_types_goldenevalrun",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -49442,6 +49873,50 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/db/support.ts",
+      "source_location": "L432",
+      "weight": 1.0,
+      "source": "db_support_updategoldenquestionoutcomes",
+      "target": "supabase_admin_createsupabaseadminclient"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/db/support.ts",
+      "source_location": "L460",
+      "weight": 1.0,
+      "source": "db_support_appendgoldenevalrun",
+      "target": "supabase_admin_createsupabaseadminclient"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/db/support.ts",
+      "source_location": "L467",
+      "weight": 1.0,
+      "source": "db_support_listgoldenevalruns",
+      "target": "supabase_admin_createsupabaseadminclient"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/db/support.ts",
+      "source_location": "L478",
+      "weight": 1.0,
+      "source": "db_support_listworkspacesforscheduledjobs",
+      "target": "supabase_admin_createsupabaseadminclient"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/db/support.ts",
       "source_location": "L246",
       "weight": 1.0,
       "source": "db_support_getretentionsetting",
@@ -52476,9 +52951,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L744",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_retention_ts",
-      "target": "db_retention_storeauditevidenceartifact",
-      "confidence_score": 1.0
+      "target": "db_retention_storeauditevidenceartifact"
     },
     {
       "relation": "contains",
@@ -52486,9 +52961,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L759",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_retention_ts",
-      "target": "db_retention_auditevidencebucketname",
-      "confidence_score": 1.0
+      "target": "db_retention_auditevidencebucketname"
     },
     {
       "relation": "contains",
@@ -52496,9 +52971,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L763",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_db_retention_ts",
-      "target": "db_retention_auditevidencepath",
-      "confidence_score": 1.0
+      "target": "db_retention_auditevidencepath"
     },
     {
       "relation": "contains",
@@ -52990,9 +53465,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L350",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_retention_createauditevidenceexport",
-      "target": "db_retention_storeauditevidenceartifact",
-      "confidence_score": 1.0
+      "target": "db_retention_storeauditevidenceartifact"
     },
     {
       "relation": "calls",
@@ -53463,9 +53938,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L748",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_retention_storeauditevidenceartifact",
-      "target": "db_retention_auditevidencebucketname",
-      "confidence_score": 1.0
+      "target": "db_retention_auditevidencebucketname"
     },
     {
       "relation": "calls",
@@ -53474,9 +53949,9 @@
       "source_file": "lib/db/retention.ts",
       "source_location": "L749",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_retention_storeauditevidenceartifact",
-      "target": "db_retention_auditevidencepath",
-      "confidence_score": 1.0
+      "target": "db_retention_auditevidencepath"
     },
     {
       "relation": "calls",
@@ -54836,6 +55311,46 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/db/support.ts",
+      "source_location": "L419",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_updategoldenquestionoutcomes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L448",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_appendgoldenevalrun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L465",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_listgoldenevalruns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L475",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_listworkspacesforscheduledjobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
       "source_location": "L244",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -55386,6 +55901,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/db/support.ts",
+      "source_location": "L1729",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_mapgoldenevalrun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
       "source_location": "L1141",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -55606,6 +56131,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/db/support.ts",
+      "source_location": "L2117",
+      "weight": 1.0,
+      "source": "lib_db_support_ts",
+      "target": "db_support_togoldenevalrunrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
       "source_location": "L1466",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -55704,6 +56239,17 @@
       "confidence_score": 1.0,
       "source": "db_support_resolveportalcustomer",
       "target": "db_support_publicid"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L454",
+      "weight": 1.0,
+      "source": "db_support_appendgoldenevalrun",
+      "target": "db_support_publicid",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -56040,6 +56586,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "lib/db/support.ts",
+      "source_location": "L2119",
+      "weight": 1.0,
+      "source": "db_support_togoldenevalrunrow",
+      "target": "db_support_maybeuuid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
       "source_location": "L1468",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -56210,6 +56767,17 @@
       "confidence_score": 1.0,
       "source": "db_support_listgoldenquestions",
       "target": "db_support_workspaceidordefault"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L466",
+      "weight": 1.0,
+      "source": "db_support_listgoldenevalruns",
+      "target": "db_support_workspaceidordefault",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -56595,6 +57163,39 @@
       "confidence_score": 1.0,
       "source": "db_support_completeonboardingstep",
       "target": "db_support_getworkspace"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L423",
+      "weight": 1.0,
+      "source": "db_support_updategoldenquestionoutcomes",
+      "target": "db_support_getworkspace",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L451",
+      "weight": 1.0,
+      "source": "db_support_appendgoldenevalrun",
+      "target": "db_support_getworkspace",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L476",
+      "weight": 1.0,
+      "source": "db_support_listworkspacesforscheduledjobs",
+      "target": "db_support_getworkspace",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -57046,6 +57647,28 @@
       "confidence_score": 1.0,
       "source": "db_support_completeonboardingstep",
       "target": "db_support_appendauditlog"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L445",
+      "weight": 1.0,
+      "source": "db_support_updategoldenquestionoutcomes",
+      "target": "db_support_listgoldenquestions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/db/support.ts",
+      "source_location": "L461",
+      "weight": 1.0,
+      "source": "db_support_appendgoldenevalrun",
+      "target": "db_support_togoldenevalrunrow",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -67919,5 +68542,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "65c5b7f976af724f9d1d59b2550499ad3c20928e"
+  "built_at_commit": "7bd2e848a3e7ccc3fcda12963cc128ab5ff3c5bd"
 }

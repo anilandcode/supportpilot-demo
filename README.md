@@ -53,6 +53,7 @@ The app works without provider or Supabase credentials by using deterministic se
 - `GET /api/stats` - dashboard metrics from the enterprise service layer, optionally scoped by `workspace`
 - `GET /api/onboarding/state` - workspace launch checklist, health, golden questions, missing knowledge, and retention settings
 - `POST /api/onboarding/steps/[step]/complete` - mark a launch checklist step complete
+- `POST /api/evals/golden/run` - worker-secret scheduled golden-question eval run with persisted pass/fail evidence
 - `GET /api/security/events` - workspace security event feed
 - `GET|POST /api/security/deletion-requests` - manager/admin data deletion request intake with verification and queued jobs
 - `GET|POST /api/security/retention/jobs` - retention cleanup job list and scheduler driven by workspace settings
@@ -139,6 +140,7 @@ SUPPORTPILOT_INTEGRATION_WORKER_SECRET=...
 SUPPORTPILOT_INTEGRATION_DELIVERY_MODE=queued # queued | inline
 SUPPORTPILOT_RETENTION_WORKER_SECRET=...
 SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET=supportpilot-audit-evidence
+SUPPORTPILOT_EVAL_WORKER_SECRET=...
 SUPPORTPILOT_HEALTH_ALERT_SECRET=...
 SUPPORTPILOT_HEALTH_ALERT_WEBHOOK_URL=...
 SUPPORTPILOT_BILLING_RECONCILIATION_SECRET=...
@@ -172,6 +174,8 @@ Integration delivery is queued by default. Approval-needed drafts and approval d
 
 Retention workflows use `retention_settings` to schedule `conversation_cleanup` and `ai_log_cleanup` jobs. Verified deletion requests create `deletion_request` jobs with non-PII proof hashes. Processed jobs redact aged ticket/message and AI-run content, remove deleted source documents with their vector chunks, and preserve audit-safe operational metadata. A worker can call `POST /api/security/retention/jobs/run` with `x-supportpilot-retention-secret` when `SUPPORTPILOT_RETENTION_WORKER_SECRET` is configured to drain due queued jobs in batches. Audit evidence exports hash the export manifest and, when Supabase is configured, store the JSON artifact in the private `supportpilot-audit-evidence` bucket with a `supabase://bucket/path` reference. Local demos keep a `memory://audit-evidence/...` artifact reference. This is SOC 2 readiness evidence, not a certification claim.
 
+Golden-question evals can run from onboarding or an external scheduler. A scheduler can call `POST /api/evals/golden/run` with `x-supportpilot-eval-secret` when `SUPPORTPILOT_EVAL_WORKER_SECRET` is configured; each run updates `golden_questions`, stores a `golden_eval_runs` evidence row with a summary hash, and writes an audit log with pass/fail counts.
+
 Custom widget domains start in `pending` status. Owners/admins add either a TXT record like `supportpilot-verify=...` or a CNAME to `SUPPORTPILOT_DOMAIN_CNAME_TARGET` at `_supportpilot.<domain>`, then call the verification endpoint. Widget config, signed widget sessions, and chat origin checks only allow domains after verification succeeds. The settings page shows domain health, stale checks, and the exact DNS challenge; scheduled jobs can call the recheck endpoint with `x-supportpilot-domain-secret`. When `SUPPORTPILOT_DOMAIN_ALERT_WEBHOOK_URL` is configured, rechecks send sanitized alerts for failing, stale, or blocked domains without exposing TXT tokens or observed DNS records.
 
 Stripe live-mode activation still requires creating real Stripe products/prices, setting the price IDs above, configuring the webhook endpoint with the matching `STRIPE_WEBHOOK_SECRET`, and running the test/live webhook matrix from `Updates/21_Billing_Stripe_Lifecycle_Plan.md`. `GET /api/billing/reconciliation` and `npm run test:billing` provide the local pre-launch reconciliation rehearsal for configured price IDs, customer mappings, subscriptions, unpaid invoices, entitlements, and checkout drift. A scheduler can call `POST /api/billing/reconciliation` with `x-supportpilot-billing-secret` when `SUPPORTPILOT_BILLING_RECONCILIATION_SECRET` is set; failing/degraded reports send sanitized issue-code alerts to `SUPPORTPILOT_BILLING_RECONCILIATION_WEBHOOK_URL` when configured.
@@ -180,7 +184,7 @@ Stripe live-mode activation still requires creating real Stripe products/prices,
 
 ## Supabase
 
-Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, private knowledge-source storage, outbound integration event tables, retention/evidence job tables, private audit evidence artifact storage, and domain verification metadata. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
+Apply all files in `supabase/migrations/` in order, then run `supabase/seed.sql` for demo data. The migrations include enterprise support tables, productization tables, update-pass security/model-route tables, production auth/onboarding tables, Stripe billing lifecycle tables, embedding versioning/re-embedding job tables, background knowledge ingestion jobs, private knowledge-source storage, outbound integration event tables, retention/evidence job tables, private audit evidence artifact storage, scheduled golden eval evidence runs, and domain verification metadata. The seed includes 1 organization, 1 workspace, 4 staff memberships, 3 verified domains, widget config, 5 customers, 20 tickets, 10 knowledge articles, 5 policy docs, 5 escalated tickets, 10 AI draft replies, feedback, audit logs, escalation rules, approval policies, usage events, launch checklist rows, golden questions, missing-knowledge tasks, model route logs, grounding checks, policy evaluations, security events, retention settings, and read-only tool definitions.
 
 Default workspace key:
 

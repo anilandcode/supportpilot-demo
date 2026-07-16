@@ -1,5 +1,12 @@
+import { createHash } from "node:crypto";
 import type { DocumentChunk, GoldenQuestion, PolicyAction, RiskLevel } from "@/lib/enterprise/types";
-import { listGoldenQuestions } from "@/lib/db/support";
+import {
+  appendAuditLog,
+  appendGoldenEvalRun,
+  listGoldenQuestions,
+  listWorkspacesForScheduledJobs,
+  updateGoldenQuestionOutcomes,
+} from "@/lib/db/support";
 import { retrieveEnterpriseChunks } from "@/lib/rag/retrieval";
 import { calculateConfidenceBreakdown } from "@/lib/workflows/confidence";
 import { verifyGrounding } from "@/lib/workflows/grounding";
@@ -34,6 +41,19 @@ export type GoldenEvalSummary = {
   cases: GoldenEvalCase[];
 };
 
+export type GoldenEvalRecordResult = {
+  summary: GoldenEvalSummary;
+  status: "passed" | "failed";
+  artifactHash: string;
+};
+
+export type ScheduledGoldenEvalResult = {
+  processed: number;
+  passed: number;
+  failed: number;
+  results: GoldenEvalRecordResult[];
+};
+
 export async function runGoldenQuestionEvals(workspaceId: string): Promise<GoldenEvalSummary> {
   const questions = await listGoldenQuestions(workspaceId);
   const cases: GoldenEvalCase[] = [];
@@ -59,6 +79,71 @@ export async function runGoldenQuestionEvals(workspaceId: string): Promise<Golde
       minimumConfidence: 0.55,
     },
     cases,
+  };
+}
+
+export async function runAndRecordGoldenQuestionEvals(
+  workspaceId: string,
+  triggeredBy: "manual" | "scheduled" | "onboarding" = "manual",
+): Promise<GoldenEvalRecordResult> {
+  const summary = await runGoldenQuestionEvals(workspaceId);
+  const status = summary.total >= 5 && summary.passRate >= summary.thresholds.minimumPassRate ? "passed" : "failed";
+  const artifactHash = hashSummary(summary);
+
+  await updateGoldenQuestionOutcomes({
+    workspaceId,
+    cases: summary.cases.map((item) => ({
+      id: item.id,
+      confidence: item.confidence,
+      passed: item.passed,
+    })),
+  });
+
+  await appendGoldenEvalRun({
+    workspaceId,
+    status,
+    total: summary.total,
+    passed: summary.passed,
+    failed: summary.failed,
+    passRate: summary.passRate,
+    thresholds: summary.thresholds,
+    cases: summary.cases as unknown as Record<string, unknown>[],
+    triggeredBy,
+    artifactHash,
+  });
+
+  await appendAuditLog({
+    workspaceId,
+    ticketId: null,
+    userId: null,
+    action: "eval.golden_questions.completed",
+    details: {
+      status,
+      triggeredBy,
+      total: summary.total,
+      passed: summary.passed,
+      failed: summary.failed,
+      passRate: summary.passRate,
+      artifactHash,
+    },
+  });
+
+  return { summary, status, artifactHash };
+}
+
+export async function processScheduledGoldenEvals(input: { workspaceId?: string | null; limit?: number } = {}): Promise<ScheduledGoldenEvalResult> {
+  const workspaces = await listWorkspacesForScheduledJobs({ workspaceId: input.workspaceId, limit: input.limit });
+  const results: GoldenEvalRecordResult[] = [];
+
+  for (const workspace of workspaces) {
+    results.push(await runAndRecordGoldenQuestionEvals(workspace.id, "scheduled"));
+  }
+
+  return {
+    processed: results.length,
+    passed: results.filter((result) => result.status === "passed").length,
+    failed: results.filter((result) => result.status === "failed").length,
+    results,
   };
 }
 
@@ -119,4 +204,8 @@ function riskLevelFor(question: string): RiskLevel {
 
 function requiresHumanReview(question: string) {
   return /\b(refund|renewal|legal|dpa|gdpr|privacy)\b/i.test(question);
+}
+
+function hashSummary(summary: GoldenEvalSummary) {
+  return createHash("sha256").update(JSON.stringify(summary)).digest("hex");
 }

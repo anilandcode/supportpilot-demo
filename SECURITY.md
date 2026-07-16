@@ -41,6 +41,7 @@ Required production secrets:
 - optional `SUPPORTPILOT_KNOWLEDGE_SOURCE_BUCKET`
 - optional `SUPPORTPILOT_RETENTION_WORKER_SECRET`
 - optional `SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET`
+- optional `SUPPORTPILOT_EVAL_WORKER_SECRET`
 - optional `LOCAL_MODEL_ENDPOINT`, `LOCAL_EMBEDDING_ENDPOINT`, `LOCAL_RERANKER_ENDPOINT`
 
 `SUPABASE_SERVICE_ROLE_KEY`, provider keys, Resend keys, invitation sender addresses, and Sentry auth tokens belong only in server-side deployment env vars.
@@ -56,6 +57,8 @@ Workspace retention settings schedule conversation and AI-log cleanup jobs. Proc
 Verified deletion requests create scoped jobs for tickets, customers, or source documents. Ticket/customer requests anonymize personal support content and customer identity fields without deleting the audit trail. Source-document requests delete the approved source and its vector chunks. `POST /api/security/retention/jobs/run` is worker-secret protected and can drain queued jobs for an external scheduler when `SUPPORTPILOT_RETENTION_WORKER_SECRET` is configured.
 
 Audit evidence exports write a non-PII manifest hash to `audit_evidence_exports`. Supabase-backed deployments also upload the JSON artifact to the private `supportpilot-audit-evidence` Storage bucket, or the bucket named by `SUPPORTPILOT_AUDIT_EVIDENCE_BUCKET`, and store only a `supabase://bucket/path` reference in the database. Workspace members can read artifacts through RLS-scoped storage policies; owner/admin/manager roles can write them. Local demos keep a `memory://audit-evidence/...` artifact reference.
+
+Scheduled golden-question evals are worker-secret protected through `SUPPORTPILOT_EVAL_WORKER_SECRET`. Runs store pass/fail counts, per-case metadata, and a SHA-256 artifact hash in `golden_eval_runs`; they also update the canonical `golden_questions` score/pass state and write an audit log. This gives launch readiness checks repeatable evidence without storing raw customer prompts.
 
 ## AI Safety Boundaries
 

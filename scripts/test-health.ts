@@ -15,6 +15,7 @@ const trackedEnv = [
   "SUPPORTPILOT_INGESTION_WORKER_SECRET",
   "SUPPORTPILOT_INTEGRATION_WORKER_SECRET",
   "SUPPORTPILOT_RETENTION_WORKER_SECRET",
+  "SUPPORTPILOT_EVAL_WORKER_SECRET",
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
   "SUPPORTPILOT_HEALTH_ALERT_SECRET",
@@ -61,6 +62,7 @@ async function main() {
   process.env.SUPPORTPILOT_INGESTION_WORKER_SECRET = "ingest";
   process.env.SUPPORTPILOT_INTEGRATION_WORKER_SECRET = "integrations";
   process.env.SUPPORTPILOT_RETENTION_WORKER_SECRET = "retention";
+  process.env.SUPPORTPILOT_EVAL_WORKER_SECRET = "eval";
   process.env.STRIPE_SECRET_KEY = "sk_test";
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
   const productionReady = buildHealthSnapshot(new Date("2026-07-15T00:00:00.000Z"));
